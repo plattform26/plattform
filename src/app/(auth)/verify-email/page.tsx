@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,7 +15,7 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     if (!token) {
       setStatus('error');
-      setMessage('No se proporcionó un token válido.');
+      setMessage('No se proporcionÃ³ un token vÃ¡lido.');
       return;
     }
 
@@ -30,14 +31,14 @@ export default function VerifyEmailPage() {
 
         if (res.ok) {
           setStatus('success');
-          setMessage(data.message || 'Tu correo ha sido verificado con éxito.');
+          setMessage(data.message || 'Tu correo ha sido verificado con Ã©xito.');
         } else {
           setStatus('error');
-          setMessage(data.error || 'El enlace es inválido o ha expirado.');
+          setMessage(data.error || 'El enlace es invÃ¡lido o ha expirado.');
         }
       } catch (e) {
         setStatus('error');
-        setMessage('Ocurrió un error en el servidor. Intenta nuevamente más tarde.');
+        setMessage('OcurriÃ³ un error en el servidor. Intenta nuevamente mÃ¡s tarde.');
       }
     };
 
@@ -47,7 +48,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-lg text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Verificación de Email</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">VerificaciÃ³n de Email</h2>
         
         {status === 'loading' && (
           <div className="text-blue-600 animate-pulse font-medium">{message}</div>
@@ -57,7 +58,7 @@ export default function VerifyEmailPage() {
           <div>
             <div className="text-green-600 font-medium mb-6">{message}</div>
             <Link href="/login" className="inline-block py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-              Ir a Iniciar Sesión
+              Ir a Iniciar SesiÃ³n
             </Link>
           </div>
         )}
@@ -65,7 +66,7 @@ export default function VerifyEmailPage() {
         {status === 'error' && (
           <div>
             <div className="text-red-600 font-medium mb-6">{message}</div>
-            <p className="text-sm text-gray-500 mb-4">Si tu token expiró, por favor intenta iniciar sesión para solicitar un nuevo enlace.</p>
+            <p className="text-sm text-gray-500 mb-4">Si tu token expirÃ³, por favor intenta iniciar sesiÃ³n para solicitar un nuevo enlace.</p>
             <Link href="/login" className="inline-block py-2 px-6 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition">
               Volver
             </Link>
@@ -75,3 +76,4 @@ export default function VerifyEmailPage() {
     </div>
   );
 }
+

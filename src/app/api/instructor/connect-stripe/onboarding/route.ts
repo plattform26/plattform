@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -64,12 +65,13 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ url: accountLink.url });
   } catch (error: any) {
-    console.error('❌ [STRIPE_ONBOARDING_ERROR]:', error);
+    console.error('âŒ [STRIPE_ONBOARDING_ERROR]:', error);
     
     return NextResponse.json({ 
-      error: 'Error en la conexión con la pasarela bancaria', 
+      error: 'Error en la conexiÃ³n con la pasarela bancaria', 
       details: error.message,
       code: error.code || 'internal_error'
     }, { status: 500 });
   }
 }
+

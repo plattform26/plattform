@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -20,7 +21,7 @@ export async function GET(req: Request) {
         
         if (resRefresh.ok) {
           console.log('DEBUG: Silent refresh successful');
-          session = await getSession(); // Intentar obtener sesión de nuevo con el nuevo cookie
+          session = await getSession(); // Intentar obtener sesiÃ³n de nuevo con el nuevo cookie
         }
       }
     }
@@ -44,7 +45,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
-    // Verificar suscripción si es INSTRUCTOR
+    // Verificar suscripciÃ³n si es INSTRUCTOR
     let hasActiveSubscription = false;
     let academySlug = '';
     
@@ -77,3 +78,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

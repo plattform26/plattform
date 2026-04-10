@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 'use client';
 
 import { useState } from 'react';
@@ -21,7 +22,7 @@ export default function ResetPasswordPage() {
 
     if (newPassword !== confirmPassword) {
       setStatus('error');
-      setMessage('Las contraseñas no coinciden.');
+      setMessage('Las contraseÃ±as no coinciden.');
       return;
     }
 
@@ -35,11 +36,11 @@ export default function ResetPasswordPage() {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || 'Ocurrió un error al actualizar.');
+        throw new Error(data.error || 'OcurriÃ³ un error al actualizar.');
       }
 
       setStatus('success');
-      setMessage('Tu contraseña ha sido actualizada exitosamente.');
+      setMessage('Tu contraseÃ±a ha sido actualizada exitosamente.');
       
       setTimeout(() => {
         router.push('/login');
@@ -55,7 +56,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-red-50 text-red-600 p-6 rounded-md shadow-md text-center max-w-sm">
-          Falta el token de seguridad mágico en el enlace. Intenta desde el email nuevamente.
+          Falta el token de seguridad mÃ¡gico en el enlace. Intenta desde el email nuevamente.
         </div>
       </div>
     );
@@ -64,12 +65,12 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Elegir Nueva Contraseña</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Elegir Nueva ContraseÃ±a</h2>
         
         {status === 'success' ? (
           <div className="text-center">
             <div className="bg-green-50 text-green-700 p-4 rounded-md mb-6">{message}</div>
-            <p className="text-sm text-gray-600 mb-4">Redirigiendo al inicio de sesión...</p>
+            <p className="text-sm text-gray-600 mb-4">Redirigiendo al inicio de sesiÃ³n...</p>
             <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
               Ir ahora
             </Link>
@@ -81,7 +82,7 @@ export default function ResetPasswordPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
+              <label className="block text-sm font-medium text-gray-700">Nueva ContraseÃ±a</label>
               <input
                 type="password"
                 required
@@ -93,7 +94,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+              <label className="block text-sm font-medium text-gray-700">Confirmar ContraseÃ±a</label>
               <input
                 type="password"
                 required
@@ -109,7 +110,7 @@ export default function ResetPasswordPage() {
               disabled={status === 'loading'}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50"
             >
-              {status === 'loading' ? 'Actualizando...' : 'Actualizar Contraseña'}
+              {status === 'loading' ? 'Actualizando...' : 'Actualizar ContraseÃ±a'}
             </button>
           </form>
         )}
@@ -117,3 +118,4 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+

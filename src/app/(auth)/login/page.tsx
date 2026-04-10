@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -36,10 +37,10 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Error al iniciar sesión');
+        throw new Error(data.error || 'Error al iniciar sesiÃ³n');
       }
 
-      // Redirección inmediata según rol
+      // RedirecciÃ³n inmediata segÃºn rol
       const targetUrl = data.role === 'ADMIN' 
         ? '/dashboard/admin' 
         : data.role === 'INSTRUCTOR' 
@@ -71,13 +72,13 @@ export default function LoginPage() {
         
         {error && (
           <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl mb-6 text-xs font-semibold animate-shake">
-            ⚠️ {error}
+            âš ï¸ {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6 text-sm">
           <div className="space-y-2">
-            <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Correo Electrónico</label>
+            <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Correo ElectrÃ³nico</label>
             <input
               type="email"
               required
@@ -89,12 +90,12 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Contraseña</label>
+            <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">ContraseÃ±a</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className="block w-full px-4 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -120,7 +121,7 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-end">
             <Link href="/forgot-password" className="text-xs font-semibold text-blue-500 hover:text-cyan-400 transition-colors">
-              ¿Olvidaste tu contraseña?
+              Â¿Olvidaste tu contraseÃ±a?
             </Link>
           </div>
 
@@ -137,15 +138,15 @@ export default function LoginPage() {
                 </svg>
                 Entrando...
               </span>
-            ) : 'Iniciar Sesión →'}
+            ) : 'Iniciar SesiÃ³n â†’'}
           </button>
         </form>
 
         <div className="mt-10 pt-6 border-t border-blue-500/10 text-center">
           <p className="text-gray-500">
-            ¿Aún no tienes cuenta?{' '}
+            Â¿AÃºn no tienes cuenta?{' '}
             <Link href="/register" className="font-bold text-cyan-400 hover:text-white transition-colors">
-              Regístrate gratis
+              RegÃ­strate gratis
             </Link>
           </p>
         </div>
@@ -153,4 +154,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 

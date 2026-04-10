@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 'use client';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
@@ -97,7 +98,7 @@ export default function StudentsPage() {
     <div className="animate-fade-in font-poppins text-gray-200">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-space-grotesk font-black text-white">Top 10 <span className="text-cyan-400">Analítico</span></h1>
+          <h1 className="text-3xl font-space-grotesk font-black text-white">Top 10 <span className="text-cyan-400">AnalÃ­tico</span></h1>
           <p className="text-gray-400 text-sm mt-2 italic font-light">Ranking de alumnos con mayor impacto en tu academia.</p>
         </div>
 
@@ -111,7 +112,7 @@ export default function StudentsPage() {
               className="w-full bg-[#0d1524] border border-blue-500/20 rounded-xl px-4 py-2 text-xs font-bold text-gray-300 hover:border-cyan-500/50 transition-all flex items-center justify-between group"
             >
               <span className="truncate pr-2">{filterLabel}</span>
-              <span className={`text-[10px] text-cyan-500/50 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-cyan-400' : ''}`}>▼</span>
+              <span className={`text-[10px] text-cyan-500/50 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-cyan-400' : ''}`}>â–¼</span>
             </button>
 
             {isDropdownOpen && (
@@ -142,11 +143,11 @@ export default function StudentsPage() {
         <div className="space-y-4">
           {filteredStudents.length === 0 ? (
             <div className="p-24 text-center bg-[#0d1524] rounded-[2.5rem] border border-blue-500/10 shadow-2xl">
-               <div className="mb-6 opacity-20 text-6xl">👥</div>
+               <div className="mb-6 opacity-20 text-6xl">ðŸ‘¥</div>
                <p className="text-gray-500 italic uppercase tracking-[0.3em] text-[10px] font-black leading-relaxed">
                   {selectedCourseId 
-                    ? 'No hay alumnos inscritos en este curso todavía' 
-                    : 'Sin alumnos destacados bajo estos parámetros'}
+                    ? 'No hay alumnos inscritos en este curso todavÃ­a' 
+                    : 'Sin alumnos destacados bajo estos parÃ¡metros'}
                </p>
                <div className="mt-8 flex justify-center gap-2">
                   <div className="w-1 h-1 rounded-full bg-blue-500/30"></div>
@@ -178,7 +179,7 @@ export default function StudentsPage() {
                       <div>
                          <p className="font-bold text-gray-200 group-hover:text-cyan-400 transition-colors uppercase text-sm tracking-tight">{student.user.name} {student.user.lastName}</p>
                          <div className="mt-1 flex items-center gap-3">
-                            <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.1em]">{student.enrollmentCount} Inscripciones Académicas</span>
+                            <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.1em]">{student.enrollmentCount} Inscripciones AcadÃ©micas</span>
                             <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
                             <span className="text-[9px] font-black text-cyan-500/70 uppercase">Activo</span>
                          </div>
@@ -187,13 +188,13 @@ export default function StudentsPage() {
 
                    <div className="flex items-center gap-6">
                       <div className="text-right hidden md:block">
-                         <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest mb-1 italic">Última Actividad</p>
+                         <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest mb-1 italic">Ãšltima Actividad</p>
                          <p className="text-[10px] font-black text-gray-400 uppercase font-mono">
                            {latestEnrolledDate.toLocaleDateString('es-MX', { month: 'short', year: 'numeric' })}
                          </p>
                       </div>
                       <div className={`w-8 h-8 rounded-xl border border-blue-500/20 flex items-center justify-center transition-transform duration-300 ${isExpanded ? 'rotate-180 border-cyan-500/50 text-cyan-400' : 'text-gray-600'}`}>
-                         ▼
+                         â–¼
                       </div>
                    </div>
                  </div>
@@ -226,7 +227,7 @@ export default function StudentsPage() {
                                                  {quiz.scorePercentage}% {quiz.passed ? 'OK' : 'FAIL'}
                                              </span>
                                           )}
-                                          {cert && <span className="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-black">📜 CERT</span>}
+                                          {cert && <span className="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-black">ðŸ“œ CERT</span>}
                                        </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -246,8 +247,8 @@ export default function StudentsPage() {
 
                       <div className="bg-[#152035]/30 rounded-[2rem] p-8 border border-white/5 flex flex-col justify-center text-center">
                          <div className="mb-6">
-                           <p className="text-4xl shadow-cyan-500/50 drop-shadow-lg mb-2">🏆</p>
-                           <p className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.3em] font-space-grotesk">Análisis de Alumno</p>
+                           <p className="text-4xl shadow-cyan-500/50 drop-shadow-lg mb-2">ðŸ†</p>
+                           <p className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.3em] font-space-grotesk">AnÃ¡lisis de Alumno</p>
                          </div>
                          <div className="space-y-4">
                            <div className="flex justify-between items-center border-b border-white/5 pb-4">
@@ -255,11 +256,11 @@ export default function StudentsPage() {
                               <span className="text-xs font-black text-white">{formatGlobalDate(student.globalFirstEnrollment)}</span>
                            </div>
                            <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                              <span className="text-[10px] font-bold text-gray-600 uppercase">Inversión en tu Academia</span>
+                              <span className="text-[10px] font-bold text-gray-600 uppercase">InversiÃ³n en tu Academia</span>
                               <span className="text-xs font-black text-cyan-400 italic">MXN ${Number(student.totalInstructorInvestment).toLocaleString()}</span>
                            </div>
                            <div className="flex justify-between items-center pb-4 pt-4">
-                              <span className="text-[10px] font-bold text-gray-600 uppercase">Estado Académico</span>
+                              <span className="text-[10px] font-bold text-gray-600 uppercase">Estado AcadÃ©mico</span>
                               <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Activo</span>
                            </div>
                          </div>
@@ -283,3 +284,4 @@ export default function StudentsPage() {
     </div>
   );
 }
+
