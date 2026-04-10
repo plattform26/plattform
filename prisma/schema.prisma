@@ -1,0 +1,577 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                        String                  @id @default(uuid())
+  name                      String
+  lastName                  String                  @map("last_name")
+  email                     String                  @unique
+  birthDate                 DateTime?               @map("birth_date")
+  passwordHash              String                  @map("password_hash")
+  role                      UserRole
+  status                    UserStatus              @default(ACTIVE)
+  emailVerifiedAt           DateTime?               @map("email_verified_at")
+  createdAt                 DateTime                @default(now()) @map("created_at")
+  updatedAt                 DateTime                @updatedAt @map("updated_at")
+  lastLoginAt               DateTime?               @map("last_login_at")
+  manualEnrollmentsCreated  AdminManualEnrollment[] @relation("AdminCreator")
+  manualEnrollmentsReceived AdminManualEnrollment[] @relation("EnrolledStudent")
+  auditLogs                 AuditLog[]
+  certifications            Certification[]
+  courseRatings             CourseRating[]
+  courses                   Course[]                @relation("InstructorCourses")
+  enrollments               Enrollment[]
+  instructorProfile         InstructorProfile?
+  notifications             Notification[]
+  passwordResetTokens       PasswordResetToken[]
+  progressRecords           Progress[]
+  quizAttempts              QuizAttempt[]
+  sessions                  Session[]
+  transactions              Transaction[]           @relation("StudentTransactions")
+
+  @@index([email])
+  @@index([role, status])
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  refreshToken String    @unique @map("refresh_token")
+  userAgent    String?   @map("user_agent")
+  ipAddress    String?   @map("ip_address")
+  expiresAt    DateTime  @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([refreshToken])
+  @@index([userId])
+  @@map("sessions")
+}
+
+model InstructorProfile {
+  id                  String                          @id @default(uuid())
+  userId              String                          @unique @map("user_id")
+  academyName         String                          @map("academy_name")
+  slug                String                          @unique
+  logoUrl             String?                         @map("logo_url")
+  bannerUrl           String?                         @map("banner_url")
+  description         String?
+  institution         String?
+  commissionRate      Decimal                         @map("commission_rate") @db.Decimal(5, 2)
+  payoutStatus        String?                         @map("payout_status")
+  stripeConnectId     String?                         @map("stripe_connect_id")
+  stripeOnboardingComplete Boolean                     @default(false) @map("stripe_onboarding_complete")
+  createdAt           DateTime                        @default(now()) @map("created_at")
+  updatedAt           DateTime                        @updatedAt @map("updated_at")
+  linkedinUrl         String?                         @map("linkedin_url")
+  user                User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionHistory InstructorSubscriptionHistory[]
+  subscriptions       InstructorSubscription[]
+
+  @@map("instructor_profiles")
+}
+
+model PlatformPlan {
+  id                  String                          @id @default(uuid())
+  name                String                          @unique
+  displayName         String                          @map("display_name")
+  monthlyPrice        Decimal                         @map("monthly_price") @db.Decimal(10, 2)
+  studentLimit        Int                             @map("student_limit")
+  courseLimit         Int                             @default(10) @map("course_limit")
+  commissionRate      Decimal                         @map("commission_rate") @db.Decimal(5, 2)
+  aiEnabled           Boolean                         @default(false) @map("ai_enabled")
+  status              String                          @default("ACTIVE")
+  createdAt           DateTime                        @default(now()) @map("created_at")
+  description         String?
+  subscriptionHistory InstructorSubscriptionHistory[]
+  subscriptions       InstructorSubscription[]
+
+  @@map("platform_plans")
+}
+
+model InstructorSubscription {
+  id                   String             @id @default(uuid())
+  instructorId         String             @map("instructor_id")
+  planId               String             @map("plan_id")
+  status               SubscriptionStatus
+  startedAt            DateTime           @map("started_at")
+  expiresAt            DateTime?          @map("expires_at")
+  stripeSubscriptionId String?            @map("stripe_subscription_id")
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  activeStudentCount   Int                @default(0) @map("active_student_count")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  instructor           InstructorProfile  @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  plan                 PlatformPlan       @relation(fields: [planId], references: [id])
+
+  @@map("instructor_subscriptions")
+}
+
+model InstructorSubscriptionHistory {
+  id           String            @id @default(uuid())
+  instructorId String            @map("instructor_id")
+  fromPlanId   String?           @map("from_plan_id")
+  toPlanId     String            @map("to_plan_id")
+  reason       String?
+  changedAt    DateTime          @default(now()) @map("changed_at")
+  fromPlan     PlatformPlan?     @relation(fields: [fromPlanId], references: [id])
+  instructor   InstructorProfile @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@map("instructor_subscription_history")
+}
+
+model Course {
+  id                String                  @id @default(uuid())
+  instructorId      String                  @map("instructor_id")
+  title             String
+  slug              String
+  description       String
+  category          CourseCategory          @default(OTHER)
+  level             CourseLevel             @default(BEGINNER)
+  durationHours     Decimal?                @map("duration_hours") @db.Decimal(5, 1)
+  price             Decimal                 @db.Decimal(10, 2)
+  currency          String                  @default("MXN")
+  status            CourseStatus            @default(DRAFT)
+  visibility        CourseVisibility        @default(PUBLIC)
+  thumbnailUrl      String?                 @map("thumbnail_url")
+  previewText       String?                 @map("preview_text")
+  aiGenerated       Boolean                 @default(false) @map("ai_generated")
+  publishedAt       DateTime?               @map("published_at")
+  deletedAt         DateTime?               @map("deleted_at")
+  createdAt         DateTime                @default(now()) @map("created_at")
+  updatedAt         DateTime                @updatedAt @map("updated_at")
+  hasQuiz           Boolean                 @default(false) @map("has_quiz")
+  stripeProductId   String?                 @map("stripe_product_id")
+  stripePriceId     String?                 @map("stripe_price_id")
+  aiJobStatus       String?                 @map("ai_job_status")
+  aiJobId           String?                 @map("ai_job_id")
+  manualEnrollments AdminManualEnrollment[]
+  aiJobs            AIGenerationJob[]
+  certifications    Certification[]
+  coupons           Coupon[]
+  lessons           CourseLesson[]
+  modules           CourseModule[]
+  ratings           CourseRating[]
+  instructor        User                    @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
+  enrollments       Enrollment[]
+  progressRecords   Progress[]
+  quizAttempts      QuizAttempt[]
+  quizzes           Quiz[]
+  transactions      Transaction[]
+
+  @@unique([instructorId, slug])
+  @@index([status, visibility, deletedAt])
+  @@index([category])
+  @@index([title])
+  @@map("courses")
+}
+
+model CourseModule {
+  id         String         @id @default(uuid())
+  courseId   String         @map("course_id")
+  title      String
+  orderIndex Int            @map("order_index")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  lessons    CourseLesson[]
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId, orderIndex])
+  @@map("course_modules")
+}
+
+model CourseLesson {
+  id              String        @id @default(uuid())
+  courseId        String        @map("course_id")
+  moduleId        String?       @map("module_id")
+  title           String
+  subtitle        String?
+  contentText     String        @map("content_text")
+  videoUrl        String?       @map("video_url")
+  contentType     ContentType   @map("content_type")
+  orderIndex      Int           @map("order_index")
+  durationMinutes Int?          @map("duration_minutes")
+  isPreview       Boolean       @default(false) @map("is_preview")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  funFact         String?       @map("fun_fact")
+  summary         String?
+  course          Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module          CourseModule? @relation(fields: [moduleId], references: [id])
+  progressRecords Progress[]
+  quiz            Quiz?
+
+  @@index([courseId, orderIndex])
+  @@map("course_lessons")
+}
+
+model Quiz {
+  id                String            @id @default(uuid())
+  courseId          String            @map("course_id")
+  lessonId          String?           @unique @map("lesson_id")
+  title             String
+  passingScore      Int               @map("passing_score")
+  totalScore        Int               @map("total_score")
+  scoreDistribution ScoreDistribution @default(AUTOMATIC) @map("score_distribution")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  attempts          QuizAttempt[]
+  questions         QuizQuestion[]
+  course            Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson            CourseLesson?     @relation(fields: [lessonId], references: [id])
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id            String       @id @default(uuid())
+  quizId        String       @map("quiz_id")
+  questionText  String       @map("question_text")
+  questionType  QuestionType @map("question_type")
+  optionsJson   Json?        @map("options_json")
+  correctAnswer Json         @map("correct_answer")
+  points        Int
+  orderIndex    Int          @map("order_index")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  options       QuizOption[]
+  quiz          Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId, orderIndex])
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id         String       @id @default(uuid())
+  questionId String       @map("question_id")
+  optionText String       @map("option_text")
+  isCorrect  Boolean      @default(false) @map("is_correct")
+  orderIndex Int          @map("order_index")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, orderIndex])
+  @@map("quiz_options")
+}
+
+model Enrollment {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  courseId    String           @map("course_id")
+  status      EnrollmentStatus @default(ACTIVE)
+  accessType  AccessType       @default(PURCHASE) @map("access_type")
+  enrolledAt  DateTime         @default(now()) @map("enrolled_at")
+  completedAt DateTime?        @map("completed_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model AdminManualEnrollment {
+  id        String   @id @default(uuid())
+  adminId   String   @map("admin_id")
+  studentId String   @map("student_id")
+  courseId  String   @map("course_id")
+  reason    String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  admin     User     @relation("AdminCreator", fields: [adminId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  student   User     @relation("EnrolledStudent", fields: [studentId], references: [id])
+
+  @@map("admin_manual_enrollments")
+}
+
+model Transaction {
+  id                       String          @id @default(uuid())
+  userId                   String          @map("user_id")
+  courseId                 String?         @map("course_id")
+  instructorId             String?         @map("instructor_id")
+  paymentType              PaymentType     @map("payment_type")
+  grossAmount              Decimal         @map("gross_amount") @db.Decimal(10, 2)
+  platformCommissionAmount Decimal         @default(0) @map("platform_commission_amount") @db.Decimal(10, 2)
+  platformCommissionRate   Decimal         @default(0) @map("platform_commission_rate") @db.Decimal(5, 2)
+  stripeFeeAmount          Decimal?        @map("stripe_fee_amount") @db.Decimal(10, 2)
+  netAmountToInstructor    Decimal         @default(0) @map("net_amount_to_instructor") @db.Decimal(10, 2)
+  currency                 String          @default("MXN")
+  paymentStatus            PaymentStatus   @default(PENDING) @map("payment_status")
+  paymentProvider          PaymentProvider @default(STRIPE) @map("payment_provider")
+  stripePaymentIntentId    String?         @map("stripe_payment_intent_id")
+  stripeSessionId          String?         @map("stripe_session_id")
+  stripeTransferId         String?         @map("stripe_transfer_id")
+  createdAt                DateTime        @default(now()) @map("created_at")
+  updatedAt                DateTime        @updatedAt @map("updated_at")
+  course                   Course?         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user                     User            @relation("StudentTransactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, paymentType])
+  @@index([paymentStatus])
+  @@map("transactions")
+}
+
+model Progress {
+  id          String       @id @default(uuid())
+  userId      String       @map("user_id")
+  courseId    String       @map("course_id")
+  lessonId    String       @map("lesson_id")
+  completed   Boolean      @default(false)
+  completedAt DateTime?    @map("completed_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson      CourseLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId, courseId])
+  @@map("progress")
+}
+
+model QuizAttempt {
+  id              String         @id @default(uuid())
+  userId          String         @map("user_id")
+  courseId        String         @map("course_id")
+  quizId          String         @map("quiz_id")
+  scoreObtained   Int            @map("score_obtained")
+  scorePercentage Int            @map("score_percentage")
+  passed          Boolean
+  answersJson     Json           @map("answers_json")
+  attemptNumber   Int            @map("attempt_number")
+  submittedAt     DateTime       @default(now()) @map("submitted_at")
+  certification   Certification?
+  course          Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  quiz            Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, quizId])
+  @@index([userId, courseId])
+  @@map("quiz_attempts")
+}
+
+model Certification {
+  id              String       @id @default(uuid())
+  userId          String       @map("user_id")
+  courseId        String       @map("course_id")
+  certificateCode String       @unique @map("certificate_code")
+  issuedAt        DateTime     @default(now()) @map("issued_at")
+  certificateUrl  String?      @map("certificate_url")
+  quizAttemptId   String?      @unique @map("quiz_attempt_id")
+  course          Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  quizAttempt     QuizAttempt? @relation(fields: [quizAttemptId], references: [id])
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("certifications")
+}
+
+model CourseRating {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  courseId  String   @map("course_id")
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@map("course_ratings")
+}
+
+model Coupon {
+  id              String    @id @default(uuid())
+  courseId        String    @map("course_id")
+  code            String
+  discountPercent Int       @map("discount_percent")
+  expiresAt       DateTime? @map("expires_at")
+  maxUses         Int?      @map("max_uses")
+  currentUses     Int       @default(0) @map("current_uses")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, code])
+  @@map("coupons")
+}
+
+model AIGenerationJob {
+  id             String   @id @default(uuid())
+  instructorId   String   @map("instructor_id")
+  courseId       String?  @map("course_id")
+  promptInput    Json     @map("prompt_input")
+  generationType String   @map("generation_type")
+  status         String
+  responseJson   Json?    @map("response_json")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  course         Course?  @relation(fields: [courseId], references: [id])
+
+  @@map("ai_generation_jobs")
+}
+
+model Notification {
+  id                String           @id @default(uuid())
+  userId            String           @map("user_id")
+  type              NotificationType
+  title             String
+  message           String
+  isRead            Boolean          @default(false) @map("is_read")
+  relatedEntityType String?          @map("related_entity_type")
+  relatedEntityId   String?          @map("related_entity_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  actorUserId  String   @map("actor_user_id")
+  action       String
+  entityType   String   @map("entity_type")
+  entityId     String   @map("entity_id")
+  metadataJson Json?    @map("metadata_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+  actor        User     @relation(fields: [actorUserId], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+  @@index([actorUserId])
+  @@map("audit_logs")
+}
+
+enum UserRole {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  HIBERNATED
+  ARCHIVED
+}
+
+enum CourseVisibility {
+  PUBLIC
+  UNLISTED
+  PRIVATE
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum CourseCategory {
+  BUSINESS
+  TECHNOLOGY
+  MARKETING
+  FINANCE
+  LEADERSHIP
+  DESIGN
+  OTHER
+}
+
+enum ContentType {
+  TEXT
+  VIDEO
+  QUIZ
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum AccessType {
+  PURCHASE
+  MANUAL
+  GRANT
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+}
+
+enum PaymentType {
+  COURSE_PURCHASE
+  INSTRUCTOR_SUBSCRIPTION
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+}
+
+enum ScoreDistribution {
+  MANUAL
+  AUTOMATIC
+}
+
+enum NotificationType {
+  COURSE_PURCHASED
+  COURSE_PUBLISHED
+  PAYMENT_FAILED
+  CERTIFICATE_ISSUED
+  QUIZ_PASSED
+  PLAN_LIMIT_REACHED
+  SUBSCRIPTION_RENEWED
+  SUBSCRIPTION_EXPIRED
+  MANUAL_ENROLLMENT
+  EMAIL_VERIFIED
+  PASSWORD_RESET_REQUESTED
+  SYSTEM_ALERT
+}

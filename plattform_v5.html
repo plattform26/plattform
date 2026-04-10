@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PLATTFORM — Crea. Vende. Escala.</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bd:#0A1F44;--bc:#1E3A8A;--be:#3B82F6;--bcy:#06B6D4;
+  --w:#FFF;--gm:#6B7280;--gd:#374151;
+  --grad:linear-gradient(135deg,#06B6D4,#3B82F6,#1E3A8A);
+  --gbtn:linear-gradient(90deg,#06B6D4,#3B82F6);
+  --s1:#0f1829;--s2:#152035;--s3:#1a2a45;
+  --bord:rgba(59,130,246,0.15);--glow:0 0 20px rgba(59,130,246,0.25);
+  --grn:#4ade80;--yel:#fbbf24;--red:#f87171;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--bd);color:var(--w);min-height:100vh;overflow-x:hidden;}
+a{cursor:pointer;color:var(--be);}
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:6px;}
+.btn-ghost{background:transparent;color:var(--gm);border:1px solid var(--bord);}
+.btn-ghost:hover{color:var(--w);border-color:var(--be);}
+.btn-primary{background:var(--gbtn);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.45);}
+.btn-outline{background:transparent;color:var(--be);border:1px solid var(--be);}
+.btn-outline:hover{background:rgba(59,130,246,.1);}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.btn-warning{background:rgba(245,158,11,.12);color:var(--yel);border:1px solid rgba(245,158,11,.25);}
+.btn-success{background:rgba(74,222,128,.12);color:var(--grn);border:1px solid rgba(74,222,128,.25);}
+.btn-lg{padding:13px 30px;font-size:15px;border-radius:10px;}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;}
+.btn-xs{padding:3px 9px;font-size:11px;border-radius:5px;}
+.btn-block{width:100%;justify-content:center;}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(10,31,68,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-txt{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-tabs{display:flex;gap:4px;background:var(--s2);border-radius:10px;padding:4px;border:1px solid var(--bord);}
+.nav-tab{padding:6px 15px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gm);border:none;background:transparent;font-family:'Poppins',sans-serif;}
+.nav-tab.active{background:var(--gbtn);color:#fff;box-shadow:var(--glow);}
+.nav-tab:hover:not(.active){color:var(--w);background:var(--s3);}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+/* SCREENS */
+.screen{display:none;}.screen.active{display:block;}
+/* DASHBOARD */
+.dash-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px);}
+.sidebar{background:var(--s1);border-right:1px solid var(--bord);padding:20px 0;overflow-y:auto;max-height:calc(100vh - 64px);}
+.sb-label{font-size:10px;font-weight:600;color:var(--gm);letter-spacing:1px;text-transform:uppercase;padding:10px 28px 4px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;margin:1px 10px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gm);}
+.sb-item:hover{background:var(--s2);color:var(--w);}
+.sb-item.active{background:rgba(59,130,246,.15);color:var(--be);}
+.sb-item .ico{font-size:15px;width:18px;text-align:center;}
+.dash-main{padding:28px 36px;overflow-y:auto;max-height:calc(100vh - 64px);}
+.dash-head{margin-bottom:22px;}
+.dash-head h2{font-size:23px;font-weight:700;}
+.dash-head p{color:var(--gm);font-size:14px;margin-top:3px;}
+/* KPIS */
+.kpi-grid{display:grid;gap:14px;margin-bottom:22px;}
+.kg4{grid-template-columns:repeat(4,1fr);}
+.kg3{grid-template-columns:repeat(3,1fr);}
+.kg5{grid-template-columns:repeat(5,1fr);}
+.kg2{grid-template-columns:repeat(2,1fr);}
+.kpi-card{background:var(--s2);border:1px solid var(--bord);border-radius:14px;padding:18px;transition:all .2s;}
+.kpi-card:hover{border-color:rgba(59,130,246,.3);transform:translateY(-2px);}
+.kpi-lbl{font-size:12px;color:var(--gm);font-weight:500;margin-bottom:6px;}
+.kpi-val{font-size:26px;font-weight:700;}
+.kpi-val.blue{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kpi-chg{font-size:12px;color:var(--grn);margin-top:3px;}
+.kpi-chg.dn{color:var(--red);}
+/* TABLE */
+.tc{background:var(--s2);border:1px solid var(--bord);border-radius:16px;overflow:hidden;margin-bottom:22px;}
+.tc-hdr{padding:16px 22px;border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.tc-hdr h3{font-size:15px;font-weight:600;white-space:nowrap;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(59,130,246,.05);}
+th{padding:10px 18px;text-align:left;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+td{padding:12px 18px;font-size:13px;border-top:1px solid var(--bord);vertical-align:middle;}
+tr:hover td{background:rgba(59,130,246,.03);}
+.td-acts{display:flex;gap:4px;flex-wrap:wrap;}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:11px;font-weight:600;white-space:nowrap;}
+.bdot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.b-pub{background:rgba(74,222,128,.12);color:var(--grn);}
+.b-dft{background:rgba(107,114,128,.15);color:#9ca3af;}
+.b-hib{background:rgba(245,158,11,.12);color:var(--yel);}
+.b-arc{background:rgba(239,68,68,.12);color:var(--red);}
+.b-act{background:rgba(74,222,128,.12);color:var(--grn);}
+.b-sus{background:rgba(239,68,68,.12);color:var(--red);}
+.b-ok{background:rgba(74,222,128,.12);color:var(--grn);}
+.b-fail{background:rgba(239,68,68,.12);color:var(--red);}
+.b-pend{background:rgba(245,158,11,.12);color:var(--yel);}
+/* FORMS */
+.fg{margin-bottom:16px;}
+.fl{font-size:13px;font-weight:600;color:var(--gm);margin-bottom:7px;display:block;}
+.fsl{font-size:11px;color:var(--gm);margin-top:-5px;margin-bottom:7px;display:block;}
+.fi{width:100%;background:var(--s1);border:1px solid var(--bord);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--w);font-family:'Poppins',sans-serif;transition:border .2s;outline:none;}
+.fi:focus{border-color:var(--be);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.fi::placeholder{color:var(--gm);}
+textarea.fi{resize:vertical;min-height:80px;}
+select.fi option{background:var(--s2);}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.panel{background:var(--s2);border:1px solid var(--bord);border-radius:16px;padding:26px;}
+.pfoot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--bord);margin-top:4px;}
+/* HERO */
+.hero{position:relative;min-height:540px;display:flex;align-items:center;overflow:hidden;padding:70px 40px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(59,130,246,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 80%,rgba(6,182,212,.12) 0%,transparent 60%),var(--bd);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:60px 60px;}
+.hero-cnt{position:relative;z-index:2;max-width:580px;}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3);border-radius:50px;padding:6px 15px;font-size:12px;font-weight:500;color:var(--bcy);margin-bottom:20px;}
+.hbadge span{width:6px;height:6px;border-radius:50%;background:var(--bcy);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero h1{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:16px;}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:16px;color:var(--gm);line-height:1.7;margin-bottom:30px;font-weight:300;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-stats{position:absolute;right:70px;top:50%;transform:translateY(-50%);z-index:2;display:flex;flex-direction:column;gap:13px;}
+.stat-card{background:rgba(21,32,53,.9);border:1px solid var(--bord);border-radius:14px;padding:16px 22px;backdrop-filter:blur(8px);}
+.stat-card .snum{font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card .slbl{font-size:12px;color:var(--gm);margin-top:2px;}
+/* COURSES */
+.sec{padding:48px 40px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;}
+.sec-ttl{font-size:21px;font-weight:700;}
+.sec-ttl span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:26px;}
+.ftag{padding:6px 15px;border-radius:50px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--bord);color:var(--gm);background:transparent;font-family:'Poppins',sans-serif;}
+.ftag.active,.ftag:hover{background:var(--gbtn);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(59,130,246,.3);}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:20px;}
+.cc{background:var(--s2);border:1px solid var(--bord);border-radius:16px;overflow:hidden;transition:all .25s;cursor:pointer;}
+.cc:hover{transform:translateY(-4px);border-color:rgba(59,130,246,.4);box-shadow:0 8px 30px rgba(59,130,246,.15);}
+.cthumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;overflow:hidden;}
+.ct1{background:linear-gradient(135deg,#0f2952,#1e3a8a);}
+.ct2{background:linear-gradient(135deg,#064e5e,#0891b2);}
+.ct3{background:linear-gradient(135deg,#1a1a4e,#3b4bc8);}
+.ct4{background:linear-gradient(135deg,#0d3320,#059669);}
+.ct5{background:linear-gradient(135deg,#3b0764,#7c3aed);}
+.ct6{background:linear-gradient(135deg,#431407,#c2410c);}
+.ccat{position:absolute;top:9px;left:9px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:#fff;}
+.cbody{padding:16px;}
+.cinst{font-size:12px;color:var(--bcy);font-weight:500;margin-bottom:4px;}
+.ctitle{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:9px;}
+.cmeta{display:flex;gap:11px;font-size:12px;color:var(--gm);margin-bottom:11px;flex-wrap:wrap;}
+.cfoot{display:flex;align-items:center;justify-content:space-between;}
+.cprice{font-size:19px;font-weight:700;color:var(--bcy);}
+.stars{color:#f59e0b;font-size:12px;}
+/* PROGRESS */
+.pbw{background:var(--s1);border-radius:50px;height:7px;overflow:hidden;margin:5px 0;}
+.pb{height:100%;border-radius:50px;background:var(--gbtn);transition:width .6s;}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:16px;}
+.ec{background:var(--s2);border:1px solid var(--bord);border-radius:14px;overflow:hidden;transition:all .2s;cursor:pointer;}
+.ec:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.35);}
+.ethumb{height:105px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.ebody{padding:15px;}
+.ettl{font-size:14px;font-weight:600;margin-bottom:3px;}
+.einst{font-size:12px;color:var(--bcy);margin-bottom:10px;}
+.plbl{display:flex;justify-content:space-between;font-size:12px;color:var(--gm);}
+/* ── LESSON EDITORIAL LAYOUT ── */
+.llay{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 64px);}
+/* LEFT SIDEBAR — modular nav */
+.lsb{background:#080f1c;border-right:1px solid rgba(59,130,246,.1);overflow-y:auto;max-height:calc(100vh - 64px);display:flex;flex-direction:column;}
+.lsb-course{padding:20px 18px 14px;border-bottom:1px solid rgba(59,130,246,.1);}
+.lsb-course-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:6px;}
+.lsb-course-title{font-size:13px;font-weight:700;line-height:1.4;color:var(--w);}
+.lsb-progress-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.lsb-progress-track{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:2px;}
+.lsb-progress-fill{height:3px;border-radius:2px;background:var(--gbtn);}
+.lsb-progress-pct{font-size:11px;color:var(--gm);font-weight:600;}
+.lsb-modules{flex:1;padding:8px 0;}
+.lsb-mod-header{padding:12px 18px 5px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.lsb-mod-num{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);}
+.lsb-mod-name{font-size:12px;font-weight:700;color:var(--w);margin-top:2px;padding:0 18px 8px;letter-spacing:.3px;}
+.lsb-mod-arrow{font-size:10px;color:var(--gm);transition:transform .2s;}
+.lsb-mod-arrow.open{transform:rotate(180deg);}
+.lsb-lessons{overflow:hidden;transition:max-height .3s;}
+.litem{padding:8px 18px 8px 22px;font-size:12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:#6b7280;display:flex;align-items:center;gap:8px;line-height:1.4;}
+.litem:hover{color:var(--w);background:rgba(59,130,246,.06);}
+.litem.active{color:var(--w);border-left-color:var(--bcy);background:rgba(6,182,212,.07);}
+.litem.done{color:#3d4f6a;}
+.litem .lchk{font-size:10px;flex-shrink:0;}
+.litem .lnum{font-size:10px;color:var(--gm);flex-shrink:0;font-family:'Space Grotesk',sans-serif;}
+.litem-eval{padding:9px 18px 9px 22px;font-size:12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:#6b7280;display:flex;align-items:center;gap:8px;margin-top:4px;border-top:1px solid rgba(59,130,246,.08);}
+.litem-eval:hover{color:var(--yel);background:rgba(245,158,11,.05);}
+.litem-eval.active{color:var(--yel);border-left-color:var(--yel);background:rgba(245,158,11,.07);}
+/* MAIN CONTENT AREA — editorial */
+.lmain{background:#0b1322;overflow-y:auto;max-height:calc(100vh - 64px);}
+.les-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid rgba(59,130,246,.08);background:#080f1c;}
+.les-breadcrumb{font-size:11px;color:var(--gm);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.les-breadcrumb span{color:var(--bcy);}
+.les-nav-btns{display:flex;gap:8px;}
+.les-body{max-width:740px;margin:0 auto;padding:48px 48px 80px;}
+/* LESSON TYPE BADGE */
+.les-type-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:16px;}
+.les-type-badge::before{content:'';width:20px;height:1px;background:var(--bcy);}
+/* LESSON TITLE — editorial big */
+.les-title{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;line-height:1.15;color:var(--w);margin-bottom:10px;letter-spacing:-.5px;}
+.les-subtitle{font-size:15px;color:#4a6080;font-weight:400;margin-bottom:36px;line-height:1.6;}
+/* DIVIDER LINE */
+.les-divider{width:40px;height:2px;background:var(--gbtn);margin-bottom:36px;border-radius:2px;}
+/* VIDEO BLOCK */
+.les-video-block{background:#080f1c;border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:18px 22px;margin-bottom:36px;display:flex;align-items:center;gap:16px;}
+.les-video-icon{width:44px;height:44px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.les-video-info{flex:1;}
+.les-video-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:3px;}
+.les-video-url{font-size:13px;color:var(--w);font-family:'Space Grotesk',sans-serif;}
+.les-video-url a{color:var(--be);text-decoration:none;}
+.les-video-url a:hover{color:var(--bcy);}
+/* RICH TEXT CONTENT */
+.les-content{color:#8ea5c0;font-size:15px;line-height:1.9;}
+.les-content p{margin-bottom:20px;}
+.les-content h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--w);margin:32px 0 12px;letter-spacing:-.2px;}
+.les-content h4{font-size:14px;font-weight:700;color:var(--bcy);text-transform:uppercase;letter-spacing:1px;margin:28px 0 10px;}
+.les-content strong{color:var(--w);font-weight:600;}
+.les-content em{color:var(--bcy);font-style:normal;font-weight:500;}
+.les-content ul{padding-left:0;list-style:none;margin-bottom:20px;}
+.les-content ul li{padding:6px 0 6px 20px;position:relative;color:#8ea5c0;}
+.les-content ul li::before{content:'→';position:absolute;left:0;color:var(--bcy);font-size:12px;top:8px;}
+.les-content ol{padding-left:0;list-style:none;counter-reset:oli;margin-bottom:20px;}
+.les-content ol li{padding:6px 0 6px 28px;position:relative;counter-increment:oli;color:#8ea5c0;}
+.les-content ol li::before{content:counter(oli);position:absolute;left:0;top:5px;width:18px;height:18px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:50%;font-size:10px;font-weight:700;color:var(--be);display:flex;align-items:center;justify-content:center;text-align:center;line-height:18px;}
+/* HIGHLIGHT CALLOUT */
+.les-callout{background:rgba(6,182,212,.05);border-left:3px solid var(--bcy);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;font-size:14px;color:#7fb3cc;line-height:1.7;}
+.les-callout strong{color:var(--bcy);}
+/* KEY POINTS */
+.les-keypoints{background:#080f1c;border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:22px 26px;margin:32px 0;}
+.les-keypoints-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:14px;}
+.les-kp-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(59,130,246,.07);font-size:13px;color:#8ea5c0;}
+.les-kp-item:last-child{border-bottom:none;}
+.les-kp-item::before{content:'◆';color:var(--bcy);font-size:8px;margin-top:4px;flex-shrink:0;}
+/* LESSON FOOTER NAV */
+.les-footer{border-top:1px solid rgba(59,130,246,.1);padding:24px 48px;background:#080f1c;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.les-footer-left{font-size:12px;color:var(--gm);}
+.les-footer-right{display:flex;gap:10px;}
+/* QUIZ SECTION */
+.les-quiz-header{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--w);margin-bottom:6px;letter-spacing:-.3px;}
+.les-quiz-sub{font-size:13px;color:var(--gm);margin-bottom:28px;}
+.qq{background:#080f1c;border:1px solid rgba(59,130,246,.15);border-radius:12px;padding:20px 24px;margin-bottom:14px;}
+.qqt{font-size:15px;font-weight:600;color:var(--w);margin-bottom:14px;line-height:1.5;}
+.qqnum{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:8px;}
+.qopt{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:8px;border:1px solid rgba(59,130,246,.1);margin-bottom:7px;cursor:pointer;font-size:13px;color:#8ea5c0;transition:all .2s;}
+.qopt:hover{border-color:rgba(59,130,246,.4);color:var(--w);background:rgba(59,130,246,.05);}
+.qopt.sel{border-color:var(--be);color:var(--w);background:rgba(59,130,246,.1);}
+.qopt.correct{border-color:var(--grn);background:rgba(74,222,128,.07);color:var(--grn);}
+.qopt-letter{width:26px;height:26px;border-radius:6px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--be);flex-shrink:0;}
+.qopt.sel .qopt-letter{background:var(--be);color:#fff;border-color:var(--be);}
+.qopt.correct .qopt-letter{background:var(--grn);color:#fff;border-color:var(--grn);}
+/* EVAL FINAL */
+.eval-card{background:#080f1c;border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:28px 32px;text-align:center;}
+.eval-icon{font-size:40px;margin-bottom:12px;}
+.eval-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--w);margin-bottom:8px;}
+.eval-sub{font-size:14px;color:var(--gm);margin-bottom:24px;line-height:1.6;}
+.eval-rules{display:flex;gap:20px;justify-content:center;margin-bottom:28px;flex-wrap:wrap;}
+.eval-rule{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:12px 20px;text-align:center;}
+.eval-rule-val{font-size:20px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.eval-rule-lbl{font-size:11px;color:var(--gm);margin-top:2px;}
+/* SCORE RESULT */
+.score-result{background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(6,182,212,.08));border:1px solid rgba(74,222,128,.25);border-radius:14px;padding:28px;text-align:center;margin-top:20px;}
+.score-num{font-size:64px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.score-label{font-size:13px;color:var(--gm);margin-top:4px;margin-bottom:16px;}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.mo.active{display:flex;}
+.mbox{background:var(--s1);border:1px solid var(--bord);border-radius:20px;max-width:680px;width:100%;max-height:92vh;overflow-y:auto;animation:mIn .25s ease;}
+.mbox.sm{max-width:480px;}
+.mbox.lg{max-width:820px;}
+@keyframes mIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.mhdr{padding:26px 26px 20px;border-bottom:1px solid var(--bord);position:relative;}
+.mhdr h2{font-size:20px;font-weight:700;}
+.mhdr p{font-size:13px;color:var(--gm);margin-top:4px;}
+.mclose{position:absolute;top:16px;right:16px;background:var(--s2);border:1px solid var(--bord);border-radius:8px;width:30px;height:30px;cursor:pointer;color:var(--gm);font-size:14px;display:flex;align-items:center;justify-content:center;}
+.mclose:hover{color:#fff;}
+.mbody{padding:22px 26px;}
+.mfoot{padding:18px 26px;border-top:1px solid var(--bord);display:flex;gap:10px;justify-content:flex-end;align-items:center;}
+/* PLAN CHANGE STEPS */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:22px;}
+.step{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--gm);}
+.step.active{color:var(--w);}
+.step.done{color:var(--grn);}
+.step-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.step.active .step-num{border-color:var(--be);background:rgba(59,130,246,.15);color:var(--be);}
+.step.done .step-num{border-color:var(--grn);background:rgba(74,222,128,.15);color:var(--grn);}
+.step-line{flex:1;height:1px;background:var(--bord);margin:0 8px;}
+/* PLAN CARDS */
+.pc{background:var(--s2);border:2px solid var(--bord);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;position:relative;text-align:center;}
+.pc:hover,.pc.sel{border-color:var(--be);background:rgba(59,130,246,.08);}
+.pc.sel::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--bcy);font-weight:700;}
+.pc .pname{font-size:15px;font-weight:700;margin-bottom:3px;}
+.pc .ppr{font-size:28px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.pc .psub{font-size:11px;color:var(--gm);margin-bottom:10px;}
+.pc .pfeat{font-size:12px;color:var(--gm);padding:2px 0;}
+.pc.pop{border-color:var(--bcy);}
+.ptag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gbtn);color:#fff;font-size:10px;font-weight:700;padding:2px 11px;border-radius:0 0 8px 8px;letter-spacing:.5px;}
+/* AI BOX */
+.aibox{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.2);border-radius:12px;padding:18px;margin-bottom:20px;}
+.aibhdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.aiico{width:32px;height:32px;background:var(--gbtn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.airbox{background:var(--s1);border:1px solid var(--bord);border-radius:8px;padding:13px;margin-top:11px;display:none;}
+.airbox.vis{display:block;}
+.amt{font-size:13px;font-weight:600;color:var(--be);margin-bottom:3px;margin-top:9px;}
+.amt:first-child{margin-top:0;}
+.ali{font-size:12px;color:var(--gm);padding:2px 0 2px 11px;border-left:2px solid var(--bord);}
+.gen{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--bcy);}
+.da span{animation:dotb .6s infinite alternate;display:inline-block;}
+.da span:nth-child(2){animation-delay:.2s}.da span:nth-child(3){animation-delay:.4s}
+@keyframes dotb{to{transform:translateY(-4px);opacity:.4}}
+/* TABS */
+.tbar{display:flex;gap:4px;background:var(--s1);border:1px solid var(--bord);border-radius:10px;padding:4px;margin-bottom:20px;}
+.titem{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gm);border:none;background:transparent;font-family:'Poppins',sans-serif;}
+.titem.active{background:var(--gbtn);color:#fff;}
+.tpane{display:none;}.tpane.active{display:block;}
+/* MANUAL COURSE BUILDER */
+.mod-block{background:var(--s1);border:1px solid var(--bord);border-radius:10px;padding:16px;margin-bottom:10px;}
+.mod-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.les-block{background:var(--s2);border:1px solid var(--bord);border-radius:8px;padding:12px;margin-bottom:8px;}
+.les-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.les-content{font-size:13px;color:var(--gm);line-height:1.7;margin-bottom:8px;}
+/* CHARTS */
+.chart-area{background:var(--s1);border-radius:10px;padding:16px;margin-bottom:20px;position:relative;height:200px;}
+.bar-group{display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 4px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar{border-radius:4px 4px 0 0;background:var(--gbtn);transition:height .6s;min-width:20px;cursor:pointer;position:relative;}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--s3);padding:2px 7px;border-radius:5px;font-size:11px;color:#fff;white-space:nowrap;}
+.bar-lbl{font-size:10px;color:var(--gm);text-align:center;}
+.chart-legend{display:flex;gap:16px;justify-content:flex-end;margin-bottom:10px;}
+.cleg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gm);}
+.cleg-dot{width:8px;height:8px;border-radius:50%;}
+/* CERT */
+#cert-screen{display:none;position:fixed;inset:0;background:#f0f4f8;z-index:300;overflow-y:auto;}
+.cert-page{width:850px;min-height:600px;margin:30px auto;background:#fff;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,.15);padding:0;overflow:hidden;font-family:'Poppins',sans-serif;}
+.cert-top{background:linear-gradient(135deg,#0A1F44,#1E3A8A);padding:40px 60px 30px;color:#fff;text-align:center;}
+.cert-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:2px;color:#06B6D4;margin-bottom:20px;}
+.cert-badge{width:80px;height:80px;background:linear-gradient(135deg,#06B6D4,#3B82F6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;}
+.cert-title{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px;}
+.cert-main{font-size:28px;font-weight:800;line-height:1.2;}
+.cert-body{padding:40px 60px;text-align:center;}
+.cert-to{font-size:13px;color:#6B7280;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.cert-name{font-size:38px;font-weight:800;background:linear-gradient(135deg,#0A1F44,#1E3A8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.cert-txt{font-size:15px;color:#374151;line-height:1.7;max-width:560px;margin:0 auto 30px;}
+.cert-course{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:16px 24px;display:inline-block;margin-bottom:30px;}
+.cert-course-name{font-size:18px;font-weight:700;color:#0A1F44;margin-bottom:4px;}
+.cert-course-meta{font-size:13px;color:#6B7280;}
+.cert-sigs{display:flex;justify-content:space-around;padding:20px 60px 0;border-top:1px solid #E2E8F0;}
+.cert-sig{text-align:center;}
+.cert-sig-line{width:140px;height:1px;background:#0A1F44;margin:0 auto 6px;}
+.cert-sig-name{font-size:13px;font-weight:600;color:#0A1F44;}
+.cert-sig-role{font-size:11px;color:#6B7280;}
+.cert-footer{background:#F8FAFC;padding:16px 60px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E2E8F0;}
+.cert-id{font-size:11px;color:#6B7280;font-family:'Space Grotesk',sans-serif;}
+.cert-date{font-size:11px;color:#6B7280;}
+.cert-actions-bar{background:#1a1a1a;padding:14px 30px;display:flex;align-items:center;justify-content:space-between;}
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(59,130,246,.12) 0%,transparent 70%),var(--bd);}
+.acard{background:var(--s1);border:1px solid var(--bord);border-radius:20px;padding:34px;width:100%;max-width:440px;}
+.atitle{font-size:21px;font-weight:700;text-align:center;margin-bottom:5px;}
+.asub{font-size:13px;color:var(--gm);text-align:center;margin-bottom:20px;}
+.role-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.ropt{background:var(--s2);border:1px solid var(--bord);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--gm);}
+.ropt:hover,.ropt.active{border-color:var(--be);color:var(--w);background:rgba(59,130,246,.1);}
+.ropt .rico{font-size:20px;display:block;margin-bottom:4px;}
+.alink{text-align:center;margin-top:12px;font-size:13px;color:var(--gm);}
+.plan-box{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.25);border-radius:12px;padding:13px;margin-bottom:14px;}
+.pfeat-li{font-size:12px;color:var(--w);padding:2px 0;display:flex;align-items:center;gap:6px;}
+.pfeat-li::before{content:'✓';color:var(--bcy);font-weight:700;}
+/* CHECKOUT */
+.cocard{background:var(--s1);border:1px solid var(--bord);border-radius:20px;padding:30px;width:100%;max-width:530px;}
+.co-sum{display:flex;gap:13px;background:var(--s2);border-radius:12px;padding:13px;margin-bottom:20px;border:1px solid var(--bord);}
+.cothumb{width:58px;height:58px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.pr-break{border-top:1px solid var(--bord);padding-top:16px;margin-top:16px;}
+.pr-row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;color:var(--gm);}
+.pr-row.tot{color:var(--w);font-weight:700;font-size:16px;border-top:1px solid var(--bord);padding-top:10px;margin-top:5px;}
+.pr-row.tot .amt{color:var(--bcy);}
+.c2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.sec-badge{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gm);margin-top:13px;}
+.ppbox{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:13px;margin-top:13px;}
+.ppbox h4{font-size:13px;font-weight:600;color:var(--grn);margin-bottom:7px;}
+.ppi{font-size:12px;color:var(--gm);padding:2px 0;display:flex;gap:7px;}
+.ppi::before{content:'→';color:var(--bcy);}
+/* FOOTER */
+.footer{background:var(--s1);border-top:1px solid var(--bord);}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding:52px 60px 40px;}
+.footer-brand .logo-txt{font-size:20px;}
+.footer-brand p{font-size:13px;color:var(--gm);line-height:1.7;margin-top:12px;max-width:280px;}
+.footer-col h4{font-size:13px;font-weight:700;margin-bottom:14px;color:var(--w);}
+.footer-col a{display:block;font-size:13px;color:var(--gm);padding:4px 0;transition:color .2s;cursor:pointer;}
+.footer-col a:hover{color:var(--w);}
+.footer-bottom{border-top:1px solid var(--bord);padding:18px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-bottom p{font-size:12px;color:var(--gm);}
+/* WHY SECTION */
+.why-sec{padding:60px 60px;background:var(--s1);}
+.why-sec h2{font-size:32px;font-weight:800;text-align:center;margin-bottom:8px;}
+.why-sec .sub{font-size:16px;color:var(--gm);text-align:center;margin-bottom:40px;}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.why-card{background:var(--s2);border:1px solid var(--bord);border-radius:16px;padding:24px;}
+.why-icon{font-size:32px;margin-bottom:14px;}
+.why-card h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+.why-card p{font-size:13px;color:var(--gm);line-height:1.7;}
+/* FAQ */
+.faq-sec{padding:60px 60px;background:var(--bd);}
+.faq-sec h2{font-size:32px;font-weight:800;text-align:center;margin-bottom:40px;}
+.faq-item{border:1px solid var(--bord);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.faq-q{padding:16px 20px;font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s;}
+.faq-q:hover{background:var(--s2);}
+.faq-a{padding:0 20px;max-height:0;overflow:hidden;transition:all .3s;font-size:13px;color:var(--gm);line-height:1.7;}
+.faq-a.open{max-height:200px;padding:0 20px 16px;}
+.faq-arr{transition:transform .3s;font-size:12px;color:var(--gm);}
+.faq-arr.open{transform:rotate(180deg);}
+/* ABOUT */
+.about-sec{padding:60px 60px;background:var(--s1);}
+.about-sec h2{font-size:32px;font-weight:800;margin-bottom:16px;}
+.about-sec p{font-size:14px;color:var(--gm);line-height:1.8;max-width:680px;margin-bottom:12px;}
+/* CONTACT */
+.contact-sec{padding:60px 60px;background:linear-gradient(135deg,rgba(6,182,212,.06),rgba(59,130,246,.06)),var(--bd);border-top:1px solid var(--bord);}
+.contact-sec h2{font-size:32px;font-weight:800;text-align:center;margin-bottom:10px;}
+.contact-sec .sub{font-size:15px;color:var(--gm);text-align:center;margin-bottom:36px;}
+.contact-form{max-width:560px;margin:0 auto;}
+/* MISC */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.rev-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bord);font-size:13px;}
+.rev-row:last-child{border-bottom:none;}
+.rbw{flex:1;background:var(--s1);border-radius:50px;height:5px;}
+.rb{height:5px;border-radius:50px;background:var(--gbtn);}
+.ramt{color:var(--bcy);font-weight:600;min-width:65px;text-align:right;}
+.alert-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bord);}
+.alert-item:last-child{border-bottom:none;}
+.adot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.adot.r{background:var(--red);box-shadow:0 0 5px var(--red);}
+.adot.y{background:var(--yel);box-shadow:0 0 5px var(--yel);}
+.adot.g{background:var(--grn);box-shadow:0 0 5px var(--grn);}
+.atext{font-size:13px;flex:1;}.atime{font-size:11px;color:var(--gm);}
+.sub-banner{background:linear-gradient(135deg,rgba(6,182,212,.1),rgba(59,130,246,.1));border:1px solid rgba(6,182,212,.3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.cert-card{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid rgba(6,182,212,.25);border-radius:14px;padding:16px;display:flex;align-items:center;gap:13px;margin-bottom:11px;}
+.cert-ico{width:42px;height:42px;background:var(--gbtn);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.cert-info h4{font-size:14px;font-weight:600;margin-bottom:2px;}
+.cert-info p{font-size:12px;color:var(--gm);}
+.cert-acts{margin-left:auto;display:flex;gap:5px;flex-shrink:0;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--s1);border:1px solid var(--bord);border-radius:12px;padding:12px 17px;display:flex;align-items:center;gap:9px;font-size:13px;z-index:500;transform:translateY(20px);opacity:0;transition:all .3s;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:330px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(74,222,128,.3);}.toast.success .ti{color:var(--grn);}
+.toast.info{border-color:rgba(59,130,246,.3);}.toast.info .ti{color:var(--be);}
+.toast.error{border-color:rgba(239,68,68,.3);}.toast.error .ti{color:var(--red);}
+.divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--gm);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bord);}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--bc)}
+@media(max-width:1100px){.hero-stats{display:none}.kg4{grid-template-columns:1fr 1fr}.kg5{grid-template-columns:repeat(3,1fr)}.footer-main{grid-template-columns:1fr 1fr}.why-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.dash-layout{grid-template-columns:1fr}.sidebar{display:none}.fr2,.fr3,.two-col,.c2{grid-template-columns:1fr}.hero h1{font-size:30px}.llay{grid-template-columns:1fr}.footer-main{grid-template-columns:1fr}.why-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="go('public')">
+    <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="2" y="18" width="5" height="12" rx="2" fill="url(#ng)"/><rect x="9" y="12" width="5" height="18" rx="2" fill="url(#ng)"/><rect x="16" y="6" width="5" height="24" rx="2" fill="url(#ng)"/><rect x="23" y="1" width="5" height="29" rx="2" fill="url(#ng)"/><defs><linearGradient id="ng" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06B6D4"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient></defs></svg>
+    <span class="logo-txt">PLATTFORM</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchRole('public',this)">🌐 Público</button>
+    <button class="nav-tab" onclick="switchRole('instructor',this)">🎓 Instructor</button>
+    <button class="nav-tab" onclick="switchRole('student',this)">📚 Alumno</button>
+    <button class="nav-tab" onclick="switchRole('admin',this)">⚙️ Admin</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="showAuth('login')">Iniciar sesión</button>
+    <button class="btn btn-primary" onclick="showAuth('register')">Registrarse</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ PÚBLICO ═══════════════ -->
+<div id="screen-public" class="screen active">
+  <div class="hero">
+    <div class="hero-bg"></div><div class="hero-grid"></div>
+    <div class="hero-cnt">
+      <div class="hbadge"><span></span>IA integrada para crear cursos</div>
+      <h1>Tu academia,<br/><em>sin fricción.</em></h1>
+      <p>Infraestructura SaaS para que profesores expertos creen, vendan y escalen su conocimiento. De idea a curso en minutos.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Crear mi academia →</button>
+        <button class="btn btn-ghost btn-lg" onclick="document.getElementById('cats').scrollIntoView({behavior:'smooth'})">Explorar cursos</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="snum">1,240</div><div class="slbl">Alumnos activos</div></div>
+      <div class="stat-card"><div class="snum">87</div><div class="slbl">Cursos publicados</div></div>
+      <div class="stat-card"><div class="snum">4.8★</div><div class="slbl">Calificación promedio</div></div>
+    </div>
+  </div>
+
+  <!-- COURSES -->
+  <div class="sec" id="cats">
+    <div class="sec-hdr">
+      <h2 class="sec-ttl">Cursos <span>disponibles</span></h2>
+      <input class="fi" style="width:200px;padding:8px 13px;font-size:13px" placeholder="🔍 Buscar cursos..."/>
+    </div>
+    <div class="filters">
+      <button class="ftag active" onclick="pf(this)">Todos</button>
+      <button class="ftag" onclick="pf(this)">Negocios</button>
+      <button class="ftag" onclick="pf(this)">Tecnología</button>
+      <button class="ftag" onclick="pf(this)">Marketing</button>
+      <button class="ftag" onclick="pf(this)">Finanzas</button>
+      <button class="ftag" onclick="pf(this)">Liderazgo</button>
+      <button class="ftag" onclick="pf(this)">Diseño</button>
+    </div>
+    <div class="cg">
+      <div class="cc" onclick="openCM(0)"><div class="cthumb ct1">📊<span class="ccat">Negocios</span></div><div class="cbody"><div class="cinst">Dr. Alejandro Ríos · UNAM</div><div class="ctitle">Estrategia Empresarial en la Era Digital</div><div class="cmeta"><span>⏱ 18h</span><span>📖 42 lecciones</span><span>🎓 320</span></div><div class="cfoot"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gm)">4.9 (128)</div></div><div class="cprice">$1,499 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+      <div class="cc" onclick="openCM(1)"><div class="cthumb ct2">🤖<span class="ccat">Tecnología</span></div><div class="cbody"><div class="cinst">PLATTFORM Academy</div><div class="ctitle">Introducción al Uso de Claude — IA Práctica</div><div class="cmeta"><span>⏱ 8h</span><span>📖 16 lecciones</span><span>🎓 412</span></div><div class="cfoot"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gm)">4.9 (98)</div></div><div class="cprice">$899 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+      <div class="cc" onclick="openCM(2)"><div class="cthumb ct3">📈<span class="ccat">Marketing</span></div><div class="cbody"><div class="cinst">Lic. Carlos Vega · ULA</div><div class="ctitle">Marketing Digital con Resultados Reales</div><div class="cmeta"><span>⏱ 15h</span><span>📖 35 lecciones</span><span>🎓 410</span></div><div class="cfoot"><div><div class="stars">★★★★☆</div><div style="font-size:11px;color:var(--gm)">4.7 (186)</div></div><div class="cprice">$999 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+      <div class="cc" onclick="openCM(3)"><div class="cthumb ct4">💰<span class="ccat">Finanzas</span></div><div class="cbody"><div class="cinst">Dr. Miguel Torres · UNITEC</div><div class="ctitle">Finanzas Personales e Inversión desde Cero</div><div class="cmeta"><span>⏱ 10h</span><span>📖 24 lecciones</span><span>🎓 280</span></div><div class="cfoot"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gm)">4.9 (97)</div></div><div class="cprice">$799 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+      <div class="cc" onclick="openCM(4)"><div class="cthumb ct5">🧠<span class="ccat">Liderazgo</span></div><div class="cbody"><div class="cinst">Mtra. Laura Castillo · IBERO</div><div class="ctitle">Liderazgo Transformacional en Organizaciones</div><div class="cmeta"><span>⏱ 8h</span><span>📖 20 lecciones</span><span>🎓 190</span></div><div class="cfoot"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gm)">4.8 (75)</div></div><div class="cprice">$1,299 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+      <div class="cc" onclick="openCM(5)"><div class="cthumb ct6">🎨<span class="ccat">Diseño</span></div><div class="cbody"><div class="cinst">Lic. Andrea Flores · UANL</div><div class="ctitle">Diseño UX/UI para Proyectos Digitales</div><div class="cmeta"><span>⏱ 20h</span><span>📖 48 lecciones</span><span>🎓 360</span></div><div class="cfoot"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gm)">4.9 (152)</div></div><div class="cprice">$1,699 <small style="font-size:11px;color:var(--gm)">MXN</small></div></div></div></div>
+    </div>
+  </div>
+
+  <!-- WHY PLATTFORM -->
+  <div class="why-sec">
+    <h2>¿Por qué <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">PLATTFORM?</span></h2>
+    <p class="sub">La infraestructura que los profesores universitarios necesitaban para monetizar su conocimiento.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon">🤖</div><h3>IA que trabaja por ti</h3><p>Genera módulos, lecciones y evaluaciones completas en segundos. Solo define el tema y el objetivo; la IA hace el resto.</p></div>
+      <div class="why-card"><div class="why-icon">💰</div><h3>Monetización real</h3><p>Tus alumnos pagan por tu curso. Tú recibes el ingreso directamente en tu cuenta vía Stripe, menos nuestra pequeña comisión.</p></div>
+      <div class="why-card"><div class="why-icon">🎓</div><h3>Certificados automáticos</h3><p>Al completar el 100% del curso y aprobar la evaluación, el alumno recibe su certificado descargable sin que tú hagas nada.</p></div>
+      <div class="why-card"><div class="why-icon">📊</div><h3>Dashboard de negocio</h3><p>Visualiza ingresos por mes y por curso, monitorea el progreso de tus alumnos y gestiona tu academia desde un solo lugar.</p></div>
+      <div class="why-card"><div class="why-icon">⚡</div><h3>Sin fricción técnica</h3><p>No necesitas saber programar, configurar hosting, ni contratar desarrolladores. PLATTFORM es tu academia lista para vender.</p></div>
+      <div class="why-card"><div class="why-icon">🔒</div><h3>Pagos seguros con Stripe</h3><p>Toda la infraestructura de cobro está integrada. Solo pon tu precio y tu cuenta bancaria; nosotros procesamos los pagos.</p></div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="about-sec" id="about">
+    <h2>Quiénes <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">somos</span></h2>
+    <p>PLATTFORM nació de una observación simple: hay miles de profesores universitarios en México y América Latina con conocimiento valioso que no tienen las herramientas para monetizarlo de forma simple y profesional.</p>
+    <p>No somos solo una plataforma de cursos. Somos la infraestructura SaaS diseñada específicamente para académicos que quieren convertir su experiencia en un negocio digital sin complicaciones técnicas.</p>
+    <p>Construido por un equipo con experiencia en educación universitaria, tecnología y negocios digitales. Con sede en Ciudad de México.</p>
+    <div style="display:flex;gap:16px;margin-top:20px;flex-wrap:wrap">
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:16px 24px;text-align:center"><div style="font-size:24px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">32</div><div style="font-size:12px;color:var(--gm)">Instructores activos</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:16px 24px;text-align:center"><div style="font-size:24px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">1,240</div><div style="font-size:12px;color:var(--gm)">Alumnos formados</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:16px 24px;text-align:center"><div style="font-size:24px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">87</div><div style="font-size:12px;color:var(--gm)">Cursos publicados</div></div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-sec" id="faq">
+    <h2>Preguntas <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">frecuentes</span></h2>
+    <div style="max-width:720px;margin:0 auto">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cuánto cuesta publicar mi curso en PLATTFORM?<span class="faq-arr">▼</span></div><div class="faq-a">Como instructor pagas una renta mensual según tu plan (Starter $99, Growth $299 o Scale $799 MXN) y una comisión por cada curso vendido (entre 7% y 15%). Tus alumnos no pagan ninguna cuota adicional a PLATTFORM.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cómo recibo mis ingresos como instructor?<span class="faq-arr">▼</span></div><div class="faq-a">Los pagos se procesan vía Stripe. Cuando un alumno compra tu curso, el monto (menos nuestra comisión) se deposita directamente en tu cuenta bancaria. No manejamos monedero virtual ni tienes que "retirar" dinero.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Necesito saber programar para crear mi curso?<span class="faq-arr">▼</span></div><div class="faq-a">No. PLATTFORM está diseñado para profesores sin perfil técnico. Puedes crear tu curso manualmente o usar nuestro generador de IA que crea módulos, lecciones y evaluaciones desde una descripción simple.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo subir videos a la plataforma?<span class="faq-arr">▼</span></div><div class="faq-a">Para mantener la plataforma ligera y económica, el contenido de video se integra via enlaces de YouTube o Vimeo. Tú subes el video a tu canal y lo vinculas a la lección. El contenido escrito y las evaluaciones sí viven directamente en PLATTFORM.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si cancelo mi suscripción como instructor?<span class="faq-arr">▼</span></div><div class="faq-a">Tus cursos se hibernan automáticamente (dejan de aceptar nuevas compras), pero tus alumnos actuales mantienen su acceso al contenido que ya compraron. Puedes reactivar tu cuenta en cualquier momento.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Los certificados tienen validez oficial?<span class="faq-arr">▼</span></div><div class="faq-a">Los certificados de PLATTFORM son emitidos por el instructor y la academia correspondiente. Son documentos digitales verificables con código único. No son títulos académicos oficiales, pero sí constancias de formación continua válidas en el ámbito profesional.</div></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-sec" id="contact">
+    <h2>¿Listo para <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">empezar?</span></h2>
+    <p class="sub">Escríbenos. Un asesor te contacta en menos de 24 horas.</p>
+    <div class="contact-form">
+      <div class="fr2"><div class="fg"><label class="fl">Nombre completo</label><input class="fi" placeholder="Tu nombre"/></div><div class="fg"><label class="fl">Institución</label><input class="fi" placeholder="UNAM, ITESM, etc."/></div></div>
+      <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+      <div class="fg"><label class="fl">¿Qué quieres enseñar?</label><textarea class="fi" placeholder="Describe brevemente tu curso o área de expertise..."></textarea></div>
+      <button class="btn btn-primary btn-lg btn-block" onclick="showToast('Mensaje enviado. Te contactamos pronto 📩','success')">Enviar mensaje →</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="logo-txt">PLATTFORM</div>
+        <p>La infraestructura SaaS para que profesores universitarios creen, vendan y escalen su conocimiento en línea.</p>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn btn-outline btn-sm" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Crear mi academia</button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <a onclick="document.getElementById('cats').scrollIntoView({behavior:'smooth'})">Explorar cursos</a>
+        <a onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Para instructores</a>
+        <a onclick="showAuth('register')">Registrarse</a>
+        <a onclick="showAuth('login')">Iniciar sesión</a>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Quiénes somos</a>
+        <a onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">FAQ</a>
+        <a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contacto</a>
+        <a onclick="showModal('modal-privacy')">Política de privacidad</a>
+      </div>
+      <div class="footer-col">
+        <h4>Planes</h4>
+        <a>Starter — $99 MXN/mes</a>
+        <a>Growth — $299 MXN/mes</a>
+        <a>Scale — $799 MXN/mes</a>
+        <a style="color:var(--bcy);margin-top:4px" onclick="showAuth('register')">Empezar gratis →</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PLATTFORM. Todos los derechos reservados.</p>
+      <div style="display:flex;gap:16px">
+        <a style="font-size:12px;color:var(--gm)" onclick="showModal('modal-privacy')">Política de privacidad</a>
+        <a style="font-size:12px;color:var(--gm)">Términos de uso</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════ INSTRUCTOR ═══════════════ -->
+<div id="screen-instructor" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-label">Principal</div>
+      <div class="sb-item active" onclick="iv('overview',this)"><span class="ico">📊</span>Resumen</div>
+      <div class="sb-item" onclick="iv('courses',this)"><span class="ico">📚</span>Mis cursos</div>
+      <div class="sb-item" onclick="iv('create',this)"><span class="ico">✨</span>Crear curso</div>
+      <div class="sb-item" onclick="iv('students',this)"><span class="ico">👥</span>Alumnos</div>
+      <div class="sb-label">Finanzas</div>
+      <div class="sb-item" onclick="iv('earnings',this)"><span class="ico">💰</span>Ingresos</div>
+      <div class="sb-item" onclick="iv('transactions',this)"><span class="ico">💳</span>Transacciones</div>
+      <div class="sb-label">Cuenta</div>
+      <div class="sb-item" onclick="iv('profile',this)"><span class="ico">🏫</span>Mi academia</div>
+      <div class="sb-item" onclick="iv('plan',this)"><span class="ico">💎</span>Mi plan</div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <div id="iv-overview">
+        <div class="dash-head"><h2>Bienvenido, Dr. Alejandro 👋</h2><p>Aquí está el estado de tu academia hoy.</p></div>
+        <div class="sub-banner">
+          <span style="font-size:18px">💎</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--bcy)">Plan Growth — Activo · $299 MXN/mes</div><div style="font-size:12px;color:var(--gm);margin-top:1px">Renovación el <strong style="color:var(--w)">15 feb 2025</strong> · Comisión: <strong style="color:var(--w)">10%</strong> · 68/100 alumnos</div></div>
+          <button class="btn btn-outline btn-sm" onclick="iv('plan',document.querySelectorAll('#screen-instructor .sb-item')[8])">Ver plan</button>
+        </div>
+        <div class="kpi-grid kg4">
+          <div class="kpi-card"><div class="kpi-lbl">📚 Cursos activos</div><div class="kpi-val blue">4</div><div class="kpi-chg">↑ 1 este mes</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">👥 Total alumnos</div><div class="kpi-val blue">320</div><div class="kpi-chg">↑ 28 esta semana</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">💰 Ingresos brutos</div><div class="kpi-val blue">$42,800</div><div class="kpi-chg">↑ 12% vs mes anterior</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">⭐ Calificación</div><div class="kpi-val blue">4.9</div><div class="kpi-chg">128 reseñas</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Mis cursos</h3><button class="btn btn-primary btn-sm" onclick="iv('create',document.querySelectorAll('#screen-instructor .sb-item')[2])">+ Nuevo curso</button></div>
+          <table><thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial en la Era Digital</strong><br/><span style="font-size:11px;color:var(--gm)">$1,499 MXN · 18h</span></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>320</td><td style="color:var(--bcy);font-weight:600">$28,400</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-warning btn-xs" onclick="showToast('Curso hibernado','info')">Hibernar</button></td></tr>
+            <tr><td><strong>Introducción al Uso de Claude</strong><br/><span style="font-size:11px;color:var(--gm)">$899 MXN · 8h · 4 módulos</span></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>412</td><td style="color:var(--bcy);font-weight:600">$8,200</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="iv('claude-course',null)">Ver curso</button></td></tr>
+            <tr><td><strong>Innovación y Modelos de Negocio</strong><br/><span style="font-size:11px;color:var(--gm)">$999 MXN · 10h</span></td><td><span class="badge b-dft"><span class="bdot"></span>BORRADOR</span></td><td>0</td><td style="color:var(--gm)">—</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs" onclick="showToast('Curso publicado 🎉','success')">Publicar</button></td></tr>
+            <tr><td><strong>Análisis de Mercados Emergentes</strong><br/><span style="font-size:11px;color:var(--gm)">$2,199 MXN · 26h</span></td><td><span class="badge b-hib"><span class="bdot"></span>HIBERNADO</span></td><td>45</td><td style="color:var(--bcy);font-weight:600">$3,200</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs" onclick="showToast('Curso reactivado','success')">Reactivar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- MIS CURSOS -->
+      <div id="iv-courses" style="display:none">
+        <div class="dash-head"><h2>Mis cursos 📚</h2></div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-primary" onclick="iv('create',document.querySelectorAll('#screen-instructor .sb-item')[2])">+ Nuevo curso</button></div>
+        <div class="tc"><table><thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Precio</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Estrategia Empresarial en la Era Digital</strong></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>320</td><td>$1,499</td><td style="color:var(--bcy)">$28,400</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-warning btn-xs">Hibernar</button><button class="btn btn-ghost btn-xs">Duplicar</button></td></tr>
+          <tr><td><strong>Introducción al Uso de Claude</strong></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>412</td><td>$899</td><td style="color:var(--bcy)">$8,200</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="iv('claude-course',null)">Ver</button><button class="btn btn-warning btn-xs">Hibernar</button></td></tr>
+          <tr><td><strong>Innovación y Modelos de Negocio</strong></td><td><span class="badge b-dft"><span class="bdot"></span>BORRADOR</span></td><td>0</td><td>$999</td><td style="color:var(--gm)">—</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs">Publicar</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- CREAR CURSO -->
+      <div id="iv-create" style="display:none">
+        <div class="dash-head">
+          <button class="btn btn-ghost btn-sm" style="margin-bottom:10px" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">← Regresar</button>
+          <h2>Crear nuevo curso ✨</h2><p>Elige cómo quieres crear tu curso.</p>
+        </div>
+        <div class="tbar">
+          <button class="titem active" onclick="stab('tab-ai',this)">🤖 Crear con IA</button>
+          <button class="titem" onclick="stab('tab-manual',this)">✍️ Crear manualmente</button>
+        </div>
+        <!-- TAB IA -->
+        <div id="tab-ai" class="tpane active">
+          <div class="panel">
+            <div class="aibox">
+              <div class="aibhdr"><div class="aiico">🤖</div><div><strong style="font-size:14px">Generador con IA</strong><p style="font-size:12px;color:var(--gm);margin-top:2px">Completa los campos — la IA genera módulos, lecciones y evaluaciones.</p></div></div>
+              <div class="fr2">
+                <div class="fg"><label class="fl">Tema del curso *</label><input class="fi" id="ai-tema" placeholder="Ej: Gestión de proyectos ágiles"/></div>
+                <div class="fg"><label class="fl">Perfil del alumno *</label><input class="fi" placeholder="Ej: Profesionistas sin experiencia técnica"/></div>
+              </div>
+              <div class="fg"><label class="fl">Objetivo de aprendizaje *</label><input class="fi" placeholder="Ej: Implementar sprints en equipos de trabajo"/></div>
+              <div class="fr3">
+                <div class="fg"><label class="fl">Número de módulos</label><select class="fi" id="ai-mods"><option>2 módulos</option><option selected>3 módulos</option><option>4 módulos</option><option>5 módulos</option><option>6 módulos</option></select></div>
+                <div class="fg"><label class="fl">Duración deseada</label><select class="fi"><option>4 horas</option><option selected>8 horas</option><option>15 horas</option><option>20+ horas</option></select></div>
+                <div class="fg"><label class="fl">Tono / Nivel</label><select class="fi"><option>Accesible (principiante)</option><option selected>Profesional (intermedio)</option><option>Técnico (avanzado)</option></select></div>
+              </div>
+              <button class="btn btn-primary" onclick="genAI()">✨ Generar estructura</button>
+              <div class="airbox" id="ai-res">
+                <div id="ai-gen" class="gen"><span>Generando estructura</span><span class="da"><span>.</span><span>.</span><span>.</span></span></div>
+                <div id="ai-out" style="display:none">
+                  <div style="font-size:12px;color:var(--bcy);font-weight:600;margin-bottom:8px">✅ 3 módulos · 9 lecciones · 12 preguntas de evaluación generados</div>
+                  <div class="amt">Módulo 1: Fundamentos de Agilidad</div>
+                  <div class="ali">L1.1 — ¿Qué es Agile y por qué importa?</div><div class="ali">L1.2 — Manifiesto Ágil y sus principios</div><div class="ali">L1.3 — Roles clave en equipos ágiles</div>
+                  <div class="amt">Módulo 2: Scrum en la Práctica</div>
+                  <div class="ali">L2.1 — Sprint planning efectivo</div><div class="ali">L2.2 — Daily standups que funcionan</div><div class="ali">L2.3 — Retrospectivas y mejora continua</div>
+                  <div class="amt">Módulo 3: Implementación Empresarial</div>
+                  <div class="ali">L3.1 — Adaptar Agile a tu organización</div><div class="ali">L3.2 — Gestión del cambio organizacional</div><div class="ali">L3.3 — Evaluación final (12 preguntas)</div>
+                </div>
+              </div>
+            </div>
+            <div class="fr2">
+              <div class="fg"><label class="fl">Título del curso *</label><input class="fi" placeholder="Se auto-llena desde el tema"/></div>
+              <div class="fg"><label class="fl">Precio (MXN) *</label><input class="fi" type="number" placeholder="1499"/></div>
+            </div>
+            <div class="fr3">
+              <div class="fg"><label class="fl">Categoría</label><select class="fi"><option>Negocios</option><option>Tecnología</option><option>Marketing</option><option>Finanzas</option><option>Liderazgo</option></select></div>
+              <div class="fg"><label class="fl">Nivel</label><select class="fi"><option>Principiante</option><option>Intermedio</option><option>Avanzado</option></select></div>
+              <div class="fg"><label class="fl">Visibilidad</label><select class="fi"><option>Público</option><option>No listado</option><option>Privado</option></select></div>
+            </div>
+            <div class="pfoot">
+              <button class="btn btn-danger" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">✕ Cancelar</button>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-ghost" onclick="showToast('Borrador guardado ✓','info')">Guardar borrador</button>
+                <button class="btn btn-primary" onclick="showToast('Curso publicado 🎉','success')">Publicar →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- TAB MANUAL -->
+        <div id="tab-manual" class="tpane">
+          <div class="panel">
+            <div style="background:rgba(59,130,246,.05);border:1px solid var(--bord);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--gm)">✍️ Crea tu curso paso a paso. Los videos se integran via enlace de YouTube o Vimeo.</div>
+            <div class="fr2">
+              <div class="fg"><label class="fl">Título del curso *</label><input class="fi" placeholder="Ej: Finanzas para emprendedores"/></div>
+              <div class="fg"><label class="fl">Precio (MXN) *</label><input class="fi" type="number" placeholder="999"/></div>
+            </div>
+            <div class="fg"><label class="fl">Descripción</label><textarea class="fi" placeholder="¿Qué aprenderán? ¿A quién va dirigido?"></textarea></div>
+            <div class="fr3">
+              <div class="fg"><label class="fl">Categoría</label><select class="fi"><option>Negocios</option><option>Tecnología</option><option>Marketing</option></select></div>
+              <div class="fg"><label class="fl">Número de módulos</label><select class="fi" id="man-mods" onchange="buildModules()"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+              <div class="fg"><label class="fl">Nivel</label><select class="fi"><option>Principiante</option><option>Intermedio</option></select></div>
+            </div>
+            <!-- MODULE BUILDER -->
+            <div id="module-builder" style="margin-bottom:18px">
+              <!-- Módulo 1 con lección de ejemplo desplegada -->
+              <div class="mod-block">
+                <div class="mod-hdr">
+                  <input class="fi" style="font-size:13px;font-weight:600;padding:7px 11px;width:auto;flex:1" value="Módulo 1: Conceptos fundamentales"/>
+                  <button class="btn btn-ghost btn-xs" style="margin-left:8px" onclick="showToast('Módulo eliminado','info')">✕</button>
+                </div>
+                <!-- Lección ejemplo completa -->
+                <div class="les-block">
+                  <div class="les-hdr">
+                    <input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Lección 1.1 — Introducción al módulo"/>
+                    <div style="display:flex;gap:5px;margin-left:8px">
+                      <select class="fi" style="font-size:12px;padding:5px 9px;width:auto"><option>Texto</option><option>Video</option><option>Evaluación</option></select>
+                      <button class="btn btn-ghost btn-xs">✕</button>
+                    </div>
+                  </div>
+                  <textarea class="fi" style="font-size:13px;margin-bottom:8px" rows="3">En esta lección exploraremos los conceptos base que necesitas conocer antes de profundizar en los temas avanzados. Al finalizar podrás identificar los elementos clave del área de estudio.</textarea>
+                  <div class="fg" style="margin-bottom:8px"><label class="fl" style="font-size:12px">Enlace de video (YouTube/Vimeo)</label><input class="fi" style="font-size:12px;padding:7px 11px" placeholder="https://youtube.com/watch?v=..."/></div>
+                  <div style="background:rgba(59,130,246,.06);border:1px solid var(--bord);border-radius:8px;padding:10px">
+                    <div style="font-size:12px;font-weight:600;color:var(--be);margin-bottom:8px">📝 Preguntas de evaluación (opcional)</div>
+                    <div style="display:flex;gap:6px;margin-bottom:7px">
+                      <input class="fi" style="font-size:12px;padding:7px 11px;flex:1" value="¿Cuál es el objetivo principal de esta lección?"/>
+                      <button class="btn btn-ghost btn-xs">✕</button>
+                    </div>
+                    <button class="btn btn-ghost btn-xs" onclick="showToast('Pregunta agregada','info')">+ Agregar pregunta</button>
+                  </div>
+                </div>
+                <button class="btn btn-ghost btn-xs" onclick="showToast('Lección agregada','info')">+ Agregar lección</button>
+              </div>
+              <div class="mod-block">
+                <div class="mod-hdr"><input class="fi" style="font-size:13px;font-weight:600;padding:7px 11px;width:auto;flex:1" value="Módulo 2: Desarrollo práctico"/><button class="btn btn-ghost btn-xs" style="margin-left:8px">✕</button></div>
+                <div style="font-size:12px;color:var(--gm);margin-bottom:8px">Sin lecciones aún.</div>
+                <button class="btn btn-ghost btn-xs" onclick="showToast('Lección agregada','info')">+ Agregar lección</button>
+              </div>
+              <div class="mod-block">
+                <div class="mod-hdr"><input class="fi" style="font-size:13px;font-weight:600;padding:7px 11px;width:auto;flex:1" value="Módulo 3: Evaluación final"/><button class="btn btn-ghost btn-xs" style="margin-left:8px">✕</button></div>
+                <div class="les-block">
+                  <div class="les-hdr"><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Evaluación final del curso"/><div style="display:flex;gap:5px;margin-left:8px"><select class="fi" style="font-size:12px;padding:5px 9px;width:auto"><option>Texto</option><option>Video</option><option selected>Evaluación</option></select><button class="btn btn-ghost btn-xs">✕</button></div></div>
+                  <div style="background:rgba(59,130,246,.06);border:1px solid var(--bord);border-radius:8px;padding:10px">
+                    <div style="font-size:12px;font-weight:600;color:var(--be);margin-bottom:8px">📝 Banco de preguntas — Evaluación final</div>
+                    <div style="font-size:12px;color:var(--gm);margin-bottom:6px">Puntaje mínimo para aprobar: <input class="fi" style="width:60px;display:inline;padding:4px 8px;font-size:12px" value="70"/>%</div>
+                    <div style="display:flex;gap:6px;margin-bottom:5px"><input class="fi" style="font-size:12px;padding:6px 10px;flex:1" value="Pregunta 1 de evaluación final..."/><button class="btn btn-ghost btn-xs">✕</button></div>
+                    <div style="display:flex;gap:6px;margin-bottom:7px"><input class="fi" style="font-size:12px;padding:6px 10px;flex:1" value="Pregunta 2 de evaluación final..."/><button class="btn btn-ghost btn-xs">✕</button></div>
+                    <button class="btn btn-ghost btn-xs" onclick="showToast('Pregunta agregada','info')">+ Agregar pregunta</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pfoot">
+              <button class="btn btn-danger" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">✕ Cancelar</button>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-ghost" onclick="showToast('Borrador guardado ✓','info')">Guardar borrador</button>
+                <button class="btn btn-primary" onclick="showToast('Curso publicado 🎉','success')">Publicar →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURSO CLAUDE (EJEMPLO COMPLETO) -->
+      <div id="iv-claude-course" style="display:none">
+        <div class="dash-head">
+          <button class="btn btn-ghost btn-sm" style="margin-bottom:10px" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">← Volver a mis cursos</button>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div><h2>Introducción al Uso de Claude — IA Práctica 🤖</h2><p>4 módulos · 16 lecciones · Evaluación final · $899 MXN</p></div>
+            <div style="display:flex;gap:8px"><span class="badge b-pub" style="font-size:12px;padding:5px 12px"><span class="bdot"></span>PUBLICADO</span><button class="btn btn-warning btn-sm">Hibernar curso</button></div>
+          </div>
+        </div>
+        <!-- Módulo 1 -->
+        <div class="mod-block" style="margin-bottom:12px">
+          <div style="font-size:14px;font-weight:700;color:var(--be);margin-bottom:12px">📦 Módulo 1: ¿Qué es Claude y cómo funciona?</div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L1.1 — Introducción a los modelos de lenguaje</span><span class="badge b-pub" style="font-size:10px">TEXTO + VIDEO</span></div><div class="les-content">Los modelos de lenguaje grande (LLMs) como Claude son sistemas de IA entrenados en enormes volúmenes de texto para comprender y generar lenguaje natural. En esta lección conocerás los conceptos fundamentales, cómo se diferencian de la búsqueda tradicional y por qué son una herramienta de productividad sin precedentes.</div><div style="font-size:12px;color:var(--bcy)">🎬 youtube.com/watch?v=ejemplo-l1</div></div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L1.2 — Claude vs. ChatGPT vs. Gemini</span><span class="badge b-pub" style="font-size:10px">TEXTO</span></div><div class="les-content">Análisis comparativo de los principales modelos de IA disponibles en 2025. Ventajas de Claude: contexto extendido, razonamiento más estructurado, menor alucinación y mejor manejo de documentos largos.</div></div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L1.3 — La interfaz de Claude.ai</span><span class="badge b-pub" style="font-size:10px">VIDEO</span></div><div class="les-content">Recorrido completo por la interfaz: conversaciones, proyectos, artefactos y configuración de cuenta. Aprenderás a organizar tu trabajo y mantener contexto entre sesiones.</div><div style="font-size:12px;color:var(--bcy)">🎬 youtube.com/watch?v=ejemplo-l3</div></div>
+          <div class="les-block" style="background:rgba(59,130,246,.06)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:8px">📝 Quiz del módulo 1 (3 preguntas)</div><div style="font-size:12px;color:var(--gm)">1. ¿Cuál es la principal ventaja de Claude frente a buscadores tradicionales?<br/>2. ¿Qué significa LLM? | 3. ¿Qué es un artefacto en Claude?</div></div>
+        </div>
+        <!-- Módulo 2 -->
+        <div class="mod-block" style="margin-bottom:12px">
+          <div style="font-size:14px;font-weight:700;color:var(--be);margin-bottom:12px">📦 Módulo 2: Prompting efectivo</div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L2.1 — Anatomía de un buen prompt</span><span class="badge b-pub" style="font-size:10px">TEXTO + VIDEO</span></div><div class="les-content">Un prompt efectivo tiene contexto, instrucción clara, formato deseado y ejemplos opcionales. En esta lección aprenderás la estructura CIFE (Contexto, Instrucción, Formato, Ejemplo) para obtener resultados consistentes.</div></div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L2.2 — Prompts para redacción profesional</span><span class="badge b-pub" style="font-size:10px">TEXTO</span></div><div class="les-content">Casos prácticos: emails, reportes, propuestas, resúmenes ejecutivos. Plantillas probadas que puedes adaptar a tu área de trabajo inmediatamente.</div></div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L2.3 — Prompts para análisis y síntesis</span><span class="badge b-pub" style="font-size:10px">VIDEO</span></div><div class="les-content">Cómo usar Claude para analizar documentos, comparar opciones, extraer insights de datos cualitativos y generar matrices de decisión.</div></div>
+          <div class="les-block"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600">L2.4 — Errores comunes y cómo evitarlos</span><span class="badge b-pub" style="font-size:10px">TEXTO</span></div><div class="les-content">Los 7 errores más frecuentes al usar IA: prompts vagos, dependencia excesiva, no verificar outputs, ignorar el contexto, etc. Checklist de calidad para tus prompts.</div></div>
+          <div class="les-block" style="background:rgba(59,130,246,.06)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:8px">📝 Quiz del módulo 2 (4 preguntas)</div><div style="font-size:12px;color:var(--gm)">1. ¿Qué significa CIFE? | 2. ¿Cuál es el error más común en prompting? | 3. ¿Cómo se estructura un prompt para análisis? | 4. Diferencia entre instrucción y contexto.</div></div>
+        </div>
+        <!-- Módulo 3 -->
+        <div class="mod-block" style="margin-bottom:12px">
+          <div style="font-size:14px;font-weight:700;color:var(--be);margin-bottom:12px">📦 Módulo 3: Claude para productividad profesional</div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L3.1 — Claude para gestión de proyectos</div><div class="les-content">Automatiza planes de proyecto, genera cronogramas, crea matrices RACI y redacta minutas de reunión. Casos de uso reales para directivos y coordinadores.</div></div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L3.2 — Claude para investigación y educación</div><div class="les-content">Revisión de literatura, generación de temarios, diseño de rúbricas, creación de material didáctico. El asistente perfecto para profesores universitarios.</div></div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L3.3 — Claude para comunicación y marketing</div><div class="les-content">Estrategias de contenido, copywriting, análisis de propuestas, scripts para presentaciones y pitch decks. Multiplica tu capacidad de comunicación.</div></div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L3.4 — Flujos de trabajo con IA integrada</div><div class="les-content">Cómo construir tu propio sistema de productividad con Claude como núcleo. Diseño de flujos repetibles para tareas recurrentes de tu trabajo.</div></div>
+          <div class="les-block" style="background:rgba(59,130,246,.06)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:8px">📝 Quiz del módulo 3 (3 preguntas)</div><div style="font-size:12px;color:var(--gm)">1. ¿Para qué sirve una matriz RACI? | 2. Nombra 2 usos de Claude en educación | 3. ¿Qué es un flujo de trabajo con IA?</div></div>
+        </div>
+        <!-- Módulo 4 -->
+        <div class="mod-block">
+          <div style="font-size:14px;font-weight:700;color:var(--be);margin-bottom:12px">📦 Módulo 4: Ética, límites y buenas prácticas</div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L4.1 — ¿Qué puede y qué no puede hacer Claude?</div><div class="les-content">Límites del modelo, tipos de contenido que no procesa, y cómo entender las respuestas de rechazo. Aprende a trabajar con los límites de forma productiva.</div></div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L4.2 — Privacidad y datos sensibles</div><div class="les-content">Qué información nunca debes incluir en un prompt. Mejores prácticas de privacidad al usar IA en entornos profesionales y corporativos.</div></div>
+          <div class="les-block"><div style="font-size:13px;font-weight:600;margin-bottom:5px">L4.3 — Verificación y pensamiento crítico</div><div class="les-content">Claude puede equivocarse. Metodología para verificar outputs, identificar alucinaciones y mantener el pensamiento crítico al usar IA como asistente.</div></div>
+          <div class="les-block" style="background:rgba(59,130,246,.06);border-color:rgba(6,182,212,.25)">
+            <div style="font-size:13px;font-weight:700;color:var(--bcy);margin-bottom:10px">🎓 EVALUACIÓN FINAL — 10 preguntas · Mínimo 70% para certificarse</div>
+            <div style="font-size:12px;color:var(--gm)">
+              1. ¿Cuál es la estructura CIFE en prompting?<br/>
+              2. ¿Qué tipo de datos nunca debes incluir en un prompt?<br/>
+              3. ¿Cuál es la diferencia principal entre Claude y un motor de búsqueda?<br/>
+              4. Nombra 3 usos de Claude en el trabajo académico.<br/>
+              5. ¿Qué es una alucinación en un modelo de IA?<br/>
+              6. ¿Qué elemento del prompt define el tono de la respuesta?<br/>
+              7. ¿Para qué sirven los Proyectos en Claude.ai?<br/>
+              8. ¿Cuándo es recomendable NO usar IA para tomar una decisión?<br/>
+              9. ¿Qué significa LLM y cuál es su función principal?<br/>
+              10. Describe un flujo de trabajo personal con Claude en tu área profesional.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALUMNOS -->
+      <div id="iv-students" style="display:none">
+        <div class="dash-head"><h2>Mis alumnos 👥</h2></div>
+        <div class="tc"><div class="tc-hdr"><h3>Alumnos activos</h3><input class="fi" style="width:185px;padding:7px 11px;font-size:13px" placeholder="Buscar alumno..."/></div>
+          <table><thead><tr><th>Alumno</th><th>Curso</th><th>Progreso</th><th>Estado</th><th>Inscrito</th></tr></thead>
+          <tbody>
+            <tr><td><strong>María González</strong><br/><span style="font-size:11px;color:var(--gm)">maria@gmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:85%"></div></div><span style="font-size:11px;color:var(--gm)">85%</span></td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px;color:var(--gm)">10 ene 2025</td></tr>
+            <tr><td><strong>Roberto Hernández</strong><br/><span style="font-size:11px;color:var(--gm)">roberto@hotmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:100%"></div></div><span style="font-size:11px;color:var(--grn)">100% ✓</span></td><td><span class="badge b-pub">COMPLETADO</span></td><td style="font-size:12px;color:var(--gm)">8 ene 2025</td></tr>
+            <tr><td><strong>Ana Ramírez</strong><br/><span style="font-size:11px;color:var(--gm)">ana.r@empresa.mx</span></td><td style="font-size:12px">Introducción a Claude</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:62%"></div></div><span style="font-size:11px;color:var(--gm)">62%</span></td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px;color:var(--gm)">15 ene 2025</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- INGRESOS -->
+      <div id="iv-earnings" style="display:none">
+        <div class="dash-head"><h2>Ingresos 💰</h2><p>Historial de ventas y comisiones generadas.</p></div>
+        <div class="kpi-grid kg4">
+          <div class="kpi-card"><div class="kpi-lbl">💰 Ingresos brutos</div><div class="kpi-val blue">$42,800</div><div class="kpi-chg">Total acumulado</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">🏦 Comisión PLATTFORM (10%)</div><div class="kpi-val" style="color:var(--red)">-$4,280</div><div class="kpi-chg dn">Deducida por ventas</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">✅ Ingresos obtenidos</div><div class="kpi-val blue">$38,520</div><div class="kpi-chg">Pagado vía Stripe a tu cuenta</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">📅 Este mes</div><div class="kpi-val blue">$8,400</div><div class="kpi-chg">↑ 18% vs mes anterior</div></div>
+        </div>
+        <!-- CHART -->
+        <div class="tc" style="margin-bottom:22px">
+          <div class="tc-hdr"><h3>Ingresos por mes</h3>
+            <div style="display:flex;gap:6px">
+              <button class="ftag active" style="padding:4px 12px;font-size:12px" onclick="this.parentElement.querySelectorAll('.ftag').forEach(t=>t.classList.remove('active'));this.classList.add('active')">2025</button>
+              <button class="ftag" style="padding:4px 12px;font-size:12px" onclick="this.parentElement.querySelectorAll('.ftag').forEach(t=>t.classList.remove('active'));this.classList.add('active')">2024</button>
+            </div>
+          </div>
+          <div style="padding:18px 22px">
+            <div class="bar-group">
+              <div class="bar-col"><div class="bar" style="height:60%" data-val="$5,200"></div><div class="bar-lbl">Sep</div></div>
+              <div class="bar-col"><div class="bar" style="height:75%" data-val="$6,800"></div><div class="bar-lbl">Oct</div></div>
+              <div class="bar-col"><div class="bar" style="height:55%" data-val="$4,900"></div><div class="bar-lbl">Nov</div></div>
+              <div class="bar-col"><div class="bar" style="height:90%" data-val="$7,200"></div><div class="bar-lbl">Dic</div></div>
+              <div class="bar-col"><div class="bar" style="height:100%" data-val="$8,400"></div><div class="bar-lbl">Ene</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- POR CURSO -->
+        <div class="tc">
+          <div class="tc-hdr"><h3>Ingresos por curso</h3>
+            <div style="display:flex;gap:6px;align-items:center">
+              <select class="fi" style="width:auto;padding:6px 10px;font-size:12px"><option>Todos los meses</option><option>Enero 2025</option><option>Diciembre 2024</option></select>
+            </div>
+          </div>
+          <table><thead><tr><th>Curso</th><th>Ventas</th><th>Ingreso bruto</th><th>Comisión</th><th>Ingreso obtenido</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial</strong></td><td>320</td><td>$28,400</td><td style="color:var(--red)">-$2,840</td><td style="color:var(--grn);font-weight:600">$25,560</td></tr>
+            <tr><td><strong>Introducción a Claude</strong></td><td>412</td><td>$8,200</td><td style="color:var(--red)">-$820</td><td style="color:var(--grn);font-weight:600">$7,380</td></tr>
+            <tr><td><strong>Pensamiento Estratégico</strong></td><td>98</td><td>$11,200</td><td style="color:var(--red)">-$1,120</td><td style="color:var(--grn);font-weight:600">$10,080</td></tr>
+            <tr><td><strong>Análisis de Mercados</strong></td><td>45</td><td>$3,200</td><td style="color:var(--red)">-$320</td><td style="color:var(--grn);font-weight:600">$2,880</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- TRANSACCIONES -->
+      <div id="iv-transactions" style="display:none">
+        <div class="dash-head"><h2>Transacciones 💳</h2></div>
+        <div class="tc"><table><thead><tr><th>ID</th><th>Alumno</th><th>Curso</th><th>Bruto</th><th>Comisión</th><th>Neto</th><th>Estado</th><th>Fecha</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8821</td><td>María González</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--bcy);font-weight:600">$1,499</td><td style="color:var(--red)">-$149.90</td><td style="color:var(--grn);font-weight:600">$1,349.10</td><td><span class="badge b-ok">EXITOSO</span></td><td style="font-size:11px;color:var(--gm)">10 ene 2025</td></tr>
+          <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8817</td><td>Pedro Salinas</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--red);font-weight:600">$1,499</td><td style="color:var(--gm)">—</td><td style="color:var(--gm)">—</td><td><span class="badge b-fail">FALLIDO</span></td><td style="font-size:11px;color:var(--gm)">7 ene 2025</td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- MI ACADEMIA -->
+      <div id="iv-profile" style="display:none">
+        <div class="dash-head"><h2>Mi academia 🏫</h2></div>
+        <div class="panel">
+          <div class="fg"><label class="fl">Nombre de la academia</label><input class="fi" value="Academia Dr. Ríos — Estrategia y Negocios"/></div>
+          <div class="fr2"><div class="fg"><label class="fl">URL pública</label><input class="fi" value="plattform.mx/rios"/></div><div class="fg"><label class="fl">Institución de origen</label><input class="fi" value="UNAM — Facultad de Economía"/></div></div>
+          <div class="fg"><label class="fl">Descripción</label><textarea class="fi">Doctor en Administración por la UNAM. 15 años de experiencia académica y consultoría empresarial.</textarea></div>
+          <div class="pfoot"><div></div><button class="btn btn-primary" onclick="showToast('Perfil actualizado ✓','success')">Guardar cambios</button></div>
+        </div>
+      </div>
+
+      <!-- MI PLAN -->
+      <div id="iv-plan" style="display:none">
+        <div class="dash-head"><h2>Mi plan 💎</h2></div>
+        <div style="background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.12));border:1px solid rgba(6,182,212,.35);border-radius:16px;padding:22px;margin-bottom:20px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+            <div><span class="badge b-act" style="margin-bottom:8px">● ACTIVO</span><h3 style="font-size:19px;font-weight:700">Plan Growth</h3><p style="color:var(--gm);font-size:13px;margin-top:3px">Hasta 100 alumnos · Cursos ilimitados · IA incluida</p></div>
+            <div style="text-align:right"><div style="font-size:30px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$299</div><div style="font-size:12px;color:var(--gm)">MXN / mes</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Próxima renovación</div><div style="font-size:14px;font-weight:600">15 de febrero, 2025</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Comisión por venta</div><div style="font-size:14px;font-weight:600;color:var(--bcy)">10% por curso vendido</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Alumnos usados</div><div style="font-size:14px;font-weight:600">68 / 100</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Generación con IA</div><div style="font-size:14px;font-weight:600">Incluida ✓</div></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="showModal('modal-change-plan')">Cambiar plan</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('Método de pago actualizado','info')">Cambiar método de pago</button>
+            <button class="btn btn-danger btn-sm" onclick="showToast('Solicitud de cancelación enviada','info')">Cancelar suscripción</button>
+          </div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Historial de pagos de suscripción</h3></div>
+          <table><thead><tr><th>Periodo</th><th>Plan</th><th>Monto</th><th>Estado</th><th>Recibo</th></tr></thead>
+          <tbody>
+            <tr><td>15 ene – 15 feb 2025</td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-ok">PAGADO</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Descargando recibo 📄','info')">Descargar</button></td></tr>
+            <tr><td>15 dic – 15 ene 2025</td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-ok">PAGADO</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Descargando recibo 📄','info')">Descargar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════ ALUMNO ═══════════════ -->
+<div id="screen-student" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-label">Mi aprendizaje</div>
+      <div class="sb-item active" onclick="sv('overview',this)"><span class="ico">🏠</span>Inicio</div>
+      <div class="sb-item" onclick="sv('courses',this)"><span class="ico">📚</span>Mis cursos</div>
+      <div class="sb-item" onclick="sv('lesson',this)"><span class="ico">▶️</span>Continuar</div>
+      <div class="sb-item" onclick="sv('certs',this)"><span class="ico">🏆</span>Certificados</div>
+      <div class="sb-label">Explorar</div>
+      <div class="sb-item" onclick="switchRole('public',document.querySelectorAll('.nav-tab')[0])"><span class="ico">🌐</span>Catálogo</div>
+    </aside>
+    <main class="dash-main">
+      <div id="sv-overview">
+        <div class="dash-head"><h2>Hola, María 👋</h2><p>Sigue aprendiendo. Tienes 2 cursos en progreso.</p></div>
+        <div class="kpi-grid kg3">
+          <div class="kpi-card"><div class="kpi-lbl">📚 Inscritos</div><div class="kpi-val blue">3</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">✅ Completados</div><div class="kpi-val blue">1</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">🏆 Certificados</div><div class="kpi-val blue">1</div></div>
+        </div>
+        <h3 style="margin-bottom:13px;font-size:15px">Continúa donde lo dejaste</h3>
+        <div class="eg">
+          <div class="ec" onclick="sv('lesson',document.querySelectorAll('#screen-student .sb-item')[2])"><div class="ethumb ct1">📊</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">Dr. Alejandro Ríos</div><div class="ettl">Estrategia Empresarial</div><div class="plbl"><span>Progreso</span><span>85%</span></div><div class="pbw"><div class="pb" style="width:85%"></div></div><button class="btn btn-primary btn-sm btn-block" style="margin-top:9px">Continuar →</button></div></div>
+          <div class="ec" onclick="sv('lesson',document.querySelectorAll('#screen-student .sb-item')[2]);loadLesson('l2-2')"><div class="ethumb ct2">🤖</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">PLATTFORM Academy</div><div class="ettl">Introducción al Uso de Claude</div><div class="plbl"><span>Progreso</span><span>62%</span></div><div class="pbw"><div class="pb" style="width:62%"></div></div><button class="btn btn-primary btn-sm btn-block" style="margin-top:9px">Continuar →</button></div></div>
+          <div class="ec"><div class="ethumb ct3">📈</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">Lic. Carlos Vega</div><div class="ettl">Marketing Digital</div><div class="plbl"><span>Completado</span><span>100%</span></div><div class="pbw"><div class="pb" style="width:100%"></div></div><button class="btn btn-success btn-sm btn-block" style="margin-top:9px" onclick="showCert()">Ver certificado 🏆</button></div></div>
+        </div>
+      </div>
+      <div id="sv-courses" style="display:none">
+        <div class="dash-head"><h2>Mis cursos 📚</h2></div>
+        <div class="eg">
+          <div class="ec"><div class="ethumb ct1">📊</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">Dr. Alejandro Ríos</div><div class="ettl">Estrategia Empresarial</div><div class="plbl"><span>Progreso</span><span>85%</span></div><div class="pbw"><div class="pb" style="width:85%"></div></div></div></div>
+          <div class="ec"><div class="ethumb ct2">🤖</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">PLATTFORM Academy</div><div class="ettl">Introducción al Uso de Claude</div><div class="plbl"><span>Progreso</span><span>62%</span></div><div class="pbw"><div class="pb" style="width:62%"></div></div></div></div>
+          <div class="ec"><div class="ethumb ct3">📈</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">Lic. Carlos Vega</div><div class="ettl">Marketing Digital</div><div class="plbl"><span>Completado</span><span>100% 🏆</span></div><div class="pbw"><div class="pb" style="width:100%"></div></div></div></div>
+        </div>
+      </div>
+      <div id="sv-lesson" style="display:none">
+        <div class="llay" style="margin:-28px -36px">
+          <!-- LEFT SIDEBAR -->
+          <div class="lsb">
+            <div class="lsb-course">
+              <div class="lsb-course-tag">PLATTFORM Academy</div>
+              <div class="lsb-course-title">Introducción al Uso de Claude — IA Práctica</div>
+              <div class="lsb-progress-row">
+                <div class="lsb-progress-track"><div class="lsb-progress-fill" style="width:62%"></div></div>
+                <div class="lsb-progress-pct">62%</div>
+              </div>
+            </div>
+            <div class="lsb-modules">
+              <!-- MOD 1 -->
+              <div class="lsb-mod-header" onclick="toggleMod('mod1')">
+                <div><div class="lsb-mod-num">Módulo 01</div></div>
+                <span class="lsb-mod-arrow open" id="arr-mod1">▼</span>
+              </div>
+              <div class="lsb-mod-name">¿Qué es Claude y cómo funciona?</div>
+              <div class="lsb-lessons" id="mod1">
+                <div class="litem done" onclick="loadLesson('l1-1')"><span class="lchk" style="color:var(--grn)">✓</span><span class="lnum">1.1</span>Introducción a los modelos de lenguaje</div>
+                <div class="litem done" onclick="loadLesson('l1-2')"><span class="lchk" style="color:var(--grn)">✓</span><span class="lnum">1.2</span>Claude vs. ChatGPT vs. Gemini</div>
+                <div class="litem done" onclick="loadLesson('l1-3')"><span class="lchk" style="color:var(--grn)">✓</span><span class="lnum">1.3</span>La interfaz de Claude.ai</div>
+                <div class="litem done" onclick="loadLesson('quiz1')"><span class="lchk" style="color:var(--bcy)">◆</span><span class="lnum"></span>Quiz del módulo</div>
+              </div>
+              <!-- MOD 2 -->
+              <div class="lsb-mod-header" onclick="toggleMod('mod2')">
+                <div><div class="lsb-mod-num">Módulo 02</div></div>
+                <span class="lsb-mod-arrow open" id="arr-mod2">▼</span>
+              </div>
+              <div class="lsb-mod-name">Prompting efectivo</div>
+              <div class="lsb-lessons" id="mod2">
+                <div class="litem done" onclick="loadLesson('l2-1')"><span class="lchk" style="color:var(--grn)">✓</span><span class="lnum">2.1</span>Anatomía de un buen prompt</div>
+                <div class="litem active" onclick="loadLesson('l2-2')"><span class="lchk">▶</span><span class="lnum">2.2</span>Prompts para redacción profesional</div>
+                <div class="litem" onclick="loadLesson('l2-3')"><span class="lchk">○</span><span class="lnum">2.3</span>Prompts para análisis y síntesis</div>
+                <div class="litem" onclick="loadLesson('l2-4')"><span class="lchk">○</span><span class="lnum">2.4</span>Errores comunes y cómo evitarlos</div>
+                <div class="litem-eval" onclick="loadLesson('quiz2')"><span class="lchk" style="color:var(--yel)">◆</span><span>Quiz del módulo</span></div>
+              </div>
+              <!-- MOD 3 -->
+              <div class="lsb-mod-header" onclick="toggleMod('mod3')">
+                <div><div class="lsb-mod-num">Módulo 03</div></div>
+                <span class="lsb-mod-arrow" id="arr-mod3">▼</span>
+              </div>
+              <div class="lsb-mod-name">Claude para productividad profesional</div>
+              <div class="lsb-lessons" id="mod3" style="max-height:0;overflow:hidden">
+                <div class="litem" onclick="loadLesson('l3-1')"><span class="lchk">○</span><span class="lnum">3.1</span>Claude para gestión de proyectos</div>
+                <div class="litem" onclick="loadLesson('l3-2')"><span class="lchk">○</span><span class="lnum">3.2</span>Claude para investigación y educación</div>
+                <div class="litem" onclick="loadLesson('l3-3')"><span class="lchk">○</span><span class="lnum">3.3</span>Claude para comunicación y marketing</div>
+                <div class="litem" onclick="loadLesson('l3-4')"><span class="lchk">○</span><span class="lnum">3.4</span>Flujos de trabajo con IA integrada</div>
+                <div class="litem-eval" onclick="loadLesson('quiz3')"><span class="lchk" style="color:var(--yel)">◆</span><span>Quiz del módulo</span></div>
+              </div>
+              <!-- MOD 4 -->
+              <div class="lsb-mod-header" onclick="toggleMod('mod4')">
+                <div><div class="lsb-mod-num">Módulo 04</div></div>
+                <span class="lsb-mod-arrow" id="arr-mod4">▼</span>
+              </div>
+              <div class="lsb-mod-name">Ética, límites y buenas prácticas</div>
+              <div class="lsb-lessons" id="mod4" style="max-height:0;overflow:hidden">
+                <div class="litem" onclick="loadLesson('l4-1')"><span class="lchk">○</span><span class="lnum">4.1</span>¿Qué puede y qué no puede hacer Claude?</div>
+                <div class="litem" onclick="loadLesson('l4-2')"><span class="lchk">○</span><span class="lnum">4.2</span>Privacidad y datos sensibles</div>
+                <div class="litem" onclick="loadLesson('l4-3')"><span class="lchk">○</span><span class="lnum">4.3</span>Verificación y pensamiento crítico</div>
+                <div class="litem-eval" onclick="loadLesson('final-eval')" style="color:var(--yel);font-weight:600"><span class="lchk" style="color:var(--yel)">🎓</span><span>Evaluación final</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAIN CONTENT -->
+          <div class="lmain">
+            <!-- TOP BAR -->
+            <div class="les-topbar">
+              <div class="les-breadcrumb">
+                <span style="cursor:pointer" onclick="sv('overview',document.querySelectorAll('#screen-student .sb-item')[0])">← Mis cursos</span>
+                <span>·</span>
+                <span id="les-breadcrumb-text">MÓDULO 02 · LECCIÓN 2.2</span>
+              </div>
+              <div class="les-nav-btns">
+                <button class="btn btn-ghost btn-sm" onclick="lesNav(-1)">← Anterior</button>
+                <button class="btn btn-primary btn-sm" onclick="lesNav(1)" id="les-next-btn">Siguiente →</button>
+              </div>
+            </div>
+
+            <!-- LESSON CONTENT (swappable) -->
+            <div id="les-content-area">
+
+              <!-- DEFAULT: L2-2 Prompts para redacción -->
+              <div class="les-body">
+                <div class="les-type-badge">MÓDULO 02 · LECCIÓN 2.2</div>
+                <h1 class="les-title">Prompts para redacción<br/>profesional</h1>
+                <p class="les-subtitle">Plantillas y técnicas probadas para emails, reportes y propuestas de alto impacto.</p>
+                <div class="les-divider"></div>
+
+                <div class="les-video-block">
+                  <div class="les-video-icon">▶</div>
+                  <div class="les-video-info">
+                    <div class="les-video-label">Video de la lección</div>
+                    <div class="les-video-url"><a href="#" onclick="showToast('Abriendo video en YouTube...','info')">youtube.com/watch?v=plattform-l2-2 · 18 min</a></div>
+                  </div>
+                  <button class="btn btn-outline btn-sm" onclick="showToast('Abriendo video...','info')">Ver video →</button>
+                </div>
+
+                <div class="les-content">
+                  <p>La redacción profesional con IA no significa delegar tu voz — significa multiplicar tu capacidad de comunicación sin sacrificar calidad ni autenticidad.</p>
+
+                  <h3>La estructura CIFE aplicada a redacción</h3>
+                  <p>Para obtener textos profesionales de Claude necesitas darle cuatro elementos: <strong>Contexto</strong> (quién eres, a quién escribes), <strong>Instrucción</strong> (qué tipo de documento necesitas), <strong>Formato</strong> (extensión, tono, estructura) y <strong>Ejemplo</strong> (opcional, pero poderoso).</p>
+
+                  <div class="les-callout">
+                    <strong>Ejemplo de prompt efectivo:</strong><br/>
+                    "Soy director académico en una universidad privada. Escribe un email formal para invitar a 15 profesores a un taller de actualización docente el próximo viernes. Tono profesional pero cercano. Máximo 150 palabras. Incluye: objetivo, horario, lugar y cómo confirmar asistencia."
+                  </div>
+
+                  <h4>Casos de uso más frecuentes</h4>
+                  <ul>
+                    <li><strong>Emails ejecutivos</strong> — Comunicación formal con autoridades, clientes o proveedores</li>
+                    <li><strong>Propuestas académicas</strong> — Proyectos de investigación, solicitudes de recursos, convenios</li>
+                    <li><strong>Reportes de gestión</strong> — Informes periódicos, avances de proyecto, resultados</li>
+                    <li><strong>Comunicaciones internas</strong> — Circulares, convocatorias, minutas de reunión</li>
+                  </ul>
+
+                  <h3>Lo que Claude hace bien en redacción</h3>
+                  <p>Claude mantiene consistencia de tono a lo largo de un documento, adapta el registro según la audiencia (técnico, ejecutivo, académico, operativo) y puede generar múltiples versiones del mismo texto para que elijas la que mejor se adapta a tu estilo.</p>
+
+                  <p>Lo más poderoso: puedes darle un email tuyo de referencia y pedirle que <em>replique tu estilo</em> para nuevas comunicaciones. Así la IA escribe con tu voz, no con la suya.</p>
+
+                  <h4>El prompt de "por favor no suenes a IA"</h4>
+                  <p>Cuando el resultado sea demasiado formal o genérico, agrega al final de tu prompt: <em>"Evita frases cliché como 'espero que este mensaje te encuentre bien'. Sé directo y natural."</em> La diferencia es notable.</p>
+                </div>
+
+                <div class="les-keypoints">
+                  <div class="les-keypoints-label">Puntos clave de esta lección</div>
+                  <div class="les-kp-item">La estructura CIFE te da resultados consistentes en cualquier tipo de redacción</div>
+                  <div class="les-kp-item">Darle un email tuyo como referencia permite que Claude replique tu estilo personal</div>
+                  <div class="les-kp-item">Pedir explícitamente "evitar clichés" mejora significativamente la naturalidad del texto</div>
+                  <div class="les-kp-item">Claude puede generar 3 versiones del mismo texto para que elijas la mejor</div>
+                </div>
+
+                <div style="border-top:1px solid rgba(59,130,246,.1);padding-top:28px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-size:12px;color:var(--gm)">¿Esta lección fue útil?&nbsp;&nbsp;<span style="cursor:pointer;font-size:16px" onclick="showToast('¡Gracias por tu feedback!','success')">👍</span>&nbsp;<span style="cursor:pointer;font-size:16px" onclick="showToast('Gracias, lo mejoraremos','info')">👎</span></div>
+                  <button class="btn btn-primary" onclick="markDone()">Marcar como completada ✓</button>
+                </div>
+              </div>
+
+            </div><!-- /les-content-area -->
+
+            <!-- FOOTER -->
+            <div class="les-footer">
+              <div class="les-footer-left">Módulo 02 de 04 · Lección 2 de 4</div>
+              <div class="les-footer-right">
+                <button class="btn btn-ghost btn-sm" onclick="lesNav(-1)">← Anterior</button>
+                <button class="btn btn-primary btn-sm" onclick="lesNav(1)">Siguiente →</button>
+              </div>
+            </div>
+          </div><!-- /lmain -->
+        </div><!-- /llay -->
+      </div>
+      <div id="sv-certs" style="display:none">
+        <div class="dash-head"><h2>Mis certificados 🏆</h2></div>
+        <div class="cert-card"><div class="cert-ico">🏆</div><div class="cert-info"><h4>Marketing Digital con Resultados Reales</h4><p>Lic. Carlos Vega · Emitido 15 ene 2025 · PLT-2025-1182</p></div><div class="cert-acts"><button class="btn btn-primary btn-sm" onclick="showCert()">Ver certificado</button><button class="btn btn-outline btn-sm" onclick="showToast('Descargando 📄','info')">Descargar PDF</button></div></div>
+        <div class="cert-card" style="opacity:.4;pointer-events:none"><div class="cert-ico" style="background:var(--s3)">🔒</div><div class="cert-info"><h4>Estrategia Empresarial en la Era Digital</h4><p>Completa el 100% y aprueba la evaluación para obtener tu certificado.</p></div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════ ADMIN ═══════════════ -->
+<div id="screen-admin" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-label">Plataforma</div>
+      <div class="sb-item active" onclick="adv('overview',this)"><span class="ico">📊</span>Dashboard global</div>
+      <div class="sb-item" onclick="adv('users',this)"><span class="ico">👥</span>Usuarios</div>
+      <div class="sb-item" onclick="adv('courses',this)"><span class="ico">📚</span>Cursos</div>
+      <div class="sb-item" onclick="adv('transactions',this)"><span class="ico">💳</span>Transacciones</div>
+      <div class="sb-label">Ingresos</div>
+      <div class="sb-item" onclick="adv('rev-rent',this)"><span class="ico">🏦</span>Rentas por instructor</div>
+      <div class="sb-item" onclick="adv('rev-comm',this)"><span class="ico">💸</span>Comisiones por venta</div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- ADMIN OVERVIEW -->
+      <div id="adv-overview">
+        <div class="dash-head"><h2>Panel Administrador ⚙️</h2><p>Vista global de PLATTFORM.</p></div>
+        <div class="tc" style="margin-bottom:20px">
+          <div class="tc-hdr"><h3>🔍 Búsqueda universal</h3>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="ftag active" onclick="sf('all',this)" style="padding:5px 13px;font-size:12px">Todos</button>
+              <button class="ftag" onclick="sf('courses',this)" style="padding:5px 13px;font-size:12px">Cursos</button>
+              <button class="ftag" onclick="sf('instructors',this)" style="padding:5px 13px;font-size:12px">Instructores</button>
+              <button class="ftag" onclick="sf('students',this)" style="padding:5px 13px;font-size:12px">Alumnos</button>
+            </div>
+          </div>
+          <div style="padding:13px 18px">
+            <input class="fi" id="asearch" placeholder="Busca por nombre, correo, ID o curso..." oninput="adSearch(this.value)" style="margin-bottom:9px"/>
+            <div id="sh" style="font-size:12px;color:var(--gm)">Escribe al menos 2 caracteres para buscar.</div>
+            <div id="sc" style="font-size:11px;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:none"></div>
+            <div id="sl"></div>
+            <div id="se" style="display:none;text-align:center;padding:16px;color:var(--gm);font-size:13px">Sin resultados.</div>
+          </div>
+        </div>
+        <div class="kpi-grid kg5">
+          <div class="kpi-card"><div class="kpi-lbl">👥 Usuarios</div><div class="kpi-val blue">1,540</div><div class="kpi-chg">↑ 84 este mes</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">🎓 Instructores</div><div class="kpi-val blue">32</div><div class="kpi-chg">↑ 4 nuevos</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">📚 Cursos activos</div><div class="kpi-val blue">87</div><div class="kpi-chg">12 en borrador</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">🏦 Rentas (mes)</div><div class="kpi-val blue">$9,568</div><div class="kpi-chg">32 suscripciones</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">💸 Comisiones (mes)</div><div class="kpi-val blue">$4,280</div><div class="kpi-chg">10% sobre ventas</div></div>
+        </div>
+        <div class="two-col">
+          <div class="tc"><div class="tc-hdr"><h3>Alertas</h3></div><div style="padding:8px 18px">
+            <div class="alert-item"><div class="adot r"></div><div class="atext"><strong>Pago fallido</strong> — Pedro Salinas</div><div class="atime">hace 2h</div></div>
+            <div class="alert-item"><div class="adot y"></div><div class="atext"><strong>Curso sin contenido</strong> — "Innovación y Modelos"</div><div class="atime">hace 5h</div></div>
+            <div class="alert-item"><div class="adot g"></div><div class="atext"><strong>Nuevo instructor</strong> — Mtra. Laura Castillo</div><div class="atime">hace 1d</div></div>
+            <div class="alert-item"><div class="adot y"></div><div class="atext"><strong>Suscripción vencida</strong> — Lic. Pedro Mora</div><div class="atime">hace 2d</div></div>
+          </div></div>
+          <div class="tc"><div class="tc-hdr"><h3>Top instructores</h3></div><div style="padding:8px 18px">
+            <div class="rev-row"><span style="min-width:145px;font-size:13px">Dr. Alejandro Ríos</span><div class="rbw"><div class="rb" style="width:90%"></div></div><span class="ramt">$42,800</span></div>
+            <div class="rev-row"><span style="min-width:145px;font-size:13px">Mtra. Sofía Mendoza</span><div class="rbw"><div class="rb" style="width:70%"></div></div><span class="ramt">$38,200</span></div>
+            <div class="rev-row"><span style="min-width:145px;font-size:13px">Lic. Andrea Flores</span><div class="rbw"><div class="rb" style="width:50%"></div></div><span class="ramt">$29,100</span></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN USERS -->
+      <div id="adv-users" style="display:none">
+        <div class="dash-head"><h2>Gestión de usuarios 👥</h2></div>
+        <div class="tc"><div class="tc-hdr"><h3>Todos los usuarios</h3><input class="fi" style="width:180px;padding:7px 11px;font-size:13px" placeholder="Buscar..."/></div>
+          <table><thead><tr><th>Usuario</th><th>Rol</th><th>Plan/Info</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dr. Alejandro Ríos</strong><br/><span style="font-size:11px;color:var(--gm)">alejandro@unam.mx</span></td><td><span class="badge b-act">INSTRUCTOR</span></td><td style="font-size:12px">Growth · 4 cursos</td><td><span class="badge b-act">ACTIVO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver perfil</button><button class="btn btn-warning btn-xs" onclick="showToast('Instructor suspendido','info')">Suspender</button><button class="btn btn-ghost btn-xs">Editar</button></td></tr>
+            <tr><td><strong>María González</strong><br/><span style="font-size:11px;color:var(--gm)">maria@gmail.com</span></td><td><span class="badge b-dft">ALUMNO</span></td><td style="font-size:12px">3 cursos inscritos</td><td><span class="badge b-act">ACTIVO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver perfil</button><button class="btn btn-danger btn-xs" onclick="showToast('Usuario suspendido','info')">Suspender</button></td></tr>
+            <tr><td><strong>Pedro Salinas</strong><br/><span style="font-size:11px;color:var(--gm)">pedro@gmail.com</span></td><td><span class="badge b-dft">ALUMNO</span></td><td style="font-size:12px">0 cursos</td><td><span class="badge b-sus">SUSPENDIDO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver perfil</button><button class="btn btn-success btn-xs" onclick="showToast('Usuario reactivado','success')">Reactivar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN COURSES -->
+      <div id="adv-courses" style="display:none">
+        <div class="dash-head"><h2>Gestión de cursos 📚</h2></div>
+        <div class="tc"><table><thead><tr><th>Curso</th><th>Instructor</th><th>Estado</th><th>Alumnos</th><th>Precio</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial</strong></td><td style="font-size:12px">Dr. Alejandro Ríos</td><td><span class="badge b-pub">PUBLICADO</span></td><td>320</td><td>$1,499</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver</button><button class="btn btn-warning btn-xs" onclick="showToast('Curso hibernado','info')">Hibernar</button><button class="btn btn-danger btn-xs" onclick="showToast('Curso archivado','info')">Archivar</button></td></tr>
+            <tr><td><strong>Introducción a Claude</strong></td><td style="font-size:12px">PLATTFORM Academy</td><td><span class="badge b-pub">PUBLICADO</span></td><td>412</td><td>$899</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver</button><button class="btn btn-warning btn-xs" onclick="showToast('Hibernado','info')">Hibernar</button></td></tr>
+            <tr><td><strong>Innovación y Modelos</strong></td><td style="font-size:12px">Dr. Alejandro Ríos</td><td><span class="badge b-dft">BORRADOR</span></td><td>0</td><td>$999</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver</button><button class="btn btn-danger btn-xs" onclick="showToast('Archivado','info')">Archivar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN TRANSACTIONS -->
+      <div id="adv-transactions" style="display:none">
+        <div class="dash-head"><h2>Transacciones globales 💳</h2></div>
+        <div class="tc"><table><thead><tr><th>ID</th><th>Alumno</th><th>Instructor</th><th>Curso</th><th>Bruto</th><th>Comisión</th><th>Estado</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8821</td><td>María González</td><td style="font-size:12px">Dr. Ríos</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--bcy);font-weight:600">$1,499</td><td style="color:var(--grn)">+$149.90</td><td><span class="badge b-ok">EXITOSO</span></td><td style="font-size:11px;color:var(--gm)">10 ene 2025</td></tr>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8817</td><td>Pedro Salinas</td><td style="font-size:12px">Dr. Ríos</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--red)">$1,499</td><td style="color:var(--gm)">—</td><td><span class="badge b-fail">FALLIDO</span></td><td style="font-size:11px;color:var(--gm)">7 ene 2025</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN RENTAS -->
+      <div id="adv-rev-rent" style="display:none">
+        <div class="dash-head"><h2>Ingresos por renta mensual 🏦</h2><p>Suscripciones activas de instructores.</p></div>
+        <div class="kpi-grid kg3">
+          <div class="kpi-card"><div class="kpi-lbl">💰 Total rentas este mes</div><div class="kpi-val blue">$9,568</div><div class="kpi-chg">32 instructores activos</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">📈 Rentas acumuladas 2025</div><div class="kpi-val blue">$28,704</div><div class="kpi-chg">3 meses</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">⚠️ Suscripciones vencidas</div><div class="kpi-val" style="color:var(--yel)">3</div><div class="kpi-chg dn">Requieren atención</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Detalle por instructor</h3>
+          <div style="display:flex;gap:6px"><select class="fi" style="width:auto;padding:6px 10px;font-size:12px"><option>Enero 2025</option><option>Diciembre 2024</option></select></div>
+        </div>
+          <table><thead><tr><th>Instructor</th><th>Plan</th><th>Monto renta</th><th>Estado suscripción</th><th>Vence</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dr. Alejandro Ríos</strong></td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px">15 feb 2025</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver historial</button></td></tr>
+            <tr><td><strong>Mtra. Sofía Mendoza</strong></td><td>Scale</td><td style="color:var(--bcy);font-weight:600">$799</td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px">20 feb 2025</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver historial</button></td></tr>
+            <tr><td><strong>Lic. Carlos Vega</strong></td><td>Starter</td><td style="color:var(--bcy);font-weight:600">$99</td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px">18 feb 2025</td><td class="td-acts"><button class="btn btn-outline btn-xs">Ver historial</button></td></tr>
+            <tr><td><strong>Lic. Pedro Mora</strong></td><td>Starter</td><td style="color:var(--red);font-weight:600">$99</td><td><span class="badge b-sus">VENCIDA</span></td><td style="font-size:12px;color:var(--red)">Venció 5 ene</td><td class="td-acts"><button class="btn btn-warning btn-xs" onclick="showToast('Recordatorio enviado','info')">Recordar</button><button class="btn btn-danger btn-xs" onclick="showToast('Plan hibernado','info')">Hibernar cursos</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN COMISIONES -->
+      <div id="adv-rev-comm" style="display:none">
+        <div class="dash-head"><h2>Ingresos por comisión 💸</h2><p>Porcentaje sobre ventas de cursos.</p></div>
+        <div class="kpi-grid kg3">
+          <div class="kpi-card"><div class="kpi-lbl">💸 Comisiones este mes</div><div class="kpi-val blue">$4,280</div><div class="kpi-chg">10% sobre $42,800 en ventas</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">📈 Comisiones acumuladas</div><div class="kpi-val blue">$28,400</div><div class="kpi-chg">Desde enero 2024</div></div>
+          <div class="kpi-card"><div class="kpi-lbl">📊 Promedio por venta</div><div class="kpi-val blue">$149.90</div><div class="kpi-chg">Ticket promedio $1,499</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Comisiones por instructor</h3></div>
+          <table><thead><tr><th>Instructor</th><th>Ventas del mes</th><th>Ingresos brutos</th><th>% Comisión</th><th>Total comisión</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dr. Alejandro Ríos</strong></td><td>28</td><td>$28,400</td><td>10%</td><td style="color:var(--grn);font-weight:600">$2,840</td></tr>
+            <tr><td><strong>Mtra. Sofía Mendoza</strong></td><td>22</td><td>$11,200</td><td>10%</td><td style="color:var(--grn);font-weight:600">$1,120</td></tr>
+            <tr><td><strong>Lic. Carlos Vega</strong></td><td>9</td><td>$3,200</td><td>15%</td><td style="color:var(--grn);font-weight:600">$480</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════ AUTH ═══════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-wrap">
+    <div class="acard">
+      <div style="text-align:center;margin-bottom:20px"><span class="logo-txt" style="font-size:22px">PLATTFORM</span></div>
+      <div id="auth-login">
+        <div class="atitle">Bienvenido de vuelta</div>
+        <div class="asub">Inicia sesión en tu cuenta</div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+        <div class="fg"><label class="fl">Contraseña</label><input class="fi" type="password" placeholder="••••••••"/></div>
+        <button class="btn btn-primary btn-block" style="padding:12px" onclick="handleLogin()">Iniciar sesión →</button>
+        <div class="alink" style="margin-top:8px"><a onclick="showModal('modal-forgot')">¿Olvidaste tu contraseña?</a></div>
+        <div class="alink">¿No tienes cuenta? <a onclick="authV('register')">Regístrate</a></div>
+      </div>
+      <div id="auth-register" style="display:none">
+        <div class="atitle">Crea tu cuenta</div>
+        <div class="asub">¿Cómo usarás PLATTFORM?</div>
+        <div class="role-sel">
+          <div class="ropt active" onclick="arole(this,'student')"><span class="rico">📚</span>Soy alumno</div>
+          <div class="ropt" onclick="arole(this,'instructor')"><span class="rico">🎓</span>Soy instructor</div>
+        </div>
+        <div id="plan-reg-box" style="display:none">
+          <div style="font-size:13px;font-weight:600;margin-bottom:9px">Elige tu plan:</div>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:13px">
+            <div class="pc" style="padding:11px 14px;text-align:left;display:flex;align-items:center;gap:11px" onclick="pp(this)"><div style="flex:1"><div class="pname">Starter</div><div style="font-size:11px;color:var(--gm)">$99/mes · 20 alumnos · 15% comisión</div></div><span style="font-size:17px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$99</span></div>
+            <div class="pc pop sel" style="padding:11px 14px;text-align:left;display:flex;align-items:center;gap:11px" onclick="pp(this)"><div class="ptag">POPULAR</div><div style="flex:1"><div class="pname">Growth</div><div style="font-size:11px;color:var(--gm)">$299/mes · 100 alumnos · 10% comisión</div></div><span style="font-size:17px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$299</span></div>
+            <div class="pc" style="padding:11px 14px;text-align:left;display:flex;align-items:center;gap:11px" onclick="pp(this)"><div style="flex:1"><div class="pname">Scale</div><div style="font-size:11px;color:var(--gm)">$799/mes · ilimitados · 7% comisión</div></div><span style="font-size:17px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$799</span></div>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Nombre completo</label><input class="fi" placeholder="Tu nombre"/></div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+        <div class="fg"><label class="fl">Contraseña</label><input class="fi" type="password" placeholder="Mínimo 8 caracteres"/></div>
+        <button class="btn btn-primary btn-block" style="padding:12px" id="reg-btn" onclick="showToast('Cuenta creada 🎉','success');go('public')">Crear cuenta →</button>
+        <div class="alink">¿Ya tienes cuenta? <a onclick="authV('login')">Inicia sesión</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHECKOUT ═══════════════ -->
+<div id="screen-checkout" class="screen">
+  <div class="auth-wrap">
+    <div class="cocard">
+      <h2 style="font-size:19px;font-weight:700;margin-bottom:16px">Resumen de compra</h2>
+      <div class="co-sum">
+        <div class="cothumb ct1" id="co-thumb">📊</div>
+        <div><div style="font-size:14px;font-weight:600;margin-bottom:3px" id="co-title">Estrategia Empresarial en la Era Digital</div><div style="font-size:12px;color:var(--bcy)" id="co-inst">Dr. Alejandro Ríos</div><div style="font-size:12px;color:var(--gm);margin-top:3px">18 horas · 42 lecciones · Certificado incluido</div></div>
+      </div>
+      <div style="background:rgba(59,130,246,.05);border:1px solid var(--bord);border-radius:8px;padding:11px 13px;margin-bottom:16px;font-size:13px;color:var(--gm)">🔐 <strong style="color:var(--w)">Acceso inmediato</strong> — Al completar el pago tendrás acceso instantáneo y empezarás cuando quieras.</div>
+      <div class="fg"><label class="fl">Nombre del titular *</label><input class="fi" placeholder="Como aparece en tu tarjeta"/></div>
+      <div class="fg"><label class="fl">Correo del comprador *</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+      <div class="fg"><label class="fl">Número de tarjeta</label><input class="fi" placeholder="4242 4242 4242 4242"/></div>
+      <div class="c2"><div class="fg"><label class="fl">Vencimiento</label><input class="fi" placeholder="MM/AA"/></div><div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"/></div></div>
+      <div class="fg"><label class="fl">Cupón de descuento</label><div style="display:flex;gap:7px"><input class="fi" placeholder="PROMO20" id="coup"/><button class="btn btn-outline" onclick="aplyCoup()" style="white-space:nowrap">Aplicar</button></div></div>
+      <div class="pr-break">
+        <div class="pr-row"><span>Precio del curso</span><span id="co-price">$1,499 MXN</span></div>
+        <div class="pr-row" id="co-disc-row" style="display:none"><span>Descuento</span><span style="color:var(--grn)" id="co-disc">—</span></div>
+        <div class="pr-row tot"><span>Total a pagar</span><span class="amt" id="co-total">$1,499 MXN</span></div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" style="margin-top:16px" onclick="completePurchase()">Pagar con Stripe →</button>
+      <div class="sec-badge">🔒 Pago procesado por Stripe · SSL 256-bit</div>
+      <div class="ppbox"><h4>¿Qué pasa después del pago?</h4>
+        <div class="ppi">Recibirás un correo de confirmación con tu acceso</div>
+        <div class="ppi">El curso aparece inmediatamente en tu dashboard</div>
+        <div class="ppi">Al completarlo, tu certificado se genera automáticamente</div>
+        <div class="ppi">Puedes iniciar desde cualquier dispositivo</div>
+      </div>
+      <div style="text-align:center;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="go('public')">← Cancelar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CERTIFICADO ═══════════════ -->
+<div id="cert-screen">
+  <div class="cert-actions-bar">
+    <div class="logo-txt" style="font-size:16px">PLATTFORM</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success btn-sm" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      <button class="btn btn-ghost btn-sm" onclick="hideCert()">✕ Cerrar</button>
+    </div>
+  </div>
+  <div style="padding:20px">
+    <div class="cert-page">
+      <div class="cert-top">
+        <div class="cert-logo">PLATTFORM</div>
+        <div class="cert-badge">🏆</div>
+        <div class="cert-title">Certificado de terminación</div>
+        <div class="cert-main">Marketing Digital con Resultados Reales</div>
+      </div>
+      <div class="cert-body">
+        <div class="cert-to">Otorgado a</div>
+        <div class="cert-name">María González</div>
+        <div class="cert-txt">Por haber completado satisfactoriamente el programa de formación, demostrando dominio de los contenidos evaluados y aprobando la evaluación final con calificación de <strong>92/100</strong>.</div>
+        <div class="cert-course">
+          <div class="cert-course-name">Marketing Digital con Resultados Reales</div>
+          <div class="cert-course-meta">Impartido por Lic. Carlos Vega · ULA · 15 horas · 35 lecciones</div>
+        </div>
+        <div class="cert-sigs">
+          <div class="cert-sig"><div class="cert-sig-line"></div><div class="cert-sig-name">Lic. Carlos Vega</div><div class="cert-sig-role">Instructor del curso</div></div>
+          <div class="cert-sig"><div class="cert-sig-line"></div><div class="cert-sig-name">PLATTFORM</div><div class="cert-sig-role">Plataforma educativa</div></div>
+        </div>
+      </div>
+      <div class="cert-footer">
+        <div class="cert-id">Código de verificación: PLT-2025-1182-MG</div>
+        <div class="cert-date">Emitido el 15 de enero de 2025 · Ciudad de México</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODALES ═══════ -->
+
+<!-- MODAL: CURSO -->
+<div class="mo" id="modal-course" onclick="cmo(event,'modal-course')">
+  <div class="mbox">
+    <div class="mhdr"><button class="mclose" onclick="hideModal('modal-course')">✕</button>
+      <span id="m-cat" class="badge b-pub" style="margin-bottom:9px">Negocios</span>
+      <h2 id="m-title"></h2>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin:12px 0">
+        <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:var(--gm)">⭐ <strong style="color:var(--w)">4.9</strong> (128 reseñas)</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:var(--gm)">👥 <strong style="color:var(--w)">320</strong> alumnos</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:var(--gm)">⏱ <strong style="color:var(--w)">18 horas</strong></div>
+      </div>
+      <p id="m-desc" style="font-size:14px;color:var(--gm);line-height:1.6"></p>
+    </div>
+    <div class="mbody"><div style="font-size:13px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Contenido</div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:12px 16px;margin-bottom:7px"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:4px">Módulo 1 — Fundamentos</div><div style="font-size:12px;color:var(--gm)">▸ ¿Qué es estrategia empresarial? ▸ El entorno VUCA ▸ Análisis FODA</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:12px 16px;margin-bottom:7px"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:4px">Módulo 2 — Planificación</div><div style="font-size:12px;color:var(--gm)">▸ OKR ▸ Roadmap estratégico ▸ Stakeholders</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:12px 16px"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:4px">Módulo 3 — Ejecución Digital</div><div style="font-size:12px;color:var(--gm)">▸ Modelos de negocio ▸ Transformación digital ▸ Evaluación final</div></div>
+    </div>
+    <div class="mfoot"><div id="m-price" style="margin-right:auto;font-size:21px;font-weight:700;color:var(--bcy)"></div><button class="btn btn-ghost" onclick="hideModal('modal-course')">Cerrar</button><button class="btn btn-primary btn-lg" onclick="requireLogin()">Comprar ahora →</button></div>
+  </div>
+</div>
+
+<!-- MODAL: CAMBIO DE PLAN -->
+<div class="mo" id="modal-change-plan" onclick="cmo(event,'modal-change-plan')">
+  <div class="mbox">
+    <div class="mhdr"><button class="mclose" onclick="hideModal('modal-change-plan')">✕</button><h2>Cambiar plan</h2><p>Selecciona el nuevo plan para tu academia.</p></div>
+    <div class="mbody">
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step active" id="ps1"><div class="step-num">1</div><span>Elegir plan</span></div>
+        <div class="step-line"></div>
+        <div class="step" id="ps2"><div class="step-num">2</div><span>Confirmar</span></div>
+        <div class="step-line"></div>
+        <div class="step" id="ps3"><div class="step-num">3</div><span>Pago</span></div>
+        <div class="step-line"></div>
+        <div class="step" id="ps4"><div class="step-num">4</div><span>Listo</span></div>
+      </div>
+      <!-- PASO 1 -->
+      <div id="plan-step-1">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="pc" onclick="selPlan(this,'starter','$99')"><div class="pname">Starter</div><div class="ppr">$99</div><div class="psub">MXN/mes · 20 alumnos</div><div class="pfeat">✓ 15% comisión</div><div class="pfeat">✓ IA incluida</div></div>
+          <div class="pc pop sel" onclick="selPlan(this,'growth','$299')"><div class="ptag">ACTUAL</div><div class="pname">Growth</div><div class="ppr">$299</div><div class="psub">MXN/mes · 100 alumnos</div><div class="pfeat">✓ 10% comisión</div><div class="pfeat">✓ IA incluida</div></div>
+          <div class="pc" onclick="selPlan(this,'scale','$799')"><div class="pname">Scale</div><div class="ppr">$799</div><div class="psub">MXN/mes · ilimitados</div><div class="pfeat">✓ 7% comisión</div><div class="pfeat">✓ IA incluida</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--gm);margin-top:12px">⚠️ Al hacer downgrade tus alumnos actuales mantienen su acceso. Las nuevas inscripciones se limitarán al nuevo plan.</div>
+      </div>
+      <!-- PASO 2 -->
+      <div id="plan-step-2" style="display:none">
+        <div style="background:var(--s2);border:1px solid var(--bord);border-radius:12px;padding:18px;margin-bottom:14px">
+          <div style="font-size:13px;color:var(--gm);margin-bottom:8px">Resumen del cambio:</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px">Plan actual</span><span class="badge b-hib">Growth · $299/mes</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:13px">Nuevo plan</span><span class="badge b-pub" id="plan-new-label">Scale · $799/mes</span></div>
+        </div>
+        <div style="font-size:13px;color:var(--gm);line-height:1.7">El cambio aplica desde tu próxima fecha de renovación (<strong style="color:var(--w)">15 feb 2025</strong>). No se cobran cargos proporcionales.</div>
+      </div>
+      <!-- PASO 3 -->
+      <div id="plan-step-3" style="display:none">
+        <div class="fg"><label class="fl">Número de tarjeta</label><input class="fi" placeholder="4242 4242 4242 4242"/></div>
+        <div class="c2"><div class="fg"><label class="fl">Vencimiento</label><input class="fi" placeholder="MM/AA"/></div><div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"/></div></div>
+        <div style="font-size:12px;color:var(--gm)">🔒 Pago procesado por Stripe. No almacenamos datos de tarjeta.</div>
+      </div>
+      <!-- PASO 4 -->
+      <div id="plan-step-4" style="display:none;text-align:center;padding:20px 0">
+        <div style="font-size:48px;margin-bottom:12px">🎉</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">¡Plan actualizado!</h3>
+        <p style="font-size:13px;color:var(--gm)">Tu nuevo plan entra en vigor el 15 de febrero de 2025. Recibirás un correo de confirmación.</p>
+      </div>
+    </div>
+    <div class="mfoot" id="plan-mfoot">
+      <button class="btn btn-ghost" onclick="hideModal('modal-change-plan')">Cancelar</button>
+      <button class="btn btn-primary" id="plan-next-btn" onclick="planNext()">Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OLVIDÉ MI CONTRASEÑA -->
+<div class="mo" id="modal-forgot" onclick="cmo(event,'modal-forgot')">
+  <div class="mbox sm">
+    <div class="mhdr"><button class="mclose" onclick="hideModal('modal-forgot')">✕</button><h2>Recuperar contraseña</h2><p>Te enviamos un enlace para restablecer tu contraseña.</p></div>
+    <div class="mbody">
+      <div class="fg"><label class="fl">Correo electrónico registrado</label><input class="fi" type="email" placeholder="tu@correo.com" id="forgot-email"/></div>
+      <div style="font-size:12px;color:var(--gm)">Recibirás un correo con instrucciones en los próximos 5 minutos. Revisa también tu carpeta de spam.</div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="hideModal('modal-forgot')">Cancelar</button>
+      <button class="btn btn-primary" onclick="sendReset()">Enviar enlace →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: POLÍTICA DE PRIVACIDAD -->
+<div class="mo" id="modal-privacy" onclick="cmo(event,'modal-privacy')">
+  <div class="mbox">
+    <div class="mhdr"><button class="mclose" onclick="hideModal('modal-privacy')">✕</button><h2>Política de Privacidad</h2><p>Última actualización: enero 2025</p></div>
+    <div class="mbody" style="font-size:13px;color:var(--gm);line-height:1.8">
+      <p style="margin-bottom:12px"><strong style="color:var(--w)">1. Información que recopilamos</strong><br/>Recopilamos nombre, correo electrónico, información de pago (procesada por Stripe) y datos de uso de la plataforma para ofrecer el servicio.</p>
+      <p style="margin-bottom:12px"><strong style="color:var(--w)">2. Uso de la información</strong><br/>Utilizamos tus datos para procesar pagos, emitir certificados, enviar comunicaciones del servicio y mejorar la plataforma. No vendemos datos a terceros.</p>
+      <p style="margin-bottom:12px"><strong style="color:var(--w)">3. Almacenamiento y seguridad</strong><br/>Los datos se almacenan en servidores seguros. Los pagos son procesados exclusivamente por Stripe; PLATTFORM no almacena datos de tarjetas bancarias.</p>
+      <p style="margin-bottom:12px"><strong style="color:var(--w)">4. Derechos del usuario</strong><br/>Tienes derecho a acceder, corregir o eliminar tus datos. Contáctanos a privacidad@plattform.mx para ejercer tus derechos.</p>
+      <p><strong style="color:var(--w)">5. Contacto</strong><br/>Para dudas sobre privacidad: privacidad@plattform.mx · Ciudad de México, México.</p>
+    </div>
+    <div class="mfoot"><button class="btn btn-primary" onclick="hideModal('modal-privacy')">Entendido</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="ti">✓</span><span id="tmsg">OK</span></div>
+
+<script>
+// DATA
+const COURSES=[
+  {title:'Estrategia Empresarial en la Era Digital',cat:'Negocios',price:'$1,499',raw:1499,desc:'Aprende a diseñar y ejecutar estrategias empresariales efectivas. Desarrollado por el Dr. Alejandro Ríos con 15 años de experiencia académica y empresarial.'},
+  {title:'Introducción al Uso de Claude — IA Práctica',cat:'Tecnología',price:'$899',raw:899,desc:'Domina Claude desde cero. Aprende prompting efectivo, casos de uso profesionales y cómo integrar IA en tu flujo de trabajo diario. 4 módulos completos.'},
+  {title:'Marketing Digital con Resultados Reales',cat:'Marketing',price:'$999',raw:999,desc:'Estrategias probadas de marketing digital para generar leads, ventas y crecimiento medible. SEO, campañas pagadas y automatización.'},
+  {title:'Finanzas Personales e Inversión desde Cero',cat:'Finanzas',price:'$799',raw:799,desc:'Aprende a manejar tu dinero, construir un fondo de emergencia, invertir en bolsa y planificar tu retiro. Sin jerga innecesaria.'},
+  {title:'Liderazgo Transformacional en Organizaciones',cat:'Liderazgo',price:'$1,299',raw:1299,desc:'Desarrolla habilidades de liderazgo para inspirar equipos, gestionar el cambio y construir culturas de alto rendimiento.'},
+  {title:'Diseño UX/UI para Proyectos Digitales',cat:'Diseño',price:'$1,699',raw:1699,desc:'Domina los principios de diseño centrado en el usuario. Interfaces digitales hermosas y funcionales con Figma.'},
+];
+const SDB={
+  courses:[
+    {id:'CRS-001',name:'Estrategia Empresarial en la Era Digital',meta:'Dr. Alejandro Ríos · 320 alumnos · PUBLICADO',type:'curso',icon:'📊'},
+    {id:'CRS-002',name:'Introducción al Uso de Claude',meta:'PLATTFORM Academy · 412 alumnos · PUBLICADO',type:'curso',icon:'🤖'},
+    {id:'CRS-004',name:'Innovación y Modelos de Negocio',meta:'Dr. Alejandro Ríos · 0 alumnos · BORRADOR',type:'curso',icon:'💡'},
+  ],
+  instructors:[
+    {id:'INS-001',name:'Dr. Alejandro Ríos',meta:'UNAM · 4 cursos · $42,800 · Plan Growth · Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-002',name:'Mtra. Sofía Mendoza',meta:'ITESM · 2 cursos · $38,200 · Plan Scale · Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-003',name:'Lic. Carlos Vega',meta:'ULA · 1 curso · $12,400 · Plan Starter · Activo',type:'instructor',icon:'🎓'},
+  ],
+  students:[
+    {id:'STU-001',name:'María González',meta:'maria@gmail.com · 3 cursos · 85% promedio · ACTIVO',type:'alumno',icon:'👤'},
+    {id:'STU-002',name:'Roberto Hernández',meta:'roberto@hotmail.com · 1 curso · Certificado obtenido',type:'alumno',icon:'👤'},
+    {id:'STU-004',name:'Pedro Salinas',meta:'pedro@gmail.com · 0 cursos · SUSPENDIDO',type:'alumno',icon:'👤'},
+  ]
+};
+let curIdx=0,loggedIn=false,pendingBuy=false,sf_='all',planStep=1,selectedPlan='growth';
+
+// NAV
+function go(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active');}
+function switchRole(n,tab){document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');go(n);}
+function showAuth(t){go('auth');authV(t);document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));}
+function authV(t){document.getElementById('auth-login').style.display=t==='login'?'block':'none';document.getElementById('auth-register').style.display=t==='register'?'block':'none';}
+
+// VIEWS
+function iv(n,el){
+  if(el){document.querySelectorAll('#screen-instructor .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','courses','create','students','earnings','transactions','profile','plan','claude-course'].forEach(v=>{const e=document.getElementById('iv-'+v);if(e)e.style.display='none';});
+  const t=document.getElementById('iv-'+n);if(t)t.style.display='block';
+}
+function sv(n,el){
+  if(el){document.querySelectorAll('#screen-student .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','courses','lesson','certs'].forEach(v=>{const e=document.getElementById('sv-'+v);if(e)e.style.display='none';});
+  const t=document.getElementById('sv-'+n);if(t)t.style.display='block';
+}
+function adv(n,el){
+  if(el){document.querySelectorAll('#screen-admin .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','users','courses','transactions','rev-rent','rev-comm'].forEach(v=>{const e=document.getElementById('adv-'+v);if(e)e.style.display='none';});
+  const t=document.getElementById('adv-'+n);if(t)t.style.display='block';
+}
+function stab(id,el){
+  document.querySelectorAll('.titem').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');document.getElementById(id).classList.add('active');
+}
+
+// MODAL
+function showModal(id){document.getElementById(id).classList.add('active');}
+function hideModal(id){document.getElementById(id).classList.remove('active');}
+function cmo(e,id){if(e.target===document.getElementById(id))hideModal(id);}
+
+// COURSE MODAL
+function openCM(i){
+  curIdx=i;const c=COURSES[i];
+  document.getElementById('m-title').textContent=c.title;
+  document.getElementById('m-desc').textContent=c.desc;
+  document.getElementById('m-cat').textContent=c.cat;
+  document.getElementById('m-price').innerHTML=c.price+' <small style="font-size:13px;color:var(--gm);font-weight:400">MXN</small>';
+  showModal('modal-course');
+}
+function requireLogin(){
+  hideModal('modal-course');
+  if(loggedIn){goCheckout();}
+  else{pendingBuy=true;showAuth('login');showToast('Inicia sesión para continuar con tu compra 🔐','info');}
+}
+function handleLogin(){
+  loggedIn=true;showToast('Sesión iniciada ✓','success');
+  if(pendingBuy){pendingBuy=false;setTimeout(()=>goCheckout(),400);}else{go('public');}
+}
+function goCheckout(){
+  const c=COURSES[curIdx];
+  document.getElementById('co-title').textContent=c.title;
+  document.getElementById('co-price').textContent=c.price+' MXN';
+  document.getElementById('co-total').textContent=c.price+' MXN';
+  document.getElementById('co-disc-row').style.display='none';
+  document.getElementById('coup').value='';
+  go('checkout');
+}
+function aplyCoup(){
+  const code=document.getElementById('coup').value.trim().toUpperCase();
+  const c=COURSES[curIdx];
+  if(code==='PROMO20'||code==='DESC20'){
+    const d=Math.round(c.raw*.2),tot=c.raw-d;
+    document.getElementById('co-disc').textContent='-$'+d+' MXN';
+    document.getElementById('co-disc-row').style.display='flex';
+    document.getElementById('co-total').textContent='$'+tot+' MXN';
+    showToast('Cupón aplicado: 20% de descuento ✓','success');
+  }else{showToast('Cupón no válido','error');}
+}
+function completePurchase(){
+  go('student');document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[2].classList.add('active');
+  showToast('¡Pago exitoso! Acceso activado 🎉','success');
+}
+
+// AUTH
+function arole(el,role){
+  document.querySelectorAll('.ropt').forEach(r=>r.classList.remove('active'));el.classList.add('active');
+  const box=document.getElementById('plan-reg-box'),btn=document.getElementById('reg-btn');
+  if(role==='instructor'){box.style.display='block';btn.textContent='Crear cuenta y activar plan →';}
+  else{box.style.display='none';btn.textContent='Crear cuenta →';}
+}
+function pp(el){document.querySelectorAll('#plan-reg-box .pc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+
+// PLAN CHANGE
+function selPlan(el,name,price){
+  document.querySelectorAll('#plan-step-1 .pc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
+  selectedPlan=name;
+  document.getElementById('plan-new-label').textContent=name.charAt(0).toUpperCase()+name.slice(1)+' · '+price+'/mes';
+}
+function planNext(){
+  if(planStep===1){
+    planStep=2;
+    document.getElementById('plan-step-1').style.display='none';
+    document.getElementById('plan-step-2').style.display='block';
+    document.getElementById('ps2').classList.add('active');
+    document.getElementById('plan-next-btn').textContent='Confirmar cambio →';
+  }else if(planStep===2){
+    planStep=3;
+    document.getElementById('plan-step-2').style.display='none';
+    document.getElementById('plan-step-3').style.display='block';
+    document.getElementById('ps3').classList.add('active');
+    document.getElementById('plan-next-btn').textContent='Pagar y activar →';
+  }else if(planStep===3){
+    planStep=4;
+    document.getElementById('plan-step-3').style.display='none';
+    document.getElementById('plan-step-4').style.display='block';
+    document.getElementById('ps4').classList.add('active');
+    document.getElementById('plan-mfoot').innerHTML='<button class="btn btn-primary" onclick="hideModal(\'modal-change-plan\');planStep=1;resetPlanSteps()">Cerrar</button>';
+    showToast('Plan actualizado exitosamente 🎉','success');
+  }
+}
+function resetPlanSteps(){
+  planStep=1;
+  ['plan-step-1','plan-step-2','plan-step-3','plan-step-4'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(el)el.style.display=i===0?'block':'none';
+  });
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(el){el.classList.remove('active','done');if(i===0)el.classList.add('active');}
+  });
+  document.getElementById('plan-mfoot').innerHTML='<button class="btn btn-ghost" onclick="hideModal(\'modal-change-plan\')">Cancelar</button><button class="btn btn-primary" id="plan-next-btn" onclick="planNext()">Continuar →</button>';
+}
+
+// FORGOT PASSWORD
+function sendReset(){
+  const e=document.getElementById('forgot-email').value;
+  if(!e){showToast('Ingresa tu correo electrónico','error');return;}
+  hideModal('modal-forgot');
+  showToast('Enlace enviado a '+e+' ✉️','success');
+}
+
+// FILTERS
+function pf(el){document.querySelectorAll('#screen-public .ftag').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+function sf(f,el){sf_=f;document.querySelectorAll('#adv-overview .ftag').forEach(t=>t.classList.remove('active'));el.classList.add('active');adSearch(document.getElementById('asearch').value);}
+
+// ADMIN SEARCH
+function adSearch(q){
+  const sl=document.getElementById('sl'),se=document.getElementById('se'),sh=document.getElementById('sh'),sc=document.getElementById('sc');
+  if(!q||q.length<2){sl.innerHTML='';se.style.display='none';sh.style.display='block';sc.style.display='none';return;}
+  sh.style.display='none';
+  const ql=q.toLowerCase();
+  let pool=[];
+  if(sf_==='all'||sf_==='courses')pool=[...pool,...SDB.courses];
+  if(sf_==='all'||sf_==='instructors')pool=[...pool,...SDB.instructors];
+  if(sf_==='all'||sf_==='students')pool=[...pool,...SDB.students];
+  const res=pool.filter(r=>r.name.toLowerCase().includes(ql)||r.meta.toLowerCase().includes(ql)||r.id.toLowerCase().includes(ql));
+  if(!res.length){sl.innerHTML='';se.style.display='block';sc.style.display='none';return;}
+  se.style.display='none';sc.style.display='block';sc.textContent=res.length+' resultado'+(res.length!==1?'s':'')+' encontrado'+(res.length!==1?'s':'');
+  sl.innerHTML=res.map(r=>`<div style="display:flex;align-items:center;gap:11px;padding:10px 13px;background:var(--s1);border:1px solid var(--bord);border-radius:10px;margin-bottom:6px;transition:border .2s" onmouseover="this.style.borderColor='rgba(59,130,246,.4)'" onmouseout="this.style.borderColor='var(--bord)'"><span style="font-size:19px">${r.icon}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">${r.name}</div><div style="font-size:12px;color:var(--gm);margin-top:1px">${r.meta}</div></div><span style="background:var(--s2);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--bcy);text-transform:capitalize;white-space:nowrap">${r.type}</span><span style="font-size:10px;color:var(--gm);white-space:nowrap">${r.id}</span><div style="display:flex;gap:4px;flex-shrink:0"><button class="btn btn-outline btn-xs" onclick="showToast('Perfil: ${r.name.split(' ')[0]}','info')">Ver</button><button class="btn btn-warning btn-xs" onclick="showToast('${r.name.split(' ')[0]} suspendido/a','info')">Suspender</button><button class="btn btn-ghost btn-xs" onclick="showToast('Editando...','info')">Editar</button></div></div>`).join('');
+}
+
+// QUIZ
+function qo(el){el.closest('.qq').querySelectorAll('.qopt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+
+// LESSON NAVIGATION
+const LESSONS=['l1-1','l1-2','l1-3','quiz1','l2-1','l2-2','l2-3','l2-4','quiz2','l3-1','l3-2','l3-3','l3-4','quiz3','l4-1','l4-2','l4-3','final-eval'];
+let curLesson='l2-2';
+
+function loadLesson(id){
+  curLesson=id;
+  // Update sidebar active state
+  document.querySelectorAll('#sv-lesson .litem, #sv-lesson .litem-eval').forEach(el=>el.classList.remove('active'));
+  const area=document.getElementById('les-content-area');
+
+  if(id==='quiz1'||id==='quiz2'||id==='quiz3'){
+    const mnum={'quiz1':'01','quiz2':'02','quiz3':'03'}[id];
+    document.getElementById('les-breadcrumb-text').textContent='MÓDULO '+mnum+' · QUIZ';
+    area.innerHTML=`<div class="les-body">
+      <div class="les-type-badge">MÓDULO ${mnum} · EVALUACIÓN</div>
+      <h1 class="les-quiz-header">Quiz del Módulo ${mnum}</h1>
+      <p class="les-quiz-sub">Responde las preguntas. Necesitas 70% para continuar.</p>
+      <div class="qq"><div class="qqnum">PREGUNTA 01</div><div class="qqt">¿Cuál es la estructura recomendada para escribir un prompt efectivo?</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">A</div>Solo la instrucción principal</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">B</div>CIFE: Contexto, Instrucción, Formato, Ejemplo</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">C</div>Pregunta directa sin contexto</div>
+      </div>
+      <div class="qq"><div class="qqnum">PREGUNTA 02</div><div class="qqt">¿Qué ventaja tiene darle a Claude un texto tuyo como referencia?</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">A</div>Claude escribe más rápido</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">B</div>Claude puede replicar tu estilo de escritura</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">C</div>Reduce el costo de tokens</div>
+      </div>
+      <div class="qq"><div class="qqnum">PREGUNTA 03</div><div class="qqt">¿Cómo se le pide a Claude que evite frases genéricas o clichés?</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">A</div>Usando mayúsculas en el prompt</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">B</div>Especificando explícitamente "evita frases cliché" en el prompt</div>
+        <div class="qopt" onclick="qo(this)"><div class="qopt-letter">C</div>No es posible controlarlo</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:20px">
+        <button class="btn btn-primary" onclick="submitQuiz()">Enviar respuestas →</button>
+      </div>
+    </div>`;
+  } else if(id==='final-eval'){
+    document.getElementById('les-breadcrumb-text').textContent='EVALUACIÓN FINAL';
+    area.innerHTML=`<div class="les-body">
+      <div class="eval-card">
+        <div class="eval-icon">🎓</div>
+        <div class="eval-title">Evaluación Final</div>
+        <div class="eval-sub">Demuestra lo que aprendiste en el curso completo.<br/>Necesitas 70% para obtener tu certificado.</div>
+        <div class="eval-rules">
+          <div class="eval-rule"><div class="eval-rule-val">10</div><div class="eval-rule-lbl">Preguntas</div></div>
+          <div class="eval-rule"><div class="eval-rule-val">70%</div><div class="eval-rule-lbl">Mínimo</div></div>
+          <div class="eval-rule"><div class="eval-rule-val">∞</div><div class="eval-rule-lbl">Intentos</div></div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="startFinalEval()">Comenzar evaluación →</button>
+      </div>
+    </div>`;
+  } else {
+    // Regular lesson content
+    const lesData={
+      'l1-1':{mod:'01',num:'1.1',title:'Introducción a los modelos de lenguaje',sub:'Qué son los LLMs, cómo funcionan y por qué Claude es diferente a un buscador.',video:'youtube.com/watch?v=plattform-l1-1 · 22 min',
+        body:`<p>Los modelos de lenguaje grande (LLMs) son sistemas de inteligencia artificial entrenados en enormes volúmenes de texto para comprender y generar lenguaje natural. A diferencia de un buscador que indexa páginas, un LLM <strong>comprende contexto, infiere intenciones y genera respuestas originales</strong>.</p>
+        <h3>¿Cómo funciona realmente?</h3><p>Durante el entrenamiento, el modelo aprende patrones estadísticos del lenguaje: qué palabras tienden a aparecer juntas, cómo se estructuran los argumentos, qué connota cada término en distintos contextos. El resultado es un sistema capaz de <em>razonar sobre texto</em> con una flexibilidad sin precedentes.</p>
+        <div class="les-callout"><strong>Diferencia clave:</strong> Un buscador te encuentra información que alguien ya escribió. Un LLM como Claude <em>genera</em> una respuesta nueva, adaptada específicamente a tu pregunta y contexto.</div>
+        <h4>Lo que esto significa para ti</h4><ul><li>Puedes pedirle que adapte información a tu contexto específico</li><li>Puede razonar sobre documentos que tú le compartes</li><li>Entiende instrucciones complejas con múltiples condiciones</li><li>Mantiene el hilo de una conversación larga sin perder contexto</li></ul>`,
+        keys:['Los LLMs generan respuestas nuevas, no recuperan información existente','Claude entiende contexto y matices del lenguaje natural','La diferencia con un buscador es fundamental para usarlo bien','La calidad del output depende directamente de la calidad del input']},
+      'l1-2':{mod:'01',num:'1.2',title:'Claude vs. ChatGPT vs. Gemini',sub:'Análisis comparativo de los principales modelos de IA disponibles en 2025.',video:'youtube.com/watch?v=plattform-l1-2 · 15 min',
+        body:`<p>Los tres modelos líderes tienen fortalezas distintas. Entender las diferencias te permite elegir la herramienta correcta para cada tarea — o usar Claude con mayor confianza sabiendo en qué brilla.</p>
+        <h3>Ventajas de Claude</h3><p>Claude destaca por su <strong>ventana de contexto extendida</strong> (ideal para documentos largos), menor tasa de alucinaciones en tareas analíticas, y un razonamiento más estructurado para problemas complejos. Su tono es más cuidadoso y matizado.</p>
+        <h4>Cuándo usar cada modelo</h4><ul><li><strong>Claude</strong> — Documentos largos, análisis profundo, redacción con matiz, código seguro</li><li><strong>ChatGPT</strong> — Integración con plugins, generación de imágenes (DALL·E), uso general</li><li><strong>Gemini</strong> — Integración con Google Workspace, búsqueda en tiempo real</li></ul>`,
+        keys:['Claude tiene menor tasa de alucinaciones en análisis complejos','La ventana de contexto extendida es ideal para documentos largos','No hay un modelo "mejor" — cada uno tiene casos de uso óptimos','Conocer las diferencias te hace más eficiente con todas las herramientas']},
+      'l2-1':{mod:'02',num:'2.1',title:'Anatomía de un buen prompt',sub:'La estructura CIFE para obtener resultados consistentes y profesionales.',video:'youtube.com/watch?v=plattform-l2-1 · 20 min',
+        body:`<p>El prompting efectivo es una habilidad aprendible. No es magia — es estructura. El framework CIFE es la base de cualquier prompt que funcione de forma consistente.</p>
+        <h3>El framework CIFE</h3><ol><li><strong>Contexto</strong> — Quién eres, cuál es la situación, a quién va dirigido el output</li><li><strong>Instrucción</strong> — Qué quieres que haga exactamente, con verbos claros de acción</li><li><strong>Formato</strong> — Extensión, estructura, tono, formato de salida</li><li><strong>Ejemplo</strong> — Un modelo de referencia (opcional pero muy poderoso)</li></ol>
+        <div class="les-callout"><strong>Regla de oro:</strong> Si Claude te da una respuesta que no querías, el problema casi siempre está en el prompt, no en el modelo.</div>`,
+        keys:['CIFE = Contexto, Instrucción, Formato, Ejemplo','Un prompt vago produce resultados vagos — sé específico','El "Formato" le dice a Claude exactamente cómo estructurar la respuesta','Agregar un ejemplo de referencia mejora la precisión en 40-60%']},
+    };
+    const d=lesData[id]||{mod:'02',num:'2.2',title:'Prompts para redacción profesional',sub:'Plantillas y técnicas para emails, reportes y propuestas.',video:'youtube.com/watch?v=plattform-l2-2 · 18 min',body:'<p>Contenido de esta lección...</p>',keys:['Punto clave 1','Punto clave 2']};
+    document.getElementById('les-breadcrumb-text').textContent=`MÓDULO ${d.mod} · LECCIÓN ${d.num}`;
+    area.innerHTML=`<div class="les-body">
+      <div class="les-type-badge">MÓDULO ${d.mod} · LECCIÓN ${d.num}</div>
+      <h1 class="les-title">${d.title}</h1>
+      <p class="les-subtitle">${d.sub}</p>
+      <div class="les-divider"></div>
+      <div class="les-video-block">
+        <div class="les-video-icon">▶</div>
+        <div class="les-video-info"><div class="les-video-label">Video de la lección</div><div class="les-video-url"><a href="#" onclick="showToast('Abriendo video...','info')">${d.video}</a></div></div>
+        <button class="btn btn-outline btn-sm" onclick="showToast('Abriendo video...','info')">Ver →</button>
+      </div>
+      <div class="les-content">${d.body}</div>
+      <div class="les-keypoints">
+        <div class="les-keypoints-label">Puntos clave</div>
+        ${d.keys.map(k=>`<div class="les-kp-item">${k}</div>`).join('')}
+      </div>
+      <div style="border-top:1px solid rgba(59,130,246,.1);padding-top:24px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--gm)">¿Útil? <span style="cursor:pointer;font-size:16px" onclick="showToast('¡Gracias!','success')">👍</span> <span style="cursor:pointer;font-size:16px" onclick="showToast('Lo mejoraremos','info')">👎</span></div>
+        <button class="btn btn-primary" onclick="markDone()">Marcar como completada ✓</button>
+      </div>
+    </div>`;
+  }
+}
+
+function toggleMod(id){
+  const el=document.getElementById(id);
+  const arr=document.getElementById('arr-'+id);
+  if(!el)return;
+  if(el.style.maxHeight==='0px'||el.style.maxHeight===''){el.style.maxHeight=el.scrollHeight+'px';arr.classList.add('open');}
+  else{el.style.maxHeight='0px';arr.classList.remove('open');}
+}
+
+function lesNav(dir){
+  const idx=LESSONS.indexOf(curLesson);
+  const next=LESSONS[Math.max(0,Math.min(LESSONS.length-1,idx+dir))];
+  loadLesson(next);
+  showToast(dir>0?'Siguiente lección cargada →':'Lección anterior ←','info');
+}
+
+function markDone(){
+  showToast('¡Lección completada! Avanzando... ✓','success');
+  setTimeout(()=>lesNav(1),800);
+}
+
+function submitQuiz(){
+  const area=document.getElementById('les-content-area');
+  area.innerHTML=`<div class="les-body">
+    <div class="score-result">
+      <div class="score-num">90<span style="font-size:28px;color:var(--grn)">%</span></div>
+      <div class="score-label">3 de 3 respuestas correctas</div>
+      <div class="badge b-pub" style="font-size:13px;padding:6px 16px;margin-bottom:20px">✓ APROBADO</div>
+      <p style="font-size:14px;color:var(--gm);margin-bottom:20px">Excelente. Has demostrado dominio de los conceptos del módulo.</p>
+      <button class="btn btn-primary btn-lg" onclick="lesNav(1)">Continuar al Módulo 03 →</button>
+    </div>
+  </div>`;
+}
+
+function startFinalEval(){
+  const area=document.getElementById('les-content-area');
+  area.innerHTML=`<div class="les-body">
+    <div class="les-type-badge">EVALUACIÓN FINAL</div>
+    <h1 class="les-quiz-header">Evaluación Final del Curso</h1>
+    <p class="les-quiz-sub">10 preguntas · Puntaje mínimo 70% · Resultado inmediato</p>
+    ${[
+      ['¿Qué significa el acrónimo CIFE en prompting?','Solo la instrucción principal','Contexto, Instrucción, Formato, Ejemplo','Comando, Input, Función, Ejecución'],
+      ['¿Cuál es la principal ventaja de Claude frente a un buscador?','Es más rápido','Genera respuestas nuevas adaptadas al contexto','Tiene acceso a más páginas web'],
+      ['¿Qué es una "alucinación" en un modelo de IA?','Cuando el modelo es demasiado creativo','Cuando el modelo genera información falsa con apariencia de verdadera','Cuando el modelo responde muy lento'],
+      ['¿Para qué tipo de tareas destaca Claude especialmente?','Generación de imágenes','Análisis de documentos largos y razonamiento estructurado','Búsqueda en tiempo real'],
+    ].map((q,i)=>`<div class="qq"><div class="qqnum">PREGUNTA 0${i+1}</div><div class="qqt">${q[0]}</div>${q.slice(1).map((opt,j)=>`<div class="qopt" onclick="qo(this)"><div class="qopt-letter">${String.fromCharCode(65+j)}</div>${opt}</div>`).join('')}</div>`).join('')}
+    <div style="display:flex;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-primary btn-lg" onclick="submitFinal()">Enviar evaluación →</button>
+    </div>
+  </div>`;
+}
+
+function submitFinal(){
+  const area=document.getElementById('les-content-area');
+  area.innerHTML=`<div class="les-body">
+    <div class="score-result">
+      <div class="score-num">92<span style="font-size:28px;color:var(--grn)">%</span></div>
+      <div class="score-label">9.2 de 10 puntos · Aprobado con distinción</div>
+      <div class="badge b-pub" style="font-size:14px;padding:8px 20px;margin:12px auto 20px;display:inline-flex">🎓 CURSO COMPLETADO</div>
+      <p style="font-size:14px;color:var(--gm);margin-bottom:24px">Felicidades, María. Has completado el curso con una calificación excelente.<br/>Tu certificado ha sido generado y está disponible en tu perfil.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="showCert()">Ver mi certificado 🏆</button>
+        <button class="btn btn-outline btn-lg" onclick="sv('certs',document.querySelectorAll('#screen-student .sb-item')[3])">Ir a Certificados</button>
+      </div>
+    </div>
+  </div>`;
+  showToast('¡Curso completado! Certificado generado 🎉','success');
+}
+
+// AI GEN
+function genAI(){
+  const t=document.getElementById('ai-tema');
+  if(!t.value.trim()){showToast('Escribe el tema del curso primero','error');return;}
+  const r=document.getElementById('ai-res'),g=document.getElementById('ai-gen'),o=document.getElementById('ai-out');
+  r.classList.add('vis');g.style.display='flex';o.style.display='none';
+  setTimeout(()=>{g.style.display='none';o.style.display='block';showToast('Estructura generada con IA ✨','success');},2400);
+}
+
+// CERT
+function showCert(){document.getElementById('cert-screen').style.display='block';document.body.style.overflow='hidden';}
+function hideCert(){document.getElementById('cert-screen').style.display='none';document.body.style.overflow='';}
+
+// FAQ
+function toggleFaq(el){
+  const a=el.nextElementSibling,arr=el.querySelector('.faq-arr');
+  const isOpen=a.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.faq-arr').forEach(x=>x.classList.remove('open'));
+  if(!isOpen){a.classList.add('open');arr.classList.add('open');}
+}
+
+// TOAST
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  document.getElementById('tmsg').textContent=msg;
+  t.className='toast '+type+' show';
+  t.querySelector('.ti').textContent=type==='success'?'✓':type==='error'?'✕':'ℹ';
+  clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3400);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+> plattform-temp@0.1.0 seed
+> ts-node prisma/seed.ts
+
+(node:5640) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/azuln/Documentos/flowi_solutions/Plattform/prisma/seed.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\azuln\Documentos\flowi_solutions\Plattform\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PrismaClientUnknownRequestError: 
+Invalid `prisma.platformPlan.createMany()` invocation:
+
+
+Error occurred during query execution:
+ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: "42P05", message: "prepared statement \"s0\" already exists", severity: "ERROR", detail: None, column: None, hint: None }), transient: false })
+    at $n.handleRequestError (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\@prisma\client\runtime\library.js:121:7505)
+    at $n.handleAndLogRequestError (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async main (file:///C:/Users/azuln/Documentos/flowi_solutions/Plattform/prisma/seed.ts:7:3) {
+  clientVersion: '5.22.0'
+}

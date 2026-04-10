@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PLATTFORM — Crea. Vende. Escala.</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --blue-deep:#0A1F44; --blue-cobalt:#1E3A8A; --blue-electric:#3B82F6; --blue-cyan:#06B6D4;
+  --white:#FFFFFF; --gray-light:#F3F4F6; --gray-mid:#6B7280; --gray-dark:#374151;
+  --gradient:linear-gradient(135deg,#06B6D4,#3B82F6,#1E3A8A);
+  --gradient-btn:linear-gradient(90deg,#06B6D4,#3B82F6);
+  --surface:#0f1829; --surface2:#152035; --surface3:#1a2a45;
+  --border:rgba(59,130,246,0.15); --glow:0 0 20px rgba(59,130,246,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--blue-deep);color:var(--white);min-height:100vh;overflow-x:hidden;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(10,31,68,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:2px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;border:1px solid var(--border);}
+.nav-tab{padding:6px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gray-mid);border:none;background:transparent;font-family:'Poppins',sans-serif;}
+.nav-tab.active{background:var(--gradient-btn);color:#fff;box-shadow:var(--glow);}
+.nav-tab:hover:not(.active){color:var(--white);background:var(--surface3);}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+
+/* BUTTONS */
+.btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:'Poppins',sans-serif;}
+.btn-ghost{background:transparent;color:var(--gray-mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--white);border-color:var(--blue-electric);}
+.btn-primary{background:var(--gradient-btn);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,0.45);}
+.btn-outline{background:transparent;color:var(--blue-electric);border:1px solid var(--blue-electric);}
+.btn-outline:hover{background:rgba(59,130,246,0.1);}
+.btn-danger{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
+.btn-success{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:10px;}
+.btn-sm{padding:5px 14px;font-size:12px;border-radius:6px;}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── PÚBLICO ─────────────────── */
+.hero{position:relative;min-height:580px;display:flex;align-items:center;overflow:hidden;padding:80px 40px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(59,130,246,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 80%,rgba(6,182,212,.12) 0%,transparent 60%),var(--blue-deep);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:60px 60px;}
+.hero-content{position:relative;z-index:2;max-width:600px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:500;color:var(--blue-cyan);margin-bottom:24px;}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--blue-cyan);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero h1{font-size:52px;font-weight:800;line-height:1.1;margin-bottom:20px;}
+.hero h1 em{font-style:normal;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:17px;color:var(--gray-mid);line-height:1.7;margin-bottom:36px;font-weight:300;}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+.hero-stats{position:absolute;right:80px;top:50%;transform:translateY(-50%);z-index:2;display:flex;flex-direction:column;gap:16px;}
+.stat-card{background:rgba(21,32,53,.9);border:1px solid var(--border);border-radius:14px;padding:20px 28px;backdrop-filter:blur(8px);}
+.stat-card .num{font-size:32px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card .lbl{font-size:12px;color:var(--gray-mid);margin-top:2px;}
+.section{padding:60px 40px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.section-title{font-size:22px;font-weight:700;}
+.section-title span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;}
+.filter-tag{padding:7px 18px;border-radius:50px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--border);color:var(--gray-mid);background:transparent;font-family:'Poppins',sans-serif;}
+.filter-tag.active,.filter-tag:hover{background:var(--gradient-btn);color:#fff;border-color:transparent;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.course-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .25s;cursor:pointer;}
+.course-card:hover{transform:translateY(-4px);border-color:rgba(59,130,246,.4);box-shadow:0 8px 32px rgba(59,130,246,.15);}
+.course-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;}
+.ct1{background:linear-gradient(135deg,#0f2952,#1e3a8a);}
+.ct2{background:linear-gradient(135deg,#064e5e,#0891b2);}
+.ct3{background:linear-gradient(135deg,#1a1a4e,#3b4bc8);}
+.ct4{background:linear-gradient(135deg,#0d3320,#059669);}
+.ct5{background:linear-gradient(135deg,#3b0764,#7c3aed);}
+.ct6{background:linear-gradient(135deg,#431407,#c2410c);}
+.course-badge-cat{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;color:#fff;}
+.course-body{padding:20px;}
+.course-instructor{font-size:12px;color:var(--blue-cyan);font-weight:500;margin-bottom:6px;}
+.course-title{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:10px;}
+.course-meta{display:flex;gap:14px;font-size:12px;color:var(--gray-mid);margin-bottom:14px;}
+.course-footer{display:flex;align-items:center;justify-content:space-between;}
+.course-price{font-size:20px;font-weight:700;color:var(--blue-cyan);}
+.course-price small{font-size:12px;color:var(--gray-mid);font-weight:400;}
+.stars{color:#f59e0b;font-size:12px;}
+
+/* ── DASHBOARD LAYOUT ─────────── */
+.dash-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px);}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--gray-mid);letter-spacing:1px;text-transform:uppercase;padding:8px 28px 4px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;margin:0 12px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gray-mid);}
+.sidebar-item:hover{background:var(--surface2);color:var(--white);}
+.sidebar-item.active{background:rgba(59,130,246,.15);color:var(--blue-electric);}
+.sidebar-item .icon{font-size:16px;width:20px;text-align:center;}
+.dash-main{padding:32px 40px;overflow-y:auto;max-height:calc(100vh - 64px);}
+.dash-greeting{margin-bottom:28px;}
+.dash-greeting h2{font-size:26px;font-weight:700;}
+.dash-greeting p{color:var(--gray-mid);font-size:14px;margin-top:4px;}
+
+/* CARDS & KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.kpi-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .2s;}
+.kpi-card:hover{border-color:rgba(59,130,246,.3);transform:translateY(-2px);}
+.kpi-label{font-size:12px;color:var(--gray-mid);font-weight:500;margin-bottom:8px;}
+.kpi-value{font-size:28px;font-weight:700;}
+.kpi-value.blue{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kpi-change{font-size:12px;color:#4ade80;margin-top:4px;}
+.kpi-change.down{color:#f87171;}
+.table-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;}
+.table-card-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.table-card-header h3{font-size:15px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(59,130,246,.05);}
+th{padding:12px 24px;text-align:left;font-size:11px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;}
+td{padding:14px 24px;font-size:13px;border-top:1px solid var(--border);}
+tr:hover td{background:rgba(59,130,246,.03);}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;}
+.status-published{background:rgba(34,197,94,.12);color:#4ade80;}
+.status-draft{background:rgba(107,114,128,.15);color:#9ca3af;}
+.status-hibernated{background:rgba(245,158,11,.12);color:#fbbf24;}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* FORMS */
+.form-group{margin-bottom:20px;}
+.form-label{font-size:13px;font-weight:600;color:var(--gray-mid);margin-bottom:8px;display:block;}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:14px;color:var(--white);font-family:'Poppins',sans-serif;transition:border .2s;outline:none;}
+.form-input:focus{border-color:var(--blue-electric);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.form-input::placeholder{color:var(--gray-mid);}
+textarea.form-input{resize:vertical;min-height:100px;}
+select.form-input option{background:var(--surface2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.create-panel{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:32px;}
+
+/* AI BOX */
+.ai-box{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.2);border-radius:12px;padding:20px;margin-bottom:24px;}
+.ai-box-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ai-icon{width:32px;height:32px;background:var(--gradient-btn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ai-box h4{font-size:14px;font-weight:600;}
+.ai-box p{font-size:13px;color:var(--gray-mid);}
+.ai-result{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:12px;display:none;}
+.ai-result.visible{display:block;}
+.ai-module{margin-bottom:12px;}
+.ai-module-title{font-size:13px;font-weight:600;color:var(--blue-electric);margin-bottom:4px;}
+.ai-lesson{font-size:12px;color:var(--gray-mid);padding:2px 0 2px 12px;border-left:2px solid var(--border);}
+.generating{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--blue-cyan);}
+.dot-anim span{animation:dotBounce .6s infinite alternate;display:inline-block;}
+.dot-anim span:nth-child(2){animation-delay:.2s}
+.dot-anim span:nth-child(3){animation-delay:.4s}
+@keyframes dotBounce{to{transform:translateY(-4px);opacity:.4}}
+
+/* PROGRESS */
+.progress-bar-wrap{background:var(--surface);border-radius:50px;height:8px;overflow:hidden;margin:6px 0;}
+.progress-bar{height:100%;border-radius:50px;background:var(--gradient-btn);transition:width .6s ease;}
+.enrolled-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.enrolled-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s;cursor:pointer;}
+.enrolled-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.35);}
+.enrolled-thumb{height:120px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.enrolled-body{padding:18px;}
+.enrolled-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.enrolled-instructor{font-size:12px;color:var(--blue-cyan);margin-bottom:12px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--gray-mid);}
+
+/* CERTS */
+.cert-card{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid rgba(6,182,212,.25);border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;}
+.cert-icon{width:48px;height:48px;background:var(--gradient-btn);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cert-info h4{font-size:14px;font-weight:600;margin-bottom:3px;}
+.cert-info p{font-size:12px;color:var(--gray-mid);}
+.cert-actions{margin-left:auto;display:flex;gap:8px;}
+
+/* LESSON */
+.lesson-layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 64px);}
+.lesson-main{padding:32px 40px;}
+.lesson-sidebar{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;}
+.lesson-sidebar-header{padding:20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;}
+.lesson-nav-item{padding:12px 20px;font-size:13px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;color:var(--gray-mid);display:flex;align-items:center;gap:10px;}
+.lesson-nav-item:hover{background:var(--surface2);color:var(--white);}
+.lesson-nav-item.active{background:rgba(59,130,246,.1);color:var(--white);border-left-color:var(--blue-electric);}
+.lesson-nav-item .check{color:#4ade80;}
+.video-placeholder{background:var(--surface2);border:1px solid var(--border);border-radius:12px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;overflow:hidden;}
+.video-placeholder::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(30,58,138,.5),rgba(6,182,212,.2));}
+.play-btn{position:relative;z-index:2;width:64px;height:64px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:all .2s;}
+.play-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.08);}
+.lesson-content-text{font-size:15px;line-height:1.8;color:#d1d5db;}
+.quiz-question{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:14px;}
+.quiz-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;font-size:13px;transition:all .2s;}
+.quiz-option:hover{border-color:var(--blue-electric);background:rgba(59,130,246,.05);}
+.quiz-option.selected{border-color:var(--blue-electric);background:rgba(59,130,246,.12);}
+
+/* ADMIN */
+.admin-kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;}
+.alert-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.alert-item:last-child{border-bottom:none;}
+.alert-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.alert-dot.yellow{background:#fbbf24;box-shadow:0 0 6px #fbbf24;}
+.alert-dot.red{background:#f87171;box-shadow:0 0 6px #f87171;}
+.alert-dot.green{background:#4ade80;box-shadow:0 0 6px #4ade80;}
+.alert-text{font-size:13px;flex:1;}
+.alert-time{font-size:11px;color:var(--gray-mid);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.rev-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.rev-row:last-child{border-bottom:none;}
+.rev-bar-wrap{flex:1;background:var(--surface);border-radius:50px;height:6px;}
+.rev-bar{height:6px;border-radius:50%;background:var(--gradient-btn);}
+.rev-amount{color:var(--blue-cyan);font-weight:600;min-width:70px;text-align:right;}
+
+/* PLAN */
+.plan-feature{font-size:12px;color:var(--white);padding:4px 0;display:flex;align-items:center;gap:6px;}
+.plan-feature::before{content:'✓';color:var(--blue-cyan);}
+
+/* AUTH */
+.auth-screen{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(59,130,246,.12) 0%,transparent 70%),var(--blue-deep);}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:440px;}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;}
+.auth-sub{font-size:13px;color:var(--gray-mid);text-align:center;margin-bottom:24px;}
+.role-selector{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;}
+.role-opt{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--gray-mid);}
+.role-opt:hover,.role-opt.active{border-color:var(--blue-electric);color:var(--white);background:rgba(59,130,246,.1);}
+.role-opt .role-icon{font-size:20px;display:block;margin-bottom:4px;}
+.auth-link{text-align:center;margin-top:16px;font-size:13px;color:var(--gray-mid);}
+.auth-link a{color:var(--blue-electric);cursor:pointer;}
+
+/* CHECKOUT */
+.checkout-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:500px;}
+.checkout-course{display:flex;gap:16px;background:var(--surface2);border-radius:12px;padding:16px;margin-bottom:24px;border:1px solid var(--border);}
+.checkout-thumb{width:64px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.price-breakdown{border-top:1px solid var(--border);padding-top:20px;margin-top:20px;}
+.price-row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;color:var(--gray-mid);}
+.price-row.total{color:var(--white);font-weight:700;font-size:16px;border-top:1px solid var(--border);padding-top:12px;margin-top:6px;}
+.price-row.total .amount{color:var(--blue-cyan);}
+.card-input-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.secure-badge{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gray-mid);margin-top:16px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.active{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-header{padding:32px 32px 24px;border-bottom:1px solid var(--border);position:relative;}
+.modal-close{position:absolute;top:20px;right:20px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--gray-mid);font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{color:#fff;}
+.modal-body{padding:28px 32px;}
+.modal-footer{padding:24px 32px;border-top:1px solid var(--border);display:flex;gap:12px;justify-content:flex-end;}
+.course-detail-meta{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0;}
+.detail-chip{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-mid);}
+.detail-chip strong{color:var(--white);}
+.syllabus h4{font-size:14px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.module{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:8px;}
+.module-title{font-size:13px;font-weight:600;color:var(--blue-electric);margin-bottom:6px;}
+.lesson-item{font-size:12px;color:var(--gray-mid);padding:3px 0;display:flex;align-items:center;gap:8px;}
+.lesson-item::before{content:'▸';color:var(--blue-cyan);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:10px;font-size:13px;z-index:500;transform:translateY(20px);opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(74,222,128,.3);}
+.toast.success .toast-icon{color:#4ade80;}
+.toast.info{border-color:rgba(59,130,246,.3);}
+.toast.info .toast-icon{color:var(--blue-electric);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--blue-cobalt)}
+
+@media(max-width:1024px){.hero-stats{display:none}.kpi-grid{grid-template-columns:1fr 1fr}.admin-kpi{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.dash-layout{grid-template-columns:1fr}.sidebar{display:none}.form-row{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <div class="nav-logo" onclick="showScreen('public')">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <rect x="2" y="18" width="5" height="12" rx="2" fill="url(#g1)"/>
+      <rect x="9" y="12" width="5" height="18" rx="2" fill="url(#g1)"/>
+      <rect x="16" y="6" width="5" height="24" rx="2" fill="url(#g1)"/>
+      <rect x="23" y="1" width="5" height="29" rx="2" fill="url(#g1)"/>
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06B6D4"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient>
+      </defs>
+    </svg>
+    <span class="logo-text">PLATTFORM</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchRole('public',this)">🌐 Público</button>
+    <button class="nav-tab" onclick="switchRole('instructor',this)">🎓 Instructor</button>
+    <button class="nav-tab" onclick="switchRole('student',this)">📚 Alumno</button>
+    <button class="nav-tab" onclick="switchRole('admin',this)">⚙️ Admin</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="showAuth('login')">Iniciar sesión</button>
+    <button class="btn btn-primary" onclick="showAuth('register')">Registrarse</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════
+     PÚBLICO
+═══════════════════════════════ -->
+<div id="screen-public" class="screen active">
+  <div class="hero">
+    <div class="hero-bg"></div><div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span></span>IA integrada para crear cursos</div>
+      <h1>Tu academia,<br/><em>sin fricción.</em></h1>
+      <p>Infraestructura para que profesores expertos creen, vendan y escalen su conocimiento. De idea a curso en minutos.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Crear mi academia →</button>
+        <button class="btn btn-ghost btn-lg" onclick="document.getElementById('cursos-sec').scrollIntoView({behavior:'smooth'})">Explorar cursos</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="num">1,240</div><div class="lbl">Alumnos activos</div></div>
+      <div class="stat-card"><div class="num">87</div><div class="lbl">Cursos publicados</div></div>
+      <div class="stat-card"><div class="num">4.8★</div><div class="lbl">Calificación promedio</div></div>
+    </div>
+  </div>
+  <div class="section" id="cursos-sec">
+    <div class="section-header">
+      <h2 class="section-title">Cursos <span>disponibles</span></h2>
+      <input class="form-input" style="width:220px;padding:8px 14px;font-size:13px" placeholder="🔍 Buscar cursos..."/>
+    </div>
+    <div class="filters">
+      <button class="filter-tag active" onclick="setPublicFilter(this)">Todos</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Negocios</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Tecnología</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Marketing</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Finanzas</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Liderazgo</button>
+      <button class="filter-tag" onclick="setPublicFilter(this)">Diseño</button>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card" onclick="openCourseModal(0)"><div class="course-thumb ct1">📊<span class="course-badge-cat">Negocios</span></div><div class="course-body"><div class="course-instructor">Dr. Alejandro Ríos · UNAM</div><div class="course-title">Estrategia Empresarial en la Era Digital</div><div class="course-meta"><span>⏱ 18h</span><span>📖 42 lecciones</span><span>🎓 320 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gray-mid)">4.9 (128 reseñas)</div></div><div class="course-price">$1,499 <small>MXN</small></div></div></div></div>
+      <div class="course-card" onclick="openCourseModal(1)"><div class="course-thumb ct2">💻<span class="course-badge-cat">Tecnología</span></div><div class="course-body"><div class="course-instructor">Mtra. Sofía Mendoza · ITESM</div><div class="course-title">Inteligencia Artificial para No Técnicos</div><div class="course-meta"><span>⏱ 12h</span><span>📖 28 lecciones</span><span>🎓 540 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gray-mid)">4.8 (240 reseñas)</div></div><div class="course-price">$1,199 <small>MXN</small></div></div></div></div>
+      <div class="course-card" onclick="openCourseModal(2)"><div class="course-thumb ct3">📈<span class="course-badge-cat">Marketing</span></div><div class="course-body"><div class="course-instructor">Lic. Carlos Vega · ULA</div><div class="course-title">Marketing Digital con Resultados Reales</div><div class="course-meta"><span>⏱ 15h</span><span>📖 35 lecciones</span><span>🎓 410 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★☆</div><div style="font-size:11px;color:var(--gray-mid)">4.7 (186 reseñas)</div></div><div class="course-price">$999 <small>MXN</small></div></div></div></div>
+      <div class="course-card" onclick="openCourseModal(3)"><div class="course-thumb ct4">💰<span class="course-badge-cat">Finanzas</span></div><div class="course-body"><div class="course-instructor">Dr. Miguel Torres · UNITEC</div><div class="course-title">Finanzas Personales e Inversión desde Cero</div><div class="course-meta"><span>⏱ 10h</span><span>📖 24 lecciones</span><span>🎓 280 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gray-mid)">4.9 (97 reseñas)</div></div><div class="course-price">$799 <small>MXN</small></div></div></div></div>
+      <div class="course-card" onclick="openCourseModal(4)"><div class="course-thumb ct5">🧠<span class="course-badge-cat">Liderazgo</span></div><div class="course-body"><div class="course-instructor">Mtra. Laura Castillo · IBERO</div><div class="course-title">Liderazgo Transformacional en Organizaciones</div><div class="course-meta"><span>⏱ 8h</span><span>📖 20 lecciones</span><span>🎓 190 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gray-mid)">4.8 (75 reseñas)</div></div><div class="course-price">$1,299 <small>MXN</small></div></div></div></div>
+      <div class="course-card" onclick="openCourseModal(5)"><div class="course-thumb ct6">🎨<span class="course-badge-cat">Diseño</span></div><div class="course-body"><div class="course-instructor">Lic. Andrea Flores · UANL</div><div class="course-title">Diseño UX/UI para Proyectos Digitales</div><div class="course-meta"><span>⏱ 20h</span><span>📖 48 lecciones</span><span>🎓 360 alumnos</span></div><div class="course-footer"><div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--gray-mid)">4.9 (152 reseñas)</div></div><div class="course-price">$1,699 <small>MXN</small></div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     INSTRUCTOR
+═══════════════════════════════ -->
+<div id="screen-instructor" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div style="padding:0 12px 16px">
+        <div class="sidebar-label">Principal</div>
+        <div class="sidebar-item active" onclick="iView('overview',this)"><span class="icon">📊</span>Resumen</div>
+        <div class="sidebar-item" onclick="iView('courses',this)"><span class="icon">📚</span>Mis cursos</div>
+        <div class="sidebar-item" onclick="iView('create',this)"><span class="icon">✨</span>Crear curso</div>
+        <div class="sidebar-item" onclick="iView('students',this)"><span class="icon">👥</span>Alumnos</div>
+        <div class="sidebar-label" style="margin-top:8px">Finanzas</div>
+        <div class="sidebar-item" onclick="iView('earnings',this)"><span class="icon">💰</span>Ingresos</div>
+        <div class="sidebar-item" onclick="iView('transactions',this)"><span class="icon">💳</span>Transacciones</div>
+        <div class="sidebar-label" style="margin-top:8px">Cuenta</div>
+        <div class="sidebar-item" onclick="iView('profile',this)"><span class="icon">🏫</span>Mi academia</div>
+        <div class="sidebar-item" onclick="iView('plan',this)"><span class="icon">💎</span>Mi plan</div>
+        <div class="sidebar-item"><span class="icon">⚙️</span>Configuración</div>
+      </div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <div id="iv-overview">
+        <div class="dash-greeting"><h2>Bienvenido, Dr. Alejandro 👋</h2><p>Aquí está el estado de tu academia hoy.</p></div>
+        <div style="background:linear-gradient(135deg,rgba(6,182,212,.1),rgba(59,130,246,.1));border:1px solid rgba(6,182,212,.3);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;margin-bottom:24px">
+          <span style="font-size:20px">💎</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue-cyan)">Plan Instructor Activo — $349 MXN/mes</div><div style="font-size:12px;color:var(--gray-mid);margin-top:2px">Renovación el <strong style="color:var(--white)">15 feb 2025</strong> · Comisión por venta: <strong style="color:var(--white)">10%</strong></div></div>
+          <button class="btn btn-outline btn-sm" onclick="iView('plan',document.querySelectorAll('#screen-instructor .sidebar-item')[7])">Ver plan</button>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">📚 Cursos activos</div><div class="kpi-value blue">4</div><div class="kpi-change">↑ 1 este mes</div></div>
+          <div class="kpi-card"><div class="kpi-label">👥 Total alumnos</div><div class="kpi-value blue">320</div><div class="kpi-change">↑ 28 esta semana</div></div>
+          <div class="kpi-card"><div class="kpi-label">💰 Ingresos totales</div><div class="kpi-value blue">$42,800</div><div class="kpi-change">↑ 12% vs mes anterior</div></div>
+          <div class="kpi-card"><div class="kpi-label">⭐ Calificación</div><div class="kpi-value blue">4.9</div><div class="kpi-change">128 reseñas</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Mis cursos</h3><button class="btn btn-primary btn-sm" onclick="iView('create',document.querySelectorAll('#screen-instructor .sidebar-item')[2])">+ Nuevo curso</button></div>
+          <table>
+            <thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Estrategia Empresarial en la Era Digital</strong><br/><span style="font-size:11px;color:var(--gray-mid)">$1,499 MXN · 18 horas</span></td><td><span class="status-badge status-published"><span class="status-dot"></span>Publicado</span></td><td>320</td><td style="color:var(--blue-cyan);font-weight:600">$28,400</td><td><button class="btn btn-outline btn-sm">Editar</button></td></tr>
+              <tr><td><strong>Pensamiento Estratégico Avanzado</strong><br/><span style="font-size:11px;color:var(--gray-mid)">$1,799 MXN · 22 horas</span></td><td><span class="status-badge status-published"><span class="status-dot"></span>Publicado</span></td><td>98</td><td style="color:var(--blue-cyan);font-weight:600">$11,200</td><td><button class="btn btn-outline btn-sm">Editar</button></td></tr>
+              <tr><td><strong>Innovación y Modelos de Negocio</strong><br/><span style="font-size:11px;color:var(--gray-mid)">$999 MXN · 10 horas</span></td><td><span class="status-badge status-draft"><span class="status-dot"></span>Borrador</span></td><td>0</td><td style="color:var(--gray-mid)">—</td><td><button class="btn btn-primary btn-sm">Publicar</button></td></tr>
+              <tr><td><strong>Análisis de Mercados Emergentes</strong><br/><span style="font-size:11px;color:var(--gray-mid)">$2,199 MXN · 26 horas</span></td><td><span class="status-badge status-hibernated"><span class="status-dot"></span>Hibernado</span></td><td>45</td><td style="color:var(--blue-cyan);font-weight:600">$3,200</td><td><button class="btn btn-outline btn-sm">Reactivar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MIS CURSOS -->
+      <div id="iv-courses" style="display:none">
+        <div class="dash-greeting"><h2>Mis cursos 📚</h2><p>Gestiona y administra tu catálogo.</p></div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn btn-primary" onclick="iView('create',document.querySelectorAll('#screen-instructor .sidebar-item')[2])">+ Nuevo curso</button></div>
+        <div class="table-card">
+          <table>
+            <thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Precio</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Estrategia Empresarial en la Era Digital</strong></td><td><span class="status-badge status-published"><span class="status-dot"></span>Publicado</span></td><td>320</td><td>$1,499</td><td style="color:var(--blue-cyan)">$28,400</td><td style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Editar</button><button class="btn btn-danger btn-sm">Hibernar</button></td></tr>
+              <tr><td><strong>Pensamiento Estratégico Avanzado</strong></td><td><span class="status-badge status-published"><span class="status-dot"></span>Publicado</span></td><td>98</td><td>$1,799</td><td style="color:var(--blue-cyan)">$11,200</td><td style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Editar</button><button class="btn btn-danger btn-sm">Hibernar</button></td></tr>
+              <tr><td><strong>Innovación y Modelos de Negocio</strong></td><td><span class="status-badge status-draft"><span class="status-dot"></span>Borrador</span></td><td>0</td><td>$999</td><td style="color:var(--gray-mid)">—</td><td style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Editar</button><button class="btn btn-success btn-sm">Publicar</button></td></tr>
+              <tr><td><strong>Análisis de Mercados Emergentes</strong></td><td><span class="status-badge status-hibernated"><span class="status-dot"></span>Hibernado</span></td><td>45</td><td>$2,199</td><td style="color:var(--blue-cyan)">$3,200</td><td style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Editar</button><button class="btn btn-success btn-sm">Reactivar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CREAR CURSO -->
+      <div id="iv-create" style="display:none">
+        <div class="dash-greeting">
+          <button class="btn btn-ghost btn-sm" style="margin-bottom:12px" onclick="iView('courses',document.querySelectorAll('#screen-instructor .sidebar-item')[1])">← Regresar a mis cursos</button>
+          <h2>Crear nuevo curso ✨</h2>
+          <p>La IA te ayuda a generar el contenido base en segundos.</p>
+        </div>
+        <div class="create-panel">
+          <div class="ai-box">
+            <div class="ai-box-header"><div class="ai-icon">🤖</div><div><h4>Generador con IA</h4><p>Describe tu curso y la IA genera módulos, lecciones y evaluaciones.</p></div></div>
+            <div class="form-group" style="margin-bottom:12px"><input class="form-input" id="ai-topic" placeholder="Ej: Gestión de proyectos ágiles para empresas medianas"/></div>
+            <button class="btn btn-primary" onclick="generateWithAI()">✨ Generar con IA</button>
+            <div class="ai-result" id="ai-result">
+              <div id="ai-generating" class="generating"><span>Generando contenido</span><span class="dot-anim"><span>.</span><span>.</span><span>.</span></span></div>
+              <div id="ai-content" style="display:none">
+                <div class="ai-module"><div class="ai-module-title">Módulo 1: Fundamentos de Agilidad</div><div class="ai-lesson">Lección 1.1 — ¿Qué es Agile y por qué importa?</div><div class="ai-lesson">Lección 1.2 — Manifiesto Ágil y sus principios</div><div class="ai-lesson">Lección 1.3 — Roles clave en equipos ágiles</div></div>
+                <div class="ai-module"><div class="ai-module-title">Módulo 2: Scrum en la Práctica</div><div class="ai-lesson">Lección 2.1 — Sprint planning efectivo</div><div class="ai-lesson">Lección 2.2 — Daily standups que funcionan</div><div class="ai-lesson">Lección 2.3 — Retrospectivas y mejora continua</div></div>
+                <div class="ai-module"><div class="ai-module-title">Módulo 3: Implementación Empresarial</div><div class="ai-lesson">Lección 3.1 — Adaptar Agile a tu organización</div><div class="ai-lesson">Lección 3.2 — Gestión del cambio organizacional</div><div class="ai-lesson">Lección 3.3 — Evaluación final y certificación</div></div>
+                <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--blue-cyan)">✅ 9 lecciones · 3 módulos · 12 preguntas de evaluación generadas</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Título del curso *</label><input class="form-input" placeholder="Ej: Gestión de Proyectos Ágiles"/></div>
+            <div class="form-group"><label class="form-label">Precio (MXN) *</label><input class="form-input" type="number" placeholder="1499"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Descripción del curso</label><textarea class="form-input" placeholder="¿Qué aprenderán tus alumnos? ¿A quién va dirigido?"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Categoría</label><select class="form-input"><option>Negocios</option><option>Tecnología</option><option>Marketing</option><option>Finanzas</option><option>Liderazgo</option><option>Diseño</option></select></div>
+            <div class="form-group"><label class="form-label">Nivel</label><select class="form-input"><option>Principiante</option><option>Intermedio</option><option>Avanzado</option></select></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)">
+            <button class="btn btn-danger" onclick="iView('courses',document.querySelectorAll('#screen-instructor .sidebar-item')[1])">✕ Cancelar</button>
+            <div style="display:flex;gap:12px">
+              <button class="btn btn-ghost" onclick="showToast('Borrador guardado ✓','info')">Guardar borrador</button>
+              <button class="btn btn-primary" onclick="showToast('Curso publicado exitosamente 🎉','success')">Publicar curso →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALUMNOS -->
+      <div id="iv-students" style="display:none">
+        <div class="dash-greeting"><h2>Mis alumnos 👥</h2><p>320 alumnos inscritos en total.</p></div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Alumnos activos</h3><input class="form-input" style="width:200px;padding:7px 12px;font-size:13px" placeholder="Buscar alumno..."/></div>
+          <table>
+            <thead><tr><th>Alumno</th><th>Curso</th><th>Progreso</th><th>Inscrito</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><strong>María González</strong><br/><span style="font-size:11px;color:var(--gray-mid)">maria@gmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="progress-bar-wrap" style="width:120px"><div class="progress-bar" style="width:85%"></div></div><span style="font-size:11px;color:var(--gray-mid)">85%</span></td><td style="font-size:12px;color:var(--gray-mid)">10 ene 2025</td><td><span class="status-badge status-published">Activo</span></td></tr>
+              <tr><td><strong>Roberto Hernández</strong><br/><span style="font-size:11px;color:var(--gray-mid)">roberto@hotmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="progress-bar-wrap" style="width:120px"><div class="progress-bar" style="width:100%"></div></div><span style="font-size:11px;color:#4ade80">100% ✓</span></td><td style="font-size:12px;color:var(--gray-mid)">8 ene 2025</td><td><span class="status-badge status-published">Certificado</span></td></tr>
+              <tr><td><strong>Ana Ramírez</strong><br/><span style="font-size:11px;color:var(--gray-mid)">ana.r@empresa.mx</span></td><td style="font-size:12px">Pensamiento Estratégico</td><td><div class="progress-bar-wrap" style="width:120px"><div class="progress-bar" style="width:42%"></div></div><span style="font-size:11px;color:var(--gray-mid)">42%</span></td><td style="font-size:12px;color:var(--gray-mid)">15 ene 2025</td><td><span class="status-badge status-published">Activo</span></td></tr>
+              <tr><td><strong>Luis Martínez</strong><br/><span style="font-size:11px;color:var(--gray-mid)">lmartinez@tec.mx</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="progress-bar-wrap" style="width:120px"><div class="progress-bar" style="width:15%"></div></div><span style="font-size:11px;color:var(--gray-mid)">15%</span></td><td style="font-size:12px;color:var(--gray-mid)">20 ene 2025</td><td><span class="status-badge status-draft">Inactivo</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INGRESOS -->
+      <div id="iv-earnings" style="display:none">
+        <div class="dash-greeting"><h2>Ingresos 💰</h2><p>Resumen financiero de tu academia.</p></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">💰 Este mes</div><div class="kpi-value blue">$8,400</div><div class="kpi-change">↑ 18% vs mes anterior</div></div>
+          <div class="kpi-card"><div class="kpi-label">📅 Total acumulado</div><div class="kpi-value blue">$42,800</div><div class="kpi-change">Desde enero 2024</div></div>
+          <div class="kpi-card"><div class="kpi-label">🏦 Comisión PLATTFORM</div><div class="kpi-value" style="color:#f87171">-$4,280</div><div class="kpi-change down">10% sobre ventas</div></div>
+          <div class="kpi-card"><div class="kpi-label">✅ Ingreso neto</div><div class="kpi-value blue">$38,520</div><div class="kpi-change">Disponible para retiro</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Ingresos por curso</h3></div>
+          <div style="padding:20px 24px">
+            <div class="rev-row"><span style="min-width:200px;font-size:13px">Estrategia Empresarial</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:80%"></div></div><span class="rev-amount">$28,400</span></div>
+            <div class="rev-row"><span style="min-width:200px;font-size:13px">Pensamiento Estratégico</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:32%"></div></div><span class="rev-amount">$11,200</span></div>
+            <div class="rev-row"><span style="min-width:200px;font-size:13px">Análisis de Mercados</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:10%"></div></div><span class="rev-amount">$3,200</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACCIONES -->
+      <div id="iv-transactions" style="display:none">
+        <div class="dash-greeting"><h2>Transacciones 💳</h2><p>Historial de pagos recibidos.</p></div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Últimas transacciones</h3></div>
+          <table>
+            <thead><tr><th>ID</th><th>Alumno</th><th>Curso</th><th>Monto</th><th>Comisión</th><th>Estado</th><th>Fecha</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8821</td><td>María González</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:var(--blue-cyan);font-weight:600">$1,499</td><td style="color:#f87171">-$149.90</td><td><span class="status-badge status-published">Exitoso</span></td><td style="font-size:12px;color:var(--gray-mid)">10 ene 2025</td></tr>
+              <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8820</td><td>Roberto Hernández</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:var(--blue-cyan);font-weight:600">$1,499</td><td style="color:#f87171">-$149.90</td><td><span class="status-badge status-published">Exitoso</span></td><td style="font-size:12px;color:var(--gray-mid)">8 ene 2025</td></tr>
+              <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8817</td><td>Pedro Salinas</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:#f87171;font-weight:600">$1,499</td><td style="color:var(--gray-mid)">—</td><td><span class="status-badge status-hibernated">Fallido</span></td><td style="font-size:12px;color:var(--gray-mid)">7 ene 2025</td></tr>
+              <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8815</td><td>Ana Ramírez</td><td style="font-size:12px">Pensamiento Estratégico</td><td style="color:var(--blue-cyan);font-weight:600">$1,799</td><td style="color:#f87171">-$179.90</td><td><span class="status-badge status-published">Exitoso</span></td><td style="font-size:12px;color:var(--gray-mid)">5 ene 2025</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MI ACADEMIA -->
+      <div id="iv-profile" style="display:none">
+        <div class="dash-greeting"><h2>Mi academia 🏫</h2><p>Configura tu perfil público como instructor.</p></div>
+        <div class="create-panel">
+          <div class="form-group"><label class="form-label">Nombre de la academia</label><input class="form-input" value="Academia Dr. Ríos — Estrategia y Negocios"/></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">URL pública</label><input class="form-input" value="plattform.mx/rios"/></div>
+            <div class="form-group"><label class="form-label">Institución de origen</label><input class="form-input" value="UNAM — Facultad de Economía"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input">Doctor en Administración por la UNAM. 15 años de experiencia académica y consultoría empresarial. Especialista en estrategia y mercados digitales.</textarea></div>
+          <div style="display:flex;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border)"><button class="btn btn-primary" onclick="showToast('Perfil actualizado ✓','success')">Guardar cambios</button></div>
+        </div>
+      </div>
+
+      <!-- MI PLAN -->
+      <div id="iv-plan" style="display:none">
+        <div class="dash-greeting"><h2>Mi plan 💎</h2><p>Gestiona tu suscripción como instructor.</p></div>
+        <div style="background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.12));border:1px solid rgba(6,182,212,.35);border-radius:16px;padding:28px;margin-bottom:24px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+            <div>
+              <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(6,182,212,.15);border:1px solid rgba(6,182,212,.4);border-radius:50px;padding:4px 14px;font-size:11px;font-weight:600;color:var(--blue-cyan);margin-bottom:10px">● ACTIVO</div>
+              <h3 style="font-size:20px;font-weight:700">Plan Instructor</h3>
+              <p style="color:var(--gray-mid);font-size:13px;margin-top:4px">Publica cursos ilimitados y monetiza tu conocimiento</p>
+            </div>
+            <div style="text-align:right"><div style="font-size:32px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$349</div><div style="font-size:12px;color:var(--gray-mid)">MXN / mes</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px 16px"><div style="font-size:11px;color:var(--gray-mid);margin-bottom:3px">Próxima renovación</div><div style="font-size:14px;font-weight:600">15 de febrero, 2025</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px 16px"><div style="font-size:11px;color:var(--gray-mid);margin-bottom:3px">Comisión por venta</div><div style="font-size:14px;font-weight:600;color:var(--blue-cyan)">10% por curso vendido</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px 16px"><div style="font-size:11px;color:var(--gray-mid);margin-bottom:3px">Cursos publicados</div><div style="font-size:14px;font-weight:600">Ilimitados ✓</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px 16px"><div style="font-size:11px;color:var(--gray-mid);margin-bottom:3px">Generación con IA</div><div style="font-size:14px;font-weight:600">Incluida ✓</div></div>
+          </div>
+          <div style="display:flex;gap:12px">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Método de pago actualizado','info')">Cambiar método de pago</button>
+            <button class="btn btn-danger btn-sm" onclick="showToast('Solicitud de cancelación enviada','info')">Cancelar suscripción</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Historial de pagos de suscripción</h3></div>
+          <table>
+            <thead><tr><th>Periodo</th><th>Monto</th><th>Estado</th><th>Recibo</th></tr></thead>
+            <tbody>
+              <tr><td>15 ene 2025 – 15 feb 2025</td><td style="color:var(--blue-cyan);font-weight:600">$349 MXN</td><td><span class="status-badge status-published">Pagado</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('Recibo descargado 📄','info')">Descargar</button></td></tr>
+              <tr><td>15 dic 2024 – 15 ene 2025</td><td style="color:var(--blue-cyan);font-weight:600">$349 MXN</td><td><span class="status-badge status-published">Pagado</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('Recibo descargado 📄','info')">Descargar</button></td></tr>
+              <tr><td>15 nov 2024 – 15 dic 2024</td><td style="color:var(--blue-cyan);font-weight:600">$349 MXN</td><td><span class="status-badge status-published">Pagado</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('Recibo descargado 📄','info')">Descargar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     ALUMNO
+═══════════════════════════════ -->
+<div id="screen-student" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div style="padding:0 12px">
+        <div class="sidebar-label">Mi aprendizaje</div>
+        <div class="sidebar-item active" onclick="sView('overview',this)"><span class="icon">🏠</span>Inicio</div>
+        <div class="sidebar-item" onclick="sView('courses',this)"><span class="icon">📚</span>Mis cursos</div>
+        <div class="sidebar-item" onclick="sView('lesson',this)"><span class="icon">▶️</span>Continuar</div>
+        <div class="sidebar-item" onclick="sView('certs',this)"><span class="icon">🏆</span>Certificados</div>
+        <div class="sidebar-label" style="margin-top:8px">Explorar</div>
+        <div class="sidebar-item" onclick="switchRole('public',document.querySelectorAll('.nav-tab')[0])"><span class="icon">🌐</span>Catálogo</div>
+      </div>
+    </aside>
+    <main class="dash-main">
+
+      <div id="sv-overview">
+        <div class="dash-greeting"><h2>Hola, María 👋</h2><p>Sigue aprendiendo. Tienes 2 cursos en progreso.</p></div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi-card"><div class="kpi-label">📚 Cursos inscritos</div><div class="kpi-value blue">3</div></div>
+          <div class="kpi-card"><div class="kpi-label">✅ Completados</div><div class="kpi-value blue">1</div></div>
+          <div class="kpi-card"><div class="kpi-label">🏆 Certificados</div><div class="kpi-value blue">1</div></div>
+        </div>
+        <h3 style="margin-bottom:16px;font-size:16px">Continúa donde lo dejaste</h3>
+        <div class="enrolled-grid">
+          <div class="enrolled-card" onclick="sView('lesson',document.querySelectorAll('#screen-student .sidebar-item')[2])"><div class="enrolled-thumb ct1">📊</div><div class="enrolled-body"><div class="enrolled-instructor">Dr. Alejandro Ríos</div><div class="enrolled-title">Estrategia Empresarial en la Era Digital</div><div class="progress-label"><span>Progreso</span><span>85%</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:85%"></div></div><div style="margin-top:10px"><button class="btn btn-primary btn-sm" style="width:100%">Continuar →</button></div></div></div>
+          <div class="enrolled-card"><div class="enrolled-thumb ct3">📈</div><div class="enrolled-body"><div class="enrolled-instructor">Lic. Carlos Vega</div><div class="enrolled-title">Marketing Digital con Resultados Reales</div><div class="progress-label"><span>Progreso</span><span>32%</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:32%"></div></div><div style="margin-top:10px"><button class="btn btn-outline btn-sm" style="width:100%">Continuar →</button></div></div></div>
+          <div class="enrolled-card"><div class="enrolled-thumb ct2">💻</div><div class="enrolled-body"><div class="enrolled-instructor">Mtra. Sofía Mendoza</div><div class="enrolled-title">Inteligencia Artificial para No Técnicos</div><div class="progress-label"><span>Completado</span><span>100%</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:100%"></div></div><div style="margin-top:10px"><button class="btn btn-success btn-sm" style="width:100%">Ver certificado 🏆</button></div></div></div>
+        </div>
+      </div>
+
+      <div id="sv-courses" style="display:none">
+        <div class="dash-greeting"><h2>Mis cursos 📚</h2><p>Todos tus cursos inscritos.</p></div>
+        <div class="enrolled-grid">
+          <div class="enrolled-card"><div class="enrolled-thumb ct1">📊</div><div class="enrolled-body"><div class="enrolled-instructor">Dr. Alejandro Ríos</div><div class="enrolled-title">Estrategia Empresarial en la Era Digital</div><div class="progress-label"><span>Progreso</span><span>85%</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:85%"></div></div></div></div>
+          <div class="enrolled-card"><div class="enrolled-thumb ct3">📈</div><div class="enrolled-body"><div class="enrolled-instructor">Lic. Carlos Vega</div><div class="enrolled-title">Marketing Digital con Resultados Reales</div><div class="progress-label"><span>Progreso</span><span>32%</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:32%"></div></div></div></div>
+          <div class="enrolled-card"><div class="enrolled-thumb ct2">💻</div><div class="enrolled-body"><div class="enrolled-instructor">Mtra. Sofía Mendoza</div><div class="enrolled-title">Inteligencia Artificial para No Técnicos</div><div class="progress-label"><span>Completado</span><span>100% 🏆</span></div><div class="progress-bar-wrap"><div class="progress-bar" style="width:100%"></div></div></div></div>
+        </div>
+      </div>
+
+      <div id="sv-lesson" style="display:none">
+        <div class="lesson-layout" style="margin:-32px -40px">
+          <div class="lesson-main">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+              <button class="btn btn-ghost btn-sm" onclick="sView('overview',document.querySelectorAll('#screen-student .sidebar-item')[0])">← Volver</button>
+              <span style="font-size:13px;color:var(--gray-mid)">Estrategia Empresarial · Módulo 3</span>
+            </div>
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Lección 3.2 — Transformación digital como ventaja competitiva</h2>
+            <div class="video-placeholder"><div class="play-btn">▶</div><div style="position:absolute;bottom:16px;left:16px;z-index:2;font-size:12px;color:rgba(255,255,255,.7)">▶ Enlace YouTube · 28:14 min</div></div>
+            <div class="lesson-content-text">
+              <p>La transformación digital no es un evento, es un proceso continuo de adaptación y aprendizaje organizacional. En esta lección exploraremos cómo las empresas líderes en México y América Latina han convertido la digitalización en su principal diferenciador competitivo.</p>
+              <br/><p>Los tres pilares: <strong style="color:var(--blue-electric)">cultura organizacional</strong>, <strong style="color:var(--blue-electric)">tecnología habilitadora</strong> y <strong style="color:var(--blue-electric)">modelo de datos</strong>. Sin los tres en equilibrio, cualquier iniciativa digital está destinada al fracaso.</p>
+            </div>
+            <div style="margin-top:28px">
+              <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">📝 Evaluación de la lección</h3>
+              <div class="quiz-question">
+                <div class="quiz-q">1. ¿Cuál es el pilar MÁS crítico para iniciar una transformación digital exitosa?</div>
+                <div class="quiz-option" onclick="selectOption(this)"><span>A</span> Inversión en tecnología de punta</div>
+                <div class="quiz-option" onclick="selectOption(this)"><span>B</span> Cultura organizacional abierta al cambio</div>
+                <div class="quiz-option" onclick="selectOption(this)"><span>C</span> Contratación de consultores externos</div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:12px">
+                <button class="btn btn-ghost">← Lección anterior</button>
+                <button class="btn btn-primary" onclick="showToast('¡Respuesta correcta! +1 lección completada ✓','success')">Siguiente lección →</button>
+              </div>
+            </div>
+          </div>
+          <div class="lesson-sidebar">
+            <div class="lesson-sidebar-header">Contenido del curso</div>
+            <div style="padding:8px 0">
+              <div style="padding:10px 20px;font-size:11px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px">Módulo 1 · Fundamentos</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>¿Qué es estrategia empresarial?</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>El entorno VUCA</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>Análisis FODA avanzado</div>
+              <div style="padding:10px 20px;font-size:11px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px">Módulo 2 · Planificación</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>Definición de objetivos OKR</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>Roadmap estratégico</div>
+              <div style="padding:10px 20px;font-size:11px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px">Módulo 3 · Ejecución Digital</div>
+              <div class="lesson-nav-item"><span class="check">✓</span>Modelos de negocio digitales</div>
+              <div class="lesson-nav-item active">▶ Transformación como ventaja</div>
+              <div class="lesson-nav-item" style="color:#374151">○ KPIs de transformación</div>
+              <div class="lesson-nav-item" style="color:#374151">○ Evaluación final</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sv-certs" style="display:none">
+        <div class="dash-greeting"><h2>Mis certificados 🏆</h2><p>Logros obtenidos al completar cursos.</p></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="cert-card"><div class="cert-icon">🏆</div><div class="cert-info"><h4>Inteligencia Artificial para No Técnicos</h4><p>Mtra. Sofía Mendoza · Emitido el 15 ene 2025 · ID: CERT-2024-1182</p></div><div class="cert-actions"><button class="btn btn-outline btn-sm" onclick="showToast('Certificado descargado 📄','info')">Descargar PDF</button><button class="btn btn-ghost btn-sm">Compartir</button></div></div>
+          <div class="cert-card" style="opacity:.4;pointer-events:none"><div class="cert-icon" style="background:var(--surface3)">🔒</div><div class="cert-info"><h4>Estrategia Empresarial en la Era Digital</h4><p>Completa el curso (85%) y aprueba la evaluación para obtener tu certificado.</p></div><div class="cert-actions"><button class="btn btn-ghost btn-sm">Bloqueado</button></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     ADMIN
+═══════════════════════════════ -->
+<div id="screen-admin" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div style="padding:0 12px">
+        <div class="sidebar-label">Plataforma</div>
+        <div class="sidebar-item active"><span class="icon">📊</span>Dashboard global</div>
+        <div class="sidebar-item"><span class="icon">👥</span>Usuarios</div>
+        <div class="sidebar-item"><span class="icon">📚</span>Cursos</div>
+        <div class="sidebar-item"><span class="icon">💳</span>Transacciones</div>
+        <div class="sidebar-label" style="margin-top:8px">Control</div>
+        <div class="sidebar-item"><span class="icon">🔒</span>Moderación</div>
+        <div class="sidebar-item"><span class="icon">⚙️</span>Configuración</div>
+      </div>
+    </aside>
+    <main class="dash-main">
+      <div class="dash-greeting"><h2>Panel Administrador ⚙️</h2><p>Vista global de la plataforma PLATTFORM.</p></div>
+
+      <!-- BUSCADOR UNIVERSAL -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:600;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🔍 Búsqueda universal</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+          <input class="form-input" id="admin-search-input" style="flex:1;min-width:220px" placeholder="Busca por nombre, correo, curso o ID..." oninput="adminSearch(this.value)"/>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="filter-tag active" onclick="setSearchFilter('all',this)">Todos</button>
+            <button class="filter-tag" onclick="setSearchFilter('courses',this)">Cursos</button>
+            <button class="filter-tag" onclick="setSearchFilter('instructors',this)">Instructores</button>
+            <button class="filter-tag" onclick="setSearchFilter('students',this)">Alumnos</button>
+          </div>
+        </div>
+        <div id="admin-search-results" style="display:none">
+          <div style="font-size:11px;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px" id="search-count"></div>
+          <div id="search-results-list"></div>
+        </div>
+        <div id="admin-search-empty" style="display:none;text-align:center;padding:20px;color:var(--gray-mid);font-size:13px">Sin resultados para tu búsqueda.</div>
+        <div id="admin-search-hint" style="font-size:12px;color:var(--gray-mid)">Escribe al menos 2 caracteres para buscar en toda la plataforma.</div>
+      </div>
+
+      <div class="admin-kpi">
+        <div class="kpi-card"><div class="kpi-label">👥 Usuarios totales</div><div class="kpi-value blue">1,540</div><div class="kpi-change">↑ 84 este mes</div></div>
+        <div class="kpi-card"><div class="kpi-label">🎓 Instructores</div><div class="kpi-value blue">32</div><div class="kpi-change">↑ 4 nuevos</div></div>
+        <div class="kpi-card"><div class="kpi-label">📚 Cursos activos</div><div class="kpi-value blue">87</div><div class="kpi-change">12 en borrador</div></div>
+        <div class="kpi-card"><div class="kpi-label">💰 Ingresos totales</div><div class="kpi-value blue">$284,000</div><div class="kpi-change">↑ 22% este mes</div></div>
+        <div class="kpi-card"><div class="kpi-label">🏦 Comisiones</div><div class="kpi-value blue">$28,400</div><div class="kpi-change">10% sobre ventas</div></div>
+      </div>
+      <div class="two-col">
+        <div class="table-card">
+          <div class="table-card-header"><h3>Alertas del sistema</h3></div>
+          <div style="padding:8px 24px">
+            <div class="alert-item"><div class="alert-dot red"></div><div class="alert-text"><strong>Pago fallido</strong> — Pedro Salinas intentó comprar "Estrategia Empresarial"</div><div class="alert-time">hace 2h</div></div>
+            <div class="alert-item"><div class="alert-dot yellow"></div><div class="alert-text"><strong>Curso sin contenido</strong> — "Innovación y Modelos" tiene 0 lecciones</div><div class="alert-time">hace 5h</div></div>
+            <div class="alert-item"><div class="alert-dot green"></div><div class="alert-text"><strong>Nuevo instructor</strong> — Mtra. Laura Castillo completó su registro</div><div class="alert-time">hace 1d</div></div>
+            <div class="alert-item"><div class="alert-dot yellow"></div><div class="alert-text"><strong>Suscripción vencida</strong> — Lic. Pedro Mora no renovó su plan instructor</div><div class="alert-time">hace 2d</div></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-header"><h3>Top instructores por ingresos</h3></div>
+          <div style="padding:8px 24px">
+            <div class="rev-row"><span style="min-width:160px;font-size:13px">Dr. Alejandro Ríos</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:90%"></div></div><span class="rev-amount">$42,800</span></div>
+            <div class="rev-row"><span style="min-width:160px;font-size:13px">Mtra. Sofía Mendoza</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:70%"></div></div><span class="rev-amount">$38,200</span></div>
+            <div class="rev-row"><span style="min-width:160px;font-size:13px">Lic. Andrea Flores</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:50%"></div></div><span class="rev-amount">$29,100</span></div>
+            <div class="rev-row"><span style="min-width:160px;font-size:13px">Dr. Miguel Torres</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:35%"></div></div><span class="rev-amount">$18,600</span></div>
+            <div class="rev-row"><span style="min-width:160px;font-size:13px">Lic. Carlos Vega</span><div class="rev-bar-wrap"><div class="rev-bar" style="width:22%"></div></div><span class="rev-amount">$12,400</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header"><h3>Últimas transacciones</h3><button class="btn btn-ghost btn-sm">Ver todas</button></div>
+        <table>
+          <thead><tr><th>ID</th><th>Usuario</th><th>Curso</th><th>Monto</th><th>Comisión</th><th>Estado</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8821</td><td>María González</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:var(--blue-cyan);font-weight:600">$1,499</td><td style="color:#4ade80">+$149.90</td><td><span class="status-badge status-published">Exitoso</span></td><td style="font-size:12px;color:var(--gray-mid)">10 ene 2025</td></tr>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8820</td><td>Roberto Hernández</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:var(--blue-cyan);font-weight:600">$1,499</td><td style="color:#4ade80">+$149.90</td><td><span class="status-badge status-published">Exitoso</span></td><td style="font-size:12px;color:var(--gray-mid)">8 ene 2025</td></tr>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gray-mid)">#TXN-8817</td><td>Pedro Salinas</td><td style="font-size:12px">Estrategia Empresarial</td><td style="color:#f87171;font-weight:600">$1,499</td><td style="color:var(--gray-mid)">—</td><td><span class="status-badge status-hibernated">Fallido</span></td><td style="font-size:12px;color:var(--gray-mid)">7 ene 2025</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     AUTH
+═══════════════════════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-screen">
+    <div class="auth-card">
+      <div style="text-align:center;margin-bottom:24px"><span class="logo-text" style="font-size:22px">PLATTFORM</span></div>
+      <div id="auth-login-view">
+        <div class="auth-title">Bienvenido de vuelta</div>
+        <div class="auth-sub">Inicia sesión en tu cuenta</div>
+        <div class="form-group"><label class="form-label">Correo electrónico</label><input class="form-input" type="email" placeholder="tu@correo.com"/></div>
+        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px" onclick="showToast('Sesión iniciada ✓','success');showScreen('public')">Iniciar sesión →</button>
+        <div class="auth-link">¿No tienes cuenta? <a onclick="showAuthView('register')">Regístrate gratis</a></div>
+      </div>
+      <div id="auth-register-view" style="display:none">
+        <div class="auth-title">Crea tu cuenta</div>
+        <div class="auth-sub">Elige cómo quieres usar PLATTFORM</div>
+        <div class="role-selector">
+          <div class="role-opt active" onclick="selectRole(this,'student')"><span class="role-icon">📚</span>Alumno</div>
+          <div class="role-opt" onclick="selectRole(this,'instructor')"><span class="role-icon">🎓</span>Instructor</div>
+          <div class="role-opt" onclick="selectRole(this,'admin')"><span class="role-icon">🏢</span>Admin</div>
+        </div>
+        <!-- Plan box: solo visible si rol = instructor -->
+        <div id="instructor-plan-box" style="display:none;margin-bottom:16px">
+          <div style="background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.25);border-radius:12px;padding:16px">
+            <div style="font-size:12px;font-weight:600;color:var(--blue-cyan);margin-bottom:8px">💎 Plan Instructor — $349 MXN/mes</div>
+            <div class="plan-feature">Cursos ilimitados</div>
+            <div class="plan-feature">Generación de contenido con IA</div>
+            <div class="plan-feature">Dashboard de ingresos y alumnos</div>
+            <div class="plan-feature">Certificados automáticos para alumnos</div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--gray-mid)">Más <strong style="color:var(--white)">10% de comisión</strong> por venta · Cancela cuando quieras</div>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" placeholder="Tu nombre"/></div>
+        <div class="form-group"><label class="form-label">Correo electrónico</label><input class="form-input" type="email" placeholder="tu@correo.com"/></div>
+        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" type="password" placeholder="Mínimo 8 caracteres"/></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px" id="register-btn" onclick="showToast('Cuenta creada exitosamente 🎉','success');showScreen('public')">Crear cuenta →</button>
+        <div class="auth-link">¿Ya tienes cuenta? <a onclick="showAuthView('login')">Inicia sesión</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     CHECKOUT
+═══════════════════════════════ -->
+<div id="screen-checkout" class="screen">
+  <div class="auth-screen">
+    <div class="checkout-card">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Resumen de compra</h2>
+      <div class="checkout-course">
+        <div class="checkout-thumb ct1">📊</div>
+        <div>
+          <div style="font-size:15px;font-weight:600;margin-bottom:4px">Estrategia Empresarial en la Era Digital</div>
+          <div style="font-size:12px;color:var(--blue-cyan)">Dr. Alejandro Ríos</div>
+          <div style="font-size:12px;color:var(--gray-mid);margin-top:4px">18 horas · 42 lecciones · Certificado incluido</div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Número de tarjeta</label><input class="form-input" placeholder="4242 4242 4242 4242"/></div>
+      <div class="card-input-group">
+        <div class="form-group"><label class="form-label">Vencimiento</label><input class="form-input" placeholder="MM/AA"/></div>
+        <div class="form-group"><label class="form-label">CVV</label><input class="form-input" placeholder="123"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Cupón de descuento (opcional)</label><input class="form-input" placeholder="CODIGO20"/></div>
+      <div class="price-breakdown">
+        <div class="price-row"><span>Precio del curso</span><span>$1,499 MXN</span></div>
+        <div class="price-row"><span>Descuento</span><span style="color:#4ade80">—</span></div>
+        <div class="price-row total"><span>Total a pagar</span><span class="amount">$1,499 MXN</span></div>
+      </div>
+      <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px" onclick="completePurchase()">Pagar $1,499 MXN →</button>
+      <div class="secure-badge">🔒 Pago seguro con Stripe · SSL encriptado</div>
+      <div style="text-align:center;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="showScreen('public')">← Cancelar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CURSO -->
+<div class="modal-overlay" id="course-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="document.getElementById('course-modal').classList.remove('active')">✕</button>
+      <div id="modal-category" class="status-badge status-published" style="margin-bottom:10px">Negocios</div>
+      <h2 id="modal-title" style="font-size:22px;font-weight:700"></h2>
+      <div class="course-detail-meta">
+        <div class="detail-chip">⭐ <strong>4.9</strong> (128 reseñas)</div>
+        <div class="detail-chip">👥 <strong>320</strong> alumnos</div>
+        <div class="detail-chip">⏱ <strong>18 horas</strong></div>
+        <div class="detail-chip">📖 <strong>42 lecciones</strong></div>
+      </div>
+      <p id="modal-desc" style="font-size:14px;color:var(--gray-mid);line-height:1.6"></p>
+    </div>
+    <div class="modal-body">
+      <div class="syllabus">
+        <h4>Contenido del curso</h4>
+        <div class="module"><div class="module-title">Módulo 1 — Fundamentos</div><div class="lesson-item">¿Qué es estrategia empresarial?</div><div class="lesson-item">El entorno VUCA y sus implicaciones</div><div class="lesson-item">Análisis FODA avanzado</div></div>
+        <div class="module"><div class="module-title">Módulo 2 — Planificación</div><div class="lesson-item">Definición de objetivos con OKR</div><div class="lesson-item">Construcción del roadmap estratégico</div><div class="lesson-item">Gestión de stakeholders</div></div>
+        <div class="module"><div class="module-title">Módulo 3 — Ejecución Digital</div><div class="lesson-item">Modelos de negocio digitales</div><div class="lesson-item">Transformación digital como ventaja competitiva</div><div class="lesson-item">KPIs y evaluación final</div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div id="modal-price" style="margin-right:auto;font-size:22px;font-weight:700;color:var(--blue-cyan)"></div>
+      <button class="btn btn-ghost" onclick="document.getElementById('course-modal').classList.remove('active')">Cerrar</button>
+      <button class="btn btn-primary btn-lg" onclick="goToCheckout()">Comprar ahora →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toast-msg">Acción completada</span></div>
+
+<script>
+const COURSES=[
+  {title:'Estrategia Empresarial en la Era Digital',cat:'Negocios',price:'$1,499',desc:'Aprende a diseñar y ejecutar estrategias empresariales efectivas. Desarrollado por el Dr. Alejandro Ríos con 15 años de experiencia académica y empresarial.'},
+  {title:'Inteligencia Artificial para No Técnicos',cat:'Tecnología',price:'$1,199',desc:'Comprende la IA desde cero, sin código. Aplica herramientas de IA en tu trabajo profesional y toma mejores decisiones en la era de la automatización.'},
+  {title:'Marketing Digital con Resultados Reales',cat:'Marketing',price:'$999',desc:'Estrategias probadas de marketing digital para generar leads, ventas y crecimiento medible. Desde SEO hasta campañas pagadas y automatización.'},
+  {title:'Finanzas Personales e Inversión desde Cero',cat:'Finanzas',price:'$799',desc:'Aprende a manejar tu dinero, construir un fondo de emergencia, invertir en bolsa y planificar tu retiro. Sin jerga financiera innecesaria.'},
+  {title:'Liderazgo Transformacional en Organizaciones',cat:'Liderazgo',price:'$1,299',desc:'Desarrolla las habilidades de liderazgo para inspirar equipos, gestionar el cambio y construir culturas organizacionales de alto rendimiento.'},
+  {title:'Diseño UX/UI para Proyectos Digitales',cat:'Diseño',price:'$1,699',desc:'Domina los principios de diseño centrado en el usuario. Crea interfaces digitales hermosas y funcionales con Figma y metodologías modernas.'},
+];
+
+// Navigation
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');}
+function switchRole(n,tab){document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');showScreen(n);}
+function showAuth(t){showScreen('auth');showAuthView(t);document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));}
+function showAuthView(t){document.getElementById('auth-login-view').style.display=t==='login'?'block':'none';document.getElementById('auth-register-view').style.display=t==='register'?'block':'none';}
+
+// Instructor views
+function iView(name,el){
+  document.querySelectorAll('#screen-instructor .sidebar-item').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['overview','courses','create','students','earnings','transactions','profile','plan'].forEach(v=>{const e=document.getElementById('iv-'+v);if(e)e.style.display='none';});
+  const t=document.getElementById('iv-'+name);if(t)t.style.display='block';
+}
+
+// Student views
+function sView(name,el){
+  document.querySelectorAll('#screen-student .sidebar-item').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['overview','courses','lesson','certs'].forEach(v=>{const e=document.getElementById('sv-'+v);if(e)e.style.display='none';});
+  const t=document.getElementById('sv-'+name);if(t)t.style.display='block';
+}
+
+// Auth role selection
+function selectRole(el,role){
+  document.querySelectorAll('.role-opt').forEach(r=>r.classList.remove('active'));
+  el.classList.add('active');
+  const box=document.getElementById('instructor-plan-box');
+  const btn=document.getElementById('register-btn');
+  if(role==='instructor'){box.style.display='block';btn.textContent='Crear cuenta y activar plan →';}
+  else{box.style.display='none';btn.textContent='Crear cuenta →';}
+}
+
+// Public filter
+function setPublicFilter(el){
+  document.querySelectorAll('#screen-public .filter-tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Course modal
+function openCourseModal(idx){
+  const c=COURSES[idx];
+  document.getElementById('modal-title').textContent=c.title;
+  document.getElementById('modal-desc').textContent=c.desc;
+  document.getElementById('modal-category').textContent=c.cat;
+  document.getElementById('modal-price').innerHTML=c.price+' <small style="font-size:13px;color:var(--gray-mid);font-weight:400">MXN</small>';
+  document.getElementById('course-modal').classList.add('active');
+}
+function closeModal(e){if(e.target===document.getElementById('course-modal'))document.getElementById('course-modal').classList.remove('active');}
+function goToCheckout(){document.getElementById('course-modal').classList.remove('active');showScreen('checkout');}
+function completePurchase(){showScreen('student');document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-tab')[2].classList.add('active');showToast('¡Pago exitoso! Ya tienes acceso al curso 🎉','success');}
+
+// Quiz
+function selectOption(el){el.closest('.quiz-question').querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
+
+// AI Generator
+function generateWithAI(){
+  const r=document.getElementById('ai-result'),g=document.getElementById('ai-generating'),c=document.getElementById('ai-content');
+  r.classList.add('visible');g.style.display='flex';c.style.display='none';
+  setTimeout(()=>{g.style.display='none';c.style.display='block';showToast('Contenido generado con IA ✨','success');},2200);
+}
+
+// Toast
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.className='toast '+type;
+  t.querySelector('.toast-icon').textContent=type==='success'?'✓':'ℹ';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// Admin universal search
+const SEARCH_DATA={
+  courses:[
+    {id:'CRS-001',name:'Estrategia Empresarial en la Era Digital',meta:'Dr. Alejandro Ríos · 320 alumnos · Publicado',type:'curso',icon:'📊'},
+    {id:'CRS-002',name:'Inteligencia Artificial para No Técnicos',meta:'Mtra. Sofía Mendoza · 540 alumnos · Publicado',type:'curso',icon:'💻'},
+    {id:'CRS-003',name:'Marketing Digital con Resultados Reales',meta:'Lic. Carlos Vega · 410 alumnos · Publicado',type:'curso',icon:'📈'},
+    {id:'CRS-004',name:'Innovación y Modelos de Negocio',meta:'Dr. Alejandro Ríos · 0 alumnos · Borrador',type:'curso',icon:'💡'},
+    {id:'CRS-005',name:'Finanzas Personales e Inversión',meta:'Dr. Miguel Torres · 280 alumnos · Publicado',type:'curso',icon:'💰'},
+  ],
+  instructors:[
+    {id:'INS-001',name:'Dr. Alejandro Ríos',meta:'UNAM · 4 cursos · $42,800 ingresos · Plan Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-002',name:'Mtra. Sofía Mendoza',meta:'ITESM · 2 cursos · $38,200 ingresos · Plan Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-003',name:'Lic. Carlos Vega',meta:'ULA · 1 curso · $12,400 ingresos · Plan Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-004',name:'Mtra. Laura Castillo',meta:'IBERO · 1 curso · $8,900 ingresos · Plan Activo',type:'instructor',icon:'🎓'},
+    {id:'INS-005',name:'Dr. Miguel Torres',meta:'UNITEC · 2 cursos · $18,600 ingresos · Plan Activo',type:'instructor',icon:'🎓'},
+  ],
+  students:[
+    {id:'STU-001',name:'María González',meta:'maria@gmail.com · 3 cursos · 85% promedio',type:'alumno',icon:'👤'},
+    {id:'STU-002',name:'Roberto Hernández',meta:'roberto@hotmail.com · 1 curso · Certificado obtenido',type:'alumno',icon:'👤'},
+    {id:'STU-003',name:'Ana Ramírez',meta:'ana.r@empresa.mx · 2 cursos · 42% promedio',type:'alumno',icon:'👤'},
+    {id:'STU-004',name:'Luis Martínez',meta:'lmartinez@tec.mx · 1 curso · 15% progreso',type:'alumno',icon:'👤'},
+    {id:'STU-005',name:'Pedro Salinas',meta:'pedro@gmail.com · 0 cursos · Pago fallido',type:'alumno',icon:'👤'},
+  ]
+};
+let currentFilter='all';
+function setSearchFilter(filter,el){
+  currentFilter=filter;
+  document.querySelectorAll('#screen-admin .filter-tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  adminSearch(document.getElementById('admin-search-input').value);
+}
+function adminSearch(q){
+  const rEl=document.getElementById('admin-search-results');
+  const eEl=document.getElementById('admin-search-empty');
+  const hEl=document.getElementById('admin-search-hint');
+  const lEl=document.getElementById('search-results-list');
+  const cEl=document.getElementById('search-count');
+  if(!q||q.length<2){rEl.style.display='none';eEl.style.display='none';hEl.style.display='block';return;}
+  hEl.style.display='none';
+  const ql=q.toLowerCase();
+  let pool=[];
+  if(currentFilter==='all'||currentFilter==='courses')pool=[...pool,...SEARCH_DATA.courses];
+  if(currentFilter==='all'||currentFilter==='instructors')pool=[...pool,...SEARCH_DATA.instructors];
+  if(currentFilter==='all'||currentFilter==='students')pool=[...pool,...SEARCH_DATA.students];
+  const res=pool.filter(r=>r.name.toLowerCase().includes(ql)||r.meta.toLowerCase().includes(ql)||r.id.toLowerCase().includes(ql));
+  if(!res.length){rEl.style.display='none';eEl.style.display='block';return;}
+  eEl.style.display='none';rEl.style.display='block';
+  cEl.textContent=`${res.length} resultado${res.length>1?'s':''} encontrado${res.length>1?'s':''}`;
+  lEl.innerHTML=res.map(r=>`
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border .2s" onmouseover="this.style.borderColor='rgba(59,130,246,.4)'" onmouseout="this.style.borderColor='rgba(59,130,246,.15)'">
+      <div style="font-size:22px">${r.icon}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${r.name}</div><div style="font-size:12px;color:var(--gray-mid);margin-top:2px">${r.meta}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="background:var(--surface2);border:1px solid var(--border);border-radius:50px;padding:2px 10px;font-size:11px;font-weight:600;color:var(--blue-cyan);text-transform:capitalize">${r.type}</span>
+        <span style="font-size:11px;color:var(--gray-mid);font-family:'Space Grotesk',sans-serif">${r.id}</span>
+        <button class="btn btn-outline btn-sm" onclick="showToast('Perfil: ${r.name.split(' ')[0]} →','info')">Ver →</button>
+      </div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>

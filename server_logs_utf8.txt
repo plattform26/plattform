@@ -1,0 +1,71 @@
+﻿
+> plattform-temp@0.1.0 dev
+> next dev -p 3001 --port 3001
+
+node.exe :  Ô¿» Failed to 
+start server
+En línea: 1 Carácter: 1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (   
+  Ô¿» Failed to start s   
+ erver:String) [], Rem    
+oteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Error: listen EADDRINUSE: 
+address already in use 
+:::3001
+    at 
+Server.setupListenHandle 
+[as _listen2] 
+(node:net:1948:16)
+    at listenInCluster 
+(node:net:2005:12)
+    at Server.listen 
+(node:net:2110:7)
+    at C:\Users\azuln\Docu
+mentos\flowi_solutions\Pla
+ttform\node_modules\next\d
+ist\server\lib\start-serve
+r.js:280:16
+    at new Promise 
+(<anonymous>)
+    at startServer (C:\Use
+rs\azuln\Documentos\flowi_
+solutions\Plattform\node_m
+odules\next\dist\server\li
+b\start-server.js:191:11)
+    at C:\Users\azuln\Docu
+mentos\flowi_solutions\Pla
+ttform\node_modules\next\d
+ist\server\lib\start-serve
+r.js:310:52
+    at Span.traceAsyncFn (
+C:\Users\azuln\Documentos\
+flowi_solutions\Plattform\
+node_modules\next\dist\tra
+ce\trace.js:154:26)
+    at 
+process.<anonymous> (C:\Us
+ers\azuln\Documentos\flowi
+_solutions\Plattform\node_
+modules\next\dist\server\l
+ib\start-server.js:310:35)
+    at process.emit 
+(node:events:508:28) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+[?25h

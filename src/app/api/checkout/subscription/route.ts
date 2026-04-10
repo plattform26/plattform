@@ -1,0 +1,151 @@
+import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { stripe } from '@/lib/stripe';
+
+export async function POST(req: Request) {
+  try {
+    const session = await getSession();
+    if (!session || session.role !== 'INSTRUCTOR') {
+       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { planName } = await req.json(); // 'starter', 'growth', 'scale'
+    
+    if (!planName) {
+      return NextResponse.json({ error: 'Falta planName' }, { status: 400 });
+    }
+
+    const platformPlan = await prisma.platformPlan.findUnique({
+      where: { name: planName.toLowerCase() }
+    });
+
+    if (!platformPlan) {
+      return NextResponse.json({ error: 'Plan no encontrado' }, { status: 404 });
+    }
+
+    const userData = await prisma.user.findUnique({
+      where: { id: session.userId }
+    });
+
+    if (!userData) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const instructorProfile = await prisma.instructorProfile.findUnique({
+      where: { userId: session.userId }
+    });
+
+    if (!instructorProfile) {
+      return NextResponse.json({ error: 'Instructor profile not found' }, { status: 404 });
+    }
+
+    // 1. Verificar si ya tiene suscripción activa o crear una nueva
+    let sub = await prisma.instructorSubscription.findFirst({
+        where: { instructorId: instructorProfile.id }
+    });
+
+    if (!sub) {
+       sub = await prisma.instructorSubscription.create({
+         data: {
+           instructorId: instructorProfile.id,
+           planId: platformPlan.id,
+           status: 'PAST_DUE',
+           startedAt: new Date(),
+         }
+       });
+    } else {
+        // Si ya existe, actualizamos el plan objetivo
+        sub = await prisma.instructorSubscription.update({
+            where: { id: sub.id },
+            data: { planId: platformPlan.id }
+        });
+    }
+
+    // 2. Crear Stripe Customer si no tiene
+    let stripeCustomerId = sub.stripeCustomerId;
+    if (!stripeCustomerId) {
+        const customer = await stripe.customers.create({
+            email: userData.email,
+            name: `${userData.name} ${userData.lastName}`,
+            metadata: { userId: session.userId }
+        });
+        stripeCustomerId = customer.id;
+        await prisma.instructorSubscription.update({
+            where: { id: sub.id },
+            data: { stripeCustomerId }
+        });
+    }
+
+    const isUpgrade = !!sub.stripeSubscriptionId;
+    const previousSubscriptionId = sub.stripeSubscriptionId;
+
+    // 2.1 LOGICA DE DOWNGRADE (Diferido)
+    if (isUpgrade && previousSubscriptionId) {
+      const currentPlan = await prisma.platformPlan.findUnique({ where: { id: sub.planId } });
+      
+      // Si el nuevo plan es más barato o igual (pero queremos un cambio diferido por política)
+      if (currentPlan && Number(platformPlan.monthlyPrice) < Number(currentPlan.monthlyPrice)) {
+        try {
+          // Programar cancelación al final del periodo en Stripe
+          const stripeSub = await stripe.subscriptions.update(previousSubscriptionId, {
+            cancel_at_period_end: true,
+          });
+
+          // Actualizar en DB: No cambiamos el planId aún, solo marcamos la expiración
+          await prisma.instructorSubscription.update({
+            where: { id: sub.id },
+            data: { 
+              expiresAt: new Date(stripeSub.current_period_end * 1000),
+              status: 'ACTIVE' // Sigue activo hasta que venza
+            }
+          });
+
+          return NextResponse.json({ 
+            message: 'Downgrade programado', 
+            details: `Tu plan ${currentPlan.displayName} seguirá activo hasta el ${new Date(stripeSub.current_period_end * 1000).toLocaleDateString()}. En esa fecha podrás activar tu nuevo plan ${platformPlan.displayName}.`,
+            url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?downgrade_scheduled=true`
+          });
+        } catch (err: any) {
+          console.error('Stripe Downgrade Error:', err);
+          throw err;
+        }
+      }
+    }
+
+    // 3. Crear Stripe Session para SUSCRIPCIÓN (Upgrade o Nueva)
+    const stripeSession = await stripe.checkout.sessions.create({
+      customer: stripeCustomerId,
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'mxn',
+            product_data: {
+              name: `Plattform ${platformPlan.displayName} Plan`,
+              description: platformPlan.description || 'Suscripción para Instructores',
+            },
+            unit_amount: Math.round(Number(platformPlan.monthlyPrice) * 100),
+            recurring: { interval: 'month' },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      success_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?success=true`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?canceled=true`,
+      metadata: {
+        instructorSubscriptionId: sub.id,
+        planId: platformPlan.id,
+        transactionType: 'INSTRUCTOR_SUBSCRIPTION',
+        isUpgrade: isUpgrade ? 'true' : 'false',
+        previousSubscriptionId: previousSubscriptionId || '',
+      },
+    });
+
+    return NextResponse.json({ url: stripeSession.url });
+  } catch (error: any) {
+    console.error('Create subscription session error:', error);
+    return NextResponse.json({ error: 'Error al procesar suscripción', details: error.message }, { status: 500 });
+  }
+}

@@ -1,0 +1,3 @@
+admin@plattform.com | ADMIN | ACTIVE
+alejandro@plattform.com | INSTRUCTOR | ACTIVE
+alumno@plattform.com | STUDENT | ACTIVE

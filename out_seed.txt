@@ -1,0 +1,30 @@
+
+> plattform-temp@0.1.0 seed
+> ts-node prisma/seed.ts
+
+C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:859
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+prisma/seed.ts(59,5): error TS2322: Type '{ slug: string; }' is not assignable to type 'CourseWhereUniqueInput'.
+  Type '{ slug: string; }' is not assignable to type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; } & { ...; }'.
+    Type '{ slug: string; }' is missing the following properties from type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; }': id, instructorId_slug
+prisma/seed.ts(84,5): error TS2322: Type '{ slug: string; }' is not assignable to type 'CourseWhereUniqueInput'.
+  Type '{ slug: string; }' is not assignable to type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; } & { ...; }'.
+    Type '{ slug: string; }' is missing the following properties from type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; }': id, instructorId_slug
+prisma/seed.ts(107,5): error TS2322: Type '{ slug: string; }' is not assignable to type 'CourseWhereUniqueInput'.
+  Type '{ slug: string; }' is not assignable to type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; } & { ...; }'.
+    Type '{ slug: string; }' is missing the following properties from type '{ id: string | CourseInstructorIdSlugCompoundUniqueInput; instructorId_slug: string | CourseInstructorIdSlugCompoundUniqueInput; }': id, instructorId_slug
+
+    at createTSError (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:859:12)
+    at reportTSError (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:863:19)
+    at getOutput (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:1077:36)
+    at Object.compile (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:1433:41)
+    at Module.m._compile (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:1617:30)
+    at node:internal/modules/cjs/loader:1943:10
+    at Object.require.extensions.<computed> [as .ts] (C:\Users\azuln\Documentos\flowi_solutions\Plattform\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+  diagnosticCodes: [ 2322, 2322, 2322 ]
+}

@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0b0e14;
+  --foreground: #e6edf3;
+  --primary: #00f2ff;
+  --secondary: #7000ff;
+  --card-bg: #161b22;
+  --success: #238636;
+  --error: #da3633;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+@layer components {
+  .card {
+    @apply bg-[#161b22] border border-[#30363d] rounded-2xl p-8 mb-8 shadow-2xl;
+  }
+  
+  .module-tag {
+    @apply bg-[#7000ff] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-4;
+  }
+
+  .video-container {
+    @apply relative pb-[56.25%] h-0 my-6 rounded-2xl overflow-hidden border border-white/5;
+  }
+
+  .video-container iframe {
+    @apply absolute top-0 left-0 w-full h-full;
+  }
+
+  .did-you-know {
+    @apply bg-purple-500/10 border-l-4 border-[#7000ff] p-6 my-6 italic text-gray-300 rounded-r-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-[#00f2ff] text-[#0b0e14] px-8 py-3 rounded-xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/20;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

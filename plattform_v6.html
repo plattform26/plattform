@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Plattform — Crea. Vende. Escala.</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bd:#070d1a;--s1:#0d1524;--s2:#131f32;--s3:#192840;--s4:#1e3050;
+  --be:#3B82F6;--bcy:#06B6D4;--bc:#1E3A8A;
+  --grad:linear-gradient(135deg,#06B6D4,#3B82F6,#1E3A8A);
+  --gbtn:linear-gradient(90deg,#06B6D4,#3B82F6);
+  --bord:rgba(59,130,246,0.12);--bord2:rgba(59,130,246,0.25);
+  --glow:0 0 24px rgba(59,130,246,0.18);
+  --w:#fff;--gm:#6B7280;--gd:#374151;
+  --grn:#4ade80;--yel:#fbbf24;--red:#f87171;--orn:#fb923c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--bd);color:var(--w);min-height:100vh;overflow-x:hidden;}
+.gr{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.screen{display:none;}.screen.active{display:block;}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
+.btn-primary{background:var(--gbtn);color:#fff;box-shadow:0 2px 16px rgba(59,130,246,.22);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(59,130,246,.38);}
+.btn-ghost{background:transparent;color:var(--gm);border:1px solid var(--bord);}
+.btn-ghost:hover{color:var(--w);border-color:var(--be);}
+.btn-outline{background:transparent;color:var(--be);border:1px solid var(--be);}
+.btn-outline:hover{background:rgba(59,130,246,.08);}
+.btn-danger{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.22);}
+.btn-danger:hover{background:rgba(239,68,68,.18);}
+.btn-warning{background:rgba(245,158,11,.1);color:var(--yel);border:1px solid rgba(245,158,11,.22);}
+.btn-success{background:rgba(74,222,128,.1);color:var(--grn);border:1px solid rgba(74,222,128,.22);}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:10px;}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;}
+.btn-xs{padding:3px 9px;font-size:11px;border-radius:5px;}
+.btn-block{width:100%;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;background:rgba(7,13,26,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-txt{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:2.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-tabs{display:flex;gap:3px;background:var(--s2);border-radius:10px;padding:4px;border:1px solid var(--bord);}
+.nav-tab{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gm);border:none;background:transparent;font-family:'Poppins',sans-serif;}
+.nav-tab.active{background:var(--gbtn);color:#fff;box-shadow:var(--glow);}
+.nav-tab:hover:not(.active){color:var(--w);background:var(--s3);}
+.nav-actions{display:flex;gap:10px;}
+
+/* DASHBOARD */
+.dash-layout{display:grid;grid-template-columns:228px 1fr;min-height:calc(100vh - 64px);}
+.sidebar{background:var(--s1);border-right:1px solid var(--bord);overflow-y:auto;max-height:calc(100vh - 64px);}
+.sb-lbl{font-size:10px;font-weight:700;color:var(--gm);letter-spacing:1.2px;text-transform:uppercase;padding:12px 26px 4px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 10px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--gm);}
+.sb-item:hover{background:var(--s2);color:var(--w);}
+.sb-item.active{background:rgba(59,130,246,.14);color:var(--be);}
+.sb-item .ico{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.dash-main{overflow-y:auto;max-height:calc(100vh - 64px);padding:30px 38px;}
+.dhead{margin-bottom:22px;}
+.dhead h2{font-size:22px;font-weight:700;}
+.dhead p{color:var(--gm);font-size:14px;margin-top:3px;}
+
+/* KPI */
+.kg{display:grid;gap:14px;margin-bottom:22px;}
+.kg2{grid-template-columns:repeat(2,1fr);}
+.kg3{grid-template-columns:repeat(3,1fr);}
+.kg4{grid-template-columns:repeat(4,1fr);}
+.kg5{grid-template-columns:repeat(5,1fr);}
+.kc{background:var(--s2);border:1px solid var(--bord);border-radius:13px;padding:18px;transition:all .2s;}
+.kc:hover{border-color:var(--bord2);transform:translateY(-2px);}
+.kc-lbl{font-size:12px;color:var(--gm);font-weight:500;margin-bottom:6px;}
+.kc-val{font-size:25px;font-weight:700;}
+.kc-val.blue{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kc-chg{font-size:12px;color:var(--grn);margin-top:3px;}
+.kc-chg.dn{color:var(--red);}
+
+/* TABLE */
+.tc{background:var(--s2);border:1px solid var(--bord);border-radius:16px;overflow:hidden;margin-bottom:22px;}
+.tc-hdr{padding:15px 20px;border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.tc-hdr h3{font-size:15px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(59,130,246,.04);}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+td{padding:12px 16px;font-size:13px;border-top:1px solid var(--bord);vertical-align:middle;}
+tr:hover td{background:rgba(59,130,246,.025);}
+.td-acts{display:flex;gap:4px;flex-wrap:wrap;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:11px;font-weight:600;white-space:nowrap;}
+.bdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.b-pub{background:rgba(74,222,128,.1);color:var(--grn);}
+.b-dft{background:rgba(107,114,128,.12);color:#9ca3af;}
+.b-hib{background:rgba(245,158,11,.1);color:var(--yel);}
+.b-arc{background:rgba(239,68,68,.1);color:var(--red);}
+.b-act{background:rgba(74,222,128,.1);color:var(--grn);}
+.b-sus{background:rgba(239,68,68,.1);color:var(--red);}
+.b-ok{background:rgba(74,222,128,.1);color:var(--grn);}
+.b-fail{background:rgba(239,68,68,.1);color:var(--red);}
+.b-pend{background:rgba(245,158,11,.1);color:var(--yel);}
+.b-inst{background:rgba(6,182,212,.1);color:var(--bcy);}
+.b-renta{background:rgba(251,146,60,.1);color:var(--orn);}
+
+/* FORMS */
+.fg{margin-bottom:16px;}
+.fl{font-size:13px;font-weight:600;color:var(--gm);margin-bottom:7px;display:block;}
+.fsl{font-size:11px;color:var(--gm);margin-top:-5px;margin-bottom:7px;display:block;}
+.fi{width:100%;background:var(--s1);border:1px solid var(--bord);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--w);font-family:'Poppins',sans-serif;transition:border .2s;outline:none;}
+.fi:focus{border-color:var(--be);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.fi::placeholder{color:var(--gm);}
+textarea.fi{resize:vertical;min-height:80px;}
+select.fi option{background:var(--s2);}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.panel{background:var(--s2);border:1px solid var(--bord);border-radius:16px;padding:26px;}
+.pfoot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--bord);}
+
+/* PUBLIC / HERO */
+.hero{position:relative;min-height:580px;display:flex;align-items:center;overflow:hidden;padding:80px 60px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 65% 40%,rgba(59,130,246,.14) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 15% 75%,rgba(6,182,212,.09) 0%,transparent 60%),var(--bd);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.038) 1px,transparent 1px);background-size:60px 60px;}
+.hero-cnt{position:relative;z-index:2;max-width:580px;}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.22);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:500;color:var(--bcy);margin-bottom:22px;}
+.hbadge-dot{width:6px;height:6px;border-radius:50%;background:var(--bcy);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+.hero h1{font-size:52px;font-weight:800;line-height:1.08;margin-bottom:18px;letter-spacing:-.5px;}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:16px;color:var(--gm);line-height:1.8;margin-bottom:32px;font-weight:300;max-width:520px;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-stats{position:absolute;right:80px;top:50%;transform:translateY(-50%);z-index:2;display:flex;flex-direction:column;gap:13px;}
+.sc{background:rgba(13,21,36,.92);border:1px solid var(--bord2);border-radius:13px;padding:17px 22px;backdrop-filter:blur(8px);}
+.sc-n{font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sc-l{font-size:12px;color:var(--gm);margin-top:2px;}
+
+/* CATALOG */
+.sec{padding:52px 60px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+.sec-ttl{font-size:22px;font-weight:700;}
+.ftags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:26px;}
+.ftag{padding:6px 16px;border-radius:50px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid var(--bord);color:var(--gm);background:transparent;font-family:'Poppins',sans-serif;}
+.ftag.active,.ftag:hover{background:var(--gbtn);color:#fff;border-color:transparent;box-shadow:0 2px 12px rgba(59,130,246,.22);}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:22px;}
+.cc{background:var(--s2);border:1px solid var(--bord);border-radius:16px;overflow:hidden;transition:all .25s;cursor:pointer;}
+.cc:hover{transform:translateY(-4px);border-color:var(--bord2);box-shadow:0 8px 32px rgba(59,130,246,.12);}
+.cthumb{height:155px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;overflow:hidden;}
+.ct1{background:linear-gradient(135deg,#09183a,#1e3a8a);}
+.ct2{background:linear-gradient(135deg,#03313b,#0891b2);}
+.ct3{background:linear-gradient(135deg,#0d0d38,#3b4bc8);}
+.ct4{background:linear-gradient(135deg,#051a0a,#059669);}
+.ct5{background:linear-gradient(135deg,#1a033e,#7c3aed);}
+.ct6{background:linear-gradient(135deg,#260800,#c2410c);}
+.ccat{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:#fff;}
+.cbody{padding:17px;}
+.cinst{font-size:12px;color:var(--bcy);font-weight:500;margin-bottom:4px;}
+.ctitle{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:9px;}
+.cmeta{display:flex;gap:10px;font-size:12px;color:var(--gm);margin-bottom:11px;flex-wrap:wrap;}
+.cfoot{display:flex;align-items:center;justify-content:space-between;}
+.cprice{font-size:19px;font-weight:700;color:var(--bcy);}
+.stars{color:#f59e0b;font-size:12px;}
+
+/* PROGRESS */
+.pbw{background:var(--s1);border-radius:50px;height:6px;overflow:hidden;margin:5px 0;}
+.pb{height:100%;border-radius:50px;background:var(--gbtn);transition:width .6s;}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:16px;}
+.ec{background:var(--s2);border:1px solid var(--bord);border-radius:13px;overflow:hidden;transition:all .2s;cursor:pointer;}
+.ec:hover{transform:translateY(-3px);border-color:var(--bord2);}
+.ethumb{height:105px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.ebody{padding:14px;}
+.ettl{font-size:14px;font-weight:600;margin-bottom:3px;}
+.plbl{display:flex;justify-content:space-between;font-size:12px;color:var(--gm);}
+
+/* LESSON EDITORIAL */
+.llay{display:grid;grid-template-columns:258px 1fr;min-height:calc(100vh - 64px);}
+.lsb{background:#050b16;border-right:1px solid rgba(59,130,246,.08);overflow-y:auto;max-height:calc(100vh - 64px);display:flex;flex-direction:column;}
+.lsb-top{padding:18px 16px 14px;border-bottom:1px solid rgba(59,130,246,.07);}
+.lsb-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:5px;}
+.lsb-ttl{font-size:13px;font-weight:700;line-height:1.4;color:var(--w);}
+.lsb-prog{display:flex;align-items:center;gap:8px;margin-top:9px;}
+.lsb-pt{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;}
+.lsb-pf{height:3px;border-radius:2px;background:var(--gbtn);}
+.lsb-pct{font-size:11px;color:var(--gm);font-weight:600;}
+.lsb-mods{flex:1;padding:6px 0 20px;}
+.lsb-mhdr{padding:10px 16px 3px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.lsb-mnum{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);}
+.lsb-mname{font-size:12px;font-weight:700;color:var(--w);padding:0 16px 6px;letter-spacing:.2px;}
+.lsb-marr{font-size:10px;color:var(--gm);transition:transform .2s;}
+.lsb-marr.open{transform:rotate(180deg);}
+.lsb-llist{overflow:hidden;transition:max-height .3s ease;}
+.litem{padding:8px 16px 8px 20px;font-size:12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:#3d5468;display:flex;align-items:center;gap:8px;line-height:1.4;}
+.litem:hover{color:var(--w);background:rgba(59,130,246,.04);}
+.litem.active{color:var(--w);border-left-color:var(--bcy);background:rgba(6,182,212,.055);}
+.litem.done{color:#253444;}
+.litem .lck{font-size:10px;flex-shrink:0;}
+.litem .lnum{font-size:10px;color:#2c4055;flex-shrink:0;font-family:'Space Grotesk',sans-serif;}
+.leval{padding:8px 16px 8px 20px;font-size:12px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:#3d5468;display:flex;align-items:center;gap:8px;margin-top:2px;}
+.leval:hover{color:var(--yel);background:rgba(245,158,11,.04);}
+.leval.active{color:var(--yel);border-left-color:var(--yel);}
+.lmain{background:#080e1c;overflow-y:auto;max-height:calc(100vh - 64px);}
+.ltopbar{display:flex;align-items:center;justify-content:space-between;padding:13px 48px;border-bottom:1px solid rgba(59,130,246,.065);background:#050b16;}
+.lbread{font-size:11px;color:var(--gm);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.lbread a{cursor:pointer;color:var(--gm);transition:color .15s;}
+.lbread a:hover{color:var(--w);}
+.lbread span{color:var(--bcy);}
+.lbody{max-width:700px;margin:0 auto;padding:48px 48px 80px;}
+.ltype{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:14px;}
+.ltype::before{content:'';width:18px;height:1px;background:var(--bcy);}
+.ltitle{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;line-height:1.14;color:var(--w);margin-bottom:10px;letter-spacing:-.4px;}
+.lsubt{font-size:15px;color:#2e4255;margin-bottom:30px;line-height:1.6;}
+.ldiv{width:36px;height:2px;background:var(--gbtn);margin-bottom:30px;border-radius:2px;}
+.lvid{background:#050b16;border:1px solid rgba(59,130,246,.11);border-radius:10px;padding:15px 19px;margin-bottom:30px;display:flex;align-items:center;gap:13px;}
+.lvid-ico{width:40px;height:40px;background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.16);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.lvid-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:3px;}
+.lvid-url{font-size:13px;color:var(--be);cursor:pointer;transition:color .15s;}
+.lvid-url:hover{color:var(--bcy);}
+.lcontent{color:#4a6278;font-size:15px;line-height:1.9;}
+.lcontent p{margin-bottom:18px;}
+.lcontent h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--w);margin:28px 0 10px;letter-spacing:-.2px;}
+.lcontent h4{font-size:13px;font-weight:700;color:var(--bcy);text-transform:uppercase;letter-spacing:1px;margin:24px 0 8px;}
+.lcontent strong{color:var(--w);font-weight:600;}
+.lcontent em{color:var(--bcy);font-style:normal;font-weight:500;}
+.lcontent ul{padding-left:0;list-style:none;margin-bottom:18px;}
+.lcontent ul li{padding:5px 0 5px 20px;position:relative;color:#4a6278;}
+.lcontent ul li::before{content:'→';position:absolute;left:0;color:var(--bcy);font-size:11px;top:7px;}
+.lcallout{background:rgba(6,182,212,.035);border-left:3px solid var(--bcy);border-radius:0 8px 8px 0;padding:13px 17px;margin:22px 0;font-size:14px;color:#4a7080;line-height:1.7;}
+.lcallout strong{color:var(--bcy);}
+.lkeys{background:#050b16;border:1px solid rgba(59,130,246,.11);border-radius:10px;padding:19px 22px;margin:28px 0;}
+.lkeys-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:11px;}
+.lkey{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid rgba(59,130,246,.055);font-size:13px;color:#4a6278;}
+.lkey:last-child{border-bottom:none;}
+.lkey::before{content:'◆';color:var(--bcy);font-size:7px;margin-top:5px;flex-shrink:0;}
+.lfooter{border-top:1px solid rgba(59,130,246,.08);padding:20px 48px;background:#050b16;display:flex;align-items:center;justify-content:space-between;}
+.lfooter-l{font-size:12px;color:var(--gm);}
+
+/* QUIZ */
+.qhdr{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--w);margin-bottom:6px;}
+.qsub{font-size:13px;color:var(--gm);margin-bottom:24px;}
+.qcard{background:#050b16;border:1px solid rgba(59,130,246,.11);border-radius:12px;padding:19px 21px;margin-bottom:12px;}
+.qnum{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bcy);margin-bottom:6px;}
+.qtxt{font-size:15px;font-weight:600;color:var(--w);margin-bottom:12px;line-height:1.5;}
+.qopt{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid rgba(59,130,246,.1);margin-bottom:6px;cursor:pointer;font-size:13px;color:#4a6278;transition:all .2s;}
+.qopt:hover{border-color:rgba(59,130,246,.32);color:var(--w);}
+.qopt.sel{border-color:var(--be);color:var(--w);background:rgba(59,130,246,.08);}
+.qopt.correct{border-color:var(--grn);background:rgba(74,222,128,.055);color:var(--grn);}
+.qletter{width:26px;height:26px;border-radius:6px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.16);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--be);flex-shrink:0;}
+.qopt.sel .qletter{background:var(--be);color:#fff;border-color:var(--be);}
+.qopt.correct .qletter{background:var(--grn);color:#fff;border-color:var(--grn);}
+.score-wrap{background:linear-gradient(135deg,rgba(74,222,128,.055),rgba(6,182,212,.055));border:1px solid rgba(74,222,128,.18);border-radius:13px;padding:32px;text-align:center;}
+.score-num{font-size:72px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.score-lbl{font-size:13px;color:var(--gm);margin-top:4px;margin-bottom:16px;}
+.eval-card{background:#050b16;border:1px solid rgba(245,158,11,.16);border-radius:13px;padding:28px;text-align:center;}
+.eval-rules{display:flex;gap:14px;justify-content:center;margin:18px 0;flex-wrap:wrap;}
+.eval-rule{background:rgba(59,130,246,.065);border:1px solid rgba(59,130,246,.13);border-radius:8px;padding:11px 17px;text-align:center;}
+.eval-rv{font-size:22px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.eval-rl{font-size:11px;color:var(--gm);margin-top:2px;}
+
+/* MODALS */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.mo.active{display:flex;}
+.mbox{background:var(--s1);border:1px solid var(--bord2);border-radius:20px;max-width:680px;width:100%;max-height:92vh;overflow-y:auto;animation:mIn .22s ease;}
+.mbox.sm{max-width:460px;}.mbox.lg{max-width:840px;}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mhdr{padding:24px 24px 19px;border-bottom:1px solid var(--bord);position:relative;}
+.mhdr h2{font-size:19px;font-weight:700;}
+.mhdr p{font-size:13px;color:var(--gm);margin-top:4px;}
+.mclose{position:absolute;top:16px;right:16px;background:var(--s2);border:1px solid var(--bord);border-radius:8px;width:30px;height:30px;cursor:pointer;color:var(--gm);font-size:14px;display:flex;align-items:center;justify-content:center;}
+.mclose:hover{color:var(--w);}
+.mbody{padding:22px 24px;}
+.mfoot{padding:17px 24px;border-top:1px solid var(--bord);display:flex;gap:10px;justify-content:flex-end;align-items:center;}
+
+/* PLAN STEPS */
+.steps{display:flex;align-items:center;margin-bottom:22px;}
+.step{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--gm);}
+.step.active{color:var(--w);}
+.step.done{color:var(--grn);}
+.snum{width:24px;height:24px;border-radius:50%;border:2px solid var(--bord);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.step.active .snum{border-color:var(--be);background:rgba(59,130,246,.13);color:var(--be);}
+.step.done .snum{border-color:var(--grn);background:rgba(74,222,128,.11);color:var(--grn);}
+.sline{flex:1;height:1px;background:var(--bord);margin:0 8px;}
+
+/* PLAN CARDS */
+.pc{background:var(--s2);border:2px solid var(--bord);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;position:relative;text-align:center;}
+.pc:hover,.pc.sel{border-color:var(--be);background:rgba(59,130,246,.065);}
+.pc.sel::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--bcy);font-weight:700;font-size:14px;}
+.pc.pop{border-color:rgba(6,182,212,.35);}
+.ptag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gbtn);color:#fff;font-size:10px;font-weight:700;padding:2px 11px;border-radius:0 0 8px 8px;letter-spacing:.5px;}
+.pname{font-size:15px;font-weight:700;margin-bottom:3px;}
+.ppr{font-size:28px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.psub{font-size:11px;color:var(--gm);margin-bottom:10px;}
+.pfeat{font-size:12px;color:var(--gm);padding:2px 0;}
+.pfeat.no{color:#2a3a4a;text-decoration:line-through;}
+
+/* AI BOX */
+.aibox{background:linear-gradient(135deg,rgba(6,182,212,.055),rgba(59,130,246,.055));border:1px solid rgba(6,182,212,.16);border-radius:12px;padding:18px;margin-bottom:20px;}
+.aibhdr{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
+.aiico{width:32px;height:32px;background:var(--gbtn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.airbox{background:var(--s1);border:1px solid var(--bord);border-radius:8px;padding:13px;margin-top:11px;display:none;}
+.airbox.vis{display:block;}
+.amt{font-size:13px;font-weight:600;color:var(--be);margin-bottom:3px;margin-top:8px;}
+.amt:first-child{margin-top:0;}
+.ali{font-size:12px;color:var(--gm);padding:2px 0 2px 11px;border-left:2px solid var(--bord);}
+.gen{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--bcy);}
+.da span{animation:db .6s infinite alternate;display:inline-block;}
+.da span:nth-child(2){animation-delay:.2s}.da span:nth-child(3){animation-delay:.4s}
+@keyframes db{to{transform:translateY(-4px);opacity:.4}}
+
+/* TABS */
+.tbar{display:flex;gap:4px;background:var(--s1);border:1px solid var(--bord);border-radius:10px;padding:4px;margin-bottom:20px;}
+.titem{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--gm);border:none;background:transparent;font-family:'Poppins',sans-serif;}
+.titem.active{background:var(--gbtn);color:#fff;}
+.tpane{display:none;}.tpane.active{display:block;}
+
+/* BUILDER */
+.mblock{background:var(--s1);border:1px solid var(--bord);border-radius:10px;padding:16px;margin-bottom:10px;}
+.lblock{background:var(--s2);border:1px solid var(--bord);border-radius:8px;padding:12px;margin-bottom:8px;}
+
+/* QUIZ BUILDER */
+.qb-card{background:var(--s1);border:1px solid var(--bord);border-radius:10px;padding:16px;margin-bottom:12px;}
+.qb-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--s2);border:1px solid var(--bord);border-radius:8px;margin-bottom:6px;}
+.qb-chk{width:18px;height:18px;border-radius:4px;border:2px solid var(--bord);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .2s;}
+.qb-chk.chked{background:var(--be);border-color:var(--be);color:#fff;}
+.qb-chk.circle{border-radius:50%;}
+.qb-chk.circle.chked{background:var(--bcy);border-color:var(--bcy);color:#fff;}
+.score-bar{background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.score-bar .sv{font-size:22px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.score-bar.ok{border-color:rgba(74,222,128,.28);}
+.score-bar.err{border-color:rgba(239,68,68,.28);}
+
+/* CHARTS */
+.bar-group{display:flex;align-items:flex-end;gap:10px;height:160px;padding:0 4px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar{border-radius:4px 4px 0 0;background:var(--gbtn);transition:height .6s;min-width:22px;cursor:pointer;position:relative;}
+.bar:hover::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--s3);padding:2px 8px;border-radius:5px;font-size:11px;color:#fff;white-space:nowrap;}
+.bar-lbl{font-size:10px;color:var(--gm);}
+.rrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bord);font-size:13px;}
+.rrow:last-child{border-bottom:none;}
+.rbw{flex:1;background:var(--s1);border-radius:50px;height:5px;}
+.rb{height:5px;border-radius:50px;background:var(--gbtn);}
+.ramt{color:var(--bcy);font-weight:600;min-width:64px;text-align:right;}
+
+/* MISC */
+.sub-banner{background:linear-gradient(135deg,rgba(6,182,212,.09),rgba(59,130,246,.09));border:1px solid rgba(6,182,212,.22);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.sub-banner.warn{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.18);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.alert-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--bord);}
+.alert-item:last-child{border-bottom:none;}
+.adot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.adot.r{background:var(--red);box-shadow:0 0 5px var(--red);}
+.adot.y{background:var(--yel);box-shadow:0 0 5px var(--yel);}
+.adot.g{background:var(--grn);box-shadow:0 0 5px var(--grn);}
+.atxt{font-size:13px;flex:1;}.atm{font-size:11px;color:var(--gm);}
+.cert-row{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid rgba(6,182,212,.18);border-radius:13px;padding:16px;display:flex;align-items:center;gap:13px;margin-bottom:10px;}
+.cico{width:42px;height:42px;background:var(--gbtn);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--gm);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bord);}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--s1);border:1px solid var(--bord);border-radius:12px;padding:12px 17px;display:flex;align-items:center;gap:9px;font-size:13px;z-index:500;transform:translateY(20px);opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(74,222,128,.26);}.toast.success .ti{color:var(--grn);}
+.toast.info{border-color:rgba(59,130,246,.26);}.toast.info .ti{color:var(--be);}
+.toast.error{border-color:rgba(239,68,68,.26);}.toast.error .ti{color:var(--red);}
+
+/* LANDING SECTIONS */
+.why-sec,.about-sec{padding:64px 60px;background:var(--s1);}
+.pricing-sec,.faq-sec{padding:64px 60px;background:var(--bd);}
+.contact-sec{padding:64px 60px;background:var(--s1);border-top:1px solid var(--bord);}
+.section-title-block{text-align:center;margin-bottom:40px;}
+.section-title-block h2{font-size:34px;font-weight:800;margin-bottom:8px;}
+.section-title-block p{font-size:15px;color:var(--gm);}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.why-card{background:var(--s2);border:1px solid var(--bord);border-radius:16px;padding:24px;transition:all .2s;}
+.why-card:hover{border-color:var(--bord2);transform:translateY(-2px);}
+.why-ico{font-size:30px;margin-bottom:13px;}
+.why-card h3{font-size:15px;font-weight:700;margin-bottom:7px;}
+.why-card p{font-size:13px;color:var(--gm);line-height:1.7;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.price-card{background:var(--s2);border:1px solid var(--bord);border-radius:18px;padding:28px;position:relative;transition:all .2s;}
+.price-card:hover{border-color:var(--bord2);transform:translateY(-3px);}
+.price-card.featured{border-color:rgba(6,182,212,.38);background:linear-gradient(135deg,rgba(6,182,212,.055),rgba(59,130,246,.055));}
+.price-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gbtn);color:#fff;font-size:10px;font-weight:700;padding:3px 14px;border-radius:0 0 10px 10px;letter-spacing:.5px;}
+.price-name{font-size:13px;font-weight:700;color:var(--gm);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.price-amount{font-size:42px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.price-period{font-size:13px;color:var(--gm);margin-bottom:20px;}
+.price-feat{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:var(--gm);border-bottom:1px solid var(--bord);}
+.price-feat:last-child{border-bottom:none;}
+.price-feat .fck{font-size:11px;flex-shrink:0;}
+.price-feat .fck.no{color:var(--red);}
+.price-feat .fck.ok{color:var(--grn);}
+.faq-item{border:1px solid var(--bord);border-radius:12px;margin-bottom:9px;overflow:hidden;transition:border .2s;}
+.faq-item:hover{border-color:var(--bord2);}
+.faq-q{padding:15px 19px;font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.faq-a{padding:0 19px;max-height:0;overflow:hidden;transition:all .3s;font-size:13px;color:var(--gm);line-height:1.7;}
+.faq-a.open{max-height:200px;padding:0 19px 15px;}
+.faq-arr{transition:transform .3s;font-size:11px;color:var(--gm);}
+.faq-arr.open{transform:rotate(180deg);}
+.footer{background:#030810;border-top:1px solid var(--bord);}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding:52px 60px 40px;}
+.footer-brand p{font-size:13px;color:var(--gm);line-height:1.7;margin-top:11px;max-width:270px;}
+.footer-col h4{font-size:13px;font-weight:700;margin-bottom:13px;}
+.footer-col a{display:block;font-size:13px;color:var(--gm);padding:4px 0;cursor:pointer;transition:color .15s;}
+.footer-col a:hover{color:var(--w);}
+.footer-bottom{border-top:1px solid var(--bord);padding:17px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-bottom p{font-size:12px;color:var(--gm);}
+
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(59,130,246,.09) 0%,transparent 70%),var(--bd);}
+.acard{background:var(--s1);border:1px solid var(--bord2);border-radius:20px;padding:36px;width:100%;max-width:440px;}
+.atitle{font-size:21px;font-weight:700;text-align:center;margin-bottom:5px;}
+.asub{font-size:13px;color:var(--gm);text-align:center;margin-bottom:20px;}
+.role-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.ropt{background:var(--s2);border:1px solid var(--bord);border-radius:9px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--gm);}
+.ropt:hover,.ropt.active{border-color:var(--be);color:var(--w);background:rgba(59,130,246,.075);}
+.rico{font-size:20px;display:block;margin-bottom:4px;}
+.alink{text-align:center;margin-top:12px;font-size:13px;color:var(--gm);}
+
+/* CHECKOUT */
+.co-card{background:var(--s1);border:1px solid var(--bord2);border-radius:20px;padding:32px;width:100%;max-width:520px;}
+.co-sum{display:flex;gap:13px;background:var(--s2);border-radius:12px;padding:13px;margin-bottom:20px;border:1px solid var(--bord);}
+.cothumb{width:58px;height:58px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.pr-break{border-top:1px solid var(--bord);padding-top:16px;margin-top:16px;}
+.pr-row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;color:var(--gm);}
+.pr-row.tot{color:var(--w);font-weight:700;font-size:16px;border-top:1px solid var(--bord);padding-top:10px;margin-top:5px;}
+.pr-row.tot .ta{color:var(--bcy);}
+.c2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.ppbox{background:rgba(74,222,128,.045);border:1px solid rgba(74,222,128,.16);border-radius:10px;padding:13px;margin-top:13px;}
+.ppbox h4{font-size:13px;font-weight:600;color:var(--grn);margin-bottom:7px;}
+.ppi{font-size:12px;color:var(--gm);padding:2px 0;display:flex;gap:7px;}
+.ppi::before{content:'→';color:var(--bcy);}
+
+/* CERT OVERLAY */
+#cert-overlay{display:none;position:fixed;inset:0;background:#e8edf4;z-index:300;overflow-y:auto;}
+.cert-topbar{background:#07101f;padding:13px 30px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(59,130,246,.12);}
+.cert-page{width:860px;margin:24px auto 40px;background:#fff;border-radius:4px;box-shadow:0 24px 80px rgba(0,0,0,.16);overflow:hidden;font-family:'Poppins',sans-serif;}
+.cert-hdr{background:linear-gradient(135deg,#07101f,#0d1f3c,#1e3a8a);padding:42px 60px 34px;text-align:center;color:#fff;}
+.cert-logo-line{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;letter-spacing:3px;color:#06B6D4;margin-bottom:20px;}
+.cert-badge{width:78px;height:78px;background:linear-gradient(135deg,#06B6D4,#3B82F6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 17px;}
+.cert-type{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:8px;}
+.cert-cname{font-size:25px;font-weight:800;line-height:1.2;}
+.cert-body{padding:38px 60px;text-align:center;}
+.cert-to{font-size:12px;color:#9ca3af;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.cert-name{font-size:38px;font-weight:800;background:linear-gradient(135deg,#07101f,#1e3a8a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.cert-desc{font-size:14px;color:#4b5563;line-height:1.7;max-width:520px;margin:0 auto 22px;}
+.cert-course-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:15px 22px;display:inline-block;margin-bottom:22px;}
+.cert-cn{font-size:17px;font-weight:700;color:#07101f;margin-bottom:4px;}
+.cert-cm{font-size:13px;color:#6b7280;}
+.cert-score{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.18);border-radius:8px;padding:8px 18px;margin-bottom:28px;font-size:14px;color:#1e3a8a;font-weight:600;}
+.cert-sigs{display:flex;justify-content:space-around;padding:22px 60px 0;border-top:1px solid #e2e8f0;}
+.cert-sig{text-align:center;}
+.cert-sig-line{width:130px;height:1px;background:#0d1f3c;margin:0 auto 6px;}
+.cert-sig-name{font-size:13px;font-weight:700;color:#07101f;}
+.cert-sig-role{font-size:11px;color:#6b7280;}
+.cert-foot{background:#f8fafc;padding:14px 60px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;}
+.cert-code{font-size:11px;color:#6b7280;font-family:'Space Grotesk',sans-serif;}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--bc)}
+@media(max-width:1100px){.hero-stats{display:none}.kg4{grid-template-columns:1fr 1fr}.kg5{grid-template-columns:repeat(3,1fr)}.footer-main,.why-grid,.pricing-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.dash-layout{grid-template-columns:1fr}.sidebar{display:none}.fr2,.fr3,.two-col,.c2{grid-template-columns:1fr}.hero h1{font-size:32px}.llay{grid-template-columns:1fr}.lsb{display:none}.sec,.why-sec,.pricing-sec,.faq-sec,.about-sec,.contact-sec{padding:40px 24px}.footer-main{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="go('public')">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <rect x="2" y="19" width="5" height="11" rx="2" fill="url(#ng)"/>
+      <rect x="9" y="13" width="5" height="17" rx="2" fill="url(#ng)"/>
+      <rect x="16" y="7" width="5" height="23" rx="2" fill="url(#ng)"/>
+      <rect x="23" y="2" width="5" height="28" rx="2" fill="url(#ng)"/>
+      <defs><linearGradient id="ng" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06B6D4"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient></defs>
+    </svg>
+    <span class="logo-txt">Plattform</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchRole('public',this)">🌐 Público</button>
+    <button class="nav-tab" onclick="switchRole('instructor',this)">🎓 Instructor</button>
+    <button class="nav-tab" onclick="switchRole('student',this)">📚 Alumno</button>
+    <button class="nav-tab" onclick="switchRole('admin',this)">⚙️ Admin</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="showAuth('login')">Iniciar sesión</button>
+    <button class="btn btn-primary" onclick="showAuth('register')">Registrarse gratis</button>
+  </div>
+</nav>
+
+<!-- PUBLIC SCREEN -->
+<div id="screen-public" class="screen active">
+  <div class="hero">
+    <div class="hero-bg"></div><div class="hero-grid"></div>
+    <div class="hero-cnt">
+      <div class="hbadge"><span class="hbadge-dot"></span>Generación de cursos con IA integrada</div>
+      <h1>Tu academia,<br/><em>sin fricción.</em></h1>
+      <p>La infraestructura SaaS para que profesores universitarios creen, vendan y escalen su conocimiento. De idea a curso en minutos, sin saber programar.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Crear mi academia →</button>
+        <button class="btn btn-ghost btn-lg" onclick="document.getElementById('cats').scrollIntoView({behavior:'smooth'})">Explorar cursos</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="sc"><div class="sc-n">1,240</div><div class="sc-l">Alumnos activos</div></div>
+      <div class="sc"><div class="sc-n">87</div><div class="sc-l">Cursos publicados</div></div>
+      <div class="sc"><div class="sc-n">4.8★</div><div class="sc-l">Calificación promedio</div></div>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <div class="sec" id="cats">
+    <div class="sec-hdr">
+      <h2 class="sec-ttl">Cursos <span class="gr">disponibles</span></h2>
+      <input class="fi" id="search-input" style="width:240px;padding:9px 14px;font-size:13px" placeholder="🔍 Buscar cursos..." oninput="searchCourses(this.value)"/>
+    </div>
+    <div class="ftags">
+      <button class="ftag active" onclick="filterCat('all',this)">Todos</button>
+      <button class="ftag" onclick="filterCat('Negocios',this)">Negocios</button>
+      <button class="ftag" onclick="filterCat('Tecnología',this)">Tecnología</button>
+      <button class="ftag" onclick="filterCat('Marketing',this)">Marketing</button>
+      <button class="ftag" onclick="filterCat('Finanzas',this)">Finanzas</button>
+      <button class="ftag" onclick="filterCat('Liderazgo',this)">Liderazgo</button>
+      <button class="ftag" onclick="filterCat('Diseño',this)">Diseño</button>
+    </div>
+    <div class="cg" id="courses-grid"></div>
+    <div id="no-results" style="display:none;text-align:center;padding:40px;color:var(--gm);font-size:14px">No se encontraron cursos para tu búsqueda.</div>
+  </div>
+
+  <!-- WHY -->
+  <div class="why-sec">
+    <div class="section-title-block"><h2>¿Por qué <span class="gr">Plattform?</span></h2><p>La infraestructura que los profesores universitarios necesitaban para monetizar su conocimiento.</p></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-ico">🤖</div><h3>IA que trabaja por ti</h3><p>Genera módulos, lecciones y evaluaciones completas en segundos. Solo define el tema y objetivo.</p></div>
+      <div class="why-card"><div class="why-ico">💰</div><h3>Monetización directa</h3><p>El dinero llega directo a tu cuenta bancaria vía Stripe, menos nuestra pequeña comisión.</p></div>
+      <div class="why-card"><div class="why-ico">🎓</div><h3>Certificados automáticos</h3><p>Al completar el curso y aprobar la evaluación, el alumno recibe su certificado descargable.</p></div>
+      <div class="why-card"><div class="why-ico">📊</div><h3>Dashboard de negocio</h3><p>Visualiza ingresos por mes y por curso, monitorea alumnos y gestiona tu academia.</p></div>
+      <div class="why-card"><div class="why-ico">⚡</div><h3>Sin fricción técnica</h3><p>No necesitas saber programar ni contratar desarrolladores. Tu academia lista en minutos.</p></div>
+      <div class="why-card"><div class="why-ico">🔒</div><h3>Pagos seguros con Stripe</h3><p>Toda la infraestructura de cobro está integrada. Solo pon tu precio y cuenta bancaria.</p></div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing-sec" id="pricing">
+    <div class="section-title-block"><h2>Planes para <span class="gr">instructores</span></h2><p>Elige el plan que se adapte al tamaño de tu academia. Cancela cuando quieras.</p></div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">$99</div>
+        <div class="price-period">MXN / mes · hasta 20 alumnos</div>
+        <div style="margin-bottom:22px">
+          <div class="price-feat"><span class="fck ok">✓</span>Cursos ilimitados</div>
+          <div class="price-feat"><span class="fck no">✕</span>Generación con IA</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Dashboard de ingresos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Certificados automáticos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>15% comisión por venta</div>
+        </div>
+        <button class="btn btn-outline btn-block" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Empezar →</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tag">MÁS POPULAR</div>
+        <div class="price-name">Growth</div>
+        <div class="price-amount">$299</div>
+        <div class="price-period">MXN / mes · hasta 100 alumnos</div>
+        <div style="margin-bottom:22px">
+          <div class="price-feat"><span class="fck ok">✓</span>Cursos ilimitados</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Generación con IA incluida</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Dashboard de ingresos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Certificados automáticos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>10% comisión por venta</div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Empezar →</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Scale</div>
+        <div class="price-amount">$799</div>
+        <div class="price-period">MXN / mes · alumnos ilimitados</div>
+        <div style="margin-bottom:22px">
+          <div class="price-feat"><span class="fck ok">✓</span>Cursos ilimitados</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Generación con IA incluida</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Dashboard de ingresos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>Certificados automáticos</div>
+          <div class="price-feat"><span class="fck ok">✓</span>7% comisión por venta</div>
+        </div>
+        <button class="btn btn-outline btn-block" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Empezar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-sec" id="faq">
+    <div class="section-title-block"><h2>Preguntas <span class="gr">frecuentes</span></h2></div>
+    <div style="max-width:700px;margin:0 auto">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cuánto cuesta publicar mi curso?<span class="faq-arr">▼</span></div><div class="faq-a">Como instructor pagas una renta mensual (Starter $99, Growth $299 o Scale $799 MXN) más una comisión por cada curso vendido (7% a 15%). Tus alumnos no pagan ninguna cuota a Plattform.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Cómo recibo mis ingresos?<span class="faq-arr">▼</span></div><div class="faq-a">Los pagos se procesan vía Stripe. Cuando un alumno compra tu curso, el monto menos nuestra comisión se deposita directamente en tu cuenta bancaria. No manejamos monedero virtual.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Necesito saber programar?<span class="faq-arr">▼</span></div><div class="faq-a">No. Plattform está diseñado para profesores sin perfil técnico. Puedes crear tu curso manualmente o usar nuestro generador de IA.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Puedo subir videos?<span class="faq-arr">▼</span></div><div class="faq-a">El contenido de video se integra via enlaces de YouTube o Vimeo. El contenido escrito y evaluaciones viven directamente en Plattform.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si cancelo mi suscripción?<span class="faq-arr">▼</span></div><div class="faq-a">Tus cursos se hibernan automáticamente, pero tus alumnos actuales mantienen su acceso al contenido que ya compraron.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">¿Los certificados tienen validez oficial?<span class="faq-arr">▼</span></div><div class="faq-a">Son constancias de formación continua válidas en el ámbito profesional, emitidas por el instructor y su academia con código de verificación único.</div></div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="about-sec" id="about">
+    <h2 style="font-size:32px;font-weight:800;margin-bottom:13px">Quiénes <span class="gr">somos</span></h2>
+    <p style="font-size:14px;color:var(--gm);line-height:1.8;max-width:660px;margin-bottom:11px">Plattform nació de una observación simple: hay miles de profesores universitarios en México y América Latina con conocimiento valioso que no tienen las herramientas para monetizarlo de forma simple y profesional.</p>
+    <p style="font-size:14px;color:var(--gm);line-height:1.8;max-width:660px;margin-bottom:20px">Somos la infraestructura SaaS diseñada específicamente para académicos que quieren convertir su experiencia en un negocio digital sin complicaciones técnicas.</p>
+    <div style="display:flex;gap:13px;flex-wrap:wrap">
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:15px 22px;text-align:center"><div style="font-size:24px;font-weight:800" class="gr">32</div><div style="font-size:12px;color:var(--gm)">Instructores activos</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:15px 22px;text-align:center"><div style="font-size:24px;font-weight:800" class="gr">1,240</div><div style="font-size:12px;color:var(--gm)">Alumnos formados</div></div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;padding:15px 22px;text-align:center"><div style="font-size:24px;font-weight:800" class="gr">87</div><div style="font-size:12px;color:var(--gm)">Cursos publicados</div></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-sec" id="contact">
+    <div class="section-title-block"><h2>¿Listo para <span class="gr">empezar?</span></h2><p>Escríbenos. Un asesor te contacta en menos de 24 horas.</p></div>
+    <div style="max-width:540px;margin:0 auto">
+      <div class="fr2"><div class="fg"><label class="fl">Nombre completo</label><input class="fi" placeholder="Tu nombre"/></div><div class="fg"><label class="fl">Institución</label><input class="fi" placeholder="UNAM, ITESM, ULA…"/></div></div>
+      <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+      <div class="fg"><label class="fl">¿Qué quieres enseñar?</label><textarea class="fi" placeholder="Describe brevemente tu área de expertise…"></textarea></div>
+      <button class="btn btn-primary btn-lg btn-block" onclick="showToast('Mensaje enviado. Te contactamos pronto 📩','success')">Enviar mensaje →</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="logo-txt" style="font-size:20px">Plattform</div>
+        <p>La infraestructura SaaS para que profesores universitarios creen, vendan y escalen su conocimiento en línea.</p>
+        <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Crear mi academia →</button>
+      </div>
+      <div class="footer-col"><h4>Plataforma</h4><a onclick="document.getElementById('cats').scrollIntoView({behavior:'smooth'})">Explorar cursos</a><a onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Planes y precios</a><a onclick="switchRole('instructor',document.querySelectorAll('.nav-tab')[1])">Para instructores</a><a onclick="showAuth('register')">Registrarse</a></div>
+      <div class="footer-col"><h4>Empresa</h4><a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Quiénes somos</a><a onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">FAQ</a><a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contacto</a><a onclick="showModal('modal-privacy')">Política de privacidad</a><a onclick="showModal('modal-terms')">Términos de uso</a></div>
+      <div class="footer-col"><h4>Planes</h4><a>Starter — $99 MXN/mes</a><a>Growth — $299 MXN/mes</a><a>Scale — $799 MXN/mes</a><a style="color:var(--bcy);margin-top:6px" onclick="showAuth('register')">Empezar gratis →</a></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Plattform. Todos los derechos reservados.</p><div style="display:flex;gap:16px"><a style="font-size:12px;color:var(--gm)" onclick="showModal('modal-privacy')">Privacidad</a><a style="font-size:12px;color:var(--gm)" onclick="showModal('modal-terms')">Términos</a></div></div>
+  </footer>
+</div>
+
+<!-- INSTRUCTOR SCREEN -->
+<div id="screen-instructor" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-lbl">Principal</div>
+      <div class="sb-item active" onclick="iv('overview',this)"><span class="ico">📊</span>Resumen</div>
+      <div class="sb-item" onclick="iv('courses',this)"><span class="ico">📚</span>Mis cursos</div>
+      <div class="sb-item" onclick="iv('create',this)"><span class="ico">✨</span>Crear curso</div>
+      <div class="sb-item" onclick="iv('students',this)"><span class="ico">👥</span>Alumnos</div>
+      <div class="sb-lbl">Finanzas</div>
+      <div class="sb-item" onclick="iv('earnings',this)"><span class="ico">💰</span>Ingresos</div>
+      <div class="sb-item" onclick="iv('transactions',this)"><span class="ico">💳</span>Transacciones</div>
+      <div class="sb-lbl">Cuenta</div>
+      <div class="sb-item" onclick="iv('profile',this)"><span class="ico">🏫</span>Mi academia</div>
+      <div class="sb-item" onclick="iv('plan',this)"><span class="ico">💎</span>Mi plan</div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <div id="iv-overview">
+        <div class="dhead"><h2>Bienvenido, Dr. Alejandro 👋</h2><p>Estado de tu academia hoy.</p></div>
+        <div class="sub-banner">
+          <span style="font-size:18px">💎</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--bcy)">Plan Growth — Activo · $299 MXN/mes</div><div style="font-size:12px;color:var(--gm);margin-top:1px">Renovación el <strong style="color:var(--w)">15 feb 2025</strong> · Comisión: <strong style="color:var(--w)">10%</strong> · 68/100 alumnos</div></div>
+          <button class="btn btn-outline btn-sm" onclick="iv('plan',document.querySelectorAll('#screen-instructor .sb-item')[8])">Ver plan</button>
+        </div>
+        <div class="kg kg4">
+          <div class="kc"><div class="kc-lbl">📚 Cursos activos</div><div class="kc-val blue">4</div><div class="kc-chg">↑ 1 este mes</div></div>
+          <div class="kc"><div class="kc-lbl">👥 Total alumnos</div><div class="kc-val blue">320</div><div class="kc-chg">↑ 28 esta semana</div></div>
+          <div class="kc"><div class="kc-lbl">💰 Ingresos brutos</div><div class="kc-val blue">$42,800</div><div class="kc-chg">↑ 12% vs mes anterior</div></div>
+          <div class="kc"><div class="kc-lbl">⭐ Calificación</div><div class="kc-val blue">4.9</div><div class="kc-chg">128 reseñas totales</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Mis cursos</h3><button class="btn btn-primary btn-sm" onclick="iv('create',document.querySelectorAll('#screen-instructor .sb-item')[2])">+ Nuevo curso</button></div>
+          <table><thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial en la Era Digital</strong><br/><span style="font-size:11px;color:var(--gm)">$1,499 MXN · 18h · Negocios</span></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>320</td><td style="color:var(--bcy);font-weight:600">$28,400</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-warning btn-xs" onclick="showToast('Curso hibernado','info')">Hibernar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Estrategia Empresarial')">Eliminar</button></td></tr>
+            <tr><td><strong>Introducción al Uso de Claude — IA Práctica</strong><br/><span style="font-size:11px;color:var(--gm)">$899 MXN · 8h · 4 módulos · Tecnología</span></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>412</td><td style="color:var(--bcy);font-weight:600">$8,200</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="iv('claude-course',null)">Ver curso</button><button class="btn btn-warning btn-xs" onclick="showToast('Curso hibernado','info')">Hibernar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Introducción a Claude')">Eliminar</button></td></tr>
+            <tr><td><strong>Innovación y Modelos de Negocio</strong><br/><span style="font-size:11px;color:var(--gm)">$999 MXN · 10h · Negocios</span></td><td><span class="badge b-dft"><span class="bdot"></span>BORRADOR</span></td><td>0</td><td style="color:var(--gm)">—</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs" onclick="showToast('Curso publicado 🎉','success')">Publicar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Innovación y Modelos')">Eliminar</button></td></tr>
+            <tr><td><strong>Análisis de Mercados Emergentes</strong><br/><span style="font-size:11px;color:var(--gm)">$2,199 MXN · 26h · Negocios</span></td><td><span class="badge b-hib"><span class="bdot"></span>HIBERNADO</span></td><td>45</td><td style="color:var(--bcy);font-weight:600">$3,200</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs" onclick="showToast('Curso reactivado ✓','success')">Reactivar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Análisis de Mercados')">Eliminar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- MIS CURSOS -->
+      <div id="iv-courses" style="display:none">
+        <div class="dhead"><h2>Mis cursos 📚</h2></div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn btn-primary" onclick="iv('create',document.querySelectorAll('#screen-instructor .sb-item')[2])">+ Nuevo curso</button></div>
+        <div class="tc"><table><thead><tr><th>Curso</th><th>Estado</th><th>Alumnos</th><th>Precio</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Estrategia Empresarial</strong></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>320</td><td>$1,499</td><td style="color:var(--bcy)">$28,400</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-warning btn-xs">Hibernar</button><button class="btn btn-ghost btn-xs">Duplicar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Estrategia Empresarial')">Eliminar</button></td></tr>
+          <tr><td><strong>Introducción a Claude</strong></td><td><span class="badge b-pub"><span class="bdot"></span>PUBLICADO</span></td><td>412</td><td>$899</td><td style="color:var(--bcy)">$8,200</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="iv('claude-course',null)">Ver</button><button class="btn btn-warning btn-xs">Hibernar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Introducción a Claude')">Eliminar</button></td></tr>
+          <tr><td><strong>Innovación y Modelos</strong></td><td><span class="badge b-dft"><span class="bdot"></span>BORRADOR</span></td><td>0</td><td>$999</td><td style="color:var(--gm)">—</td><td class="td-acts"><button class="btn btn-outline btn-xs">Editar</button><button class="btn btn-success btn-xs">Publicar</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Innovación y Modelos')">Eliminar</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- CREAR CURSO -->
+      <div id="iv-create" style="display:none">
+        <div class="dhead">
+          <button class="btn btn-ghost btn-sm" style="margin-bottom:10px" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">← Regresar a mis cursos</button>
+          <h2>Crear nuevo curso ✨</h2><p>Elige cómo quieres construir tu curso.</p>
+        </div>
+        <div class="tbar">
+          <button class="titem active" onclick="stab('tab-ai',this)">🤖 Crear con IA</button>
+          <button class="titem" onclick="stab('tab-manual',this)">✍️ Crear manualmente</button>
+        </div>
+        <!-- IA TAB -->
+        <div id="tab-ai" class="tpane active">
+          <div class="panel">
+            <div class="aibox">
+              <div class="aibhdr"><div class="aiico">🤖</div><div><strong style="font-size:14px">Generador con IA</strong><p style="font-size:12px;color:var(--gm);margin-top:2px">Completa los campos y la IA genera módulos, lecciones y evaluaciones listas para editar.</p></div></div>
+              <div class="fr2">
+                <div class="fg"><label class="fl">Tema del curso *</label><input class="fi" id="ai-tema" placeholder="Ej: Gestión de proyectos ágiles"/></div>
+                <div class="fg"><label class="fl">Perfil del alumno *</label><input class="fi" placeholder="Ej: Profesionistas sin experiencia técnica"/></div>
+              </div>
+              <div class="fg"><label class="fl">Objetivo de aprendizaje *</label><input class="fi" placeholder="Ej: Que el alumno pueda implementar sprints en su equipo"/></div>
+              <div class="fr3">
+                <div class="fg"><label class="fl">Número de módulos</label><select class="fi"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
+                <div class="fg"><label class="fl">Duración deseada</label><select class="fi"><option>4 horas</option><option selected>8 horas</option><option>15 horas</option><option>20+ horas</option></select></div>
+                <div class="fg"><label class="fl">Tono / Nivel</label><select class="fi"><option>Accesible (principiante)</option><option selected>Profesional (intermedio)</option><option>Técnico (avanzado)</option></select></div>
+              </div>
+              <button class="btn btn-primary" onclick="genAI()">✨ Generar estructura del curso</button>
+              <div class="airbox" id="ai-res">
+                <div id="ai-gen" class="gen"><span>Generando estructura</span><span class="da"><span>.</span><span>.</span><span>.</span></span></div>
+                <div id="ai-out" style="display:none">
+                  <div style="font-size:12px;color:var(--bcy);font-weight:600;margin-bottom:8px">✅ 3 módulos · 9 lecciones · 12 preguntas generados</div>
+                  <div class="amt">Módulo 1: Fundamentos de Agilidad</div>
+                  <div class="ali">L1.1 — ¿Qué es Agile y por qué importa?</div><div class="ali">L1.2 — Manifiesto Ágil y sus principios</div><div class="ali">L1.3 — Roles clave en equipos ágiles</div>
+                  <div class="amt">Módulo 2: Scrum en la Práctica</div>
+                  <div class="ali">L2.1 — Sprint planning efectivo</div><div class="ali">L2.2 — Daily standups que funcionan</div><div class="ali">L2.3 — Retrospectivas y mejora continua</div>
+                  <div class="amt">Módulo 3: Implementación Empresarial</div>
+                  <div class="ali">L3.1 — Adaptar Agile a tu organización</div><div class="ali">L3.2 — Gestión del cambio organizacional</div><div class="ali">L3.3 — Evaluación final (12 preguntas)</div>
+                </div>
+              </div>
+            </div>
+            <div class="fr2"><div class="fg"><label class="fl">Título del curso *</label><input class="fi" placeholder="Se auto-llena desde el tema"/></div><div class="fg"><label class="fl">Precio (MXN) *</label><input class="fi" type="number" placeholder="1499"/></div></div>
+            <div class="fr3">
+              <div class="fg"><label class="fl">Categoría</label><select class="fi"><option>Negocios</option><option>Tecnología</option><option>Marketing</option><option>Finanzas</option><option>Liderazgo</option><option>Diseño</option></select></div>
+              <div class="fg"><label class="fl">Nivel</label><select class="fi"><option>Principiante</option><option>Intermedio</option><option>Avanzado</option></select></div>
+              <div class="fg"><label class="fl">Visibilidad</label><select class="fi"><option>Público</option><option>No listado</option><option>Privado</option></select></div>
+            </div>
+            <div class="pfoot"><button class="btn btn-danger" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">✕ Cancelar</button><div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="showToast('Borrador guardado ✓','info')">Guardar borrador</button><button class="btn btn-primary" onclick="showToast('Curso publicado 🎉','success')">Publicar →</button></div></div>
+          </div>
+        </div>
+        <!-- MANUAL TAB -->
+        <div id="tab-manual" class="tpane">
+          <div class="panel">
+            <div style="background:rgba(59,130,246,.045);border:1px solid var(--bord);border-radius:9px;padding:11px 15px;margin-bottom:18px;font-size:13px;color:var(--gm)">✍️ Crea tu curso paso a paso. Los videos se integran via enlace de YouTube o Vimeo.</div>
+            <div class="fr2"><div class="fg"><label class="fl">Título *</label><input class="fi" placeholder="Ej: Finanzas para emprendedores"/></div><div class="fg"><label class="fl">Precio (MXN) *</label><input class="fi" type="number" placeholder="999"/></div></div>
+            <div class="fg"><label class="fl">Descripción</label><textarea class="fi" placeholder="¿Qué aprenderán? ¿A quién va dirigido?"></textarea></div>
+            <div class="fr3">
+              <div class="fg"><label class="fl">Categoría</label><select class="fi"><option>Negocios</option><option>Tecnología</option><option>Marketing</option></select></div>
+              <div class="fg"><label class="fl">Número de módulos</label><select class="fi"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+              <div class="fg"><label class="fl">Nivel</label><select class="fi"><option>Principiante</option><option>Intermedio</option><option>Avanzado</option></select></div>
+            </div>
+            <!-- MODULE BUILDER -->
+            <div style="margin-bottom:18px">
+              <div class="mblock">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <span style="font-size:10px;font-weight:700;color:var(--bcy);letter-spacing:1px">MÓD 01</span>
+                  <input class="fi" style="font-size:13px;font-weight:600;padding:6px 11px;flex:1" value="Conceptos fundamentales"/>
+                  <button class="btn btn-ghost btn-xs" style="margin-left:6px" onclick="showToast('Módulo eliminado','info')">✕</button>
+                </div>
+                <div class="lblock">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                    <span style="font-size:10px;color:var(--gm)">L1.1</span>
+                    <input class="fi" style="font-size:13px;padding:5px 10px;flex:1" value="Introducción al módulo"/>
+                    <select class="fi" style="font-size:12px;padding:5px 9px;width:auto;margin-left:5px"><option>Texto</option><option>Video</option><option>Evaluación</option></select>
+                    <button class="btn btn-ghost btn-xs" style="margin-left:4px">✕</button>
+                  </div>
+                  <textarea class="fi" style="font-size:13px;margin-bottom:8px" rows="3">En esta lección exploraremos los conceptos base. Al finalizar podrás identificar los elementos clave del área de estudio y aplicarlos a tu contexto profesional.</textarea>
+                  <div class="fg" style="margin-bottom:8px"><label class="fl" style="font-size:12px">Enlace de video (YouTube / Vimeo)</label><input class="fi" style="font-size:12px;padding:7px 11px" placeholder="https://youtube.com/watch?v=..."/></div>
+                  <div style="background:rgba(59,130,246,.04);border:1px solid var(--bord);border-radius:8px;padding:10px">
+                    <div style="font-size:12px;font-weight:600;color:var(--be);margin-bottom:7px">📝 Preguntas de esta lección (opcional)</div>
+                    <div style="display:flex;gap:6px;margin-bottom:6px"><input class="fi" style="font-size:12px;padding:6px 10px;flex:1" placeholder="Escribe una pregunta…"/><button class="btn btn-ghost btn-xs">✕</button></div>
+                    <button class="btn btn-ghost btn-xs" onclick="showToast('Pregunta agregada','info')">+ Agregar pregunta</button>
+                  </div>
+                </div>
+                <button class="btn btn-ghost btn-xs" style="margin-top:4px" onclick="showToast('Lección agregada','info')">+ Agregar lección</button>
+              </div>
+              <div class="mblock">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:10px;font-weight:700;color:var(--bcy);letter-spacing:1px">MÓD 02</span><input class="fi" style="font-size:13px;font-weight:600;padding:6px 11px;flex:1" value="Desarrollo práctico"/><button class="btn btn-ghost btn-xs" style="margin-left:6px">✕</button></div>
+                <div style="font-size:12px;color:var(--gm);margin-bottom:8px">Sin lecciones aún.</div>
+                <button class="btn btn-ghost btn-xs" onclick="showToast('Lección agregada','info')">+ Agregar lección</button>
+              </div>
+              <div class="mblock" style="border-color:rgba(245,158,11,.18)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:10px;font-weight:700;color:var(--yel);letter-spacing:1px">MÓD 03 · EVALUACIÓN</span><input class="fi" style="font-size:13px;font-weight:600;padding:6px 11px;flex:1" value="Evaluación final del curso"/><button class="btn btn-ghost btn-xs" style="margin-left:6px">✕</button></div>
+                <button class="btn btn-warning btn-xs" onclick="iv('quiz-builder',null)">Configurar evaluación →</button>
+              </div>
+            </div>
+            <div class="pfoot"><button class="btn btn-danger" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">✕ Cancelar</button><div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="showToast('Borrador guardado ✓','info')">Guardar borrador</button><button class="btn btn-primary" onclick="showToast('Curso publicado 🎉','success')">Publicar →</button></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ BUILDER -->
+      <div id="iv-quiz-builder" style="display:none">
+        <div class="dhead"><button class="btn btn-ghost btn-sm" style="margin-bottom:10px" onclick="iv('create',null)">← Volver al curso</button><h2>Configurar evaluación 📝</h2><p>Define puntaje, tipo de preguntas y respuestas correctas.</p></div>
+        <div class="panel">
+          <div class="score-bar ok" id="qb-bar">
+            <div style="flex:1"><div style="font-size:12px;color:var(--gm);margin-bottom:3px">Puntaje total</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <select class="fi" style="width:auto;padding:6px 10px;font-size:13px" onchange="updateScore()"><option value="100" selected>100 puntos</option><option value="10">10 puntos</option></select>
+                <select class="fi" style="width:auto;padding:6px 10px;font-size:13px" onchange="updateScore()"><option value="auto" selected>Distribución automática</option><option value="manual">Manual por pregunta</option></select>
+                <select class="fi" style="width:auto;padding:6px 10px;font-size:13px"><option>70% mínimo para aprobar</option><option>80%</option><option>60%</option></select>
+              </div>
+            </div>
+            <div style="text-align:right"><div class="sv" id="qb-score-display">100 / 100</div><div style="font-size:11px;color:var(--grn)">✓ Suma correcta</div></div>
+            <button class="btn btn-success btn-sm" onclick="showToast('Puntaje distribuido automáticamente','info')">Auto-distribuir</button>
+          </div>
+          <div id="qb-questions-list">
+            <!-- Q1 - SINGLE -->
+            <div class="qb-card">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <span style="font-size:10px;font-weight:700;color:var(--bcy);letter-spacing:1px">PREGUNTA 01</span>
+                    <select class="fi" style="width:auto;padding:4px 9px;font-size:12px"><option value="single" selected>Selección única (una correcta)</option><option value="multiple">Respuesta múltiple (varias correctas)</option></select>
+                    <div style="display:flex;align-items:center;gap:5px"><span style="font-size:12px;color:var(--gm)">Pts:</span><input class="fi" style="width:58px;padding:4px 8px;font-size:13px;font-weight:600" value="25" type="number" min="1" onchange="updateScore()"/></div>
+                  </div>
+                  <input class="fi" style="font-size:13px;margin-bottom:9px" value="¿Cuál es el objetivo principal de esta evaluación?"/>
+                  <div class="qb-opt"><div class="qb-chk circle chked" onclick="toggleChk(this,'single')">●</div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Verificar la comprensión del tema"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div class="qb-opt"><div class="qb-chk circle" onclick="toggleChk(this,'single')"></div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Completar el curso más rápido"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div class="qb-opt"><div class="qb-chk circle" onclick="toggleChk(this,'single')"></div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Obtener el certificado sin estudiar"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div style="font-size:11px;color:var(--gm);margin-top:7px">● = única respuesta correcta · 3 de 15 opciones máx</div>
+                  <button class="btn btn-ghost btn-xs" style="margin-top:7px" onclick="showToast('Opción agregada','info')">+ Agregar opción</button>
+                </div>
+                <button class="btn btn-danger btn-xs" onclick="showToast('Pregunta eliminada','info')">✕</button>
+              </div>
+            </div>
+            <!-- Q2 - MULTIPLE -->
+            <div class="qb-card">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <span style="font-size:10px;font-weight:700;color:var(--bcy);letter-spacing:1px">PREGUNTA 02</span>
+                    <select class="fi" style="width:auto;padding:4px 9px;font-size:12px"><option value="single">Selección única</option><option value="multiple" selected>Respuesta múltiple</option></select>
+                    <div style="display:flex;align-items:center;gap:5px"><span style="font-size:12px;color:var(--gm)">Pts:</span><input class="fi" style="width:58px;padding:4px 8px;font-size:13px;font-weight:600" value="25" type="number" min="1" onchange="updateScore()"/></div>
+                  </div>
+                  <input class="fi" style="font-size:13px;margin-bottom:9px" value="Selecciona TODAS las ventajas de usar IA en tu trabajo:"/>
+                  <div class="qb-opt"><div class="qb-chk chked" onclick="toggleChk(this,'multiple')">✓</div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Aumenta la velocidad de producción"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div class="qb-opt"><div class="qb-chk chked" onclick="toggleChk(this,'multiple')">✓</div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Analiza documentos largos en segundos"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div class="qb-opt"><div class="qb-chk" onclick="toggleChk(this,'multiple')"></div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Reemplaza completamente el juicio humano"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div class="qb-opt"><div class="qb-chk chked" onclick="toggleChk(this,'multiple')">✓</div><input class="fi" style="font-size:13px;padding:6px 10px;flex:1" value="Reduce tiempo en tareas repetitivas"/><button class="btn btn-ghost btn-xs" style="margin-left:5px">✕</button></div>
+                  <div style="font-size:11px;color:var(--gm);margin-top:7px">☑ = respuestas correctas (múltiple) · 4 de 15 opciones máx</div>
+                  <button class="btn btn-ghost btn-xs" style="margin-top:7px" onclick="showToast('Opción agregada','info')">+ Agregar opción</button>
+                </div>
+                <button class="btn btn-danger btn-xs" onclick="showToast('Pregunta eliminada','info')">✕</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--bord)">
+            <button class="btn btn-outline" onclick="showToast('Pregunta agregada','info')">+ Agregar pregunta</button>
+            <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="iv('create',null)">← Volver</button><button class="btn btn-primary" onclick="showToast('Evaluación guardada ✓','success');iv('create',null)">Guardar evaluación ✓</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURSO CLAUDE COMPLETO -->
+      <div id="iv-claude-course" style="display:none">
+        <div class="dhead">
+          <button class="btn btn-ghost btn-sm" style="margin-bottom:10px" onclick="iv('courses',document.querySelectorAll('#screen-instructor .sb-item')[1])">← Volver a mis cursos</button>
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div><h2>Introducción al Uso de Claude — IA Práctica 🤖</h2><p>4 módulos · 16 lecciones · Evaluación final · $899 MXN</p></div>
+            <div style="display:flex;gap:8px"><span class="badge b-pub" style="font-size:12px;padding:5px 12px"><span class="bdot"></span>PUBLICADO</span><button class="btn btn-warning btn-sm">Hibernar</button></div>
+          </div>
+        </div>
+        <div class="mblock" style="margin-bottom:10px"><div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:10px">📦 Módulo 1: ¿Qué es Claude y cómo funciona?</div><div class="lblock"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:600">L1.1 — Introducción a los modelos de lenguaje</span><span class="badge b-dft">TEXTO + VIDEO</span></div><div style="font-size:13px;color:var(--gm)">Los LLMs son sistemas de IA entrenados para comprender y generar lenguaje natural. Claude no indexa páginas — genera respuestas nuevas adaptadas a tu contexto.</div><div style="font-size:12px;color:var(--bcy);margin-top:5px">🎬 youtube.com/watch?v=plattform-l1-1</div></div><div class="lblock"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:600">L1.2 — Claude vs ChatGPT vs Gemini</span><span class="badge b-dft">TEXTO</span></div><div style="font-size:13px;color:var(--gm)">Análisis comparativo. Claude destaca: contexto extendido, menor tasa de alucinaciones, razonamiento estructurado.</div></div><div class="lblock"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:600">L1.3 — La interfaz de Claude.ai</span><span class="badge b-dft">VIDEO</span></div><div style="font-size:13px;color:var(--gm)">Recorrido: conversaciones, proyectos, artefactos y configuración de cuenta.</div><div style="font-size:12px;color:var(--bcy);margin-top:5px">🎬 youtube.com/watch?v=plattform-l1-3</div></div><div class="lblock" style="background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:5px">📝 Quiz módulo 1 — 3 preguntas · 30 pts</div><div style="font-size:12px;color:var(--gm)">1. Diferencia LLM vs buscador | 2. ¿Qué es un LLM? | 3. ¿Qué es un artefacto?</div></div></div>
+        <div class="mblock" style="margin-bottom:10px"><div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:10px">📦 Módulo 2: Prompting efectivo</div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.1 — Anatomía de un buen prompt (CIFE)</div><div style="font-size:13px;color:var(--gm)">Framework CIFE: Contexto, Instrucción, Formato, Ejemplo.</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.2 — Prompts para redacción profesional</div><div style="font-size:13px;color:var(--gm)">Emails, propuestas, reportes. Cómo darle tu estilo como referencia.</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.3 — Prompts para análisis y síntesis</div><div style="font-size:13px;color:var(--gm)">Documentos, comparaciones, matrices de decisión, extracción de insights.</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.4 — Errores comunes y cómo evitarlos</div><div style="font-size:13px;color:var(--gm)">Los 7 errores más frecuentes. Checklist de calidad para tus prompts.</div></div><div class="lblock" style="background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:5px">📝 Quiz módulo 2 — 4 preguntas · 40 pts</div></div></div>
+        <div class="mblock" style="margin-bottom:10px"><div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:10px">📦 Módulo 3: Claude para productividad profesional</div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L3.1 — Gestión de proyectos con Claude</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L3.2 — Investigación y educación</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L3.3 — Comunicación y marketing</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L3.4 — Flujos de trabajo con IA integrada</div></div><div class="lblock" style="background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18)"><div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:5px">📝 Quiz módulo 3 — 3 preguntas · 30 pts</div></div></div>
+        <div class="mblock"><div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:10px">📦 Módulo 4: Ética, límites y buenas prácticas</div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L4.1 — ¿Qué puede y no puede hacer Claude?</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L4.2 — Privacidad y datos sensibles</div></div><div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L4.3 — Verificación y pensamiento crítico</div></div><div class="lblock" style="background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.18)"><div style="font-size:13px;font-weight:700;color:var(--yel);margin-bottom:7px">🎓 EVALUACIÓN FINAL — 10 preguntas · 100 pts · Mínimo 70 para certificarse</div><div style="font-size:12px;color:var(--gm)">1. CIFE | 2. Datos privados | 3. Claude vs buscador | 4. Usos en educación | 5. Alucinaciones | 6. Tono | 7. Proyectos | 8. Limitaciones | 9. LLM | 10. Flujo personal</div></div></div>
+      </div>
+
+      <!-- ALUMNOS -->
+      <div id="iv-students" style="display:none">
+        <div class="dhead"><h2>Mis alumnos 👥</h2><p>320 alumnos inscritos en total.</p></div>
+        <div class="sub-banner warn" id="limit-warn" style="display:none">
+          <span style="font-size:18px">⚠️</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Límite de plan alcanzado (100/100 alumnos)</div><div style="font-size:12px;color:var(--gm);margin-top:1px">Los nuevos alumnos no pueden inscribirse. Actualiza tu plan para continuar.</div></div>
+          <button class="btn btn-primary btn-sm" onclick="iv('plan',document.querySelectorAll('#screen-instructor .sb-item')[8])">Actualizar plan →</button>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Alumnos</h3><input class="fi" style="width:185px;padding:7px 11px;font-size:13px" placeholder="Buscar alumno..."/></div>
+          <table><thead><tr><th>Alumno</th><th>Curso</th><th>Progreso</th><th>Estado</th><th>Inscrito</th></tr></thead>
+          <tbody>
+            <tr><td><strong>María González</strong><br/><span style="font-size:11px;color:var(--gm)">maria@gmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:85%"></div></div><span style="font-size:11px;color:var(--gm)">85%</span></td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px;color:var(--gm)">10 ene 2025</td></tr>
+            <tr><td><strong>Roberto Hernández</strong><br/><span style="font-size:11px;color:var(--gm)">roberto@hotmail.com</span></td><td style="font-size:12px">Estrategia Empresarial</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:100%"></div></div><span style="font-size:11px;color:var(--grn)">100% ✓</span></td><td><span class="badge b-pub">COMPLETADO</span></td><td style="font-size:12px;color:var(--gm)">8 ene 2025</td></tr>
+            <tr><td><strong>Ana Ramírez</strong><br/><span style="font-size:11px;color:var(--gm)">ana.r@empresa.mx</span></td><td style="font-size:12px">Introducción a Claude</td><td><div class="pbw" style="width:110px"><div class="pb" style="width:62%"></div></div><span style="font-size:11px;color:var(--gm)">62%</span></td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px;color:var(--gm)">15 ene 2025</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- INGRESOS -->
+      <div id="iv-earnings" style="display:none">
+        <div class="dhead"><h2>Ingresos 💰</h2><p>Los pagos se depositan directo en tu cuenta bancaria vía Stripe.</p></div>
+        <div class="kg kg4">
+          <div class="kc"><div class="kc-lbl">💰 Bruto total</div><div class="kc-val blue">$42,800</div><div class="kc-chg">Desde enero 2024</div></div>
+          <div class="kc"><div class="kc-lbl">🏦 Comisión Plattform (10%)</div><div class="kc-val" style="color:var(--red)">-$4,280</div><div class="kc-chg dn">Deducida por ventas</div></div>
+          <div class="kc"><div class="kc-lbl">✅ Ingresos obtenidos</div><div class="kc-val blue">$38,520</div><div class="kc-chg">Depositado en tu cuenta</div></div>
+          <div class="kc"><div class="kc-lbl">📅 Este mes</div><div class="kc-val blue">$8,400</div><div class="kc-chg">↑ 18% vs mes anterior</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Ingresos por mes</h3><div style="display:flex;gap:6px"><button class="ftag active" style="padding:4px 11px;font-size:12px" onclick="this.parentElement.querySelectorAll('.ftag').forEach(t=>t.classList.remove('active'));this.classList.add('active')">2025</button><button class="ftag" style="padding:4px 11px;font-size:12px" onclick="this.parentElement.querySelectorAll('.ftag').forEach(t=>t.classList.remove('active'));this.classList.add('active')">2024</button></div></div>
+          <div style="padding:18px 20px"><div class="bar-group"><div class="bar-col"><div class="bar" style="height:55%" data-v="$5,200"></div><div class="bar-lbl">Sep</div></div><div class="bar-col"><div class="bar" style="height:68%" data-v="$6,800"></div><div class="bar-lbl">Oct</div></div><div class="bar-col"><div class="bar" style="height:50%" data-v="$4,900"></div><div class="bar-lbl">Nov</div></div><div class="bar-col"><div class="bar" style="height:86%" data-v="$7,200"></div><div class="bar-lbl">Dic</div></div><div class="bar-col"><div class="bar" style="height:100%" data-v="$8,400"></div><div class="bar-lbl">Ene</div></div></div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Ingresos por curso</h3><select class="fi" style="width:auto;padding:6px 10px;font-size:12px"><option>Todos los meses</option><option>Enero 2025</option></select></div>
+          <table><thead><tr><th>Curso</th><th>Ventas</th><th>Bruto</th><th>Comisión</th><th>Ingreso obtenido</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial</strong></td><td>320</td><td>$28,400</td><td style="color:var(--red)">-$2,840</td><td style="color:var(--grn);font-weight:600">$25,560</td></tr>
+            <tr><td><strong>Introducción a Claude</strong></td><td>412</td><td>$8,200</td><td style="color:var(--red)">-$820</td><td style="color:var(--grn);font-weight:600">$7,380</td></tr>
+            <tr><td><strong>Pensamiento Estratégico</strong></td><td>98</td><td>$11,200</td><td style="color:var(--red)">-$1,120</td><td style="color:var(--grn);font-weight:600">$10,080</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- TRANSACCIONES -->
+      <div id="iv-transactions" style="display:none">
+        <div class="dhead"><h2>Transacciones 💳</h2></div>
+        <div class="tc"><table><thead><tr><th>ID</th><th>Alumno</th><th>Curso</th><th>Bruto</th><th>Comisión</th><th>Neto</th><th>Estado</th><th>Fecha</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8821</td><td>María González</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--bcy);font-weight:600">$1,499</td><td style="color:var(--red)">-$149.90</td><td style="color:var(--grn);font-weight:600">$1,349.10</td><td><span class="badge b-ok">EXITOSO</span></td><td style="font-size:11px;color:var(--gm)">10 ene 2025</td></tr>
+          <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8817</td><td>Pedro Salinas</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--red)">$1,499</td><td style="color:var(--gm)">—</td><td style="color:var(--gm)">—</td><td><span class="badge b-fail">FALLIDO</span></td><td style="font-size:11px;color:var(--gm)">7 ene 2025</td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- MI ACADEMIA -->
+      <div id="iv-profile" style="display:none">
+        <div class="dhead"><h2>Mi academia 🏫</h2></div>
+        <div class="panel">
+          <div class="fg"><label class="fl">Nombre de la academia</label><input class="fi" value="Academia Dr. Ríos — Estrategia y Negocios"/></div>
+          <div class="fr2"><div class="fg"><label class="fl">URL pública</label><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gm);white-space:nowrap">plattform.com/</span><input class="fi" value="rios"/></div></div><div class="fg"><label class="fl">Institución de origen</label><input class="fi" value="UNAM — Facultad de Economía"/></div></div>
+          <div class="fg"><label class="fl">Descripción</label><textarea class="fi">Doctor en Administración por la UNAM. 15 años de experiencia académica y consultoría empresarial.</textarea></div>
+          <div class="pfoot"><div></div><button class="btn btn-primary" onclick="showToast('Perfil actualizado ✓','success')">Guardar cambios</button></div>
+        </div>
+      </div>
+
+      <!-- MI PLAN -->
+      <div id="iv-plan" style="display:none">
+        <div class="dhead"><h2>Mi plan 💎</h2></div>
+        <div style="background:linear-gradient(135deg,rgba(6,182,212,.09),rgba(59,130,246,.09));border:1px solid rgba(6,182,212,.25);border-radius:16px;padding:22px;margin-bottom:22px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+            <div><span class="badge b-act" style="margin-bottom:8px">● ACTIVO</span><h3 style="font-size:19px;font-weight:700">Plan Growth</h3><p style="color:var(--gm);font-size:13px;margin-top:3px">100 alumnos · Cursos ilimitados · IA incluida</p></div>
+            <div style="text-align:right"><div style="font-size:30px;font-weight:800" class="gr">$299</div><div style="font-size:12px;color:var(--gm)">MXN / mes</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <div style="background:rgba(0,0,0,.16);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Próxima renovación</div><div style="font-size:14px;font-weight:600">15 de febrero, 2025</div></div>
+            <div style="background:rgba(0,0,0,.16);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Comisión por venta</div><div style="font-size:14px;font-weight:600;color:var(--bcy)">10% por curso vendido</div></div>
+            <div style="background:rgba(0,0,0,.16);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Alumnos usados</div><div style="font-size:14px;font-weight:600">68 / 100</div></div>
+            <div style="background:rgba(0,0,0,.16);border-radius:8px;padding:11px 14px"><div style="font-size:11px;color:var(--gm);margin-bottom:2px">Generación con IA</div><div style="font-size:14px;font-weight:600">Incluida ✓</div></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="showModal('modal-change-plan')">Cambiar plan</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('Método de pago actualizado','info')">Cambiar método de pago</button>
+            <button class="btn btn-danger btn-sm" onclick="showToast('Solicitud de cancelación enviada','info')">Cancelar suscripción</button>
+          </div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Historial de suscripción</h3></div>
+          <table><thead><tr><th>Periodo</th><th>Plan</th><th>Monto</th><th>Estado</th><th>Recibo</th></tr></thead>
+          <tbody>
+            <tr><td>15 ene – 15 feb 2025</td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-ok">PAGADO</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Recibo descargado 📄','info')">Descargar</button></td></tr>
+            <tr><td>15 dic – 15 ene 2025</td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-ok">PAGADO</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Recibo descargado 📄','info')">Descargar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ALUMNO SCREEN -->
+<div id="screen-student" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-lbl">Mi aprendizaje</div>
+      <div class="sb-item active" onclick="sv('overview',this)"><span class="ico">🏠</span>Inicio</div>
+      <div class="sb-item" onclick="sv('courses',this)"><span class="ico">📚</span>Mis cursos</div>
+      <div class="sb-item" onclick="sv('lesson',this)"><span class="ico">▶️</span>Continuar</div>
+      <div class="sb-item" onclick="sv('certs',this)"><span class="ico">🏆</span>Certificados</div>
+      <div class="sb-lbl">Explorar</div>
+      <div class="sb-item" onclick="switchRole('public',document.querySelectorAll('.nav-tab')[0])"><span class="ico">🌐</span>Catálogo</div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- OVERVIEW ALUMNO -->
+      <div id="sv-overview">
+        <div class="dhead"><h2>Hola, María 👋</h2><p>Sigue aprendiendo. Tienes 2 cursos en progreso.</p></div>
+        <div class="kg kg3">
+          <div class="kc"><div class="kc-lbl">📚 Cursos inscritos</div><div class="kc-val blue">3</div></div>
+          <div class="kc"><div class="kc-lbl">✅ Cursos completados</div><div class="kc-val blue">1</div></div>
+          <div class="kc"><div class="kc-lbl">🏆 Certificados</div><div class="kc-val blue">1</div></div>
+        </div>
+        <h3 style="margin-bottom:13px;font-size:15px;font-weight:600">Continúa donde lo dejaste</h3>
+        <div class="eg">
+          <div class="ec" onclick="openLesson()"><div class="ethumb ct1">📊</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">Dr. Alejandro Ríos</div><div class="ettl">Estrategia Empresarial en la Era Digital</div><div class="plbl"><span>Progreso</span><span>85%</span></div><div class="pbw"><div class="pb" style="width:85%"></div></div><button class="btn btn-primary btn-sm btn-block" style="margin-top:9px">Continuar →</button></div></div>
+          <div class="ec" onclick="openLesson()"><div class="ethumb ct2">🤖</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">Plattform Academy</div><div class="ettl">Introducción al Uso de Claude — IA Práctica</div><div class="plbl"><span>Progreso</span><span>62%</span></div><div class="pbw"><div class="pb" style="width:62%"></div></div><button class="btn btn-outline btn-sm btn-block" style="margin-top:9px">Continuar →</button></div></div>
+          <div class="ec"><div class="ethumb ct3">📈</div><div class="ebody"><div style="font-size:12px;color:var(--bcy);margin-bottom:3px">Lic. Carlos Vega</div><div class="ettl">Marketing Digital con Resultados Reales</div><div class="plbl"><span>Completado</span><span>100%</span></div><div class="pbw"><div class="pb" style="width:100%"></div></div><button class="btn btn-success btn-sm btn-block" style="margin-top:9px" onclick="event.stopPropagation();showCert()">Ver certificado 🏆</button></div></div>
+        </div>
+      </div>
+
+      <!-- MIS CURSOS ALUMNO -->
+      <div id="sv-courses" style="display:none">
+        <div class="dhead"><h2>Mis cursos inscritos 📚</h2></div>
+        <div class="eg">
+          <div class="ec" onclick="openLesson()"><div class="ethumb ct1">📊</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">Dr. Alejandro Ríos</div><div class="ettl">Estrategia Empresarial</div><div class="plbl"><span>Progreso</span><span>85%</span></div><div class="pbw"><div class="pb" style="width:85%"></div></div></div></div>
+          <div class="ec" onclick="openLesson()"><div class="ethumb ct2">🤖</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">Plattform Academy</div><div class="ettl">Introducción al Uso de Claude</div><div class="plbl"><span>Progreso</span><span>62%</span></div><div class="pbw"><div class="pb" style="width:62%"></div></div></div></div>
+          <div class="ec"><div class="ethumb ct3">📈</div><div class="ebody"><div style="font-size:12px;color:var(--bcy)">Lic. Carlos Vega</div><div class="ettl">Marketing Digital</div><div class="plbl"><span>Completado</span><span>100% 🏆</span></div><div class="pbw"><div class="pb" style="width:100%"></div></div></div></div>
+        </div>
+      </div>
+
+      <!-- VISTA EDITORIAL LECCIÓN -->
+      <div id="sv-lesson" style="display:none">
+        <div class="llay" style="margin:-30px -38px">
+          <!-- SIDEBAR IZQUIERDO -->
+          <div class="lsb">
+            <div class="lsb-top">
+              <div class="lsb-tag">Plattform Academy</div>
+              <div class="lsb-ttl">Introducción al Uso de Claude — IA Práctica</div>
+              <div class="lsb-prog">
+                <div class="lsb-pt"><div class="lsb-pf" id="lpf" style="width:62%"></div></div>
+                <div class="lsb-pct" id="lpct">62%</div>
+              </div>
+            </div>
+            <div class="lsb-mods">
+              <div class="lsb-mhdr" onclick="toggleMod('m1')"><div><div class="lsb-mnum">Módulo 01</div></div><span class="lsb-marr open" id="arr-m1">▼</span></div>
+              <div class="lsb-mname">¿Qué es Claude y cómo funciona?</div>
+              <div class="lsb-llist" id="m1">
+                <div class="litem done" onclick="loadLesson('l1-1')"><span class="lck" style="color:var(--grn)">✓</span><span class="lnum">1.1</span>Introducción a los modelos de lenguaje</div>
+                <div class="litem done" onclick="loadLesson('l1-2')"><span class="lck" style="color:var(--grn)">✓</span><span class="lnum">1.2</span>Claude vs ChatGPT vs Gemini</div>
+                <div class="litem done" onclick="loadLesson('l1-3')"><span class="lck" style="color:var(--grn)">✓</span><span class="lnum">1.3</span>La interfaz de Claude.ai</div>
+                <div class="leval done" onclick="loadLesson('quiz1')"><span class="lck" style="color:var(--grn)">✓</span>Quiz módulo — Aprobado</div>
+              </div>
+              <div class="lsb-mhdr" onclick="toggleMod('m2')"><div><div class="lsb-mnum">Módulo 02</div></div><span class="lsb-marr open" id="arr-m2">▼</span></div>
+              <div class="lsb-mname">Prompting efectivo</div>
+              <div class="lsb-llist" id="m2">
+                <div class="litem done" onclick="loadLesson('l2-1')"><span class="lck" style="color:var(--grn)">✓</span><span class="lnum">2.1</span>Anatomía de un buen prompt</div>
+                <div class="litem active" id="li-l2-2" onclick="loadLesson('l2-2')"><span class="lck">▶</span><span class="lnum">2.2</span>Prompts para redacción profesional</div>
+                <div class="litem" onclick="loadLesson('l2-3')"><span class="lck">○</span><span class="lnum">2.3</span>Prompts para análisis y síntesis</div>
+                <div class="litem" onclick="loadLesson('l2-4')"><span class="lck">○</span><span class="lnum">2.4</span>Errores comunes y cómo evitarlos</div>
+                <div class="leval" onclick="loadLesson('quiz2')"><span class="lck" style="color:var(--yel)">◆</span>Quiz del módulo</div>
+              </div>
+              <div class="lsb-mhdr" onclick="toggleMod('m3')"><div><div class="lsb-mnum">Módulo 03</div></div><span class="lsb-marr" id="arr-m3">▼</span></div>
+              <div class="lsb-mname">Claude para productividad</div>
+              <div class="lsb-llist" id="m3" style="max-height:0">
+                <div class="litem" onclick="loadLesson('l3-1')"><span class="lck">○</span><span class="lnum">3.1</span>Claude para gestión de proyectos</div>
+                <div class="litem" onclick="loadLesson('l3-2')"><span class="lck">○</span><span class="lnum">3.2</span>Claude para investigación</div>
+                <div class="litem" onclick="loadLesson('l3-3')"><span class="lck">○</span><span class="lnum">3.3</span>Claude para comunicación</div>
+                <div class="litem" onclick="loadLesson('l3-4')"><span class="lck">○</span><span class="lnum">3.4</span>Flujos de trabajo con IA</div>
+                <div class="leval" onclick="loadLesson('quiz3')"><span class="lck" style="color:var(--yel)">◆</span>Quiz del módulo</div>
+              </div>
+              <div class="lsb-mhdr" onclick="toggleMod('m4')"><div><div class="lsb-mnum">Módulo 04</div></div><span class="lsb-marr" id="arr-m4">▼</span></div>
+              <div class="lsb-mname">Ética y buenas prácticas</div>
+              <div class="lsb-llist" id="m4" style="max-height:0">
+                <div class="litem" onclick="loadLesson('l4-1')"><span class="lck">○</span><span class="lnum">4.1</span>¿Qué puede y no puede hacer Claude?</div>
+                <div class="litem" onclick="loadLesson('l4-2')"><span class="lck">○</span><span class="lnum">4.2</span>Privacidad y datos sensibles</div>
+                <div class="litem" onclick="loadLesson('l4-3')"><span class="lck">○</span><span class="lnum">4.3</span>Verificación y pensamiento crítico</div>
+                <div class="leval" style="color:var(--yel);font-weight:600" onclick="loadLesson('final-eval')"><span class="lck">🎓</span>Evaluación final</div>
+              </div>
+            </div>
+          </div>
+          <!-- CONTENIDO PRINCIPAL -->
+          <div class="lmain">
+            <div class="ltopbar">
+              <div class="lbread"><a onclick="sv('overview',document.querySelectorAll('#screen-student .sb-item')[0])">← Mis cursos</a><span>·</span><span id="lbread">MÓDULO 02 · LECCIÓN 2.2</span></div>
+              <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="lesNav(-1)">← Anterior</button><button class="btn btn-primary btn-sm" onclick="lesNav(1)">Siguiente →</button></div>
+            </div>
+            <div id="les-area"></div>
+            <div class="lfooter">
+              <div class="lfooter-l" id="lfooter">Módulo 02 de 04 · Lección 2 de 4</div>
+              <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="lesNav(-1)">← Anterior</button><button class="btn btn-primary btn-sm" onclick="lesNav(1)">Siguiente →</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CERTIFICADOS ALUMNO -->
+      <div id="sv-certs" style="display:none">
+        <div class="dhead"><h2>Mis certificados 🏆</h2></div>
+        <div class="cert-row"><div class="cico">🏆</div><div style="flex:1"><h4 style="font-size:14px;font-weight:600;margin-bottom:2px">Marketing Digital con Resultados Reales</h4><p style="font-size:12px;color:var(--gm)">Lic. Carlos Vega · Emitido 15 ene 2025 · Calificación: 92/100 · PLT-2025-1182</p></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-primary btn-sm" onclick="showCert()">Ver certificado</button><button class="btn btn-outline btn-sm" onclick="showToast('Descargando 📄','info')">Descargar PDF</button></div></div>
+        <div class="cert-row" style="opacity:.4;pointer-events:none"><div class="cico" style="background:var(--s3)">🔒</div><div style="flex:1"><h4 style="font-size:14px;font-weight:600;margin-bottom:2px">Introducción al Uso de Claude</h4><p style="font-size:12px;color:var(--gm)">Completa el 100% y aprueba la evaluación final para obtener tu certificado.</p></div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="screen-admin" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sb-lbl">Plataforma</div>
+      <div class="sb-item active" onclick="adv('overview',this)"><span class="ico">📊</span>Dashboard global</div>
+      <div class="sb-item" onclick="adv('users',this)"><span class="ico">👥</span>Usuarios</div>
+      <div class="sb-item" onclick="adv('courses',this)"><span class="ico">📚</span>Cursos</div>
+      <div class="sb-item" onclick="adv('transactions',this)"><span class="ico">💳</span>Transacciones</div>
+      <div class="sb-lbl">Ingresos</div>
+      <div class="sb-item" onclick="adv('rev-rent',this)"><span class="ico">🏦</span>Rentas por instructor</div>
+      <div class="sb-item" onclick="adv('rev-comm',this)"><span class="ico">💸</span>Comisiones por venta</div>
+      <div class="sb-lbl">Operaciones</div>
+      <div class="sb-item" onclick="adv('manual-enroll',this)"><span class="ico">🎁</span>Inscripción manual</div>
+    </aside>
+    <main class="dash-main">
+
+      <!-- ADMIN OVERVIEW -->
+      <div id="adv-overview">
+        <div class="dhead"><h2>Panel Administrador ⚙️</h2><p>Vista global de Plattform.</p></div>
+        <div class="tc" style="margin-bottom:20px">
+          <div class="tc-hdr"><h3>🔍 Búsqueda universal</h3>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="ftag active" onclick="sf('all',this)" style="padding:5px 12px;font-size:12px">Todos</button>
+              <button class="ftag" onclick="sf('courses',this)" style="padding:5px 12px;font-size:12px">Cursos</button>
+              <button class="ftag" onclick="sf('instructors',this)" style="padding:5px 12px;font-size:12px">Instructores</button>
+              <button class="ftag" onclick="sf('students',this)" style="padding:5px 12px;font-size:12px">Alumnos</button>
+            </div>
+          </div>
+          <div style="padding:13px 18px">
+            <input class="fi" id="asearch" placeholder="Busca por nombre, correo, ID o curso…" oninput="adSearch(this.value)" style="margin-bottom:8px"/>
+            <div id="sh" style="font-size:12px;color:var(--gm)">Escribe al menos 2 caracteres para buscar en toda la plataforma.</div>
+            <div id="sc" style="font-size:11px;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:none"></div>
+            <div id="sl"></div>
+            <div id="sno" style="display:none;text-align:center;padding:16px;color:var(--gm);font-size:13px">Sin resultados.</div>
+          </div>
+        </div>
+        <div class="kg kg5">
+          <div class="kc"><div class="kc-lbl">👥 Usuarios totales</div><div class="kc-val blue">1,540</div><div class="kc-chg">↑ 84 este mes</div></div>
+          <div class="kc"><div class="kc-lbl">🎓 Instructores</div><div class="kc-val blue">32</div><div class="kc-chg">↑ 4 nuevos</div></div>
+          <div class="kc"><div class="kc-lbl">📚 Cursos activos</div><div class="kc-val blue">87</div><div class="kc-chg">12 en borrador</div></div>
+          <div class="kc"><div class="kc-lbl">🏦 Rentas (mes)</div><div class="kc-val blue">$9,568</div><div class="kc-chg">32 suscripciones</div></div>
+          <div class="kc"><div class="kc-lbl">💸 Comisiones (mes)</div><div class="kc-val blue">$4,280</div><div class="kc-chg">10% sobre ventas</div></div>
+        </div>
+        <div class="two-col">
+          <div class="tc"><div class="tc-hdr"><h3>Alertas del sistema</h3></div><div style="padding:8px 18px">
+            <div class="alert-item"><div class="adot r"></div><div class="atxt"><strong>Pago fallido</strong> — Pedro Salinas · Estrategia Empresarial</div><div class="atm">hace 2h</div></div>
+            <div class="alert-item"><div class="adot y"></div><div class="atxt"><strong>Curso sin contenido</strong> — "Innovación y Modelos"</div><div class="atm">hace 5h</div></div>
+            <div class="alert-item"><div class="adot g"></div><div class="atxt"><strong>Nuevo instructor</strong> — Mtra. Laura Castillo</div><div class="atm">hace 1d</div></div>
+            <div class="alert-item"><div class="adot y"></div><div class="atxt"><strong>Suscripción vencida</strong> — Lic. Pedro Mora</div><div class="atm">hace 2d</div></div>
+          </div></div>
+          <div class="tc"><div class="tc-hdr"><h3>Top instructores por ingresos</h3></div><div style="padding:8px 18px">
+            <div class="rrow"><span style="min-width:145px">Dr. Alejandro Ríos</span><div class="rbw"><div class="rb" style="width:90%"></div></div><span class="ramt">$42,800</span></div>
+            <div class="rrow"><span style="min-width:145px">Mtra. Sofía Mendoza</span><div class="rbw"><div class="rb" style="width:70%"></div></div><span class="ramt">$38,200</span></div>
+            <div class="rrow"><span style="min-width:145px">Lic. Andrea Flores</span><div class="rbw"><div class="rb" style="width:48%"></div></div><span class="ramt">$29,100</span></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN USUARIOS -->
+      <div id="adv-users" style="display:none">
+        <div class="dhead"><h2>Gestión de usuarios 👥</h2></div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+          <button class="ftag active" onclick="filterUsers('all',this)">Todos (1,540)</button>
+          <button class="ftag" onclick="filterUsers('instructor',this)">Instructores (32)</button>
+          <button class="ftag" onclick="filterUsers('student',this)">Alumnos (1,508)</button>
+          <input class="fi" style="width:200px;padding:7px 12px;font-size:13px;margin-left:auto" placeholder="Buscar usuario..."/>
+        </div>
+        <div class="tc"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Plan / Cursos</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="users-tbody">
+            <tr><td><strong>Dr. Alejandro Ríos</strong><br/><span style="font-size:11px;color:var(--gm)">alejandro@unam.mx · UNAM</span></td><td><span class="badge b-inst">INSTRUCTOR</span></td><td style="font-size:12px">Growth · 4 cursos · 320 alumnos</td><td><span class="badge b-act">ACTIVO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="showUserDetail('instructor','Dr. Alejandro Ríos','alejandro@unam.mx · UNAM · Plan Growth')">Ver detalle</button><button class="btn btn-warning btn-xs" onclick="showToast('Instructor suspendido','info')">Suspender</button></td></tr>
+            <tr><td><strong>Mtra. Sofía Mendoza</strong><br/><span style="font-size:11px;color:var(--gm)">sofia@itesm.mx · ITESM</span></td><td><span class="badge b-inst">INSTRUCTOR</span></td><td style="font-size:12px">Scale · 2 cursos · 540 alumnos</td><td><span class="badge b-act">ACTIVO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="showUserDetail('instructor','Mtra. Sofía Mendoza','sofia@itesm.mx · ITESM · Plan Scale')">Ver detalle</button><button class="btn btn-warning btn-xs" onclick="showToast('Instructor suspendido','info')">Suspender</button></td></tr>
+            <tr><td><strong>María González</strong><br/><span style="font-size:11px;color:var(--gm)">maria@gmail.com</span></td><td><span class="badge b-dft">ALUMNO</span></td><td style="font-size:12px">3 cursos inscritos</td><td><span class="badge b-act">ACTIVO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="showUserDetail('student','María González','maria@gmail.com · 3 cursos · 85% promedio')">Ver detalle</button><button class="btn btn-danger btn-xs" onclick="showToast('Usuario suspendido','info')">Suspender</button></td></tr>
+            <tr><td><strong>Pedro Salinas</strong><br/><span style="font-size:11px;color:var(--gm)">pedro@gmail.com · Pago fallido</span></td><td><span class="badge b-dft">ALUMNO</span></td><td style="font-size:12px">0 cursos</td><td><span class="badge b-sus">SUSPENDIDO</span></td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="showUserDetail('student','Pedro Salinas','pedro@gmail.com · Suspendido · Pago fallido')">Ver detalle</button><button class="btn btn-success btn-xs" onclick="showToast('Usuario reactivado ✓','success')">Reactivar</button></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ADMIN CURSOS -->
+      <div id="adv-courses" style="display:none">
+        <div class="dhead"><h2>Gestión de cursos 📚</h2></div>
+        <div class="tc"><table><thead><tr><th>Curso</th><th>Instructor</th><th>Estado</th><th>Alumnos</th><th>Precio</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Estrategia Empresarial en la Era Digital</strong><br/><span style="font-size:11px;color:var(--gm)">Negocios · Intermedio · 18h</span></td><td style="font-size:12px">Dr. Alejandro Ríos</td><td><span class="badge b-pub">PUBLICADO</span></td><td>320</td><td>$1,499</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="adv('course-view',null)">Ver curso</button><button class="btn btn-warning btn-xs" onclick="showToast('Curso hibernado','info')">Hibernar</button><button class="btn btn-danger btn-xs" onclick="showToast('Curso archivado','info')">Archivar</button></td></tr>
+            <tr><td><strong>Introducción al Uso de Claude</strong><br/><span style="font-size:11px;color:var(--gm)">Tecnología · Principiante · 8h</span></td><td style="font-size:12px">Plattform Academy</td><td><span class="badge b-pub">PUBLICADO</span></td><td>412</td><td>$899</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="adv('course-view',null)">Ver curso</button><button class="btn btn-warning btn-xs" onclick="showToast('Hibernado','info')">Hibernar</button><button class="btn btn-danger btn-xs" onclick="showToast('Archivado','info')">Archivar</button></td></tr>
+            <tr><td><strong>Innovación y Modelos de Negocio</strong><br/><span style="font-size:11px;color:var(--gm)">Negocios · Intermedio · 10h</span></td><td style="font-size:12px">Dr. Alejandro Ríos</td><td><span class="badge b-dft">BORRADOR</span></td><td>0</td><td>$999</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="adv('course-view',null)">Ver curso</button><button class="btn btn-danger btn-xs" onclick="showToast('Archivado','info')">Archivar</button></td></tr>
+            <tr><td><strong>Análisis de Mercados Emergentes</strong><br/><span style="font-size:11px;color:var(--gm)">Negocios · Avanzado · 26h</span></td><td style="font-size:12px">Dr. Alejandro Ríos</td><td><span class="badge b-hib">HIBERNADO</span></td><td>45</td><td>$2,199</td><td class="td-acts"><button class="btn btn-outline btn-xs" onclick="adv('course-view',null)">Ver curso</button><button class="btn btn-success btn-xs" onclick="showToast('Reactivado ✓','success')">Reactivar</button><button class="btn btn-danger btn-xs" onclick="showToast('Archivado','info')">Archivar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN VER CURSO (solo lectura) -->
+      <div id="adv-course-view" style="display:none">
+        <div class="dhead">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <button class="btn btn-ghost btn-sm" onclick="adv('courses',document.querySelectorAll('#screen-admin .sb-item')[2])">← Volver a cursos</button>
+            <span class="badge b-pend">👁 VISTA ADMIN — SOLO LECTURA</span>
+          </div>
+          <h2>Estrategia Empresarial en la Era Digital</h2>
+          <p>Dr. Alejandro Ríos · 320 alumnos · $1,499 MXN · Publicado</p>
+        </div>
+        <div class="mblock" style="margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:9px">📦 Módulo 1 — Fundamentos de Estrategia</div>
+          <div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L1.1 — ¿Qué es estrategia empresarial?</div><div style="font-size:13px;color:var(--gm)">Definición, orígenes y aplicaciones modernas. La estrategia como ventaja competitiva sostenible en mercados dinámicos.</div></div>
+          <div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L1.2 — El entorno VUCA</div><div style="font-size:13px;color:var(--gm)">Volatilidad, Incertidumbre, Complejidad y Ambigüedad. Decisiones estratégicas en entornos cambiantes.</div></div>
+          <div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L1.3 — Análisis FODA avanzado</div><div style="font-size:13px;color:var(--gm)">Cruce de variables y construcción de estrategias FO, FA, DO, DA.</div></div>
+        </div>
+        <div class="mblock">
+          <div style="font-size:13px;font-weight:700;color:var(--be);margin-bottom:9px">📦 Módulo 2 — Planificación Estratégica</div>
+          <div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.1 — Definición de objetivos con OKR</div><div style="font-size:13px;color:var(--gm)">Objectives and Key Results. Cómo alinear equipos con la estrategia corporativa.</div></div>
+          <div class="lblock"><div style="font-size:13px;font-weight:600;margin-bottom:4px">L2.2 — Construcción del roadmap estratégico</div><div style="font-size:13px;color:var(--gm)">Hoja de ruta a 90 días, 6 meses y 1 año. Priorización de iniciativas.</div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN TRANSACCIONES -->
+      <div id="adv-transactions" style="display:none">
+        <div class="dhead"><h2>Transacciones globales 💳</h2></div>
+        <div class="tc"><table><thead><tr><th>ID</th><th>Tipo</th><th>Usuario</th><th>Detalle</th><th>Bruto</th><th>Ingreso Plattform</th><th>Estado</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8821</td><td><span class="badge b-dft">CURSO</span></td><td>María González</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--bcy);font-weight:600">$1,499</td><td style="color:var(--grn)">+$149.90</td><td><span class="badge b-ok">EXITOSO</span></td><td style="font-size:11px;color:var(--gm)">10 ene 2025</td></tr>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#SUB-0032</td><td><span class="badge b-renta">RENTA</span></td><td>Dr. Alejandro Ríos</td><td style="font-size:12px">Plan Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td style="color:var(--grn)">+$299</td><td><span class="badge b-ok">EXITOSO</span></td><td style="font-size:11px;color:var(--gm)">15 ene 2025</td></tr>
+            <tr><td style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--gm)">#TXN-8817</td><td><span class="badge b-dft">CURSO</span></td><td>Pedro Salinas</td><td style="font-size:12px">Estrategia Emp.</td><td style="color:var(--red)">$1,499</td><td style="color:var(--gm)">—</td><td><span class="badge b-fail">FALLIDO</span></td><td style="font-size:11px;color:var(--gm)">7 ene 2025</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- RENTAS -->
+      <div id="adv-rev-rent" style="display:none">
+        <div class="dhead"><h2>Ingresos por renta mensual 🏦</h2><p>Suscripciones activas de instructores.</p></div>
+        <div class="kg kg3">
+          <div class="kc"><div class="kc-lbl">💰 Rentas este mes</div><div class="kc-val blue">$9,568</div><div class="kc-chg">32 instructores activos</div></div>
+          <div class="kc"><div class="kc-lbl">📈 Rentas acumuladas 2025</div><div class="kc-val blue">$28,704</div><div class="kc-chg">3 meses</div></div>
+          <div class="kc"><div class="kc-lbl">⚠️ Suscripciones vencidas</div><div class="kc-val" style="color:var(--yel)">3</div><div class="kc-chg dn">Requieren atención</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Detalle por instructor</h3><select class="fi" style="width:auto;padding:6px 10px;font-size:12px"><option>Enero 2025</option><option>Diciembre 2024</option></select></div>
+          <table><thead><tr><th>Instructor</th><th>Plan</th><th>Monto</th><th>Estado</th><th>Vence</th><th>Alumnos</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dr. Alejandro Ríos</strong></td><td>Growth</td><td style="color:var(--bcy);font-weight:600">$299</td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px">15 feb 2025</td><td>68/100</td><td><button class="btn btn-ghost btn-xs">Historial</button></td></tr>
+            <tr><td><strong>Mtra. Sofía Mendoza</strong></td><td>Scale</td><td style="color:var(--bcy);font-weight:600">$799</td><td><span class="badge b-act">ACTIVO</span></td><td style="font-size:12px">20 feb 2025</td><td>540/∞</td><td><button class="btn btn-ghost btn-xs">Historial</button></td></tr>
+            <tr><td><strong>Lic. Pedro Mora</strong></td><td>Starter</td><td style="color:var(--red);font-weight:600">$99</td><td><span class="badge b-sus">VENCIDA</span></td><td style="font-size:12px;color:var(--red)">Venció 5 ene</td><td>12/20</td><td class="td-acts"><button class="btn btn-warning btn-xs" onclick="showToast('Recordatorio enviado','info')">Recordar</button><button class="btn btn-danger btn-xs" onclick="showToast('Cursos hibernados','info')">Hibernar</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- COMISIONES -->
+      <div id="adv-rev-comm" style="display:none">
+        <div class="dhead"><h2>Ingresos por comisión 💸</h2></div>
+        <div class="kg kg3">
+          <div class="kc"><div class="kc-lbl">💸 Comisiones este mes</div><div class="kc-val blue">$4,280</div><div class="kc-chg">10% sobre $42,800 en ventas</div></div>
+          <div class="kc"><div class="kc-lbl">📈 Acumulado 2025</div><div class="kc-val blue">$28,400</div></div>
+          <div class="kc"><div class="kc-lbl">📊 Promedio por venta</div><div class="kc-val blue">$149.90</div><div class="kc-chg">Ticket promedio $1,499</div></div>
+        </div>
+        <div class="tc"><div class="tc-hdr"><h3>Comisiones por instructor</h3></div>
+          <table><thead><tr><th>Instructor</th><th>Plan</th><th>Ventas</th><th>Bruto</th><th>% Comisión</th><th>Total comisión</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dr. Alejandro Ríos</strong></td><td>Growth</td><td>28</td><td>$28,400</td><td>10%</td><td style="color:var(--grn);font-weight:600">$2,840</td></tr>
+            <tr><td><strong>Mtra. Sofía Mendoza</strong></td><td>Scale</td><td>22</td><td>$11,200</td><td>7%</td><td style="color:var(--grn);font-weight:600">$784</td></tr>
+            <tr><td><strong>Lic. Carlos Vega</strong></td><td>Starter</td><td>9</td><td>$3,200</td><td>15%</td><td style="color:var(--grn);font-weight:600">$480</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- INSCRIPCIÓN MANUAL -->
+      <div id="adv-manual-enroll" style="display:none">
+        <div class="dhead"><h2>Inscripción manual 🎁</h2><p>Inscribe alumnos a cursos sin costo — convenios, demos o cortesías.</p></div>
+        <div class="panel" style="max-width:560px">
+          <div class="fg"><label class="fl">Alumno a inscribir *</label><span class="fsl">Busca por nombre o correo</span><select class="fi"><option>— Selecciona un alumno —</option><option>María González (maria@gmail.com)</option><option>Roberto Hernández (roberto@hotmail.com)</option><option>Ana Ramírez (ana.r@empresa.mx)</option><option>Luis Martínez (lmartinez@tec.mx)</option></select></div>
+          <div class="fg"><label class="fl">Curso *</label><select class="fi"><option>— Selecciona un curso —</option><option>Estrategia Empresarial — Dr. Ríos ($1,499)</option><option>Introducción al Uso de Claude — Plattform Academy ($899)</option><option>Marketing Digital — Lic. Vega ($999)</option></select></div>
+          <div class="fg"><label class="fl">Motivo</label><select class="fi"><option>Cortesía</option><option>Convenio institucional</option><option>Demo para instructor</option><option>Premio o beca</option><option>Corrección de error</option></select></div>
+          <div class="fg"><label class="fl">Notas adicionales (opcional)</label><textarea class="fi" placeholder="Contexto para el registro interno…"></textarea></div>
+          <div style="background:rgba(245,158,11,.055);border:1px solid rgba(245,158,11,.16);border-radius:8px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:var(--gm)">⚠️ Esta inscripción <strong style="color:var(--w)">no genera transacción de pago</strong>. El alumno tendrá acceso inmediato. Queda registrada en auditoría.</div>
+          <button class="btn btn-primary btn-block btn-lg" onclick="showToast('✓ Alumno inscrito. Se envió notificación por email.','success')">Inscribir alumno →</button>
+        </div>
+        <div class="tc" style="margin-top:22px"><div class="tc-hdr"><h3>Historial de inscripciones manuales</h3></div>
+          <table><thead><tr><th>Alumno</th><th>Curso</th><th>Motivo</th><th>Admin</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <tr><td>Roberto Hernández</td><td style="font-size:12px">Introducción a Claude</td><td style="font-size:12px">Convenio UNAM</td><td style="font-size:12px">Admin</td><td style="font-size:11px;color:var(--gm)">5 ene 2025</td></tr>
+            <tr><td>Lucía Morales</td><td style="font-size:12px">Estrategia Empresarial</td><td style="font-size:12px">Demo instructor</td><td style="font-size:12px">Admin</td><td style="font-size:11px;color:var(--gm)">28 dic 2024</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="screen-auth" class="screen">
+  <div class="auth-wrap">
+    <div class="acard">
+      <div style="text-align:center;margin-bottom:22px"><span class="logo-txt" style="font-size:22px">Plattform</span></div>
+      <div id="auth-login">
+        <div class="atitle">Bienvenido de vuelta</div>
+        <div class="asub">Inicia sesión en tu cuenta</div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+        <div class="fg"><label class="fl">Contraseña</label><input class="fi" type="password" placeholder="••••••••"/></div>
+        <button class="btn btn-primary btn-block" style="padding:12px" onclick="handleLogin()">Iniciar sesión →</button>
+        <div class="alink" style="margin-top:8px"><a style="color:var(--be);cursor:pointer" onclick="showModal('modal-forgot')">¿Olvidaste tu contraseña?</a></div>
+        <div class="alink">¿No tienes cuenta? <a style="color:var(--be);cursor:pointer" onclick="authV('register')">Regístrate gratis</a></div>
+      </div>
+      <div id="auth-register" style="display:none">
+        <div class="atitle">Crea tu cuenta</div>
+        <div class="asub">¿Cómo usarás Plattform?</div>
+        <div class="role-sel">
+          <div class="ropt active" onclick="arole(this,'student')"><span class="rico">📚</span>Soy alumno</div>
+          <div class="ropt" onclick="arole(this,'instructor')"><span class="rico">🎓</span>Soy instructor</div>
+        </div>
+        <div id="plan-reg" style="display:none;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:9px;color:var(--gm)">Elige tu plan:</div>
+          <div class="pc" style="padding:10px 14px;text-align:left;display:flex;align-items:center;gap:10px;margin-bottom:7px" onclick="selRegPlan(this,'starter','99')"><div style="flex:1"><div class="pname" style="font-size:13px">Starter</div><div style="font-size:11px;color:var(--gm)">$99/mes · 20 alumnos · Sin IA · 15% comisión</div></div><span class="gr" style="font-size:16px;font-weight:800">$99</span></div>
+          <div class="pc pop sel" style="padding:10px 14px;text-align:left;display:flex;align-items:center;gap:10px;margin-bottom:7px" onclick="selRegPlan(this,'growth','299')"><div class="ptag">POPULAR</div><div style="flex:1"><div class="pname" style="font-size:13px">Growth</div><div style="font-size:11px;color:var(--gm)">$299/mes · 100 alumnos · IA incluida · 10% comisión</div></div><span class="gr" style="font-size:16px;font-weight:800">$299</span></div>
+          <div class="pc" style="padding:10px 14px;text-align:left;display:flex;align-items:center;gap:10px" onclick="selRegPlan(this,'scale','799')"><div style="flex:1"><div class="pname" style="font-size:13px">Scale</div><div style="font-size:11px;color:var(--gm)">$799/mes · Ilimitados · IA incluida · 7% comisión</div></div><span class="gr" style="font-size:16px;font-weight:800">$799</span></div>
+        </div>
+        <div class="fg"><label class="fl">Nombre completo</label><input class="fi" placeholder="Tu nombre"/></div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+        <div class="fg"><label class="fl">Contraseña</label><input class="fi" type="password" placeholder="Mínimo 8 caracteres"/></div>
+        <button class="btn btn-primary btn-block" style="padding:12px" id="reg-btn" onclick="handleRegister()">Crear cuenta →</button>
+        <div class="alink">¿Ya tienes cuenta? <a style="color:var(--be);cursor:pointer" onclick="authV('login')">Inicia sesión</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGO SUSCRIPCIÓN POST-REGISTRO -->
+<div id="screen-sub-pay" class="screen">
+  <div class="auth-wrap">
+    <div class="co-card" style="max-width:500px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div class="logo-txt" style="font-size:20px;margin-bottom:6px">Plattform</div>
+        <div style="font-size:12px;color:var(--gm)">Activa tu plan para comenzar a crear y vender</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:16px;margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:13px;font-weight:700;color:var(--bcy)" id="subp-name">Plan Growth</div><div style="font-size:12px;color:var(--gm);margin-top:2px">100 alumnos · IA incluida · 10% comisión</div></div>
+          <div style="text-align:right"><div class="gr" style="font-size:26px;font-weight:800" id="subp-price">$299</div><div style="font-size:11px;color:var(--gm)">MXN/mes</div></div>
+        </div>
+        <div style="margin-top:11px;padding-top:11px;border-top:1px solid rgba(59,130,246,.11);font-size:12px;color:var(--gm)">✓ Se cobra mensualmente · Cancela cuando quieras · Sin permanencia</div>
+      </div>
+      <div class="fg"><label class="fl">Nombre del titular</label><input class="fi" placeholder="Como aparece en tu tarjeta"/></div>
+      <div class="fg"><label class="fl">Número de tarjeta</label><input class="fi" placeholder="4242 4242 4242 4242"/></div>
+      <div class="c2"><div class="fg"><label class="fl">Vencimiento</label><input class="fi" placeholder="MM/AA"/></div><div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"/></div></div>
+      <div class="pr-break">
+        <div class="pr-row"><span>Primer pago</span><span id="subp-first">$299 MXN</span></div>
+        <div class="pr-row"><span>Renovaciones mensuales</span><span id="subp-renew">$299 MXN</span></div>
+        <div class="pr-row tot"><span>Total hoy</span><span class="ta" id="subp-total">$299 MXN</span></div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" style="margin-top:16px" onclick="completeSubPay()">Activar plan y comenzar →</button>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gm);margin-top:12px">🔒 Pago procesado por Stripe · SSL 256-bit</div>
+      <div style="text-align:center;margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="go('auth');authV('register')">← Cambiar plan</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT CURSO -->
+<div id="screen-checkout" class="screen">
+  <div class="auth-wrap">
+    <div class="co-card">
+      <h2 style="font-size:19px;font-weight:700;margin-bottom:16px">Resumen de compra</h2>
+      <div class="co-sum">
+        <div class="cothumb ct1" id="co-thumb">📊</div>
+        <div><div style="font-size:14px;font-weight:600;margin-bottom:3px" id="co-title">Estrategia Empresarial</div><div style="font-size:12px;color:var(--bcy)" id="co-inst">Dr. Alejandro Ríos</div><div style="font-size:12px;color:var(--gm);margin-top:3px">Acceso inmediato · Certificado incluido</div></div>
+      </div>
+      <div class="fg"><label class="fl">Nombre del titular *</label><input class="fi" placeholder="Como aparece en tu tarjeta"/></div>
+      <div class="fg"><label class="fl">Correo del comprador *</label><input class="fi" type="email" placeholder="tu@correo.com"/></div>
+      <div class="fg"><label class="fl">Número de tarjeta</label><input class="fi" placeholder="4242 4242 4242 4242"/></div>
+      <div class="c2"><div class="fg"><label class="fl">Vencimiento</label><input class="fi" placeholder="MM/AA"/></div><div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"/></div></div>
+      <div class="fg"><label class="fl">Cupón de descuento</label><div style="display:flex;gap:7px"><input class="fi" placeholder="Ej: PROMO20" id="coup-in"/><button class="btn btn-outline" onclick="aplyCoup()">Aplicar</button></div></div>
+      <div class="pr-break">
+        <div class="pr-row"><span>Precio del curso</span><span id="co-price">$1,499 MXN</span></div>
+        <div class="pr-row" id="co-disc-row" style="display:none"><span>Descuento cupón</span><span style="color:var(--grn)" id="co-disc">—</span></div>
+        <div class="pr-row tot"><span>Total a pagar</span><span class="ta" id="co-total">$1,499 MXN</span></div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" style="margin-top:16px" onclick="completePurchase()">Pagar con Stripe →</button>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gm);margin-top:12px">🔒 Pago procesado por Stripe · SSL 256-bit</div>
+      <div class="ppbox"><h4>¿Qué pasa después del pago?</h4>
+        <div class="ppi">Recibirás confirmación por correo</div>
+        <div class="ppi">El curso aparece inmediatamente en tu dashboard</div>
+        <div class="ppi">Certificado automático al completarlo</div>
+      </div>
+      <div style="text-align:center;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="go('public')">← Cancelar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICADO -->
+<div id="cert-overlay">
+  <div class="cert-topbar">
+    <span class="logo-txt" style="font-size:16px">Plattform</span>
+    <div style="display:flex;gap:10px"><button class="btn btn-success btn-sm" onclick="window.print()">🖨️ Imprimir / PDF</button><button class="btn btn-ghost btn-sm" onclick="hideCert()">✕ Cerrar</button></div>
+  </div>
+  <div style="padding:20px">
+    <div class="cert-page">
+      <div class="cert-hdr">
+        <div class="cert-logo-line">Plattform</div>
+        <div class="cert-badge">🏆</div>
+        <div class="cert-type">Certificado de terminación</div>
+        <div class="cert-cname">Marketing Digital con Resultados Reales</div>
+      </div>
+      <div class="cert-body">
+        <div class="cert-to">Otorgado a</div>
+        <div class="cert-name">María González</div>
+        <div class="cert-desc">Por haber completado satisfactoriamente el programa de formación, demostrando dominio de los contenidos evaluados y aprobando la evaluación final del curso.</div>
+        <div class="cert-course-box"><div class="cert-cn">Marketing Digital con Resultados Reales</div><div class="cert-cm">Lic. Carlos Vega · ULA · 15 horas · 35 lecciones · Enero 2025</div></div>
+        <div class="cert-score">🎯 Calificación final: 92 / 100 puntos</div>
+        <div class="cert-sigs">
+          <div class="cert-sig"><div class="cert-sig-line"></div><div class="cert-sig-name">Lic. Carlos Vega</div><div class="cert-sig-role">Instructor del curso</div></div>
+          <div class="cert-sig"><div class="cert-sig-line"></div><div class="cert-sig-name">Plattform</div><div class="cert-sig-role">Plataforma educativa</div></div>
+        </div>
+      </div>
+      <div class="cert-foot">
+        <div class="cert-code">Código de verificación: PLT-2025-1182-MG</div>
+        <div style="font-size:11px;color:#6b7280">Emitido el 15 de enero de 2025 · Ciudad de México</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<!-- MODAL CURSO -->
+<div class="mo" id="modal-course" onclick="cmo(event,'modal-course')">
+  <div class="mbox"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-course')">✕</button>
+    <span id="m-cat" class="badge b-pub" style="margin-bottom:9px"></span>
+    <h2 id="m-title" style="font-size:21px;font-weight:700;margin-bottom:11px"></h2>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:11px">
+      <div style="font-size:13px;color:var(--gm)">⭐ <strong id="m-rating" style="color:var(--w)"></strong> (<span id="m-reviews"></span> reseñas)</div>
+      <div style="font-size:13px;color:var(--gm)">👥 <strong id="m-students" style="color:var(--w)"></strong> alumnos</div>
+      <div style="font-size:13px;color:var(--gm)">⏱ <strong id="m-hours" style="color:var(--w)"></strong></div>
+    </div>
+    <p id="m-desc" style="font-size:14px;color:var(--gm);line-height:1.6"></p>
+  </div>
+  <div class="mbody"><div style="font-size:12px;font-weight:700;color:var(--gm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Contenido del curso</div><div id="m-modules"></div></div>
+  <div class="mfoot"><div id="m-price" style="margin-right:auto;font-size:22px;font-weight:700;color:var(--bcy)"></div><button class="btn btn-ghost" onclick="hideModal('modal-course')">Cerrar</button><button class="btn btn-primary btn-lg" onclick="requireLogin()">Comprar ahora →</button></div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div class="mo" id="modal-delete" onclick="cmo(event,'modal-delete')">
+  <div class="mbox sm"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-delete')">✕</button><h2>Eliminar curso</h2></div>
+  <div class="mbody"><div style="background:rgba(239,68,68,.055);border:1px solid rgba(239,68,68,.18);border-radius:10px;padding:18px;text-align:center">
+    <div style="font-size:28px;margin-bottom:10px">⚠️</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:8px">¿Estás seguro que deseas eliminar "<span id="del-name"></span>"?</div>
+    <div style="font-size:13px;color:var(--gm);line-height:1.6">Esta acción no se puede deshacer. El curso dejará de aparecer en tu lista.</div>
+  </div></div>
+  <div class="mfoot"><button class="btn btn-ghost" onclick="hideModal('modal-delete')">Cancelar</button><button class="btn btn-danger" onclick="doDelete()">Sí, eliminar curso</button></div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE USUARIO -->
+<div class="mo" id="modal-user" onclick="cmo(event,'modal-user')">
+  <div class="mbox lg"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-user')">✕</button>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div id="ud-ico" style="width:48px;height:48px;background:var(--gbtn);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">🎓</div>
+      <div><h2 id="ud-name" style="font-size:20px">Dr. Alejandro Ríos</h2><p id="ud-sub" style="color:var(--gm);font-size:13px"></p></div>
+      <span id="ud-badge" class="badge b-act" style="margin-left:auto">ACTIVO</span>
+    </div>
+  </div>
+  <div class="mbody" id="ud-body"></div>
+  <div class="mfoot"><button class="btn btn-ghost" onclick="hideModal('modal-user')">Cerrar</button><button id="ud-act" class="btn btn-warning" onclick="showToast('Acción aplicada','info')">Suspender usuario</button></div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR PLAN -->
+<div class="mo" id="modal-change-plan" onclick="cmo(event,'modal-change-plan')">
+  <div class="mbox"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-change-plan')">✕</button><h2>Cambiar plan</h2><p>El cambio aplica desde tu próxima renovación.</p></div>
+  <div class="mbody">
+    <div class="steps">
+      <div class="step active" id="ps1"><div class="snum">1</div><span>Elegir plan</span></div><div class="sline"></div>
+      <div class="step" id="ps2"><div class="snum">2</div><span>Confirmar</span></div><div class="sline"></div>
+      <div class="step" id="ps3"><div class="snum">3</div><span>Pago</span></div><div class="sline"></div>
+      <div class="step" id="ps4"><div class="snum">4</div><span>Listo</span></div>
+    </div>
+    <div id="plan-s1"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      <div class="pc" onclick="selPlan(this,'Starter','$99')"><div class="pname">Starter</div><div class="ppr">$99</div><div class="psub">MXN/mes · 20 alumnos</div><div class="pfeat no">Sin IA</div><div class="pfeat">15% comisión</div></div>
+      <div class="pc pop sel" onclick="selPlan(this,'Growth','$299')"><div class="ptag">ACTUAL</div><div class="pname">Growth</div><div class="ppr">$299</div><div class="psub">MXN/mes · 100 alumnos</div><div class="pfeat">IA incluida</div><div class="pfeat">10% comisión</div></div>
+      <div class="pc" onclick="selPlan(this,'Scale','$799')"><div class="pname">Scale</div><div class="ppr">$799</div><div class="psub">MXN/mes · ilimitados</div><div class="pfeat">IA incluida</div><div class="pfeat">7% comisión</div></div>
+    </div></div>
+    <div id="plan-s2" style="display:none"><div style="background:var(--s2);border:1px solid var(--bord);border-radius:12px;padding:18px;margin-bottom:14px"><div style="font-size:13px;color:var(--gm);margin-bottom:8px">Resumen del cambio:</div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px">Plan actual</span><span class="badge b-hib">Growth · $299/mes</span></div><div style="display:flex;justify-content:space-between"><span style="font-size:13px">Nuevo plan</span><span class="badge b-pub" id="plan-new-lbl">Scale · $799/mes</span></div></div><div style="font-size:13px;color:var(--gm);line-height:1.7">El cambio aplica desde tu próxima renovación (<strong style="color:var(--w)">15 feb 2025</strong>). No hay cargos adicionales hoy.</div></div>
+    <div id="plan-s3" style="display:none"><div class="fg"><label class="fl">Número de tarjeta</label><input class="fi" placeholder="4242 4242 4242 4242"/></div><div class="c2"><div class="fg"><label class="fl">Vencimiento</label><input class="fi" placeholder="MM/AA"/></div><div class="fg"><label class="fl">CVV</label><input class="fi" placeholder="123"/></div></div><div style="font-size:12px;color:var(--gm)">🔒 Pago procesado por Stripe. No almacenamos datos de tarjeta.</div></div>
+    <div id="plan-s4" style="display:none;text-align:center;padding:20px 0"><div style="font-size:44px;margin-bottom:12px">🎉</div><h3 style="font-size:18px;font-weight:700;margin-bottom:8px">¡Plan actualizado!</h3><p style="font-size:13px;color:var(--gm)">Tu nuevo plan entra en vigor el 15 de febrero de 2025.</p></div>
+  </div>
+  <div class="mfoot" id="plan-mfoot"><button class="btn btn-ghost" onclick="hideModal('modal-change-plan')">Cancelar</button><button class="btn btn-primary" id="plan-next-btn" onclick="planNext()">Continuar →</button></div>
+  </div>
+</div>
+
+<!-- MODAL OLVIDÉ CONTRASEÑA -->
+<div class="mo" id="modal-forgot" onclick="cmo(event,'modal-forgot')">
+  <div class="mbox sm"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-forgot')">✕</button><h2>Recuperar contraseña</h2><p>Te enviamos un enlace a tu correo registrado. Expira en 30 minutos.</p></div>
+  <div class="mbody"><div class="fg"><label class="fl">Correo electrónico</label><input class="fi" type="email" placeholder="tu@correo.com"/></div></div>
+  <div class="mfoot"><button class="btn btn-ghost" onclick="hideModal('modal-forgot')">Cancelar</button><button class="btn btn-primary" onclick="showToast('Enlace enviado. Revisa tu correo 📩','success');hideModal('modal-forgot')">Enviar enlace →</button></div>
+  </div>
+</div>
+
+<!-- MODAL PRIVACIDAD -->
+<div class="mo" id="modal-privacy" onclick="cmo(event,'modal-privacy')">
+  <div class="mbox"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-privacy')">✕</button><h2>Política de Privacidad</h2><p>Última actualización: enero 2025</p></div>
+  <div class="mbody" style="font-size:13px;color:var(--gm);line-height:1.8">
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">1. Información que recopilamos</strong><br/>Nombre, correo electrónico, información de pago procesada por Stripe y datos de uso del servicio.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">2. Uso de la información</strong><br/>Para procesar pagos, emitir certificados, enviar comunicaciones del servicio y mejorar la plataforma. No vendemos datos a terceros.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">3. Seguridad</strong><br/>Los pagos son procesados exclusivamente por Stripe. Plattform no almacena datos de tarjetas bancarias.</p>
+    <p><strong style="color:var(--w)">4. Contacto</strong><br/>privacidad@plattform.com · Ciudad de México, México.</p>
+  </div>
+  <div class="mfoot"><button class="btn btn-primary" onclick="hideModal('modal-privacy')">Entendido</button></div>
+  </div>
+</div>
+
+<!-- MODAL TÉRMINOS -->
+<div class="mo" id="modal-terms" onclick="cmo(event,'modal-terms')">
+  <div class="mbox"><div class="mhdr"><button class="mclose" onclick="hideModal('modal-terms')">✕</button><h2>Términos de Uso</h2><p>Última actualización: enero 2025</p></div>
+  <div class="mbody" style="font-size:13px;color:var(--gm);line-height:1.8">
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">1. Uso de la plataforma</strong><br/>Plattform es una plataforma SaaS para la creación y venta de cursos en línea sujeta a las leyes aplicables en México.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">2. Responsabilidad del contenido</strong><br/>Los instructores son responsables del contenido de sus cursos. Plattform puede archivar contenido que viole estas políticas.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--w)">3. Pagos y comisiones</strong><br/>Los instructores pagan una renta mensual y una comisión por cada venta. Los pagos se procesan vía Stripe.</p>
+    <p><strong style="color:var(--w)">4. Cancelaciones</strong><br/>Los instructores pueden cancelar en cualquier momento. Los alumnos con cursos activos mantienen su acceso.</p>
+  </div>
+  <div class="mfoot"><button class="btn btn-primary" onclick="hideModal('modal-terms')">Entendido</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="ti" id="ti">✓</span><span id="tmsg"></span></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────
+const COURSES = [
+  {id:0,title:'Estrategia Empresarial en la Era Digital',cat:'Negocios',level:'Intermedio',price:1499,hours:'18h',lessons:42,students:320,rating:4.9,reviews:128,inst:'Dr. Alejandro Ríos',uni:'UNAM',emoji:'📊',ct:'ct1',desc:'Aprende a diseñar y ejecutar estrategias empresariales efectivas. Desarrollado con 15 años de experiencia académica y empresarial en México.',mods:['Fundamentos de Estrategia','Planificación Estratégica','Ejecución Digital','Métricas y Control']},
+  {id:1,title:'Introducción al Uso de Claude — IA Práctica',cat:'Tecnología',level:'Principiante',price:899,hours:'8h',lessons:16,students:412,rating:4.9,reviews:98,inst:'Plattform Academy',uni:'',emoji:'🤖',ct:'ct2',desc:'Domina Claude desde cero. Aprende prompting efectivo, casos de uso profesionales y cómo integrar IA en tu flujo de trabajo diario. 4 módulos completos.',mods:['¿Qué es Claude y cómo funciona?','Prompting efectivo','Claude para productividad profesional','Ética y buenas prácticas']},
+  {id:2,title:'Marketing Digital con Resultados Reales',cat:'Marketing',level:'Intermedio',price:999,hours:'15h',lessons:35,students:410,rating:4.7,reviews:186,inst:'Lic. Carlos Vega',uni:'ULA',emoji:'📈',ct:'ct3',desc:'Estrategias probadas de marketing digital para generar leads, ventas y crecimiento medible. SEO, campañas pagadas y automatización.',mods:['Fundamentos de Marketing Digital','SEO y Contenidos','Campañas Pagadas','Automatización y CRM']},
+  {id:3,title:'Finanzas Personales e Inversión desde Cero',cat:'Finanzas',level:'Principiante',price:799,hours:'10h',lessons:24,students:280,rating:4.9,reviews:97,inst:'Dr. Miguel Torres',uni:'UNITEC',emoji:'💰',ct:'ct4',desc:'Aprende a manejar tu dinero, construir un fondo de emergencia, invertir en bolsa y planificar tu retiro. Sin jerga financiera.',mods:['Finanzas Personales Básicas','Ahorro e Inversión','Bolsa de Valores','Planificación a Largo Plazo']},
+  {id:4,title:'Liderazgo Transformacional en Organizaciones',cat:'Liderazgo',level:'Avanzado',price:1299,hours:'8h',lessons:20,students:190,rating:4.8,reviews:75,inst:'Mtra. Laura Castillo',uni:'IBERO',emoji:'🧠',ct:'ct5',desc:'Desarrolla las habilidades de liderazgo para inspirar equipos, gestionar el cambio y construir culturas de alto rendimiento.',mods:['Fundamentos del Liderazgo','Inteligencia Emocional','Gestión del Cambio','Culturas de Alto Rendimiento']},
+  {id:5,title:'Diseño UX/UI para Proyectos Digitales',cat:'Diseño',level:'Intermedio',price:1699,hours:'20h',lessons:48,students:360,rating:4.9,reviews:152,inst:'Lic. Andrea Flores',uni:'UANL',emoji:'🎨',ct:'ct6',desc:'Domina los principios de diseño centrado en el usuario. Crea interfaces digitales con Figma y metodologías modernas de UX.',mods:['Principios de UX','Investigación de Usuario','Diseño de Interfaces','Prototipado con Figma']},
+];
+
+const SEARCH_DB = {
+  courses:[
+    {n:'Estrategia Empresarial en la Era Digital',m:'Dr. Alejandro Ríos · 320 alumnos · PUBLICADO',i:'📊'},
+    {n:'Introducción al Uso de Claude',m:'Plattform Academy · 412 alumnos · PUBLICADO',i:'🤖'},
+    {n:'Marketing Digital con Resultados Reales',m:'Lic. Carlos Vega · 410 alumnos · PUBLICADO',i:'📈'},
+    {n:'Innovación y Modelos de Negocio',m:'Dr. Alejandro Ríos · 0 alumnos · BORRADOR',i:'💡'},
+  ],
+  instructors:[
+    {n:'Dr. Alejandro Ríos',m:'UNAM · 4 cursos · $42,800 ingresos · Plan Growth',i:'🎓'},
+    {n:'Mtra. Sofía Mendoza',m:'ITESM · 2 cursos · $38,200 ingresos · Plan Scale',i:'🎓'},
+    {n:'Lic. Carlos Vega',m:'ULA · 1 curso · $12,400 ingresos · Plan Starter',i:'🎓'},
+  ],
+  students:[
+    {n:'María González',m:'maria@gmail.com · 3 cursos · 85% promedio',i:'👤'},
+    {n:'Roberto Hernández',m:'roberto@hotmail.com · 1 curso · Certificado obtenido',i:'👤'},
+    {n:'Pedro Salinas',m:'pedro@gmail.com · 0 cursos · SUSPENDIDO',i:'👤'},
+  ]
+};
+
+// ── STATE ─────────────────────────────────────────────────
+let curCourse=0, loggedIn=false, pendingBuy=false, sfilt='all';
+let planStep=1, selPlanName='Growth', selPlanPrice='$299';
+let activeCat='all', deletingCourse='', curLesson='l2-2';
+let regRole='student', regPlanPrice='299';
+
+const LESSON_ORDER=['l1-1','l1-2','l1-3','quiz1','l2-1','l2-2','l2-3','l2-4','quiz2','l3-1','l3-2','l3-3','l3-4','quiz3','l4-1','l4-2','l4-3','final-eval'];
+
+// ── NAVIGATION ────────────────────────────────────────────
+function go(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+}
+function switchRole(n,tab){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  go(n);
+}
+function showAuth(t){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  go('auth');authV(t);
+}
+function authV(t){
+  document.getElementById('auth-login').style.display=t==='login'?'block':'none';
+  document.getElementById('auth-register').style.display=t==='register'?'block':'none';
+}
+
+// ── INSTRUCTOR VIEWS ──────────────────────────────────────
+function iv(n,el){
+  if(el){document.querySelectorAll('#screen-instructor .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','courses','create','students','earnings','transactions','profile','plan','claude-course','quiz-builder'].forEach(v=>{
+    const e=document.getElementById('iv-'+v);if(e)e.style.display='none';
+  });
+  const t=document.getElementById('iv-'+n);if(t)t.style.display='block';
+}
+
+// ── STUDENT VIEWS ─────────────────────────────────────────
+function sv(n,el){
+  if(el){document.querySelectorAll('#screen-student .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','courses','lesson','certs'].forEach(v=>{
+    const e=document.getElementById('sv-'+v);if(e)e.style.display='none';
+  });
+  const t=document.getElementById('sv-'+n);if(t)t.style.display='block';
+  if(n==='lesson'&&document.getElementById('les-area').innerHTML==='')loadLesson('l2-2');
+}
+function openLesson(){
+  sv('lesson',document.querySelectorAll('#screen-student .sb-item')[2]);
+  loadLesson('l2-2');
+}
+
+// ── ADMIN VIEWS ───────────────────────────────────────────
+function adv(n,el){
+  if(el){document.querySelectorAll('#screen-admin .sb-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+  ['overview','users','courses','transactions','rev-rent','rev-comm','manual-enroll','course-view'].forEach(v=>{
+    const e=document.getElementById('adv-'+v);if(e)e.style.display='none';
+  });
+  const t=document.getElementById('adv-'+n);if(t)t.style.display='block';
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function stab(id,el){
+  el.closest('.tbar').querySelectorAll('.titem').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const tp=el.closest('.dash-main')||el.closest('.panel')||document;
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── CATALOG ───────────────────────────────────────────────
+function renderCourses(list){
+  const g=document.getElementById('courses-grid'),nr=document.getElementById('no-results');
+  if(!list.length){g.innerHTML='';nr.style.display='block';return;}
+  nr.style.display='none';
+  g.innerHTML=list.map(c=>`
+    <div class="cc" onclick="openCM(${c.id})">
+      <div class="cthumb ${c.ct}">${c.emoji}<span class="ccat">${c.cat}</span></div>
+      <div class="cbody">
+        <div class="cinst">${c.inst}${c.uni?' · '+c.uni:''}</div>
+        <div class="ctitle">${c.title}</div>
+        <div class="cmeta"><span>⏱ ${c.hours}</span><span>📖 ${c.lessons} lecciones</span><span>👥 ${c.students}</span></div>
+        <div class="cfoot">
+          <div><div class="stars">${'★'.repeat(Math.floor(c.rating))}${'☆'.repeat(5-Math.floor(c.rating))}</div><div style="font-size:11px;color:var(--gm)">${c.rating} (${c.reviews})</div></div>
+          <div class="cprice">$${c.price.toLocaleString()} <small style="font-size:11px;color:var(--gm)">MXN</small></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function filterCat(cat,el){
+  activeCat=cat;
+  document.querySelectorAll('#screen-public .ftag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters(document.getElementById('search-input').value.toLowerCase(),cat);
+}
+function searchCourses(q){applyFilters(q.toLowerCase(),activeCat);}
+function applyFilters(q,cat){
+  let res=COURSES;
+  if(cat!=='all')res=res.filter(c=>c.cat===cat);
+  if(q.length>=2)res=res.filter(c=>c.title.toLowerCase().includes(q)||c.inst.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q));
+  renderCourses(res);
+}
+renderCourses(COURSES);
+
+// ── COURSE MODAL ──────────────────────────────────────────
+function openCM(i){
+  curCourse=i;const c=COURSES[i];
+  document.getElementById('m-title').textContent=c.title;
+  document.getElementById('m-desc').textContent=c.desc;
+  document.getElementById('m-cat').textContent=c.cat;
+  document.getElementById('m-rating').textContent=c.rating;
+  document.getElementById('m-reviews').textContent=c.reviews;
+  document.getElementById('m-students').textContent=c.students.toLocaleString();
+  document.getElementById('m-hours').textContent=c.hours;
+  document.getElementById('m-price').innerHTML='$'+c.price.toLocaleString()+' <small style="font-size:13px;color:var(--gm);font-weight:400">MXN</small>';
+  document.getElementById('m-modules').innerHTML=c.mods.map((m,j)=>`
+    <div style="background:var(--s2);border:1px solid var(--bord);border-radius:9px;padding:11px 14px;margin-bottom:6px">
+      <div style="font-size:13px;font-weight:600;color:var(--be);margin-bottom:3px">Módulo ${j+1} — ${m}</div>
+      <div style="font-size:12px;color:var(--gm)">3-4 lecciones · Evaluación incluida</div>
+    </div>`).join('');
+  showModal('modal-course');
+}
+function requireLogin(){
+  hideModal('modal-course');
+  if(loggedIn){goCheckout();}
+  else{pendingBuy=true;showAuth('login');showToast('Inicia sesión para comprar 🔐','info');}
+}
+function handleLogin(){
+  loggedIn=true;showToast('Sesión iniciada ✓','success');
+  if(pendingBuy){pendingBuy=false;setTimeout(()=>goCheckout(),400);}
+  else{go('public');document.querySelectorAll('.nav-tab')[0].classList.add('active');}
+}
+function handleRegister(){
+  if(regRole==='instructor'){
+    go('sub-pay');
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    showToast('Cuenta creada. Activa tu plan para comenzar.','info');
+  } else {
+    loggedIn=true;showToast('Cuenta creada exitosamente 🎉','success');
+    go('student');document.querySelectorAll('.nav-tab')[2].classList.add('active');
+  }
+}
+function completeSubPay(){
+  showToast('¡Plan activado! Bienvenido a Plattform 🎉','success');
+  switchRole('instructor',document.querySelectorAll('.nav-tab')[1]);
+}
+function goCheckout(){
+  const c=COURSES[curCourse];
+  document.getElementById('co-title').textContent=c.title;
+  document.getElementById('co-inst').textContent=c.inst;
+  document.getElementById('co-price').textContent='$'+c.price.toLocaleString()+' MXN';
+  document.getElementById('co-total').textContent='$'+c.price.toLocaleString()+' MXN';
+  document.getElementById('co-disc-row').style.display='none';
+  document.getElementById('coup-in').value='';
+  go('checkout');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+}
+function aplyCoup(){
+  const code=document.getElementById('coup-in').value.trim().toUpperCase();
+  const c=COURSES[curCourse];
+  if(code==='PROMO20'||code==='DESC20'){
+    const d=Math.round(c.price*.2),tot=c.price-d;
+    document.getElementById('co-disc').textContent='-$'+d.toLocaleString()+' MXN';
+    document.getElementById('co-disc-row').style.display='flex';
+    document.getElementById('co-total').textContent='$'+tot.toLocaleString()+' MXN';
+    showToast('Cupón aplicado: 20% de descuento ✓','success');
+  } else showToast('Cupón no válido o expirado','error');
+}
+function completePurchase(){
+  loggedIn=true;
+  go('student');document.querySelectorAll('.nav-tab')[2].classList.add('active');
+  showToast('¡Pago exitoso! Acceso activado 🎉','success');
+}
+
+// ── AUTH ──────────────────────────────────────────────────
+function arole(el,role){
+  regRole=role;
+  document.querySelectorAll('.ropt').forEach(r=>r.classList.remove('active'));el.classList.add('active');
+  const box=document.getElementById('plan-reg'),btn=document.getElementById('reg-btn');
+  if(role==='instructor'){box.style.display='block';btn.textContent='Continuar al pago →';}
+  else{box.style.display='none';btn.textContent='Crear cuenta →';}
+}
+function selRegPlan(el,plan,price){
+  regPlanPrice=price;
+  document.querySelectorAll('#plan-reg .pc').forEach(c=>{c.classList.remove('sel');});
+  el.classList.add('sel');
+  const labels={starter:'Plan Starter · 20 alumnos · Sin IA',growth:'Plan Growth · 100 alumnos · IA incluida',scale:'Plan Scale · Ilimitados · IA incluida'};
+  const prices={starter:'99',growth:'299',scale:'799'};
+  document.getElementById('subp-name').textContent='Plan '+plan.charAt(0).toUpperCase()+plan.slice(1);
+  document.getElementById('subp-price').textContent='$'+prices[plan];
+  document.getElementById('subp-first').textContent='$'+prices[plan]+' MXN';
+  document.getElementById('subp-renew').textContent='$'+prices[plan]+' MXN';
+  document.getElementById('subp-total').textContent='$'+prices[plan]+' MXN';
+}
+
+// ── DELETE COURSE ─────────────────────────────────────────
+function confirmDelete(name){
+  deletingCourse=name;
+  document.getElementById('del-name').textContent=name;
+  showModal('modal-delete');
+}
+function doDelete(){
+  hideModal('modal-delete');
+  showToast('"'+deletingCourse+'" eliminado de tu lista','info');
+}
+
+// ── ADMIN SEARCH ──────────────────────────────────────────
+function sf(f,el){
+  sfilt=f;
+  document.querySelectorAll('#adv-overview .ftag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  adSearch(document.getElementById('asearch').value);
+}
+function adSearch(q){
+  const h=document.getElementById('sh'),sc=document.getElementById('sc'),sl=document.getElementById('sl'),sno=document.getElementById('sno');
+  if(q.length<2){h.style.display='block';sc.style.display='none';sl.innerHTML='';sno.style.display='none';return;}
+  h.style.display='none';
+  let all=[];
+  const addSet=(key,label)=>{
+    if(sfilt==='all'||sfilt===key){
+      SEARCH_DB[key].forEach(item=>{
+        if(item.n.toLowerCase().includes(q.toLowerCase())||item.m.toLowerCase().includes(q.toLowerCase()))
+          all.push({...item,type:label});
+      });
+    }
+  };
+  addSet('courses','Curso');addSet('instructors','Instructor');addSet('students','Alumno');
+  if(!all.length){sl.innerHTML='';sno.style.display='block';sc.style.display='none';return;}
+  sno.style.display='none';sc.style.display='block';sc.textContent=all.length+' resultado'+(all.length!==1?'s':'');
+  sl.innerHTML=all.map(r=>`
+    <div style="display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--bord);cursor:pointer" onclick="showToast('Abriendo: ${r.n}','info')">
+      <div style="width:36px;height:36px;background:var(--s3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${r.i}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${r.n}</div><div style="font-size:12px;color:var(--gm)">${r.m}</div></div>
+      <span class="badge ${r.type==='Curso'?'b-pub':r.type==='Instructor'?'b-inst':'b-dft'}">${r.type}</span>
+      <button class="btn btn-outline btn-xs">Ver</button>
+    </div>`).join('');
+}
+
+// ── USERS FILTER ──────────────────────────────────────────
+function filterUsers(role,el){
+  document.querySelectorAll('#adv-users .ftag').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  const rows=document.querySelectorAll('#users-tbody tr');
+  rows.forEach(row=>{
+    const badge=row.querySelector('.badge');if(!badge)return;
+    const isInst=badge.classList.contains('b-inst');
+    if(role==='all')row.style.display='';
+    else if(role==='instructor')row.style.display=isInst?'':'none';
+    else row.style.display=isInst?'none':'';
+  });
+}
+
+// ── USER DETAIL ───────────────────────────────────────────
+function showUserDetail(type,name,sub){
+  document.getElementById('ud-name').textContent=name;
+  document.getElementById('ud-sub').textContent=sub;
+  document.getElementById('ud-badge').textContent='ACTIVO';
+  document.getElementById('ud-badge').className='badge b-act';
+  if(name==='Pedro Salinas'){document.getElementById('ud-badge').textContent='SUSPENDIDO';document.getElementById('ud-badge').className='badge b-sus';}
+  if(type==='instructor'){
+    document.getElementById('ud-ico').textContent='🎓';
+    document.getElementById('ud-act').textContent='Suspender instructor';
+    document.getElementById('ud-body').innerHTML=`
+      <div class="kg kg2" style="margin-bottom:16px">
+        <div class="kc"><div class="kc-lbl">📚 Cursos publicados</div><div class="kc-val blue">4</div></div>
+        <div class="kc"><div class="kc-lbl">👥 Total alumnos</div><div class="kc-val blue">320</div></div>
+        <div class="kc"><div class="kc-lbl">💰 Ingresos totales</div><div class="kc-val blue">$42,800</div></div>
+        <div class="kc"><div class="kc-lbl">💎 Plan activo</div><div class="kc-val blue">Growth</div></div>
+      </div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cursos del instructor:</div>
+      <div style="background:var(--s2);border:1px solid var(--bord);border-radius:10px;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--bord);font-size:13px"><span><strong>Estrategia Empresarial</strong> · 320 alumnos</span><div style="display:flex;gap:7px;align-items:center"><span class="badge b-pub">PUBLICADO</span><button class="btn btn-outline btn-xs" onclick="adv('course-view',null);hideModal('modal-user')">Ver curso</button></div></div>
+        <div style="display:flex;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--bord);font-size:13px"><span><strong>Introducción a Claude</strong> · 412 alumnos</span><div style="display:flex;gap:7px;align-items:center"><span class="badge b-pub">PUBLICADO</span><button class="btn btn-outline btn-xs" onclick="adv('course-view',null);hideModal('modal-user')">Ver curso</button></div></div>
+        <div style="display:flex;justify-content:space-between;padding:11px 15px;font-size:13px"><span><strong>Innovación y Modelos</strong> · Borrador</span><div style="display:flex;gap:7px;align-items:center"><span class="badge b-dft">BORRADOR</span><button class="btn btn-outline btn-xs" onclick="adv('course-view',null);hideModal('modal-user')">Ver curso</button></div></div>
+      </div>`;
+  } else {
+    document.getElementById('ud-ico').textContent='👤';
+    document.getElementById('ud-act').textContent=name==='Pedro Salinas'?'Reactivar usuario':'Suspender usuario';
+    document.getElementById('ud-body').innerHTML=`
+      <div class="kg kg3" style="margin-bottom:16px">
+        <div class="kc"><div class="kc-lbl">📚 Cursos inscritos</div><div class="kc-val blue">${name==='Pedro Salinas'?0:3}</div></div>
+        <div class="kc"><div class="kc-lbl">✅ Completados</div><div class="kc-val blue">${name==='Pedro Salinas'?0:1}</div></div>
+        <div class="kc"><div class="kc-lbl">🏆 Certificados</div><div class="kc-val blue">${name==='Pedro Salinas'?0:1}</div></div>
+      </div>
+      <div style="font-size:13px;color:var(--gm);line-height:1.8">
+        ${name==='Pedro Salinas'?'<div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.16);border-radius:8px;padding:12px;font-size:13px;color:var(--gm)">⚠️ Este usuario fue suspendido por pago fallido el 7 de enero de 2025.</div>':'<strong style="color:var(--w)">María González</strong> está activa con 3 cursos inscritos y 1 certificado obtenido. Última actividad hace 2 horas.'}
+      </div>`;
+  }
+  showModal('modal-user');
+}
+
+// ── PLAN CHANGE ───────────────────────────────────────────
+function selPlan(el,name,price){
+  document.querySelectorAll('#modal-change-plan .pc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');selPlanName=name;selPlanPrice=price;
+  document.getElementById('plan-new-lbl').textContent=name+' · '+price+'/mes';
+}
+function planNext(){
+  if(planStep===4){hideModal('modal-change-plan');planStep=1;resetPlanSteps();return;}
+  document.getElementById('plan-s'+planStep).style.display='none';
+  planStep++;
+  document.getElementById('plan-s'+planStep).style.display='block';
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='step'+(i+1<planStep?' done':i+1===planStep?' active':'');
+  });
+  if(planStep===4){
+    document.getElementById('plan-next-btn').textContent='Cerrar ✓';
+    document.querySelector('#plan-mfoot .btn-ghost').style.display='none';
+    showToast('¡Plan actualizado exitosamente! 🎉','success');
+  } else document.getElementById('plan-next-btn').textContent='Continuar →';
+}
+function resetPlanSteps(){
+  for(let i=1;i<=4;i++){const e=document.getElementById('plan-s'+i);if(e)e.style.display=i===1?'block':'none';}
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{document.getElementById(id).className='step'+(i===0?' active':'');});
+  document.getElementById('plan-next-btn').textContent='Continuar →';
+  const gb=document.querySelector('#plan-mfoot .btn-ghost');if(gb)gb.style.display='';
+}
+
+// ── AI GENERATE ───────────────────────────────────────────
+function genAI(){
+  const t=document.getElementById('ai-tema').value.trim();
+  if(!t){showToast('Escribe el tema del curso primero','error');return;}
+  const r=document.getElementById('ai-res');r.classList.add('vis');
+  document.getElementById('ai-gen').style.display='flex';
+  document.getElementById('ai-out').style.display='none';
+  setTimeout(()=>{
+    document.getElementById('ai-gen').style.display='none';
+    document.getElementById('ai-out').style.display='block';
+    showToast('¡Estructura generada exitosamente! ✓','success');
+  },2200);
+}
+
+// ── QUIZ BUILDER SCORE ────────────────────────────────────
+function updateScore(){
+  const bar=document.getElementById('qb-bar'),disp=document.getElementById('qb-score-display');
+  const total=document.querySelector('#qb-bar select').value;
+  const pts=document.querySelectorAll('#qb-questions-list input[type="number"]');
+  let sum=0;pts.forEach(p=>sum+=parseInt(p.value)||0);
+  disp.textContent=sum+' / '+total;
+  if(sum==total){bar.className='score-bar ok';disp.nextElementSibling.textContent='✓ Suma correcta';disp.nextElementSibling.style.color='var(--grn)';}
+  else{bar.className='score-bar err';disp.nextElementSibling.textContent='⚠️ Debe sumar '+total;disp.nextElementSibling.style.color='var(--yel)';}
+}
+function toggleChk(el,type){
+  if(type==='single'){
+    el.closest('.qb-card').querySelectorAll('.qb-chk').forEach(c=>{c.classList.remove('chked');c.textContent='';});
+    el.classList.add('chked');el.textContent='●';
+  } else {
+    if(el.classList.contains('chked')){el.classList.remove('chked');el.textContent='';}
+    else{el.classList.add('chked');el.textContent='✓';}
+  }
+}
+
+// ── LESSON VIEW ───────────────────────────────────────────
+const LESSON_DATA={
+  'l1-1':{mod:'01',num:'1.1',title:'Introducción a los modelos de lenguaje',subt:'Qué son los LLMs, cómo funcionan y por qué Claude es diferente a un buscador.',vid:'youtube.com/watch?v=plattform-l1-1 · 22 min',keys:['Los LLMs generan respuestas nuevas, no recuperan información existente','Claude entiende contexto y matices del lenguaje natural','La diferencia con un buscador es fundamental para usarlo bien','La calidad del output depende directamente de la calidad del input'],body:`<p>Los modelos de lenguaje grande (LLMs) son sistemas de inteligencia artificial entrenados en enormes volúmenes de texto para comprender y generar lenguaje natural. A diferencia de un buscador que indexa páginas, un LLM <strong>comprende contexto, infiere intenciones y genera respuestas originales</strong>.</p><h3>¿Cómo funciona realmente?</h3><p>Durante el entrenamiento, el modelo aprende patrones estadísticos del lenguaje: qué palabras tienden a aparecer juntas, cómo se estructuran los argumentos, qué connota cada término en distintos contextos. El resultado es un sistema capaz de <em>razonar sobre texto</em> con una flexibilidad sin precedentes.</p><div class="lcallout"><strong>Diferencia clave:</strong> Un buscador te encuentra información que alguien ya escribió. Claude <em>genera</em> una respuesta nueva, adaptada específicamente a tu pregunta y contexto.</div><h4>Lo que esto significa para ti</h4><ul><li>Puedes pedirle que adapte información a tu contexto específico</li><li>Puede razonar sobre documentos que tú le compartes</li><li>Entiende instrucciones complejas con múltiples condiciones</li><li>Mantiene el hilo de una conversación larga sin perder contexto</li></ul>`,foot:'Módulo 01 de 04 · Lección 1 de 3'},
+  'l1-2':{mod:'01',num:'1.2',title:'Claude vs. ChatGPT vs. Gemini',subt:'Análisis comparativo de los principales modelos de IA disponibles en 2025.',vid:'youtube.com/watch?v=plattform-l1-2 · 15 min',keys:['Claude destaca por menor tasa de alucinaciones en análisis complejos','La ventana de contexto extendida es ideal para documentos largos','No hay un modelo "mejor" — cada uno tiene casos de uso óptimos','Conocer las diferencias te hace más eficiente con todas las herramientas'],body:`<p>Los tres modelos líderes tienen fortalezas distintas. Entender las diferencias te permite elegir la herramienta correcta para cada tarea.</p><h3>Ventajas de Claude</h3><p>Claude destaca por su <strong>ventana de contexto extendida</strong> (ideal para documentos largos), menor tasa de alucinaciones en tareas analíticas, y un razonamiento más estructurado para problemas complejos.</p><h4>Cuándo usar cada modelo</h4><ul><li><strong>Claude</strong> — Documentos largos, análisis profundo, redacción con matiz</li><li><strong>ChatGPT</strong> — Integración con plugins, generación de imágenes (DALL·E)</li><li><strong>Gemini</strong> — Integración con Google Workspace, búsqueda en tiempo real</li></ul>`,foot:'Módulo 01 de 04 · Lección 2 de 3'},
+  'l1-3':{mod:'01',num:'1.3',title:'La interfaz de Claude.ai',subt:'Recorrido completo: conversaciones, proyectos, artefactos y configuración.',vid:'youtube.com/watch?v=plattform-l1-3 · 12 min',keys:['Los proyectos mantienen contexto persistente entre conversaciones','Los artefactos permiten generar código, documentos y visualizaciones','El historial de conversaciones te ayuda a retomar trabajos anteriores','La configuración de idioma y preferencias mejora la experiencia'],body:`<p>Claude.ai es la interfaz web oficial para interactuar con Claude. Conocer bien sus funcionalidades te permitirá sacar el máximo provecho desde el primer día.</p><h3>Elementos principales</h3><p>La pantalla principal tiene tres áreas clave: el <strong>panel de conversaciones</strong> donde se listan tus chats anteriores, el <strong>área de proyectos</strong> para trabajo contextualizado, y el <strong>canvas de conversación</strong> donde ocurre la magia.</p><h4>Los artefactos</h4><p>Los artefactos son uno de los elementos más poderosos: cuando Claude genera código, un documento, una tabla o una visualización interactiva, los muestra en un panel lateral que puedes editar, copiar o descargar.</p>`,foot:'Módulo 01 de 04 · Lección 3 de 3'},
+  'l2-1':{mod:'02',num:'2.1',title:'Anatomía de un buen prompt',subt:'El framework CIFE para obtener resultados consistentes y profesionales.',vid:'youtube.com/watch?v=plattform-l2-1 · 20 min',keys:['CIFE = Contexto, Instrucción, Formato, Ejemplo','Un prompt vago produce resultados vagos — sé específico','El "Formato" le dice a Claude exactamente cómo estructurar la respuesta','Agregar un ejemplo de referencia mejora la precisión considerablemente'],body:`<p>El prompting efectivo es una habilidad aprendible. No es magia — es estructura. El framework CIFE es la base de cualquier prompt que funcione de forma consistente.</p><h3>El framework CIFE</h3><ul><li><strong>Contexto</strong> — Quién eres, cuál es la situación, a quién va dirigido el output</li><li><strong>Instrucción</strong> — Qué quieres que haga exactamente, con verbos claros de acción</li><li><strong>Formato</strong> — Extensión, estructura, tono, formato de salida</li><li><strong>Ejemplo</strong> — Un modelo de referencia (opcional pero muy poderoso)</li></ul><div class="lcallout"><strong>Regla de oro:</strong> Si Claude te da una respuesta que no querías, el problema casi siempre está en el prompt, no en el modelo.</div>`,foot:'Módulo 02 de 04 · Lección 1 de 4'},
+  'l2-2':{mod:'02',num:'2.2',title:'Prompts para redacción profesional',subt:'Plantillas y técnicas probadas para emails, reportes y propuestas de alto impacto.',vid:'youtube.com/watch?v=plattform-l2-2 · 18 min',keys:['La estructura CIFE te da resultados consistentes en cualquier redacción','Darle un email tuyo como referencia permite replicar tu estilo personal','Pedir explícitamente "evitar clichés" mejora la naturalidad del texto','Claude puede generar 3 versiones del mismo texto para que elijas la mejor'],body:`<p>La redacción profesional con IA no significa delegar tu voz — significa multiplicar tu capacidad de comunicación sin sacrificar calidad ni autenticidad.</p><h3>La estructura CIFE aplicada a redacción</h3><p>Para obtener textos profesionales de Claude necesitas darle cuatro elementos: <strong>Contexto</strong> (quién eres, a quién escribes), <strong>Instrucción</strong> (qué tipo de documento), <strong>Formato</strong> (extensión, tono) y <strong>Ejemplo</strong> (opcional, pero poderoso).</p><div class="lcallout"><strong>Ejemplo de prompt efectivo:</strong><br/>"Soy director académico. Escribe un email formal para invitar a 15 profesores a un taller. Tono profesional pero cercano. Máximo 150 palabras. Incluye: objetivo, horario, lugar y cómo confirmar asistencia."</div><h4>Casos de uso frecuentes</h4><ul><li><strong>Emails ejecutivos</strong> — Comunicación formal con autoridades o clientes</li><li><strong>Propuestas académicas</strong> — Proyectos de investigación, solicitudes de recursos</li><li><strong>Reportes de gestión</strong> — Informes periódicos, avances de proyecto</li><li><strong>Comunicaciones internas</strong> — Circulares, convocatorias, minutas</li></ul><h3>Lo que Claude hace bien en redacción</h3><p>Claude mantiene consistencia de tono, adapta el registro según la audiencia y puede generar múltiples versiones del mismo texto. Lo más poderoso: puedes darle un email tuyo de referencia y pedirle que <em>replique tu estilo</em> para nuevas comunicaciones.</p>`,foot:'Módulo 02 de 04 · Lección 2 de 4'},
+  'l2-3':{mod:'02',num:'2.3',title:'Prompts para análisis y síntesis',subt:'Análisis de documentos, comparaciones, matrices de decisión y extracción de insights.',vid:'youtube.com/watch?v=plattform-l2-3 · 16 min',keys:['Claude puede analizar documentos de hasta 100,000 palabras en un solo prompt','Las matrices de decisión son ideales para comparar opciones complejas','Pedir "extrae los 5 puntos más importantes" da mejores resultados que "resume"','Especificar el formato de salida (tabla, bullets, prosa) mejora la utilidad'],body:`<p>Una de las capacidades más poderosas de Claude es su habilidad para procesar, analizar y sintetizar grandes volúmenes de información. Esto transforma completamente cómo investigas, decides y reportas.</p><h3>Análisis de documentos</h3><p>Claude puede recibir documentos completos y responder preguntas específicas sobre ellos. La clave es ser preciso: en lugar de "¿qué dice este documento?", pregunta <strong>"¿cuáles son las tres principales recomendaciones y qué evidencia las sustenta?"</strong></p><h4>Tipos de análisis más útiles</h4><ul><li>Síntesis de reportes largos en puntos ejecutivos</li><li>Comparación de múltiples documentos o propuestas</li><li>Extracción de datos específicos de textos no estructurados</li><li>Identificación de contradicciones o gaps en argumentos</li></ul>`,foot:'Módulo 02 de 04 · Lección 3 de 4'},
+};
+
+function loadLesson(id){
+  curLesson=id;
+  // Update sidebar active state
+  document.querySelectorAll('#sv-lesson .litem, #sv-lesson .leval').forEach(el=>el.classList.remove('active'));
+  const target=document.getElementById('li-'+id);if(target)target.classList.add('active');
+  const area=document.getElementById('les-area');
+
+  if(id==='quiz1'||id==='quiz2'||id==='quiz3'){
+    const mn={'quiz1':'01','quiz2':'02','quiz3':'03'}[id];
+    document.getElementById('lbread').textContent='MÓDULO '+mn+' · QUIZ';
+    document.getElementById('lfooter').textContent='Evaluación del módulo '+mn;
+    area.innerHTML=`<div class="lbody">
+      <div class="ltype">MÓDULO ${mn} · EVALUACIÓN</div>
+      <h1 class="qhdr">Quiz del Módulo ${mn}</h1>
+      <p class="qsub">Responde las preguntas. Necesitas 70% para continuar.</p>
+      ${buildQuiz([
+        ['¿Cuál es la estructura recomendada para un prompt efectivo?',['Solo la instrucción principal','CIFE: Contexto, Instrucción, Formato, Ejemplo','Pregunta directa sin contexto'],1],
+        ['¿Qué ventaja tiene darle a Claude un texto tuyo como referencia?',['Claude escribe más rápido','Claude puede replicar tu estilo de escritura','Reduce el costo de tokens'],1],
+        ['¿Cómo se pide a Claude que evite frases genéricas?',['Usando mayúsculas en el prompt','Especificando "evita frases cliché" en el prompt','No es posible controlarlo'],1],
+      ])}
+      <div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="btn btn-primary" onclick="submitQuiz()">Enviar respuestas →</button></div>
+    </div>`;
+  } else if(id==='final-eval'){
+    document.getElementById('lbread').textContent='EVALUACIÓN FINAL';
+    document.getElementById('lfooter').textContent='Módulo 04 de 04 · Evaluación final';
+    area.innerHTML=`<div class="lbody">
+      <div class="eval-card">
+        <div style="font-size:40px;margin-bottom:12px">🎓</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--w);margin-bottom:8px">Evaluación Final</h2>
+        <p style="font-size:14px;color:var(--gm);margin-bottom:22px">Demuestra lo que aprendiste en el curso completo. Necesitas 70% para obtener tu certificado.</p>
+        <div class="eval-rules">
+          <div class="eval-rule"><div class="eval-rv">10</div><div class="eval-rl">Preguntas</div></div>
+          <div class="eval-rule"><div class="eval-rv">100</div><div class="eval-rl">Puntos totales</div></div>
+          <div class="eval-rule"><div class="eval-rv">70%</div><div class="eval-rl">Mínimo</div></div>
+          <div class="eval-rule"><div class="eval-rv">∞</div><div class="eval-rl">Intentos</div></div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="startFinalEval()">Comenzar evaluación →</button>
+      </div>
+    </div>`;
+  } else {
+    const d=LESSON_DATA[id]||LESSON_DATA['l2-2'];
+    document.getElementById('lbread').textContent='MÓDULO '+d.mod+' · LECCIÓN '+d.num;
+    document.getElementById('lfooter').textContent=d.foot||'';
+    area.innerHTML=`<div class="lbody">
+      <div class="ltype">MÓDULO ${d.mod} · LECCIÓN ${d.num}</div>
+      <h1 class="ltitle">${d.title}</h1>
+      <p class="lsubt">${d.subt}</p>
+      <div class="ldiv"></div>
+      <div class="lvid">
+        <div class="lvid-ico">▶</div>
+        <div style="flex:1"><div class="lvid-lbl">Video de la lección</div><div class="lvid-url" onclick="showToast('Abriendo video en YouTube...','info')">${d.vid}</div></div>
+        <button class="btn btn-outline btn-sm" onclick="showToast('Abriendo video...','info')">Ver →</button>
+      </div>
+      <div class="lcontent">${d.body}</div>
+      <div class="lkeys">
+        <div class="lkeys-lbl">Puntos clave de esta lección</div>
+        ${d.keys.map(k=>`<div class="lkey">${k}</div>`).join('')}
+      </div>
+      <div style="border-top:1px solid rgba(59,130,246,.08);padding-top:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--gm)">¿Útil? <span style="cursor:pointer;font-size:15px" onclick="showToast('¡Gracias!','success')">👍</span> <span style="cursor:pointer;font-size:15px" onclick="showToast('Lo mejoraremos','info')">👎</span></div>
+        <button class="btn btn-primary" onclick="markDone()">Marcar como completada ✓</button>
+      </div>
+    </div>`;
+  }
+}
+
+function buildQuiz(qs){
+  return qs.map((q,qi)=>`
+    <div class="qcard">
+      <div class="qnum">PREGUNTA 0${qi+1}</div>
+      <div class="qtxt">${q[0]}</div>
+      ${q[1].map((opt,oi)=>`<div class="qopt" onclick="qo(this)"><div class="qletter">${String.fromCharCode(65+oi)}</div>${opt}</div>`).join('')}
+    </div>`).join('');
+}
+function qo(el){el.closest('.qcard').querySelectorAll('.qopt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function toggleMod(id){
+  const el=document.getElementById(id),arr=document.getElementById('arr-'+id);
+  if(!el)return;
+  if(!el.style.maxHeight||el.style.maxHeight==='0px'){el.style.maxHeight=el.scrollHeight+'px';arr.classList.add('open');}
+  else{el.style.maxHeight='0px';arr.classList.remove('open');}
+}
+function lesNav(dir){
+  const idx=LESSON_ORDER.indexOf(curLesson);
+  const next=LESSON_ORDER[Math.max(0,Math.min(LESSON_ORDER.length-1,idx+dir))];
+  loadLesson(next);
+  if(dir>0)showToast('Siguiente lección →','info');
+  else showToast('← Lección anterior','info');
+}
+function markDone(){
+  showToast('¡Lección completada! ✓','success');
+  document.getElementById('lpf').style.width='68%';
+  document.getElementById('lpct').textContent='68%';
+  setTimeout(()=>lesNav(1),700);
+}
+function submitQuiz(){
+  document.getElementById('les-area').innerHTML=`<div class="lbody">
+    <div class="score-wrap">
+      <div class="score-num">90<span style="font-size:28px;color:var(--grn)">%</span></div>
+      <div class="score-lbl">9 de 10 puntos — 3 de 3 correctas</div>
+      <span class="badge b-pub" style="font-size:13px;padding:6px 16px;margin-bottom:18px">✓ APROBADO</span>
+      <p style="font-size:14px;color:var(--gm);margin-bottom:20px">Excelente. Has demostrado dominio del módulo.</p>
+      <button class="btn btn-primary btn-lg" onclick="lesNav(1)">Continuar al siguiente módulo →</button>
+    </div>
+  </div>`;
+}
+function startFinalEval(){
+  document.getElementById('les-area').innerHTML=`<div class="lbody">
+    <div class="ltype">EVALUACIÓN FINAL</div>
+    <h1 class="qhdr">Evaluación Final del Curso</h1>
+    <p class="qsub">10 preguntas · 100 puntos · Mínimo 70% para certificarse</p>
+    ${buildQuiz([
+      ['¿Qué significa el acrónimo CIFE en prompting?',['Solo la instrucción principal','Contexto, Instrucción, Formato, Ejemplo','Comando, Input, Función, Ejecución'],1],
+      ['¿Cuál es la principal diferencia entre Claude y un buscador?',['Es más rápido','Genera respuestas nuevas adaptadas al contexto','Tiene acceso a más páginas web'],1],
+      ['¿Qué es una "alucinación" en un modelo de IA?',['Cuando el modelo es demasiado creativo','Cuando el modelo genera información falsa con apariencia de verdadera','Cuando el modelo responde muy lento'],1],
+      ['¿Para qué tipo de tareas destaca Claude especialmente?',['Generación de imágenes','Análisis de documentos largos y razonamiento estructurado','Búsqueda en tiempo real'],1],
+    ])}
+    <div style="display:flex;justify-content:flex-end;margin-top:22px">
+      <button class="btn btn-primary btn-lg" onclick="submitFinal()">Enviar evaluación →</button>
+    </div>
+  </div>`;
+}
+function submitFinal(){
+  document.getElementById('les-area').innerHTML=`<div class="lbody">
+    <div class="score-wrap">
+      <div class="score-num">92<span style="font-size:28px;color:var(--grn)">%</span></div>
+      <div class="score-lbl">9.2 de 10 puntos — Aprobado con distinción</div>
+      <span class="badge b-pub" style="font-size:14px;padding:8px 20px;margin:12px auto 18px;display:inline-flex">🎓 CURSO COMPLETADO</span>
+      <p style="font-size:14px;color:var(--gm);margin-bottom:22px">Felicidades, María. Has completado el curso con una calificación excelente.<br/>Tu certificado ha sido generado y está disponible.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="showCert()">Ver mi certificado 🏆</button>
+        <button class="btn btn-outline btn-lg" onclick="sv('certs',document.querySelectorAll('#screen-student .sb-item')[3])">Ir a Certificados</button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('lpf').style.width='100%';
+  document.getElementById('lpct').textContent='100%';
+  showToast('¡Curso completado! Certificado generado 🎉','success');
+}
+
+// ── MODALS ────────────────────────────────────────────────
+function showModal(id){document.getElementById(id).classList.add('active');}
+function hideModal(id){document.getElementById(id).classList.remove('active');}
+function cmo(e,id){if(e.target.id===id)hideModal(id);}
+
+// ── CERT ──────────────────────────────────────────────────
+function showCert(){document.getElementById('cert-overlay').style.display='block';document.body.style.overflow='hidden';}
+function hideCert(){document.getElementById('cert-overlay').style.display='none';document.body.style.overflow='';}
+
+// ── FAQ ───────────────────────────────────────────────────
+function toggleFaq(el){
+  const a=el.nextElementSibling,arr=el.querySelector('.faq-arr');
+  if(a.classList.contains('open')){a.classList.remove('open');arr.classList.remove('open');}
+  else{a.classList.add('open');arr.classList.add('open');}
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast'),ti=document.getElementById('ti'),tm=document.getElementById('tmsg');
+  t.className='toast '+type;
+  ti.textContent=type==='success'?'✓':type==='error'?'✕':'ℹ';
+  tm.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+// Load default lesson when student view opens
+document.addEventListener('DOMContentLoaded',()=>{
+  loadLesson('l2-2');
+});
+</script>
+</body>
+</html>
