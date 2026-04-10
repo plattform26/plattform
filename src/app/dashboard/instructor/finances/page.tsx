@@ -1,10 +1,13 @@
 ﻿'use client';
 export const dynamic = 'force-dynamic';
-import { useState, useEffect } from 'react';
+import { Suspense } from 'react';
+
+function PageContent() {
+import { useState, useEffect } , Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function FinancesPage() {
+
   const searchParams = useSearchParams();
   const userIdFromQuery = searchParams.get('userId');
 
@@ -302,5 +305,6 @@ export default function FinancesPage() {
     </div>
   );
 }
+}
 
-
+export default function Page() { return <Suspense fallback={null}><PageContent /></Suspense>; }

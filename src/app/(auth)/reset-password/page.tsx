@@ -1,11 +1,13 @@
 ﻿'use client';
 export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
 
-import { useState } from 'react';
+function PageContent() {
+import { useState } , Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ResetPasswordPage() {
+
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
   const router = useRouter();
@@ -118,5 +120,6 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+}
 
-
+export default function Page() { return <Suspense fallback={null}><PageContent /></Suspense>; }

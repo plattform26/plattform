@@ -1,10 +1,13 @@
 ﻿'use client';
 export const dynamic = 'force-dynamic';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { Suspense } from 'react';
+
+function PageContent() {
+import { useState, useEffect, useMemo, useRef } , Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function StudentsPage() {
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedCourseId = searchParams.get('courseId') || '';
@@ -284,5 +287,6 @@ export default function StudentsPage() {
     </div>
   );
 }
+}
 
-
+export default function Page() { return <Suspense fallback={null}><PageContent /></Suspense>; }
