@@ -2,11 +2,22 @@
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-export default function PlanClient({ plans, activePlanId }: { plans: any[], activePlanId?: string }) {
+export default function PlanClient({ 
+  plans, 
+  activePlanId,
+  expirationDate 
+}: { 
+  plans: any[], 
+  activePlanId?: string,
+  expirationDate?: string | null
+}) {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showDowngradeModal, setShowDowngradeModal] = useState<string | null>(null);
+
+  const activePlan = plans.find(p => p.id === activePlanId);
 
   useEffect(() => {
     if (searchParams.get('upgrade') === 'true') {
@@ -14,9 +25,20 @@ export default function PlanClient({ plans, activePlanId }: { plans: any[], acti
     }
   }, [searchParams]);
 
-  const handleSubscribe = async (planName: string) => {
+  const handleSubscribe = async (planName: string, confirmedDowngrade = false) => {
+    const targetPlan = plans.find(p => p.name === planName.toLowerCase());
+    
+    // Si es un Downgrade y no ha sido confirmado aún, mostrar Modal de Advertencia
+    if (activePlan && targetPlan && !confirmedDowngrade) {
+        if (Number(targetPlan.monthlyPrice) < Number(activePlan.monthlyPrice)) {
+            setShowDowngradeModal(planName);
+            return;
+        }
+    }
+
     setLoading(planName);
     setError('');
+    setShowDowngradeModal(null);
     
     try {
       const res = await fetch('/api/checkout/subscription', {
@@ -66,8 +88,8 @@ export default function PlanClient({ plans, activePlanId }: { plans: any[], acti
           return (
             <div key={plan.id} className={`relative bg-[#0d1524] rounded-2xl p-6 border-2 transition-all ${isCurrent ? 'border-cyan-500/50' : 'border-blue-500/15 hover:border-blue-500/30'}`}>
               {isCurrent && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
-                  Plan actual
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-cyan-500/20 uppercase tracking-widest whitespace-nowrap">
+                  ⭐ Tu Plan Actual
                 </div>
               )}
               <div className="text-2xl mb-3">{PLAN_ICONS[plan.name] ?? '💎'}</div>
@@ -76,6 +98,11 @@ export default function PlanClient({ plans, activePlanId }: { plans: any[], acti
                 ${Number(plan.monthlyPrice).toLocaleString('es-MX')}
                 <span className="text-sm text-gray-500 ml-1">MXN/mes</span>
               </div>
+              {isCurrent && expirationDate && (
+                <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1">
+                   <span className="animate-pulse">●</span> Renovación: {new Date(expirationDate).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+              )}
               <div className="space-y-2 mt-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-400">
                   <span className="text-green-400">✓</span>
@@ -90,19 +117,69 @@ export default function PlanClient({ plans, activePlanId }: { plans: any[], acti
                   {plan.name === 'scale' ? 'Full IA + Carga de Documentos' : 'IA para generar cursos'}
                 </div>
               </div>
-              {!isCurrent && (
+              {isCurrent ? (
+                <div className="mt-8 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex flex-col items-center gap-1 group/active">
+                   <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] group-hover/active:scale-110 transition-transform">✓ Beneficios Activos</span>
+                   <span className="text-[8px] text-gray-400 uppercase font-bold tracking-widest italic opacity-60">Gestiona desde tu perfil</span>
+                </div>
+              ) : (
                 <button 
                   onClick={() => handleSubscribe(plan.name)}
                   disabled={loading !== null}
-                  className="mt-5 w-full py-2.5 rounded-xl bg-blue-600/10 border border-blue-500/20 text-sm font-semibold text-gray-300 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition-all disabled:opacity-50"
+                  className="mt-8 w-full py-4 rounded-2xl bg-blue-600/10 border border-blue-500/10 text-[10px] font-black text-gray-400 hover:text-white hover:bg-blue-600 hover:border-blue-600 hover:scale-[1.02] transition-all disabled:opacity-50 uppercase tracking-[0.2em]"
                 >
-                  {isProcessing ? 'Procesando...' : `Cambiar a ${plan.displayName}`}
+                  {isProcessing ? (
+                    <span className="flex items-center justify-center gap-2">
+                       <span className="w-2 h-2 rounded-full bg-current animate-ping" /> Procesando...
+                    </span>
+                  ) : `Migrar a ${plan.displayName}`}
                 </button>
               )}
             </div>
           );
         })}
       </div>
+
+      {showDowngradeModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0b1221] border border-red-500/30 rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl shadow-red-500/10 relative overflow-hidden group">
+             {/* Decorative Background */}
+             <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-600/5 blur-[80px] rounded-full group-hover:bg-red-600/10 transition-all duration-700" />
+             
+             <div className="relative z-10 text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 mb-8">
+                   <span className="text-4xl">⚠️</span>
+                </div>
+                
+                <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter">¿Confirmar Downgrade?</h3>
+                
+                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light italic">
+                   Estás a punto de bajar de nivel al plan <span className="text-red-400 font-bold">{showDowngradeModal.toUpperCase()}</span>. 
+                   <br/><br/>
+                   <span className="text-white font-bold block mb-2">REGLAS DE REINICIO DE CICLO:</span>
+                   1. Se realizará un <span className="text-red-400 font-bold">cobro inmediato</span> por el monto total del nuevo plan.
+                   2. Tu ciclo de facturación <span className="text-cyan-400 font-bold">se reinicia hoy</span> (Hoy + 30 días).
+                   3. <span className="text-red-500 font-bold underline">Perderás el tiempo remanente</span> de tu plan actual prepagado.
+                </p>
+
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => handleSubscribe(showDowngradeModal, true)}
+                    className="w-full py-4 bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl text-xs font-black text-white hover:scale-105 transition-all shadow-xl shadow-red-600/20 uppercase tracking-widest"
+                  >
+                    Acepto perder mi tiempo actual y Reiniciar Ciclo
+                  </button>
+                  <button 
+                    onClick={() => setShowDowngradeModal(null)}
+                    className="w-full py-4 text-gray-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
+                  >
+                    Mantener mi plan actual
+                  </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

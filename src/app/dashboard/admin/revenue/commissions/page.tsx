@@ -7,7 +7,9 @@ export default function AdminRevenueCommissionsPage() {
   const now = new Date();
   const [filters, setFilters] = useState({
     month: now.getMonth().toString(),
-    year: now.getFullYear().toString()
+    year: now.getFullYear().toString(),
+    instructorId: 'all',
+    status: 'all'
   });
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,11 +19,27 @@ export default function AdminRevenueCommissionsPage() {
     instructors: []
   });
   const [loading, setLoading] = useState(true);
+  const [instructorsList, setInstructorsList] = useState<any[]>([]);
+
+  const fetchInstructors = async () => {
+    const res = await fetch('/api/admin/users?role=INSTRUCTOR');
+    if (res.ok) {
+        const result = await res.json();
+        setInstructorsList(result.users || []);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/revenue/commissions?month=${filters.month}&year=${filters.year}`);
+      const query = new URLSearchParams({
+        month: filters.month,
+        year: filters.year,
+        instructorId: filters.instructorId,
+        status: filters.status
+      }).toString();
+
+      const res = await fetch(`/api/admin/revenue/commissions?${query}`);
       if (res.ok) {
         const result = await res.json();
         setData(result);
@@ -32,6 +50,10 @@ export default function AdminRevenueCommissionsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchInstructors();
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -111,22 +133,47 @@ export default function AdminRevenueCommissionsPage() {
              <p className="text-gray-400 mt-2 font-light tracking-wide uppercase text-[10px] tracking-[0.2em] italic">Análisis de dispersión de ingresos transaccionales.</p>
           </div>
           
-          <div className="flex items-center gap-4">
-             <div className="relative group">
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+             <div className="flex flex-col gap-1.5">
+                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Instructor</span>
+                <select 
+                  value={filters.instructorId} 
+                  onChange={(e) => setFilters(prev => ({ ...prev, instructorId: e.target.value }))}
+                  className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-48"
+                >
+                   <option value="all">Todos los Instructores</option>
+                   {instructorsList.map(i => (
+                     <option key={i.id} value={i.id}>{i.name} {i.lastName}</option>
+                   ))}
+                </select>
+             </div>
+             <div className="flex flex-col gap-1.5">
+                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Estado del Curso</span>
+                <select 
+                   value={filters.status} 
+                   onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                   className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-40"
+                >
+                   <option value="all">Todos</option>
+                   <option value="PUBLISHED">Publicados</option>
+                   <option value="DRAFT">Borradores</option>
+                   <option value="HIBERNATED">Hibernados</option>
+                </select>
+             </div>
+             <div className="relative group mb-0.5">
                 <input 
                   type="text"
-                  placeholder="Buscar instructor o academia..."
+                  placeholder="Filtrar por nombre..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all w-64 pl-10"
+                  className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all w-48 pl-10"
                 />
                 <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
              </div>
-             <div className="flex gap-2">
-                <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-secondary/10 hover:border-secondary/50 hover:bg-secondary/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
-                <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
+             <div className="flex gap-2 mb-0.5">
+                <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-secondary/10 hover:border-secondary/50 hover:bg-secondary/10 transition-all uppercase tracking-widest leading-none">CSV</button>
              </div>
           </div>
        </div>
@@ -291,7 +338,7 @@ export default function AdminRevenueCommissionsPage() {
                            <td colSpan={7} className="p-8 border-t border-secondary/10">
                               <div className="grid grid-cols-1 gap-6">
                                  <div className="flex items-center justify-between mb-2">
-                                    <h4 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.4em]">Detalle de Operaciones (Stripe Sync)</h4>
+                                    <h4 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.4em]">Detalle de Inscripciones (Real-Time)</h4>
                                     <span className="text-[10px] text-gray-600 font-mono">
                                       Periodo: {filters.month === 'all' ? 'Todo' : months.find(m => m.value === filters.month)?.label} {filters.year === 'all' ? 'Histórico' : filters.year}
                                     </span>
@@ -300,17 +347,20 @@ export default function AdminRevenueCommissionsPage() {
                                     <table className="w-full text-left text-xs">
                                        <thead className="bg-[#152035] text-[9px] font-black text-gray-500 uppercase tracking-widest">
                                           <tr>
-                                             <th className="p-4">Curso Vendido</th>
-                                             <th className="p-4 text-center">Fecha</th>
+                                             <th className="p-4">Curso / Estudiante</th>
+                                             <th className="p-4 text-center">Fecha Inscripción</th>
                                              <th className="p-4 text-center">Bruto</th>
-                                             <th className="p-4 text-center">Comisión</th>
-                                             <th className="p-4 text-right">Stripe Payment Intent</th>
+                                             <th className="p-4 text-center">Comisión Plataforma</th>
+                                             <th className="p-4 text-right">Estado</th>
                                           </tr>
                                        </thead>
                                        <tbody className="divide-y divide-white/5">
                                           {comm.transactions.map((t: any) => (
                                              <tr key={t.id} className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-bold text-gray-300">{t.courseTitle}</td>
+                                                <td className="p-4">
+                                                  <div className="font-bold text-gray-300">{t.courseTitle}</div>
+                                                  <div className="text-[10px] text-gray-500 font-medium italic">{t.studentName}</div>
+                                                </td>
                                                 <td className="p-4 text-center text-gray-500 font-mono">{new Date(t.createdAt).toLocaleDateString()}</td>
                                                 <td className="p-4 text-center text-white font-mono" suppressHydrationWarning>
                                                    ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(t.amount)}
@@ -319,8 +369,8 @@ export default function AdminRevenueCommissionsPage() {
                                                    -${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(t.commission)}
                                                 </td>
                                                 <td className="p-4 text-right">
-                                                   <span className="text-[10px] font-mono text-gray-600 px-2 py-1 bg-black/50 rounded border border-white/5">
-                                                      {t.stripeId}
+                                                   <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded border ${t.status === 'PUBLISHED' ? 'border-emerald-500/30 text-emerald-400 bg-emerald-500/5' : 'border-gray-500/30 text-gray-400 bg-gray-500/5'}`}>
+                                                      {t.status}
                                                    </span>
                                                 </td>
                                              </tr>

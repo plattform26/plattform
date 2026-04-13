@@ -9,16 +9,25 @@ export default function SidebarClient({
   completedLessonIds, 
   progressPercent, 
   courseId,
+  userRole,
   children 
 }: { 
   course: any; 
   completedLessonIds: string[]; 
   progressPercent: number;
   courseId: string;
+  userRole: string;
   children: React.ReactNode; 
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
+
+  // Determinar la ruta de retorno según el rol
+  const getReturnPath = () => {
+    if (userRole === 'INSTRUCTOR') return '/dashboard/instructor/courses';
+    if (userRole === 'ADMIN') return '/dashboard/admin/courses'; // Misión: Recalibración del Botón de Retorno
+    return '/dashboard/student/courses';
+  };
 
   return (
     <>
@@ -29,9 +38,10 @@ export default function SidebarClient({
         } h-full bg-[#050b16] border-r border-blue-500/10 flex flex-col transition-all duration-300 overflow-hidden relative z-50`}
       >
         <div className="p-6 border-b border-blue-500/10 flex flex-col gap-4">
-           <Link href="/dashboard/student/courses" className="text-[10px] uppercase font-bold text-gray-500 hover:text-cyan-400 transition-colors">
-              ← Mis Cursos
+           <Link href={getReturnPath()} className="text-[10px] uppercase font-bold text-gray-500 hover:text-cyan-400 transition-colors">
+              ← Volver {userRole === 'STUDENT' ? 'a mis cursos' : 'al panel'}
            </Link>
+
            <div>
              <h2 className="text-sm font-bold leading-tight line-clamp-2">{course.title}</h2>
            </div>

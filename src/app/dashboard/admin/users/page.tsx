@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { exportToCSV, exportToExcel } from '@/lib/export-utils';
 
@@ -44,8 +45,9 @@ export default function AdminUsersPage() {
        Nombre: `${u.name} ${u.lastName}`,
        Email: u.email,
        Rol: u.role,
+       Especialidad: u.specialty || '',
        Estado: u.status,
-       'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? u._count.courses : u._count.enrollments,
+       'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? (u._count?.courses ?? 0) : (u._count?.enrollments ?? 0),
        'Registrado El': new Date(u.createdAt).toLocaleDateString()
     }));
     exportToCSV(exportData, 'plattform-usuarios-2025');
@@ -57,12 +59,14 @@ export default function AdminUsersPage() {
        Nombre: `${u.name} ${u.lastName}`,
        Email: u.email,
        Rol: u.role,
+       Especialidad: u.specialty || '',
        Estado: u.status,
-       'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? u._count.courses : u._count.enrollments,
+       'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? (u._count?.courses ?? 0) : (u._count?.enrollments ?? 0),
        'Registrado El': new Date(u.createdAt).toLocaleDateString()
     }));
     exportToExcel(exportData, 'plattform-usuarios-2025', 'Usuarios');
   };
+
 
   const getColorByRole = (role: string) => {
      if (role === 'ADMIN') return 'text-red-400 bg-red-400/10';
@@ -117,6 +121,7 @@ export default function AdminUsersPage() {
                 <tr>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Usuario</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Rol</th>
+                   <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Especialidad</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Cursos/Inscrip</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Estado</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Fecha Reg</th>
@@ -126,7 +131,7 @@ export default function AdminUsersPage() {
              <tbody className="divide-y divide-blue-500/5">
                 {loading ? (
                    <tr>
-                      <td colSpan={6} className="p-20 text-center text-gray-500 animate-pulse">Cargando base de datos de usuarios...</td>
+                      <td colSpan={7} className="p-20 text-center text-gray-500 animate-pulse">Cargando base de datos de usuarios...</td>
                    </tr>
                 ) : users.map(user => (
                    <tr key={user.id} className="hover:bg-blue-600/5 transition-colors group">
@@ -147,8 +152,13 @@ export default function AdminUsersPage() {
                          </span>
                       </td>
                       <td className="p-6">
+                         <div className="text-xs font-bold text-cyan-400/80 italic">
+                            {user.specialty || (user.role === 'INSTRUCTOR' ? 'Pendiente' : '—')}
+                         </div>
+                      </td>
+                      <td className="p-6">
                          <div className="text-lg font-extrabold text-gray-300">
-                            {user.role === 'INSTRUCTOR' ? user._count.courses : user._count.enrollments}
+                            {user.role === 'INSTRUCTOR' ? (user._count?.courses ?? 0) : (user._count?.enrollments ?? 0)}
                          </div>
                       </td>
                       <td className="p-6">
@@ -162,7 +172,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="p-6 text-right">
                          <div className="flex justify-end gap-2">
-                            <Link href={`/dashboard/admin/users/${user.id}`} className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all text-gray-400 hover:text-white">VER DETALLE</Link>
+                            <Link href={`/dashboard/admin/users/edit/${user.id}?role=${user.role.toLowerCase()}`} className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all text-gray-400 hover:text-white">EDITAR PERFIL</Link>
                             {user.status === 'ACTIVE' ? (
                                <button 
                                  onClick={async () => {
@@ -198,7 +208,7 @@ export default function AdminUsersPage() {
                 ))}
                 {(!loading && users.length === 0) && (
                    <tr>
-                      <td colSpan={6} className="p-20 text-center text-gray-500 italic">No se encontraron usuarios con estos criterios.</td>
+                      <td colSpan={7} className="p-20 text-center text-gray-500 italic">No se encontraron usuarios con estos criterios.</td>
                    </tr>
                 )}
              </tbody>

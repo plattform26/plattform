@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import { headers } from 'next/headers';
-import { sendPaymentConfirmationEmail } from '@/lib/email';
+import { 
+  sendPaymentConfirmationEmail, 
+  sendSaleNotificationToInstructor, 
+  sendAdminTechnicalAlert,
+  sendPlanActivityEmail
+} from '@/lib/mail';
 import { Prisma } from '@prisma/client';
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
@@ -124,41 +129,95 @@ export async function POST(req: Request) {
             }
           });
 
-          // Enviar email de confirmación (fuera de la transacción por performance)
+          // Enviar correo de confirmación (fuera de la transacción por performance)
           const user = await prisma.user.findUnique({ where: { id: userId } });
+          const instructorUser = await prisma.user.findUnique({ where: { id: course.instructorId } });
+
           if (user) {
             await sendPaymentConfirmationEmail(user.email, user.name, course.title, grossAmount);
+          }
+
+          // Notificar al instructor sobre la venta
+          if (instructorUser) {
+            await sendSaleNotificationToInstructor(instructorUser.email, user?.name || 'Un alumno', course.title);
           }
 
           console.log(`Enrollment manual/compra exitosa para User:${userId} en Course:${courseId}`);
         }
 
-        // --- CASO 2: SUSCRIPCIÓN DE INSTRUCTOR (NUEVA O UPGRADE) ---
+        // --- CASO 2: SUSCRIPCIÓN DE INSTRUCTOR (NUEVA O UPGRADE/DOWNGRADE) ---
         if (metadata.transactionType === 'INSTRUCTOR_SUBSCRIPTION') {
           const { instructorSubscriptionId, planId, isUpgrade, previousSubscriptionId } = metadata;
 
-          // Si es un Upgrade (Reinicio de ciclo)
+          const plan = await prisma.platformPlan.findUnique({ where: { id: planId } });
+          if (!plan) throw new Error('Plan not found');
+
+          // Si es un Cambio de Plan (Upgrade o Downgrade Inmediato)
           if (isUpgrade === 'true' && previousSubscriptionId) {
             try {
-              // Cancelar la suscripción anterior de inmediato en Stripe para evitar cobros dobles
+              // Cancelar la suscripción anterior de inmediato en Stripe
               await stripe.subscriptions.cancel(previousSubscriptionId);
-              console.log(`Stripe: Suscripción antigua ${previousSubscriptionId} cancelada por Upgrade.`);
+              console.log(`Stripe: Suscripción antigua ${previousSubscriptionId} cancelada de inmediato.`);
             } catch (err) {
               console.error(`Error cancelando suscripción antigua ${previousSubscriptionId}:`, err);
-              // Continuamos para no dejar al usuario sin su nuevo plan
             }
           }
 
-          // Actualizar la suscripción en nuestra DB (Reinicio de Ciclo)
-          await prisma.instructorSubscription.update({
-            where: { id: instructorSubscriptionId },
-            data: { 
-              status: 'ACTIVE',
-              planId: planId, // Asegurar que el nuevo plan quede registrado
-              stripeSubscriptionId: session.subscription as string,
-              startedAt: new Date(), // REINICIO DE CICLO: La fecha de facturación es HOY
-            }
+          const sub = await prisma.instructorSubscription.findUnique({
+             where: { id: instructorSubscriptionId },
+             include: { instructor: true }
           });
+
+          if (!sub) throw new Error('Subscription ID not found');
+
+          const now = new Date();
+          const thirtyDaysLater = new Date();
+          thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+
+          await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+            // 1. Caducar registros anteriores del usuario
+            await tx.subscriptionRecord.updateMany({
+              where: { userId: sub.instructor.userId, status: 'ACTIVE' },
+              data: { status: 'EXPIRED', endDate: now }
+            });
+
+            // 2. Crear Nuevo Registro Histórico (Auditable)
+            await tx.subscriptionRecord.create({
+              data: {
+                userId: sub.instructor.userId,
+                planId: planId,
+                status: 'ACTIVE',
+                startDate: now,
+                endDate: thirtyDaysLater,
+                amountPaid: plan.monthlyPrice,
+                stripeSubscriptionId: session.subscription as string,
+              }
+            });
+
+            // 3. Actualizar la suscripción "Puntero" (Reinicio de Ciclo)
+            await tx.instructorSubscription.update({
+              where: { id: instructorSubscriptionId },
+              data: { 
+                status: 'ACTIVE',
+                planId: planId,
+                stripeSubscriptionId: session.subscription as string,
+                startedAt: now,
+                expiresAt: thirtyDaysLater // Reinicio local de ciclo
+              }
+            });
+          });
+
+          // Notificar al instructor sobre su nuevo plan
+          const instructorUser = await prisma.user.findUnique({
+            where: { id: sub.instructor.userId }
+          });
+          if (instructorUser) {
+            await sendPlanActivityEmail(
+              instructorUser.email, 
+              isUpgrade === 'true' ? 'UPGRADE' : 'WELCOME', 
+              plan.name
+            );
+          }
         }
         break;
       }
@@ -187,6 +246,17 @@ export async function POST(req: Request) {
                     data: { status: 'PUBLISHED' }
                   });
                   console.log(`Stripe: Cursos de Instructor ${profile.userId} deshibernados tras pago exitoso.`);
+                }
+
+                // Notificar renovación exitosa
+                const instructorUser = await prisma.user.findUnique({
+                  where: { id: sub.instructorId }
+                });
+                const plan = await prisma.platformPlan.findUnique({
+                  where: { id: sub.planId }
+                });
+                if (instructorUser && plan) {
+                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name);
                 }
               }
             }
@@ -314,6 +384,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true });
   } catch (error: any) {
     console.error('Webhook processing error:', error);
+    
+    // Misión: Sistema SOS y Alertas Técnicas
+    await sendAdminTechnicalAlert(
+      'STRIPE_WEBHOOK_PROCESSING_ERROR',
+      `Error procesando evento ${event?.type || 'unknown'}`,
+      error.message
+    );
+
     return NextResponse.json({ error: 'Webhook processing failed', details: error.message }, { status: 500 });
   }
 }

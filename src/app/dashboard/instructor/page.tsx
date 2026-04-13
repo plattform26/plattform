@@ -2,6 +2,8 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
+import StarRating from '@/components/StarRating';
 
 export default async function InstructorDashboardPage() {
   const session = await getSession();
@@ -53,6 +55,24 @@ export default async function InstructorDashboardPage() {
     WHERE c.instructor_id = ${session.userId} 
   `;
   const studentsCount = Number(studentsCountRaw[0]?.total || 0);
+
+  // Global Rating Stats
+  const instructorRatings = await prisma.courseRating.aggregate({
+    where: { instructorId: session.userId },
+    _avg: { rating: true },
+    _count: { id: true }
+  });
+  
+  const avgRating = instructorRatings._avg.rating || 0;
+  const ratingCount = instructorRatings._count.id;
+
+  // Fetch individual course ratings for the list
+  const courseAggregatedRatings = await prisma.courseRating.groupBy({
+    by: ['courseId'],
+    where: { instructorId: session.userId },
+    _avg: { rating: true },
+    _count: { id: true }
+  });
 
   // Monthly Earnings
   const startOfMonth = new Date();
@@ -127,8 +147,8 @@ export default async function InstructorDashboardPage() {
              <div>
                 <p className="text-sm font-bold">Límite de capacidad {usagePercent >= 100 ? 'excedido' : 'próximo'}</p>
                 <p className="text-xs opacity-70 mt-0.5">
-                  Has usado {totalEnrollmentsCount}/{studentLimit} inscripciones. 
-                  {usagePercent >= 100 ? ' Tus cursos han sido hibernados.' : ' Sube de plan para evitar cierres.'}
+                   Has usado {totalEnrollmentsCount}/{studentLimit} inscripciones. 
+                   {usagePercent >= 100 ? ' Tus cursos han sido hibernados.' : ' Sube de plan para evitar cierres.'}
                 </p>
              </div>
           </div>
@@ -161,8 +181,25 @@ export default async function InstructorDashboardPage() {
           </div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 rounded-2xl p-5 hover:border-blue-500/40 hover:-translate-y-1 transition-all">
-          <div className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wide">⭐ Calificación</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">N/A</div>
+          <div className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wide">⭐ Calificación Global</div>
+          <div className="mt-1">
+            {ratingCount > 0 ? (
+              <>
+                <div className="text-3xl font-bold bg-gradient-to-r from-[#FFD700] to-yellow-500 bg-clip-text text-transparent">
+                  {avgRating.toFixed(1)}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <StarRating value={avgRating} readonly size="sm" />
+                  <span className="text-[10px] text-gray-500 font-bold">({ratingCount})</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col">
+                <div className="text-xl font-bold text-gray-600">N/A</div>
+                <span className="text-[10px] text-gray-500 italic">Sin evaluaciones aún</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -178,6 +215,7 @@ export default async function InstructorDashboardPage() {
                 <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider">Curso</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider">Alumnos</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider">Estado</th>
+                <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider">Reputación</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider">Precio</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 uppercase text-[11px] tracking-wider text-right">Acciones</th>
               </tr>
@@ -199,9 +237,29 @@ export default async function InstructorDashboardPage() {
                      c.status === 'DRAFT' ? <span className="text-gray-400 bg-gray-400/10 px-2 py-0.5 rounded text-[11px] font-bold">● BORRADOR</span> :
                      <span className="text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded text-[11px] font-bold">● HIBERNADO</span>}
                   </td>
+                  <td className="px-6 py-4">
+                    {(() => {
+                      const rating = courseAggregatedRatings.find(r => r.courseId === c.id);
+                      const avg = rating?._avg.rating || 0;
+                      const count = rating?._count.id || 0;
+                      if (count === 0) return <span className="text-gray-600 text-[10px] italic">Sin evaluaciones</span>;
+                      return (
+                        <div className="flex flex-col items-start gap-1">
+                          <StarRating value={avg} readonly size="sm" />
+                          <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">{count} evaluaciones</span>
+                        </div>
+                      );
+                    })()}
+                  </td>
                   <td className="px-6 py-4 text-cyan-400 font-semibold">${Number(c.price)} MXN</td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <Link href={`/dashboard/instructor/courses/${c.id}`} className="px-3 py-1 bg-[#1a2a45] hover:bg-cyan-500/20 border border-blue-500/20 hover:border-cyan-500/50 rounded text-xs transition-colors">Editar</Link>
+                  <td className="px-6 py-4 text-right">
+                    <CourseActionsClient 
+                      courseId={c.id} 
+                      status={c.status} 
+                      enrollmentCount={c._count.enrollments} 
+                      role="INSTRUCTOR" 
+                      planName={activeSub?.plan.name}
+                    />
                   </td>
                 </tr>
               ))}

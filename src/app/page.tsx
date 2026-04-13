@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import StarRating from '@/components/StarRating';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -174,13 +175,10 @@ export default function LandingPage() {
                     <span>⏱ {course.durationHours}h</span>
                     <span>🎓 {course.studentCount}</span>
                   </div>
-                  <div className="flex items-center justify-between mt-auto">
-                    <div>
-                      <span className="text-yellow-500 text-xs">★★★★★</span>
-                      <span className="text-[10px] text-gray-400 ml-1">{course.averageRating.toFixed(1)}</span>
+                    <div className="flex items-center justify-between mt-auto">
+                      <StarRating value={course.averageRating} readonly size="sm" />
+                      <div className="font-bold text-lg text-cyan-400">${course.price} <span className="text-[10px] text-gray-400">MXN</span></div>
                     </div>
-                    <div className="font-bold text-lg text-cyan-400">${course.price} <span className="text-[10px] text-gray-400">MXN</span></div>
-                  </div>
                 </div>
               </Link>
             ))}

@@ -135,7 +135,7 @@ export default async function LessonPage({
                   // BINDING_FIX: Saneamiento Radical en el Server Component
                   // Se reconstruye el objeto quiz para OMITIR campos legacy (optionsJson, correctAnswer)
                   // Esto garantiza que el componente Cliente reciba datos limpios.
-                  const sanitizedQuiz = {
+                  const sanitizedQuizRaw = {
                     ...lesson.quiz,
                     questions: (lesson.quiz.questions as any[]).map(q => ({
                       id: q.id,
@@ -148,6 +148,10 @@ export default async function LessonPage({
                     }))
                   };
 
+                  // Blindaje de Serialización: Convertir a objeto plano
+                  const sanitizedQuiz = JSON.parse(JSON.stringify(sanitizedQuizRaw));
+                  const sanitizedAttempt = latestAttempt ? JSON.parse(JSON.stringify(latestAttempt)) : null;
+
                   return (
                     <QuizViewer 
                        quiz={sanitizedQuiz} 
@@ -155,7 +159,7 @@ export default async function LessonPage({
                        lessonId={params.lessonId}
                        userId={session.userId}
                        studentName={`${session.name} ${session.lastName || ''}`}
-                       initialAttempt={latestAttempt}
+                       initialAttempt={sanitizedAttempt}
                     />
                   );
                 })()
@@ -198,6 +202,7 @@ export default async function LessonPage({
           prevLesson={prevLesson} 
           nextLesson={nextLesson}
           isCompletedInitial={isCompleted}
+          userRole={session.role}
         />
       </div>
       </div>

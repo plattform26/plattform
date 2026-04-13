@@ -49,6 +49,13 @@ export default async function FinalQuizPage({
     orderBy: { submittedAt: 'desc' }
   }) : null;
 
+  // Buscar si el alumno ya calificó el curso
+  const userRatingRecord = await prisma.courseRating.findFirst({
+    where: { courseId: params.id, userId: session.userId },
+    select: { rating: true }
+  });
+  const userRating = userRatingRecord?.rating || null;
+
   if (!finalQuiz) {
     return (
       <div className="max-w-2xl mx-auto py-20 text-center">
@@ -61,19 +68,9 @@ export default async function FinalQuizPage({
     );
   }
 
-  // Saneamiento de datos para el QuizViewer
-  const sanitizedQuiz = {
-    ...finalQuiz,
-    questions: (finalQuiz.questions as any[]).map(q => ({
-      id: q.id,
-      quizId: q.quizId,
-      questionText: q.questionText,
-      questionType: q.questionType,
-      points: q.points,
-      orderIndex: q.orderIndex,
-      options: q.options
-    }))
-  };
+  // Saneamiento Radical: Convertir a objeto plano para evitar errores de Decimal
+  const sanitizedQuiz = JSON.parse(JSON.stringify(finalQuiz));
+  const sanitizedAttempt = initialAttempt ? JSON.parse(JSON.stringify(initialAttempt)) : null;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
@@ -95,7 +92,8 @@ export default async function FinalQuizPage({
            lessonId="" 
            userId={session.userId}
            studentName={`${session.name} ${session.lastName || ''}`}
-           initialAttempt={initialAttempt}
+           initialAttempt={sanitizedAttempt}
+           userRating={userRating}
         />
       </div>
 

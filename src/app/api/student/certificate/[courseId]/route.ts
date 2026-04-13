@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { sendCertificateEmail } from '@/lib/mail';
 
 export async function GET(req: Request, { params }: { params: { courseId: string } }) {
   try {
@@ -82,6 +81,15 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
         relatedEntityId: cert.id,
       }
     });
+
+    // Misión: Logro del Alumno - Envío automático de Email
+    const course = await prisma.course.findUnique({ where: { id: params.courseId } });
+    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    
+    if (course && user) {
+      const downloadLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/student/certificates`;
+      await sendCertificateEmail(user.email, user.name, course.title, downloadLink);
+    }
 
     return NextResponse.json(cert);
   } catch (error) {

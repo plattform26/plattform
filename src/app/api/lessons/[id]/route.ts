@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { isCourseLocked } from '@/lib/course-protection';
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -27,14 +28,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Lógica de Bloqueo de Edición - Solo para Instructores
-    const hasEnrollments = lesson.course._count.enrollments > 0;
-    const isActive = lesson.course.status === 'PUBLISHED' || lesson.course.status === 'HIBERNATED';
-    
-    if (session.role === 'INSTRUCTOR' && hasEnrollments && isActive) {
+    // Lógica de Bloqueo de Edición (Seguridad en Producción)
+    const lock = await isCourseLocked(lesson.courseId, session.role);
+    if (lock.locked) {
         return NextResponse.json({ 
           error: 'CURSO_BLOQUEADO',
-          message: 'Este curso tiene alumnos activos y sus lecciones no pueden ser editadas.' 
+          message: lock.reason 
         }, { status: 403 });
     }
 
@@ -110,14 +109,12 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
 
-      // Lógica de Bloqueo de Eliminación - Solo para Instructores
-      const hasEnrollments = lesson.course._count.enrollments > 0;
-      const isActive = lesson.course.status === 'PUBLISHED' || lesson.course.status === 'HIBERNATED';
-
-      if (session.role === 'INSTRUCTOR' && hasEnrollments && isActive) {
+      // Lógica de Bloqueo de Eliminación (Seguridad en Producción)
+      const lock = await isCourseLocked(lesson.courseId, session.role);
+      if (lock.locked) {
           return NextResponse.json({ 
             error: 'CURSO_BLOQUEADO',
-            message: 'No puedes eliminar lecciones de un curso con alumnos activos.' 
+            message: lock.reason
           }, { status: 403 });
       }
   

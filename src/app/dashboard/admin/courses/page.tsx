@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import StarRating from '@/components/StarRating';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const router = useRouter();
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -29,7 +32,7 @@ export default function AdminCoursesPage() {
     }
   };
 
-  const toggleStatus = async (id: string, status: string) => {
+  const handleStatusChange = async (id: string, status: string) => {
     try {
       const res = await fetch(`/api/admin/courses/${id}`, {
         method: 'PATCH',
@@ -39,6 +42,27 @@ export default function AdminCoursesPage() {
       if (res.ok) fetchCourses();
     } catch (err) {
       console.error('Error updating course status:', err);
+    }
+  };
+
+  const handleDuplicate = async (id: string) => {
+    if (!confirm('¿Deseas duplicar este curso? Se creará una copia en estado BORRADOR.')) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/instructor/courses/${id}/duplicate`, {
+        method: 'POST'
+      });
+      if (res.ok) {
+        const newCourse = await res.json();
+        router.push(`/dashboard/admin/courses/${newCourse.id}/modules`);
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Error al duplicar el curso');
+      }
+    } catch (err) {
+      console.error('Error duplicating course:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,6 +180,7 @@ export default function AdminCoursesPage() {
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Categoría</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Estado</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400 text-center">Alumnos</th>
+                   <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Reputación</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Precio</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400 text-right">Acciones</th>
                 </tr>
@@ -187,36 +212,71 @@ export default function AdminCoursesPage() {
                          </div>
                       </td>
                       <td className="p-6">
+                         <div className="flex flex-col items-start gap-1">
+                            <StarRating value={course.avgRating || 0} readonly size="sm" />
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                               {course.ratingCount || 0} evaluaciones
+                            </span>
+                         </div>
+                      </td>
+                      <td className="p-6">
                          <span className="text-sm font-bold text-cyan-400/80">${Number(course.price).toLocaleString()}</span>
                       </td>
                       <td className="p-6 text-right">
-                         <div className="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                             <Link href={`/dashboard/admin/courses/${course.id}/modules`} className="px-3 py-1.5 rounded-lg text-[10px] font-black border border-cyan-500/20 hover:border-cyan-500/80 hover:bg-cyan-500/10 transition-all text-cyan-400/80 hover:text-white uppercase tracking-widest">CONSTRUCTOR 🛠️</Link>
+                         <div className="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity flex-wrap max-w-[400px]">
+                             {/* Vista Previa */}
+                             <Link 
+                                href={`/dashboard/student/learn/${course.id}?preview=true`} 
+                                target="_blank"
+                                className="px-3 py-1.5 rounded-lg text-[10px] font-black border border-green-500/20 hover:border-green-500/80 hover:bg-green-500/10 transition-all text-green-400/80 hover:text-white uppercase tracking-widest"
+                             >
+                                👁️ Vista Previa
+                             </Link>
+
+                             {/* Constructor */}
+                             <Link 
+                                href={`/dashboard/admin/courses/${course.id}/modules`} 
+                                className="px-3 py-1.5 rounded-lg text-[10px] font-black border border-cyan-500/20 hover:border-cyan-500/80 hover:bg-cyan-500/10 transition-all text-cyan-400/80 hover:text-white uppercase tracking-widest"
+                             >
+                                CONSTRUCTOR 🛠️
+                             </Link>
                             
-                            {course.status === 'PUBLISHED' ? (
-                               <button 
-                                 onClick={() => toggleStatus(course.id, 'HIBERNATED')}
-                                 className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-orange-500/20 hover:bg-orange-500/10 text-orange-400/80 hover:text-orange-400 transition-all"
-                                 title="Ocultar del catálogo"
-                               >
-                                 HIBERNAR
-                               </button>
-                            ) : (
-                               <button 
-                                 onClick={() => toggleStatus(course.id, 'PUBLISHED')}
-                                 className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-green-500/20 hover:bg-green-500/10 text-green-400/80 hover:text-green-400 transition-all"
-                               >
-                                 PUBLICAR
-                               </button>
-                            )}
-                            {course.status !== 'ARCHIVED' && (
-                               <button 
-                                 onClick={() => toggleStatus(course.id, 'ARCHIVED')}
-                                 className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/20 hover:bg-red-500/10 text-red-400/80 hover:text-red-400 transition-all"
-                               >
-                                 ELIMINAR
-                               </button>
-                            )}
+                             {/* Estados */}
+                             {course.status === 'PUBLISHED' ? (
+                                <button 
+                                  onClick={() => handleStatusChange(course.id, 'HIBERNATED')}
+                                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-yellow-500/20 hover:bg-yellow-500/10 text-yellow-400/80 hover:text-yellow-400 transition-all uppercase"
+                                  title="Ocultar del catálogo"
+                                >
+                                  ❄️ Hibernar
+                                </button>
+                             ) : (
+                                <button 
+                                  onClick={() => handleStatusChange(course.id, 'PUBLISHED')}
+                                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-green-500/20 hover:bg-green-500/10 text-green-400/80 hover:text-green-400 transition-all uppercase"
+                                >
+                                  🔥 Publicar
+                                </button>
+                             )}
+
+                             {/* Duplicar */}
+                             <button 
+                                onClick={() => handleDuplicate(course.id)}
+                                className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-500/10 text-blue-400/80 hover:text-blue-400 transition-all uppercase"
+                                title="Clonar este curso"
+                             >
+                                📑 Duplicar
+                             </button>
+
+                             {/* Eliminar */}
+                             {course.status !== 'ARCHIVED' && (
+                                <button 
+                                  onClick={() => handleStatusChange(course.id, 'ARCHIVED')}
+                                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/20 hover:bg-red-500/10 text-red-400/80 hover:text-red-400 transition-all uppercase"
+                                >
+                                  🗑️ Eliminar
+                                </button>
+                             )}
                          </div>
                       </td>
                    </tr>

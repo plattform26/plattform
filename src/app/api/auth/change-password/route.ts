@@ -8,7 +8,13 @@ export async function PATCH(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { currentPassword, newPassword } = await req.json();
+    const body = await req.json();
+    console.log('--- FORMULARIO RECIBIDO ---', body);
+    const { currentPassword, newPassword } = body;
+    
+    console.log('--- [BACKEND] INTENTO DE CAMBIO DE PASS ---');
+    console.log('User ID Target:', session.userId);
+    console.log('Nueva Password Recibida:', newPassword);
 
     if (!currentPassword || !newPassword) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
@@ -29,7 +35,8 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'La nueva contraseña debe tener al menos 8 caracteres' }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    // Cifrado Síncrono para asegurar impacto real
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
 
     await prisma.user.update({
       where: { id: user.id },
@@ -38,6 +45,8 @@ export async function PATCH(req: NextRequest) {
         updatedAt: new Date()
       }
     });
+
+    console.log('--- PASSWORD ACTUALIZADA ---');
 
     return NextResponse.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {

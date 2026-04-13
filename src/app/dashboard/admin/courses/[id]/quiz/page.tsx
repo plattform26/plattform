@@ -44,8 +44,14 @@ export default function AdminQuizBuilderPage() {
   const [quizId, setQuizId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    // Obtener rol del usuario actual
+    fetch('/api/auth/me')
+      .then(r => r.json())
+      .then(d => { if (d.authenticated) setUserRole(d.role); });
+
     fetch(`/api/instructor/courses/${courseId}`)
       .then(r => r.json())
       .then(d => {
@@ -58,15 +64,35 @@ export default function AdminQuizBuilderPage() {
             totalScore: q.totalScore,
             passingScore: q.passingScore,
             scoreDistribution: q.scoreDistribution,
-            questions: (q.questions || []).map((qq: any) => ({
-              id: qq.id,
-              questionText: qq.questionText,
-              questionType: qq.questionType,
-              options: Array.isArray(qq.optionsJson) ? qq.optionsJson.map((o: any) => ({ text: o })) : [],
-              correctAnswer: Array.isArray(qq.correctAnswer) ? qq.correctAnswer : [],
-              points: qq.points,
-              orderIndex: qq.orderIndex,
-            }))
+            questions: (q.questions || []).map((qq: any) => {
+              // Mapeo inteligente de opciones (maneja strings u objetos)
+              // FIX: Acceder a .text o .optionText si es un objeto, sino usar String(o)
+              const mappedOptions = Array.isArray(qq.optionsJson) 
+                ? qq.optionsJson.map((o: any) => ({ 
+                    text: typeof o === 'object' ? (o.text || o.optionText || '') : String(o) 
+                  })) 
+                : [];
+
+              // Detector de respuestas correctas (basado en la bandera isCorrect de la IA)
+              const autoCorrectAnswers: number[] = [];
+              if (Array.isArray(qq.optionsJson)) {
+                qq.optionsJson.forEach((o: any, idx: number) => {
+                   if (o && typeof o === 'object' && o.isCorrect === true) {
+                     autoCorrectAnswers.push(idx);
+                   }
+                });
+              }
+
+              return {
+                id: qq.id,
+                questionText: qq.questionText,
+                questionType: qq.questionType,
+                options: mappedOptions,
+                correctAnswer: autoCorrectAnswers.length > 0 ? autoCorrectAnswers : (Array.isArray(qq.correctAnswer) ? qq.correctAnswer : []),
+                points: qq.points,
+                orderIndex: qq.orderIndex,
+              };
+            })
           });
         }
       });
@@ -174,6 +200,7 @@ export default function AdminQuizBuilderPage() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = async () => {
+    console.log('💾 Botón de guardado presionado - Iniciando Sincronización Antigravity');
     const err = validate();
     if (err) { showMsg('err', err); return; }
     
@@ -186,6 +213,7 @@ export default function AdminQuizBuilderPage() {
 
     setSaving(true);
     try {
+      // Usar el nuevo endpoint unificado que creamos
       const res = await fetch(`/api/courses/${courseId}/quiz`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -216,8 +244,23 @@ export default function AdminQuizBuilderPage() {
 
   if (!course) return <div className="text-gray-400 py-20 text-center animate-pulse italic">Cargando Motor de Evaluación...</div>;
 
+  // El bloqueo solo aplica si el usuario es INSTRUCTOR
+  const isLocked = userRole === 'INSTRUCTOR' && (course.status === 'PUBLISHED' || course.status === 'HIBERNATED') && (course._count?.enrollments > 0);
+
   return (
-    <div className="pb-40 relative">
+    <div className={`pb-40 relative ${isLocked ? 'pointer-events-none opacity-80' : ''}`}>
+      {isLocked && (
+        <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-2xl px-6 pointer-events-auto">
+          <div className="bg-blue-600 border border-cyan-400/50 rounded-2xl p-4 shadow-2xl flex items-center gap-4 animate-in slide-in-from-top duration-500">
+            <span className="text-2xl">🔒</span>
+            <div className="text-white">
+              <p className="font-bold text-sm">Evaluación Bio-Protegida</p>
+              <p className="text-xs opacity-90">Este curso tiene alumnos activos. No puedes modificar el examen final para proteger la integridad de sus calificaciones.</p>
+            </div>
+            <Link href={`/dashboard/admin/courses/${courseId}`} className="ml-auto px-4 py-2 bg-black/20 hover:bg-black/40 rounded-xl text-xs font-bold transition-all">Volver</Link>
+          </div>
+        </div>
+      )}
       <div className="flex items-start justify-between mb-10 flex-wrap gap-4 sticky top-0 z-[999] bg-[#0b0e14]/90 backdrop-blur-xl p-6 rounded-3xl border border-white/5 shadow-2xl">
         <div className="flex-1">
           <Link href={`/dashboard/admin/courses/${courseId}`} className="text-gray-500 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 mb-3 transition-colors">
@@ -233,10 +276,14 @@ export default function AdminQuizBuilderPage() {
         <div className="flex items-center gap-4">
           <button 
             onClick={handleSave}
-            disabled={saving || quiz.questions.length === 0}
-            className="px-10 py-5 bg-[#00f2ff] text-black rounded-2xl text-[11px] font-black hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20 flex items-center gap-3 border-none ring-2 ring-cyan-500/50"
+            disabled={saving || quiz.questions.length === 0 || isLocked}
+            className={`px-10 py-5 rounded-2xl text-[11px] font-black hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-xl flex items-center gap-3 border-none ring-2 ${
+              isLocked 
+                ? 'bg-gray-800 text-gray-500 ring-gray-700 cursor-not-allowed shadow-none' 
+                : 'bg-[#00f2ff] text-black ring-cyan-500/50 shadow-cyan-500/20'
+            }`}
           >
-            {saving ? '📦 SINCRONIZANDO...' : '💾 GUARDAR EXAMEN FINAL'}
+            {saving ? '📦 SINCRONIZANDO...' : isLocked ? '🔒 EXAMEN BLOQUEADO' : '💾 GUARDAR EXAMEN FINAL'}
           </button>
           <Link href={`/dashboard/admin/courses/${courseId}/modules`} className="px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-white text-[10px] font-black transition-all hover:bg-white/10 uppercase tracking-widest italic">
             Módulos →

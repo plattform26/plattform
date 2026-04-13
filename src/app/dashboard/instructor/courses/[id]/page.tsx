@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import UpgradePlanModal from '@/components/dashboard/UpgradePlanModal';
 
 const CATEGORIES = ['BUSINESS','TECHNOLOGY','MARKETING','FINANCE','LEADERSHIP','DESIGN','OTHER'];
 const LEVELS = ['BEGINNER','INTERMEDIATE','ADVANCED'];
@@ -27,9 +29,37 @@ export default function EditCoursePage() {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showLockModal, setShowLockModal] = useState(false);
+  const [role, setRole] = useState<'ADMIN' | 'INSTRUCTOR' | null>(null);
+
+  // Misión: Validación de Claridad Total
+  const validateForm = () => {
+    const missingFields: string[] = [];
+    if (!form.title?.trim()) missingFields.push('Título');
+    if (!form.description?.trim()) missingFields.push('Descripción');
+    if (!form.previewText?.trim()) missingFields.push('Lección de muestra');
+    if (!form.price || parseFloat(form.price) <= 0) missingFields.push('Precio');
+    if (!form.durationHours || parseInt(form.durationHours) <= 0) missingFields.push('Duración');
+    if (!form.category) missingFields.push('Categoría');
+    if (!form.level) missingFields.push('Nivel');
+
+    if (missingFields.length > 0) {
+      toast.error('No se puede guardar: Faltan datos esenciales', {
+        description: `Por favor completa los siguientes campos: [${missingFields.join(', ')}].`,
+        duration: 5000,
+      });
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
+    // Fetch session for role
+    fetch('/api/auth/me')
+      .then(r => r.json())
+      .then(s => setRole(s.role));
+
     fetch(`/api/instructor/courses/${id}`)
       .then(r => r.json())
       .then(d => {
@@ -48,13 +78,10 @@ export default function EditCoursePage() {
       });
   }, [id]);
 
-  const showMsg = (type: 'ok' | 'err', text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 4000);
-  };
-
   const handleSave = async () => {
+    if (!validateForm()) return;
     setSaving(true);
+    const toastId = toast.loading('Guardando cambios...');
     try {
       const res = await fetch(`/api/instructor/courses/${id}`, {
         method: 'PATCH',
@@ -64,9 +91,9 @@ export default function EditCoursePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCourse(data);
-      showMsg('ok', 'Cambios guardados ✓');
+      toast.success('Cambios guardados ✓', { id: toastId });
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setSaving(false);
     }
@@ -76,29 +103,35 @@ export default function EditCoursePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      showMsg('err', 'El archivo supera los 5MB permitidos');
+    // Misión: Validación de 2MB de Alto Impacto
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Error: La imagen excede el límite de 2MB. Por favor, optimiza el archivo antes de subirlo.', {
+        duration: 5000,
+        description: 'Intenta usar herramientas como TinyPNG o reducir las dimensiones.'
+      });
       return;
     }
 
     const reader = new FileReader();
     reader.onloadend = () => {
       setForm({ ...form, thumbnailUrl: reader.result as string });
-      showMsg('ok', 'Imagen cargada localmente (base64) ✓');
+      toast.success('Imagen cargada localmente ✓');
     };
     reader.readAsDataURL(file);
   };
 
   const handlePublish = async () => {
+    if (!validateForm()) return;
     setPublishing(true);
+    const toastId = toast.loading('Publicando curso...');
     try {
       const res = await fetch(`/api/instructor/courses/${id}/publish`, { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCourse({ ...course, status: 'PUBLISHED' });
-      showMsg('ok', '🎉 Curso publicado exitosamente');
+      toast.success('🎉 Curso publicado exitosamente', { id: toastId });
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setPublishing(false);
     }
@@ -109,7 +142,7 @@ export default function EditCoursePage() {
     const res = await fetch(`/api/instructor/courses/${id}/hibernate`, { method: 'POST' });
     if (res.ok) {
       setCourse({ ...course, status: 'HIBERNATED' });
-      showMsg('ok', 'Curso hibernado');
+      toast.success('Curso hibernado');
     }
   };
 
@@ -118,40 +151,45 @@ export default function EditCoursePage() {
     setDeleting(true);
     const res = await fetch(`/api/instructor/courses/${id}`, { method: 'DELETE' });
     if (res.ok) {
+      toast.success('Curso eliminado');
       router.push('/dashboard/instructor/courses');
     } else {
-      showMsg('err', 'Error al eliminar');
+      toast.error('Error al eliminar');
       setDeleting(false);
     }
   };
 
+  const activePlan = course?.instructor?.instructorProfile?.subscriptions?.[0]?.plan?.name;
+  const isDuplicationRestricted = activePlan !== 'scale';
+
   const handleDuplicate = async () => {
+    if (isDuplicationRestricted) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    const toastId = toast.loading('Duplicando curso...');
     const res = await fetch(`/api/instructor/courses/${id}/duplicate`, { method: 'POST' });
     const data = await res.json();
     if (res.ok) {
-      showMsg('ok', 'Curso duplicado ✓');
-      setTimeout(() => router.push(`/dashboard/instructor/courses/${data.id}`), 1000);
+      toast.success('Curso duplicado ✓', { id: toastId });
+      setTimeout(() => router.push(`/dashboard/instructor/courses/${data.id}/modules`), 1000);
     } else {
-      showMsg('err', data.error);
+      toast.error(data.error, { id: toastId });
     }
   };
 
   const handleFinalize = async () => {
+    if (!validateForm()) return;
     setSaving(true);
     try {
-      const res = await fetch(`/api/instructor/courses/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
       router.push(`/dashboard/student/learn/${id}`);
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message);
       setSaving(false);
     }
   };
+
+  const isLocked = role === 'INSTRUCTOR' && course?.status !== 'DRAFT' && (course?._count?.enrollments > 0);
 
   if (!course) return (
     <div className="flex items-center justify-center py-20">
@@ -191,17 +229,56 @@ export default function EditCoursePage() {
               💤 Hibernar
             </button>
           )}
-          <button onClick={handleDuplicate} className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 rounded-xl text-gray-300 text-xs font-bold transition-colors">
-            📋 Duplicar
-          </button>
+          
+          <div className="relative group/dup">
+            <button 
+                onClick={handleDuplicate} 
+                className={`px-4 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                    isDuplicationRestricted 
+                    ? 'bg-gray-500/5 border-gray-500/20 text-gray-500 hover:bg-gray-500/10' 
+                    : 'bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20 text-gray-300'
+                }`}
+            >
+                {isDuplicationRestricted && <span>🔒</span>}
+                📋 Duplicar
+            </button>
+            {isDuplicationRestricted && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-black/90 border border-cyan-500/30 rounded-lg text-[10px] text-cyan-400 font-bold whitespace-nowrap opacity-0 group-hover/dup:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
+                    Función exclusiva del Plan Scale
+                </div>
+            )}
+          </div>
+
           <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-xl text-red-400 text-xs font-bold transition-colors disabled:opacity-60">
             🗑 Eliminar
           </button>
         </div>
       </div>
 
+      <UpgradePlanModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+        featureName="Duplicación Masiva"
+      />
+
       {/* BANNER DE ALERTA DINÁMICO (Misión: Relajar Restricciones) */}
-      {(!form.title || !form.description) && course.status !== 'PUBLISHED' && (
+      {isLocked ? (
+        <div className="mb-6 p-6 bg-blue-500/10 border border-blue-500/30 rounded-3xl flex items-center gap-6 animate-in slide-in-from-top duration-300 shadow-2xl shadow-blue-500/5">
+          <span className="text-4xl">🔒</span>
+          <div className="flex-1">
+            <h4 className="text-lg font-space-grotesk font-black text-white italic uppercase tracking-tighter">Seguridad de Producción Activa</h4>
+            <p className="text-xs text-blue-300 font-medium mt-1">
+              Este curso tiene <strong className="text-white">{course?._count?.enrollments} alumnos activos</strong>. La edición directa está bloqueada para garantizar la estabilidad del aprendizaje.
+            </p>
+          </div>
+          <button 
+            onClick={() => setShowLockModal(true)}
+            className="text-[10px] font-black uppercase text-cyan-400 tracking-widest px-6 py-2 bg-cyan-400/10 border border-cyan-400/20 rounded-xl hover:bg-cyan-400/20 transition-all"
+          >
+            Saber más
+          </button>
+        </div>
+      ) : (!form.title || !form.description) && course.status !== 'PUBLISHED' && (
         <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl flex items-center gap-4 animate-in slide-in-from-top duration-300">
           <span className="text-2xl">⚠️</span>
           <div className="flex-1">
@@ -215,48 +292,55 @@ export default function EditCoursePage() {
         </div>
       )}
 
-      {msg && (
-        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium border ${msg.type === 'ok' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
-          {msg.text}
-        </div>
-      )}
 
       {/* Quick nav */}
       <div className="flex gap-3 mb-6 flex-wrap">
-        <Link href={`/dashboard/instructor/courses/${id}/modules`} className="flex-1 min-w-[150px] bg-[#0d1524] border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl p-4 text-center transition-colors group">
-          <div className="text-2xl mb-1">📦</div>
-          <div className="text-sm font-semibold text-cyan-400 group-hover:text-cyan-300">Editor de módulos</div>
+        <button 
+          onClick={() => isLocked ? setShowLockModal(true) : router.push(`/dashboard/instructor/courses/${id}/modules`)} 
+          className={`flex-1 min-w-[150px] bg-[#0d1524] border rounded-xl p-4 text-center transition-colors group ${isLocked ? 'border-gray-500/20 opacity-60' : 'border-cyan-500/20 hover:border-cyan-500/40'}`}
+        >
+          <div className="text-2xl mb-1">{isLocked ? '🔒' : '📦'}</div>
+          <div className={`text-sm font-semibold transition-colors ${isLocked ? 'text-gray-500' : 'text-cyan-400 group-hover:text-cyan-300'}`}>Constructor de Módulos 🛠️</div>
           <div className="text-xs text-gray-500 mt-0.5">{course.modules?.length ?? 0} módulos</div>
-        </Link>
-        <Link href={`/dashboard/instructor/courses/${id}/quiz`} className="flex-1 min-w-[150px] bg-[#0d1524] border border-purple-500/20 hover:border-purple-500/40 rounded-xl p-4 text-center transition-colors group">
-          <div className="text-2xl mb-1">📝</div>
-          <div className="text-sm font-semibold text-purple-400 group-hover:text-purple-300">Constructor de evaluación</div>
+        </button>
+        <button 
+          onClick={() => isLocked ? setShowLockModal(true) : router.push(`/dashboard/instructor/courses/${id}/quiz`)}
+          className={`flex-1 min-w-[150px] bg-[#0d1524] border rounded-xl p-4 text-center transition-colors group ${isLocked ? 'border-gray-500/20 opacity-60' : 'border-purple-500/20 hover:border-purple-500/40'}`}
+        >
+          <div className="text-2xl mb-1">{isLocked ? '🔒' : '📝'}</div>
+          <div className={`text-sm font-semibold transition-colors ${isLocked ? 'text-gray-500' : 'text-purple-400 group-hover:text-purple-300'}`}>Constructor de Evaluación 🛠️</div>
           <div className="text-xs text-gray-500 mt-0.5">{course.quizzes?.length ?? 0} evaluaciones</div>
-        </Link>
+        </button>
       </div>
 
       <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl p-6 space-y-5">
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Título *</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            Título <span className="text-red-500">*</span>
+          </label>
           <input
+            disabled={isLocked}
             value={form.title || ''}
             onChange={e => setForm({ ...form, title: e.target.value })}
-            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
+            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Descripción del curso</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            Descripción del curso <span className="text-red-500">*</span>
+          </label>
           <textarea
+            disabled={isLocked}
             value={form.description || ''}
             onChange={e => setForm({ ...form, description: e.target.value })}
             placeholder="¿Qué aprenderán tus alumnos? ¿A quién va dirigido este curso?"
             rows={4}
-            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none"
+            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none disabled:opacity-50"
           />
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-2">
-            Lección de muestra gratuita
+            Lección de muestra gratuita <span className="text-red-500">*</span>
             <span className="group relative">
                 <span className="cursor-help text-cyan-500">ⓘ</span>
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-black border border-white/10 rounded-lg text-[10px] text-gray-300 invisible group-hover:visible shadow-2xl">
@@ -265,17 +349,18 @@ export default function EditCoursePage() {
             </span>
           </label>
           <textarea
+            disabled={isLocked}
             value={form.previewText || ''}
-            onChange={e => setForm({ ...form, previewText: e.target.value })}
+            onChange={(e) => setForm({ ...form, previewText: e.target.value })}
             rows={2}
             placeholder="Un resumen estratégico que invite a la compra..."
-            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none placeholder-gray-600"
+            className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none placeholder-gray-600 disabled:opacity-50"
           />
         </div>
         
         <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Imagen de portada (PNG/JPG/WEBP - Máx 5MB)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 italic">Imagen de portada (PNG/JPG/WEBP - Máx 2MB - Opcional)</label>
             <div className="flex items-center gap-4">
               <div className="w-32 h-20 bg-[#070d1a] border border-blue-500/20 rounded-xl overflow-hidden flex items-center justify-center relative group">
                 {form.thumbnailUrl ? (
@@ -289,6 +374,7 @@ export default function EditCoursePage() {
               </div>
               <div className="flex-1">
                 <input
+                  disabled={isLocked}
                   type="file"
                   accept="image/png, image/jpeg, image/webp"
                   onChange={handleFileUpload}
@@ -296,8 +382,9 @@ export default function EditCoursePage() {
                   id="course-thumbnail-upload"
                 />
                 <label 
-                  htmlFor="course-thumbnail-upload"
-                  className="inline-block px-4 py-2 border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 rounded-lg text-xs font-bold text-cyan-400 cursor-pointer transition-colors"
+                  htmlFor={isLocked ? undefined : "course-thumbnail-upload"}
+                  onClick={() => isLocked && setShowLockModal(true)}
+                  className={`inline-block px-4 py-2 border rounded-lg text-xs font-bold cursor-pointer transition-colors ${isLocked ? 'border-gray-500/20 bg-gray-500/5 text-gray-500' : 'border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 text-cyan-400'}`}
                 >
                   {form.thumbnailUrl ? 'Cambiar imagen' : 'Subir imagen'}
                 </label>
@@ -309,52 +396,98 @@ export default function EditCoursePage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Precio (MXN)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Precio (MXN) <span className="text-red-500">*</span>
+            </label>
             <input
+              disabled={isLocked}
               type="number"
               value={form.price || 0}
               onChange={e => setForm({ ...form, price: e.target.value })}
-              className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Duración (horas)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Duración (horas) <span className="text-red-500">*</span>
+            </label>
             <input
+              disabled={isLocked}
               type="number"
               value={form.durationHours || 0}
               onChange={e => setForm({ ...form, durationHours: e.target.value })}
-              className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50"
             />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
-            <select value={form.category || 'BUSINESS'} onChange={e => setForm({ ...form, category: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors">
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Categoría <span className="text-red-500">*</span>
+            </label>
+            <select disabled={isLocked} value={form.category || 'BUSINESS'} onChange={e => setForm({ ...form, category: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50">
               {CATEGORIES.map(c => <option key={c} value={c}>{CAT_LABELS[c]}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Nivel</label>
-            <select value={form.level || 'BEGINNER'} onChange={e => setForm({ ...form, level: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors">
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Nivel <span className="text-red-500">*</span>
+            </label>
+            <select disabled={isLocked} value={form.level || 'BEGINNER'} onChange={e => setForm({ ...form, level: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50">
               {LEVELS.map(l => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
             </select>
           </div>
         </div>
 
+        {/* Modal de Bloqueo Instructivo */}
+        {showLockModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+            <div className="bg-[#0b1221] border border-blue-500/30 rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl relative">
+              <button 
+                onClick={() => setShowLockModal(false)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-white"
+              >✕</button>
+              <div className="text-4xl mb-6">🔒</div>
+              <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter text-left">Curso Blindado</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light italic">
+                La seguridad de producción está activa porque este curso ya tiene <span className="text-cyan-400 font-bold">{course._count.enrollments} alumnos inscritos</span>. 
+                Para evitar inconsistencias en el progreso de tus alumnos, la edición estructural ha sido restringida.
+                <br/><br/>
+                <span className="text-white font-bold block mb-2">¿Cómo proceder?</span>
+                1. <span className="text-cyan-400 font-bold">Duplica el curso</span> para trabajar en una nueva versión (Requiere Plan Scale).
+                2. Contacta a <span className="text-blue-400 font-bold">Soporte Técnico</span> si necesitas un cambio de emergencia.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button 
+                   onClick={() => { setShowLockModal(false); handleDuplicate(); }}
+                   className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl text-xs font-black text-white hover:scale-105 transition-all shadow-xl shadow-cyan-600/20 uppercase tracking-widest"
+                >
+                  📑 Duplicar Curso Certificado
+                </button>
+                <button 
+                  onClick={() => setShowLockModal(false)}
+                  className="w-full py-4 text-gray-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-blue-500/10">
           <button
-            onClick={handleSave}
+            onClick={() => isLocked ? setShowLockModal(true) : handleSave()}
             disabled={saving}
-            className="px-6 py-2.5 bg-[#0d1524] border border-blue-500/20 rounded-xl text-sm font-bold text-gray-400 hover:text-white hover:border-blue-500/40 transition-all disabled:opacity-60"
+            className={`px-6 py-2.5 bg-[#0d1524] border rounded-xl text-sm font-bold transition-all disabled:opacity-60 ${isLocked ? 'border-gray-500/20 text-gray-500' : 'border-blue-500/20 text-gray-400 hover:text-white hover:border-blue-500/40'}`}
           >
-            {saving ? '...' : 'Guardar cambios'}
+            {saving ? '...' : (isLocked ? '🔒 Bloqueado' : 'Guardar cambios')}
           </button>
           
           <button
-            onClick={handleFinalize}
+            onClick={() => isLocked ? setShowLockModal(true) : handleFinalize()}
             disabled={saving}
-            className="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl text-sm font-black text-white shadow-lg shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-wider"
+            className={`px-8 py-2.5 rounded-xl text-sm font-black text-white shadow-lg transition-all uppercase tracking-wider ${isLocked ? 'bg-gray-700/50 opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]'}`}
           >
             {saving ? 'Guardando...' : 'Finalizar y ver curso →'}
           </button>

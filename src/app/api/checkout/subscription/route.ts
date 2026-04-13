@@ -80,40 +80,8 @@ export async function POST(req: Request) {
     const isUpgrade = !!sub.stripeSubscriptionId;
     const previousSubscriptionId = sub.stripeSubscriptionId;
 
-    // 2.1 LOGICA DE DOWNGRADE (Diferido)
-    if (isUpgrade && previousSubscriptionId) {
-      const currentPlan = await prisma.platformPlan.findUnique({ where: { id: sub.planId } });
-      
-      // Si el nuevo plan es más barato o igual (pero queremos un cambio diferido por política)
-      if (currentPlan && Number(platformPlan.monthlyPrice) < Number(currentPlan.monthlyPrice)) {
-        try {
-          // Programar cancelación al final del periodo en Stripe
-          const stripeSub = await stripe.subscriptions.update(previousSubscriptionId, {
-            cancel_at_period_end: true,
-          });
-
-          // Actualizar en DB: No cambiamos el planId aún, solo marcamos la expiración
-          await prisma.instructorSubscription.update({
-            where: { id: sub.id },
-            data: { 
-              expiresAt: new Date(stripeSub.current_period_end * 1000),
-              status: 'ACTIVE' // Sigue activo hasta que venza
-            }
-          });
-
-          return NextResponse.json({ 
-            message: 'Downgrade programado', 
-            details: `Tu plan ${currentPlan.displayName} seguirá activo hasta el ${new Date(stripeSub.current_period_end * 1000).toLocaleDateString()}. En esa fecha podrás activar tu nuevo plan ${platformPlan.displayName}.`,
-            url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?downgrade_scheduled=true`
-          });
-        } catch (err: any) {
-          console.error('Stripe Downgrade Error:', err);
-          throw err;
-        }
-      }
-    }
-
-    // 3. Crear Stripe Session para SUSCRIPCIÓN (Upgrade o Nueva)
+    // 3. Crear Stripe Session para SUSCRIPCIÓN (Upgrade, Downgrade o Nueva)
+    // Todo cambio genera un cobro completo y reinicia el ciclo (30 días)
     const stripeSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ['card'],

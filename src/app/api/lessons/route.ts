@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { isCourseLocked } from '@/lib/course-protection';
 
 export async function POST(req: Request) {
   try {
@@ -27,14 +28,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Lógica de Bloqueo: Solo para Instructores si hay alumnos y curso activo
-    const hasEnrollments = course._count.enrollments > 0;
-    const isActive = course.status === 'PUBLISHED' || course.status === 'HIBERNATED';
-    
-    if (session.role === 'INSTRUCTOR' && hasEnrollments && isActive) {
+    // Lógica de Bloqueo (Seguridad en Producción)
+    const lock = await isCourseLocked(courseId, session.role);
+    if (lock.locked) {
         return NextResponse.json({ 
           error: 'CURSO_BLOQUEADO',
-          message: 'No puedes agregar contenido nuevo a un curso con alumnos activos.'
+          message: lock.reason
         }, { status: 403 });
     }
 

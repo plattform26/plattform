@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { isCourseLocked } from '@/lib/course-protection';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -16,6 +17,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
           select: {
             name: true,
             lastName: true,
+            instructorProfile: {
+              include: {
+                subscriptions: {
+                  where: { status: 'ACTIVE' },
+                  include: { plan: true },
+                  take: 1
+                }
+              }
+            }
           }
         },
         modules: {
@@ -82,23 +92,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     
     if (!course) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    // Lógica de Bloqueo de Edición (Edit Lock) - Solo aplica para INSTRUCTORES
-    const hasEnrollments = course._count.enrollments > 0;
-    const isActive = course.status === 'PUBLISHED' || course.status === 'HIBERNATED';
-    const isInstructor = session.role === 'INSTRUCTOR';
-    
-    // Si es instructor, tiene alumnos y está publicado/hibernado, bloqueamos cambios en el contenido base
-    if (isInstructor && hasEnrollments && isActive) {
-        // Campos prohibidos si hay alumnos
-        const restrictedFields = ['title', 'description', 'price', 'category', 'level', 'durationHours', 'thumbnailUrl'];
-        const attemptingRestricted = Object.keys(body).some(key => restrictedFields.includes(key) && body[key] !== undefined);
-        
-        if (attemptingRestricted) {
-           return NextResponse.json({ 
-             error: 'CURSO_BLOQUEADO', 
-             message: 'Este curso tiene alumnos activos y no puedes editarlo para proteger la integridad del contenido. Contacta al soporte si necesitas realizar cambios críticos.' 
-           }, { status: 403 });
-        }
+    // Lógica de Bloqueo de Edición (Seguridad en Producción)
+    const lock = await isCourseLocked(params.id, session.role);
+    if (lock.locked) {
+      return NextResponse.json({ 
+        error: 'CURSO_BLOQUEADO', 
+        message: lock.reason 
+      }, { status: 403 });
     }
 
     const updated = await prisma.course.update({
@@ -142,12 +142,12 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     if (!course) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    // Bloqueo de Eliminación: El administrador puede borrar todo. 
-    // Los instructores solo pueden borrar si el curso tiene 0 alumnos (limpieza de pruebas).
-    if (session.role === 'INSTRUCTOR' && course._count.enrollments > 0) {
+    // Bloqueo de Eliminación (Seguridad en Producción)
+    const lock = await isCourseLocked(params.id, session.role);
+    if (lock.locked) {
        return NextResponse.json({ 
          error: 'ELIMINACION_PROHIBIDA',
-         message: 'No puedes eliminar un curso que ya tiene alumnos inscritos. Contacta al soporte para gestionar la baja del contenido.'
+         message: lock.reason
        }, { status: 403 });
     }
 

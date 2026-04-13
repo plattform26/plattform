@@ -14,22 +14,32 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
   const [msg, setMsg] = useState('');
 
   const fetchUser = async () => {
-    const res = await fetch(`/api/admin/users/${id}`);
-    if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-        setForm({
-            name: data.name || '',
-            lastName: data.lastName || '',
-            email: data.email || '',
-            password: '',
-            status: data.status || 'ACTIVE',
-            academyName: data.instructorProfile?.academyName || '',
-            slug: data.instructorProfile?.slug || '',
-            planId: data.instructorProfile?.subscriptions?.[0]?.plan?.name || ''
-        });
+    try {
+      const res = await fetch(`/api/admin/users/${id}`);
+      if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          setForm({
+              name: data?.name || '',
+              lastName: data?.lastName || '',
+              email: data?.email || '',
+              specialty: data?.specialty || '',
+              role: data?.role || 'STUDENT',
+              password: '',
+              status: data?.status || 'ACTIVE',
+              academyName: data?.instructorProfile?.academyName || '',
+              slug: data?.instructorProfile?.slug || '',
+              planId: data?.instructorProfile?.subscriptions?.[0]?.plan?.name || ''
+          });
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error al capturar datos del usuario:', error);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,41 +48,51 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
 
   const handleSave = async () => {
     setSaving(true);
-    const res = await fetch(`/api/admin/users/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-    });
-    if (res.ok) {
-        setMsg('✓ Usuario actualizado con éxito');
-        setIsEditing(false);
-        fetchUser();
-        setTimeout(() => setMsg(''), 3000);
-    } else {
-        const err = await res.json();
-        alert(err.error || 'Error al guardar');
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form)
+      });
+      if (res.ok) {
+          setMsg('✓ Usuario actualizado con éxito');
+          setIsEditing(false);
+          fetchUser();
+          setTimeout(() => setMsg(''), 3000);
+      } else {
+          const err = await res.json();
+          alert(err.error || 'Error al guardar');
+      }
+    } catch (err) {
+      alert('Error de conexión al servidor');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleUpdatePlan = async () => {
     if (!form.planId) return alert('Selecciona un plan');
     setSaving(true);
-    const res = await fetch(`/api/admin/instructors/${user.instructorProfile.id}/manage-plan`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId: form.planId })
-    });
-    if (res.ok) {
-        setMsg('✓ Plan actualizado correctamente');
-        fetchUser();
-        setTimeout(() => setMsg(''), 3000);
+    try {
+      const res = await fetch(`/api/admin/instructors/${user?.instructorProfile?.id}/manage-plan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: form.planId })
+      });
+      if (res.ok) {
+          setMsg('✓ Plan actualizado correctamente');
+          fetchUser();
+          setTimeout(() => setMsg(''), 3000);
+      }
+    } catch (err) {
+      alert('Error al actualizar plan');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   if (loading) return <div className="p-20 text-center text-gray-500 animate-pulse uppercase tracking-[0.3em] text-[10px]">Descifrando Perfil Maestro...</div>;
-  if (!user) return <div className="p-20 text-center text-red-400 font-black tracking-widest uppercase">ERROR: USUARIO NO ENCONTRADO EN LA RED</div>;
+  if (!user) return <div className="p-20 text-center text-red-400 font-black tracking-widest uppercase">ERROR: NODO NO ENCONTRADO O ERROR DE RED</div>;
 
   return (
     <div className="space-y-12 animate-fade-in font-poppins pb-32 max-w-7xl mx-auto">
@@ -115,8 +135,8 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                     </button>
                 </div>
             )}
-            <span className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 ${user.status === 'ACTIVE' ? 'text-green-400 border-green-500/20 bg-green-400/5' : 'text-red-400 border-red-500/20 bg-red-500/5'}`}>
-                {user.status}
+            <span className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 ${user?.status === 'ACTIVE' ? 'text-green-400 border-green-500/20 bg-green-400/5' : 'text-red-400 border-red-500/20 bg-red-500/5'}`}>
+                {user?.status}
             </span>
           </div>
        </div>
@@ -129,7 +149,7 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                 
                 <div className="relative z-10">
                     <div className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-4xl font-black text-white shadow-3xl shadow-blue-600/30 mx-auto mb-8 border-4 border-white/10">
-                       {user.name?.[0]}{user.lastName?.[0]}
+                       {user?.name?.[0]}{user?.lastName?.[0]}
                     </div>
                     
                     {isEditing ? (
@@ -146,29 +166,43 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                                 <input value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-cyan-400 font-mono text-center outline-none focus:border-cyan-500" />
                             </div>
                             <div>
-                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">🔐 Reset Password</label>
-                                <input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Nueva contraseña..." className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none focus:border-cyan-500 placeholder:text-gray-700" />
+                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">Especialidad Profesional</label>
+                                <input value={form.specialty} onChange={e => setForm({...form, specialty: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none focus:border-cyan-500" placeholder="Ej. Desarrollador Web..." />
                             </div>
-                            <div>
-                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">Estado del Nodo</label>
-                                <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none appearance-none cursor-pointer focus:border-cyan-500 uppercase tracking-widest font-black">
-                                    <option value="ACTIVE">ACTIVO</option>
-                                    <option value="SUSPENDED">SUSPENDIDO</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">Privilegio (Rol)</label>
+                                    <select value={form.role} onChange={e => setForm({...form, role: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none focus:border-cyan-500 appearance-none uppercase font-black">
+                                        <option value="STUDENT">STUDENT</option>
+                                        <option value="INSTRUCTOR">INSTRUCTOR</option>
+                                        <option value="ADMIN">ADMIN</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">Estado del Nodo</label>
+                                    <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none focus:border-cyan-500 appearance-none uppercase font-black">
+                                        <option value="ACTIVE">ACTIVO</option>
+                                        <option value="SUSPENDED">SUSPENDIDO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="pt-2 text-center">
+                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1 block italic text-center">🔐 Reset Password (Opcional)</label>
+                                <input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Nueva contraseña maestra..." className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white text-center outline-none focus:border-cyan-500 placeholder:text-gray-700" />
                             </div>
                         </div>
                     ) : (
                         <>
-                            <h2 className="text-3xl font-space-grotesk font-black text-white italic tracking-tighter">{user.name} {user.lastName}</h2>
-                            <p className="text-gray-500 text-xs mt-2 font-mono italic">{user.email}</p>
+                            <h2 className="text-3xl font-space-grotesk font-black text-white italic tracking-tighter">{user?.name} {user?.lastName}</h2>
+                            <p className="text-gray-500 text-xs mt-2 font-mono italic">{user?.email}</p>
                             <div className="mt-8 pt-8 border-t border-white/5 flex flex-col gap-4 text-left">
                                <div className="flex justify-between items-center">
                                   <span className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] italic">Rol de Acceso</span>
-                                  <span className="text-[10px] font-black text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-lg border border-cyan-400/20 tracking-widest uppercase">{user.role}</span>
+                                  <span className="text-[10px] font-black text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-lg border border-cyan-400/20 tracking-widest uppercase">{user?.role}</span>
                                </div>
                                <div className="flex justify-between items-center">
                                   <span className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] italic">Fecha Registro</span>
-                                  <span className="text-xs text-gray-400 font-mono italic">{new Date(user.createdAt).toLocaleDateString()}</span>
+                                  <span className="text-xs text-gray-400 font-mono italic">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</span>
                                </div>
                             </div>
                         </>
@@ -176,17 +210,17 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                 </div>
              </div>
 
-             {/* ACADEMIA (Si es Instructor) */}
-             {user.role === 'INSTRUCTOR' && (
-                 <div className="bg-[#0d1524] border border-blue-500/10 p-10 rounded-[3rem] shadow-3xl">
-                    <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-8 italic text-center">Marca Educativa</h3>
-                    <div className="space-y-6">
+             {/* ACADEMIA (Si el rol seleccionado es INSTRUCTOR) */}
+             {(form?.role === 'INSTRUCTOR' || user?.role === 'INSTRUCTOR') && (
+                  <div className="bg-[#0d1524] border border-blue-500/10 p-10 rounded-[3rem] shadow-3xl">
+                     <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-8 italic text-center">Marca Educativa</h3>
+                     <div className="space-y-6">
                         <div>
                             <label className="text-[9px] font-black text-gray-600 uppercase mb-2 block italic">Identificador (Slug)</label>
                             {isEditing ? (
                                 <input value={form.slug} onChange={e => setForm({...form, slug: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-cyan-400 font-mono" />
                             ) : (
-                                <p className="text-xs text-cyan-400 font-mono tracking-widest hover:text-white transition-colors">/{user.instructorProfile?.slug || 'sin-slug'}</p>
+                                <p className="text-xs text-cyan-400 font-mono tracking-widest hover:text-white transition-colors">/{user?.instructorProfile?.slug || 'sin-slug'}</p>
                             )}
                         </div>
                         <div>
@@ -194,18 +228,18 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                             {isEditing ? (
                                 <input value={form.academyName} onChange={e => setForm({...form, academyName: e.target.value})} className="w-full bg-[#070d1a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white" />
                             ) : (
-                                <p className="text-xs text-gray-200 font-bold uppercase tracking-tight">{user.instructorProfile?.academyName || 'No asignado'}</p>
+                                <p className="text-xs text-gray-200 font-bold uppercase tracking-tight">{user?.instructorProfile?.academyName || 'No asignado'}</p>
                             )}
                         </div>
-                    </div>
-                 </div>
+                     </div>
+                  </div>
              )}
           </div>
 
           {/* COLUMNA DERECHA: RECURSOS Y GESTIÓN */}
           <div className="lg:col-span-8 space-y-10">
              {/* GESTIÓN DE PLANES (Solo Instructores) */}
-             {user.role === 'INSTRUCTOR' && (
+             {user?.role === 'INSTRUCTOR' && (
                 <div className="bg-[#0d1524] border border-cyan-500/10 p-10 rounded-[3rem] relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-10 text-8xl opacity-[0.03] grayscale group-hover:grayscale-0 transition-all duration-700 select-none">💎</div>
                     
@@ -231,14 +265,13 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                                     disabled={saving}
                                     className="px-6 py-3 bg-cyan-600 rounded-2xl text-[10px] font-black text-white hover:scale-105 transition-all shadow-xl shadow-cyan-600/20 uppercase tracking-widest"
                                 >
-                                    🔄 Actualizar
+                                    {saving ? '...' : '🔄 Actualizar'}
                                 </button>
                             </div>
                         </div>
 
-                        {user.instructorProfile?.subscriptions?.[0] ? (() => {
+                        {user?.instructorProfile?.subscriptions?.[0] ? (() => {
                              const sub = user.instructorProfile.subscriptions[0];
-                             // Nueva lógica: Suma de Alumnos-Materia (Capacity Nodes)
                              const capacityNodes = user.courses?.reduce((acc: number, c: any) => acc + (c._count?.enrollments || 0), 0) || 0;
                              const limit = sub.plan.studentLimit;
                              const usagePercent = limit > 0 ? Math.min(Math.round((capacityNodes / limit) * 100), 100) : 100;
@@ -287,7 +320,7 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                                         </div>
                                     </div>
                                 </div>
-                            );
+                             );
                         })() : (
                             <div className="p-16 border-4 border-dashed border-red-500/10 rounded-[3rem] text-center bg-red-500/5 animate-pulse">
                                 <span className="text-5xl mb-6 block">⚠️</span>
@@ -305,12 +338,12 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                     <h3 className="text-2xl font-space-grotesk font-black text-white italic uppercase tracking-tighter">Bitácora <span className="text-cyan-400">Financiera</span></h3>
                     <div className="text-right">
                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest italic mb-1">
-                          {user.role === 'INSTRUCTOR' ? 'Rentabilidad Generada' : 'Inversión Total'}
+                          {user?.role === 'INSTRUCTOR' ? 'Rentabilidad Generada' : 'Inversión Total'}
                        </p>
                        <p className="text-2xl font-black text-white font-mono">
-                          ${user.role === 'INSTRUCTOR' 
-                             ? (user.transactions?.reduce((acc: number, t: any) => acc + Number(t.netAmountToInstructor || 0), 0) || 0).toLocaleString()
-                             : (user.transactions?.reduce((acc: number, t: any) => acc + Number(t.grossAmount || 0), 0) || 0).toLocaleString()
+                          ${user?.role === 'INSTRUCTOR' 
+                             ? (user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.netAmountToInstructor || 0), 0) || 0).toLocaleString()
+                             : (user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.grossAmount || 0), 0) || 0).toLocaleString()
                           } <span className="text-xs text-gray-500">MXN</span>
                        </p>
                     </div>
@@ -327,7 +360,7 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {user.transactions?.map((tx: any) => (
+                            {user?.transactions?.map((tx: any) => (
                                 <tr key={tx.id} className="hover:bg-white/5 transition-colors group">
                                     <td className="p-4">
                                         <p className="text-xs font-bold text-gray-300 group-hover:text-cyan-400 transition-colors uppercase truncate w-40">{tx.course?.title || 'Suscripción'}</p>
@@ -342,9 +375,65 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                                     </td>
                                 </tr>
                             ))}
-                            {(!user.transactions || user.transactions.length === 0) && (
+                            {(!user?.transactions || user?.transactions.length === 0) && (
                                 <tr>
                                     <td colSpan={4} className="p-10 text-center text-gray-700 italic uppercase text-[9px] tracking-widest">Sin movimientos financieros</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+
+             {/* AUDITORÍA DE SUSCRIPCIONES (History) */}
+             <div className="bg-[#0d1524] border border-blue-500/10 p-10 rounded-[3rem] shadow-3xl">
+                <h3 className="text-2xl font-space-grotesk font-black text-white italic uppercase tracking-tighter mb-8">Auditoría de <span className="text-cyan-400">Suscripciones</span></h3>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="bg-white/5 border-b border-white/5">
+                            <tr>
+                                <th className="p-4 text-[9px] font-black uppercase text-gray-500 italic">Plan</th>
+                                <th className="p-4 text-[9px] font-black uppercase text-gray-500 italic">Período</th>
+                                <th className="p-4 text-[9px] font-black uppercase text-gray-500 italic text-center">Estado</th>
+                                <th className="p-4 text-[9px] font-black uppercase text-gray-500 italic">Monto Pagado</th>
+                                <th className="p-4 text-[9px] font-black uppercase text-gray-500 italic">ID Stripe</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {user?.subscriptionRecords?.map((record: any) => (
+                                <tr key={record.id} className="hover:bg-white/5 transition-colors">
+                                    <td className="p-4">
+                                        <p className="text-xs font-bold text-white uppercase italic">{record.plan.displayName}</p>
+                                        <p className="text-[8px] text-gray-600 font-mono italic uppercase">ID: {record.id.slice(-6)}</p>
+                                    </td>
+                                    <td className="p-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-gray-400 font-mono italic">{new Date(record.startDate).toLocaleDateString()}</span>
+                                            <span className="text-[8px] text-gray-600 font-mono">→ {record.endDate ? new Date(record.endDate).toLocaleDateString() : 'Activo'}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-center">
+                                        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border ${
+                                            record.status === 'ACTIVE' ? 'text-green-400 border-green-500/20 bg-green-400/5' :
+                                            record.status === 'EXPIRED' ? 'text-gray-500 border-white/10 bg-white/5' :
+                                            'text-red-400 border-red-500/20'
+                                        }`}>
+                                            {record.status}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="text-xs font-black text-white font-mono">${Number(record.amountPaid).toLocaleString()} <span className="text-[8px] text-gray-600">MXN</span></p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="text-[8px] text-gray-500 font-mono italic truncate w-32" title={record.stripeSubscriptionId}>
+                                            {record.stripeSubscriptionId || 'N/A'}
+                                        </p>
+                                    </td>
+                                </tr>
+                            ))}
+                            {(!user?.subscriptionRecords || user?.subscriptionRecords.length === 0) && (
+                                <tr>
+                                    <td colSpan={5} className="p-10 text-center text-gray-700 italic uppercase text-[9px] tracking-widest animate-pulse">Sin registros históricos</td>
                                 </tr>
                             )}
                         </tbody>
@@ -356,10 +445,10 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
              <div className="bg-[#0d1524] border border-blue-500/10 p-10 rounded-[3rem] shadow-3xl">
                 <div className="flex justify-between items-center mb-10">
                     <h3 className="text-2xl font-space-grotesk font-black text-white italic uppercase tracking-tighter">Inscripciones / <span className="text-cyan-400">Portafolio</span></h3>
-                    <span className="text-[10px] text-gray-600 font-black uppercase tracking-[0.2em]">{user.role === 'INSTRUCTOR' ? (user.courses?.length || 0) : (user.enrollments?.length || 0)} Registros</span>
+                    <span className="text-[10px] text-gray-600 font-black uppercase tracking-[0.2em]">{user?.role === 'INSTRUCTOR' ? (user?.courses?.length || 0) : (user?.enrollments?.length || 0)} Registros</span>
                 </div>
                 <div className="space-y-4">
-                    {(user.role === 'INSTRUCTOR' ? user.courses : user.enrollments?.map((e: any) => e.course))?.map((course: any) => (
+                    {(user?.role === 'INSTRUCTOR' ? user?.courses : user?.enrollments?.map((e: any) => e.course))?.map((course: any) => (
                         <div key={course.id} className="bg-[#070d1a] border border-white/5 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-center gap-6 hover:border-cyan-500/30 transition-all group">
                              <div className="flex items-center gap-6 w-full md:w-auto">
                                 <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 overflow-hidden flex-shrink-0 group-hover:border-cyan-500 transition-colors">
@@ -383,15 +472,15 @@ export default function AdminUserDetailPage({ params }: { params: { id: string }
                                     <p className="text-sm font-black text-white font-mono">${Number(course.price).toLocaleString()}</p>
                                 </div>
                                 <button 
-                                    onClick={() => alert('Función de moderación: PRÓXIMAMENTE')}
-                                    className="w-10 h-10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-500/30 hover:bg-red-500/10 hover:text-red-500 transition-all"
+                                    onClick={() => alert('Moderación activa')}
+                                    className="w-10 h-10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-500/30 hover:bg-red-500/10 hover:text-red-500 transition-all font-bold"
                                 >
                                     🗑️
                                 </button>
                              </div>
                         </div>
                     ))}
-                    {((user.role === 'INSTRUCTOR' && (!user.courses || user.courses.length === 0)) || (user.role === 'STUDENT' && (!user.enrollments || user.enrollments.length === 0))) && (
+                    {((user?.role === 'INSTRUCTOR' && (!user?.courses || user?.courses?.length === 0)) || (user?.role === 'STUDENT' && (!user?.enrollments || user?.enrollments?.length === 0))) && (
                         <div className="py-20 text-center bg-white/5 rounded-[2.5rem] border-2 border-dashed border-white/5">
                             <p className="text-gray-600 uppercase font-black text-[10px] tracking-[0.3em] italic">Sin Actividad Académica Registrada</p>
                         </div>

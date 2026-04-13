@@ -2,7 +2,8 @@ import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
-import { sendVerificationEmail } from '@/lib/email';
+import { generateVerificationToken } from '@/lib/tokens';
+import { sendVerificationEmail, sendInstructorRegistrationNoticeToAdmin } from '@/lib/mail';
 import { stripe } from '@/lib/stripe';
 import { JWT_SECRET } from '@/lib/jwt';
 
@@ -27,6 +28,9 @@ export async function POST(req: Request) {
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(password, salt);
 
+    // Misión: Control de Calidad - Instructores quedan en PENDING_APPROVAL
+    const initialStatus = role === 'INSTRUCTOR' ? 'PENDING_APPROVAL' : 'ACTIVE';
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -35,15 +39,20 @@ export async function POST(req: Request) {
         passwordHash,
         role,
         birthDate: birthDate ? new Date(birthDate) : null,
-        status: 'ACTIVE',
+        status: initialStatus,
       },
     });
 
-    // Generate Verification Token (Email Verification)
-    const verificationToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
+    // Misión: Blindaje de Acceso - Generar y Guardar Token en DB
+    const verificationToken = await generateVerificationToken(user.email);
     
-    // Non-blocking email sending
-    sendVerificationEmail(user.email, verificationToken, user.name);
+    // Envío Profesional vía Resend
+    await sendVerificationEmail(user.email, verificationToken.token);
+
+    // Notificar al Admin si es un Instructor nuevo
+    if (role === 'INSTRUCTOR') {
+      await sendInstructorRegistrationNoticeToAdmin(`${name} ${lastName}`, user.id);
+    }
 
     if (role === 'STUDENT') {
       return NextResponse.json({

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { isCourseLocked } from '@/lib/course-protection';
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -26,14 +27,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Lógica de Bloqueo de Edición - Solo para Instructores
-    const hasEnrollments = mod.course._count.enrollments > 0;
-    const isActive = mod.course.status === 'PUBLISHED' || mod.course.status === 'HIBERNATED';
-
-    if (session.role === 'INSTRUCTOR' && hasEnrollments && isActive) {
+    // Lógica de Bloqueo de Edición (Seguridad en Producción)
+    const lock = await isCourseLocked(mod.courseId, session.role);
+    if (lock.locked) {
         return NextResponse.json({ 
           error: 'CURSO_BLOQUEADO',
-          message: 'Este curso tiene alumnos activos y sus módulos no pueden ser editados.' 
+          message: lock.reason 
         }, { status: 403 });
     }
 
@@ -71,14 +70,12 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Lógica de Bloqueo de Eliminación - Solo para Instructores
-    const hasEnrollments = mod.course._count.enrollments > 0;
-    const isActive = mod.course.status === 'PUBLISHED' || mod.course.status === 'HIBERNATED';
-
-    if (session.role === 'INSTRUCTOR' && hasEnrollments && isActive) {
+    // Lógica de Bloqueo de Eliminación (Seguridad en Producción)
+    const lock = await isCourseLocked(mod.courseId, session.role);
+    if (lock.locked) {
         return NextResponse.json({ 
           error: 'CURSO_BLOQUEADO',
-          message: 'No puedes eliminar módulos de un curso con alumnos activos.' 
+          message: lock.reason
         }, { status: 403 });
     }
 

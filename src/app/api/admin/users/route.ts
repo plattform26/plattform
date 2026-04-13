@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const where: any = {};
-    if (role) where.role = role;
+    if (role && role !== 'ALL') where.role = role;
     if (status) where.status = status;
     if (query) {
       where.OR = [
@@ -29,39 +29,49 @@ export async function GET(req: NextRequest) {
       ];
     }
 
+    // Consulta simplificada para evitar errores de relación compleja o tipos no serializables
     const users = await prisma.user.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
       include: {
-         instructorProfile: {
-           include: {
-             subscriptions: {
-               where: { status: 'ACTIVE' },
-               include: { plan: true },
-               take: 1
-             }
-           }
-         },
-         _count: {
-           select: {
-             enrollments: true,
-             courses: true
-           }
-         }
-      }
+        instructorProfile: true, 
+        _count: {
+          select: { courses: true, enrollments: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
     });
 
-    // Mapear para facilitar consumo en el cliente
-    const formattedUsers = users.map(u => ({
-      ...u,
-      plan: u.instructorProfile?.subscriptions[0]?.plan?.displayName || 'N/A',
-      courseCount: u._count.courses,
-      enrollmentCount: u._count.enrollments
+
+    // Mapear para facilitar consumo en el cliente y asegurar tipos planos (Blindaje de Datos)
+    const cleanUsers = users.map(u => ({
+      id: u.id,
+      name: u.name,
+      lastName: u.lastName,
+      email: u.email,
+      role: u.role,
+      status: u.status,
+      // Aquí está el truco: buscamos la especialidad en el perfil, con un fallback
+      specialty: u.instructorProfile?.specialty || 'N/A',
+      createdAt: u.createdAt.toISOString(),
+      _count: {
+        courses: u._count?.courses || 0,
+        enrollments: u._count?.enrollments || 0
+      }
     }));
 
-    return NextResponse.json(formattedUsers);
-  } catch (error) {
-    console.error('Error fetching admin users:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+
+    // Serialización profunda para evitar errores de red (Next.js 500) en listas largas con tipos complejos
+    const finalResponse = JSON.parse(JSON.stringify(cleanUsers));
+
+    return NextResponse.json(finalResponse);
+  } catch (error: any) {
+    // Diagnóstico de Terminal (Indispensable)
+    console.error('❌ ERROR CRÍTICO EN LISTA ADMIN:', error.message);
+    
+    return NextResponse.json({ 
+      error: 'Internal Server Error',
+      details: error.message 
+    }, { status: 500 });
   }
 }
+

@@ -2,7 +2,9 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { serialize } from '@/lib/utils';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
+import StarRating from '@/components/StarRating';
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   PUBLISHED: { label: 'PUBLICADO', cls: 'text-green-400 bg-green-400/10 border border-green-400/20' },
@@ -15,12 +17,33 @@ export default async function InstructorCoursesPage() {
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
+  const instructorProfile = await prisma.instructorProfile.findUnique({
+    where: { userId: session.userId },
+    include: {
+      subscriptions: {
+        where: { status: 'ACTIVE' },
+        include: { plan: true },
+        take: 1
+      }
+    }
+  });
+
+  const activePlan = instructorProfile?.subscriptions[0]?.plan.name;
+
   const courses = await prisma.course.findMany({
     where: { instructorId: session.userId, deletedAt: null },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { updatedAt: 'desc' },
     include: {
       _count: { select: { enrollments: true, modules: true } },
     }
+  });
+
+  // Fetch individual course ratings
+  const courseAggregatedRatings = await prisma.courseRating.groupBy({
+    by: ['courseId'],
+    where: { instructorId: session.userId },
+    _avg: { rating: true },
+    _count: { id: true }
   });
 
   return (
@@ -47,6 +70,7 @@ export default async function InstructorCoursesPage() {
                 <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider">Estado</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider">Módulos</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider text-center">Alumnos</th>
+                <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider">Reputación</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider">Precio</th>
                 <th className="font-semibold text-gray-400 px-6 py-4 text-[11px] uppercase tracking-wider text-right">Ciclo de Vida / Acciones</th>
               </tr>
@@ -80,6 +104,20 @@ export default async function InstructorCoursesPage() {
                         {c._count.enrollments}
                       </span>
                     </td>
+                    <td className="px-6 py-4">
+                      {(() => {
+                        const rating = courseAggregatedRatings.find(r => r.courseId === c.id);
+                        const avg = rating?._avg.rating || 0;
+                        const count = rating?._count.id || 0;
+                        if (count === 0) return <span className="text-gray-600 text-[10px] italic">Sin evaluaciones</span>;
+                        return (
+                          <div className="flex flex-col items-start gap-1">
+                            <StarRating value={avg} readonly size="sm" />
+                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">{count} evaluaciones</span>
+                          </div>
+                        );
+                      })()}
+                    </td>
                     <td className="px-6 py-4 text-gray-300 font-semibold">${Number(c.price).toLocaleString('es-MX')}</td>
                     <td className="px-6 py-4">
                       <CourseActionsClient 
@@ -87,6 +125,7 @@ export default async function InstructorCoursesPage() {
                         status={c.status} 
                         enrollmentCount={c._count.enrollments} 
                         role="INSTRUCTOR" 
+                        planName={serialize(activePlan)}
                       />
                     </td>
                   </tr>

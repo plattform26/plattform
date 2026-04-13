@@ -2,10 +2,17 @@ import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import StudentCourseRatingOrchestrator from '@/components/dashboard/StudentCourseRatingOrchestrator';
+import ManualRatingButton from '@/components/dashboard/ManualRatingButton';
 
 export default async function StudentCoursesPage() {
   const session = await getSession();
-  if (!session || session.role !== 'STUDENT') redirect('/login');
+  if (!session) redirect('/login');
+  
+  // Si el usuario está autenticado pero no es un estudiante (ej: Admin o Instructor),
+  // enviarlo al enrutador inteligente de /dashboard en lugar de expulsarlo al login.
+  if (session.role !== 'STUDENT') redirect('/dashboard');
+
 
   const enrollments = await prisma.enrollment.findMany({
     where: { userId: session.userId, status: 'ACTIVE' },
@@ -21,7 +28,7 @@ export default async function StudentCoursesPage() {
     orderBy: { enrolledAt: 'desc' }
   });
 
-  const courses = await Promise.all(enrollments.map(async (en: any) => {
+  const coursesArr = await Promise.all(enrollments.map(async (en: any) => {
     const completedLessons = await prisma.progress.count({
       where: { userId: session.userId, courseId: en.courseId, completed: true }
     });
@@ -33,44 +40,33 @@ export default async function StudentCoursesPage() {
         where: { userId: session.userId, courseId: en.courseId }
     });
 
-    const allLessonIds = (await prisma.courseLesson.findMany({
-        where: { courseId: en.courseId },
-        orderBy: { orderIndex: 'asc' },
-        select: { id: true }
-    })).map((l: any) => l.id);
-
-    const completedLessonIds = (await prisma.progress.findMany({
-        where: { userId: session.userId, courseId: en.courseId, completed: true },
-        select: { lessonId: true }
-    })).map((l: any) => l.lessonId);
-
-    const nextLessonId = allLessonIds.length > 0 
-      ? (allLessonIds.find((id: string) => !completedLessonIds.includes(id)) || allLessonIds[0])
-      : null;
-
-    const transaction = await prisma.transaction.findFirst({
-      where: { userId: session.userId, courseId: en.courseId, paymentStatus: 'SUCCESS' },
-      select: { grossAmount: true }
+    const userRatingRecord = await prisma.courseRating.findFirst({
+      where: { courseId: en.courseId, userId: session.userId },
+      select: { rating: true }
     });
 
-    const hasPassedQuiz = en.course.quizAttempts.length > 0;
+    const hasPassedQuiz = (en.course.quizAttempts?.length || 0) > 0;
 
     return { 
-      ...en.course, 
+      id: en.course.id,
+      title: en.course.title,
+      thumbnailUrl: en.course.thumbnailUrl,
       progress, 
-      nextLessonId,
       hasCertificate: !!certification,
       hasPassedQuiz,
-      paidPrice: transaction ? Number(transaction.grossAmount) : null,
-      instructorName: en.course.instructor.name 
+      userRating: userRatingRecord?.rating || null,
+      instructorName: en.course.instructor?.name || 'Instructor' 
     };
   }));
 
-  const totalCompletedCourses = courses.filter(c => c.progress === 100 || c.hasPassedQuiz || c.hasCertificate).length;
-  const totalCertificates = courses.filter(c => c.hasCertificate).length;
+  const totalCompletedCourses = coursesArr.filter(c => c.progress === 100 || c.hasPassedQuiz || c.hasCertificate).length;
+  const totalCertificates = coursesArr.filter(c => c.hasCertificate).length;
 
   return (
     <div className="space-y-10">
+      {/* ORQUESTADOR DE RATING RETROACTIVO */}
+      <StudentCourseRatingOrchestrator courses={coursesArr} />
+
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-3xl font-space-grotesk font-black text-white italic uppercase tracking-tighter italic">Laboratorio de <span className="text-cyan-400">Aprendizaje</span></h1>
@@ -96,14 +92,14 @@ export default async function StudentCoursesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {courses.length === 0 ? (
+        {coursesArr.length === 0 ? (
           <div className="col-span-full py-20 text-center bg-[#152035] rounded-3xl border border-blue-500/10">
              <div className="text-4xl mb-4">🎒</div>
              <p className="text-gray-400 italic">No tienes cursos todavía.</p>
              <Link href="/courses" className="mt-4 text-cyan-400 block text-sm">Explorar catálogo</Link>
           </div>
         ) : (
-          courses.map((course) => (
+          coursesArr.map((course) => (
             <div key={course.id} className="bg-[#152035] border border-blue-500/15 rounded-3xl overflow-hidden hover:-translate-y-1 transition-all group shadow-lg">
                 <div className="aspect-video relative overflow-hidden">
                     {course.thumbnailUrl ? (
@@ -115,15 +111,11 @@ export default async function StudentCoursesPage() {
                 </div>
                 <div className="p-5 flex flex-col h-full">
                     <div className="flex justify-between items-start mb-2 gap-2">
-                        {course.nextLessonId ? (
-                            <Link href={`/dashboard/student/learn/${course.id}/lesson/${course.nextLessonId}`} className="flex-1">
-                                <h3 className="font-bold text-sm group-hover:text-cyan-400 transition-colors line-clamp-2 italic">{course.title}</h3>
-                            </Link>
-                        ) : (
-                            <h3 className="font-bold text-sm text-gray-500 line-clamp-2 italic flex-1">{course.title}</h3>
-                        )}
+                        <Link href={`/dashboard/student/learn/${course.id}`} className="flex-1">
+                            <h3 className="font-bold text-sm group-hover:text-cyan-400 transition-colors line-clamp-2 italic">{course.title}</h3>
+                        </Link>
                         {course.hasCertificate && (
-                            <span className="text-[8px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 font-black animate-pulse whitespace-nowrap shadow-[0_0_10px_rgba(34,197,94,0.2)]">
+                            <span className="text-[8px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 font-black animate-pulse whitespace-nowrap shadow-[0_0_100px_rgba(34,197,94,0.2)]">
                                 ✅ CERTIFICADO
                             </span>
                         )}
@@ -140,24 +132,20 @@ export default async function StudentCoursesPage() {
                     </div>
 
                     <p className="text-[9px] text-gray-500 mb-1 uppercase tracking-widest font-bold">Instruido por</p>
-                    <p className="text-[10px] text-gray-300 mb-4 font-black uppercase italic">{course.instructorName}</p>
+                    <p className="text-[10px] text-gray-300 mb-2 font-black uppercase italic">{course.instructorName}</p>
                     
-                    <div className="mt-auto">
-                        {course.nextLessonId ? (
-                          <Link 
-                             href={`/dashboard/student/learn/${course.id}/lesson/${course.nextLessonId}`}
-                             className="block w-full py-3 bg-blue-600 hover:bg-cyan-500 hover:text-black rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all shadow-lg"
-                          >
-                             Continuar Aprendizaje →
-                          </Link>
-                        ) : (
-                          <button 
-                             disabled
-                             className="block w-full py-3 bg-gray-800 text-gray-600 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest cursor-not-allowed border border-white/5"
-                          >
-                             Contenido Próximamente
-                          </button>
-                        )}
+                    {/* BOTÓN DE RATING RETROACTIVO/MANUAL */}
+                    {course.progress === 100 && (
+                      <ManualRatingButton courseId={course.id} userRating={course.userRating} />
+                    )}
+                    
+                    <div className="mt-4">
+                        <Link 
+                           href={`/dashboard/student/learn/${course.id}`}
+                           className="block w-full py-3 bg-blue-600 hover:bg-cyan-500 hover:text-black rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all shadow-lg"
+                        >
+                           Ver Contenido →
+                        </Link>
                     </div>
                 </div>
             </div>

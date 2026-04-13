@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast, Toaster } from 'sonner';
 
 const CATEGORIES = ['BUSINESS','TECHNOLOGY','MARKETING','FINANCE','LEADERSHIP','DESIGN','OTHER'];
 const LEVELS = ['BEGINNER','INTERMEDIATE','ADVANCED'];
@@ -27,7 +28,27 @@ export default function AdminEditCoursePage() {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+
+  // Misión: Validación de Claridad Total
+  const validateForm = () => {
+    const missingFields: string[] = [];
+    if (!form.title?.trim()) missingFields.push('Título');
+    if (!form.description?.trim()) missingFields.push('Descripción');
+    if (!form.previewText?.trim()) missingFields.push('Lección de muestra');
+    if (!form.price || parseFloat(form.price) <= 0) missingFields.push('Precio');
+    if (!form.durationHours || parseInt(form.durationHours) <= 0) missingFields.push('Duración');
+    if (!form.category) missingFields.push('Categoría');
+    if (!form.level) missingFields.push('Nivel');
+
+    if (missingFields.length > 0) {
+      toast.error('No se puede guardar: Faltan datos esenciales', {
+        description: `Por favor completa los siguientes campos: [${missingFields.join(', ')}].`,
+        duration: 5000,
+      });
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
     fetch(`/api/instructor/courses/${id}`)
@@ -48,13 +69,10 @@ export default function AdminEditCoursePage() {
       });
   }, [id]);
 
-  const showMsg = (type: 'ok' | 'err', text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 4000);
-  };
-
   const handleSave = async () => {
+    if (!validateForm()) return;
     setSaving(true);
+    const toastId = toast.loading('Guardando cambios...');
     try {
       const res = await fetch(`/api/instructor/courses/${id}`, {
         method: 'PATCH',
@@ -64,9 +82,9 @@ export default function AdminEditCoursePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCourse(data);
-      showMsg('ok', 'Cambios guardados ✓');
+      toast.success('Cambios guardados ✓', { id: toastId });
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setSaving(false);
     }
@@ -76,29 +94,35 @@ export default function AdminEditCoursePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      showMsg('err', 'El archivo supera los 5MB permitidos');
+    // Misión: Validación de 2MB de Alto Impacto
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Error: La imagen excede el límite de 2MB. Por favor, optimiza el archivo antes de subirlo.', {
+        duration: 5000,
+        description: 'Intenta usar herramientas como TinyPNG o reducir las dimensiones.'
+      });
       return;
     }
 
     const reader = new FileReader();
     reader.onloadend = () => {
       setForm({ ...form, thumbnailUrl: reader.result as string });
-      showMsg('ok', 'Imagen cargada localmente (base64) ✓');
+      toast.success('Imagen cargada localmente ✓');
     };
     reader.readAsDataURL(file);
   };
 
   const handlePublish = async () => {
+    if (!validateForm()) return;
     setPublishing(true);
+    const toastId = toast.loading('Publicando curso...');
     try {
       const res = await fetch(`/api/instructor/courses/${id}/publish`, { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCourse({ ...course, status: 'PUBLISHED' });
-      showMsg('ok', '🎉 Curso publicado exitosamente');
+      toast.success('🎉 Curso publicado exitosamente', { id: toastId });
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setPublishing(false);
     }
@@ -109,7 +133,7 @@ export default function AdminEditCoursePage() {
     const res = await fetch(`/api/instructor/courses/${id}/hibernate`, { method: 'POST' });
     if (res.ok) {
       setCourse({ ...course, status: 'HIBERNATED' });
-      showMsg('ok', 'Curso hibernado');
+      toast.success('Curso hibernado');
     }
   };
 
@@ -118,25 +142,28 @@ export default function AdminEditCoursePage() {
     setDeleting(true);
     const res = await fetch(`/api/instructor/courses/${id}`, { method: 'DELETE' });
     if (res.ok) {
+      toast.success('Curso eliminado');
       router.push('/dashboard/admin/courses');
     } else {
-      showMsg('err', 'Error al eliminar');
+      toast.error('Error al eliminar');
       setDeleting(false);
     }
   };
 
   const handleDuplicate = async () => {
+    const toastId = toast.loading('Duplicando curso...');
     const res = await fetch(`/api/instructor/courses/${id}/duplicate`, { method: 'POST' });
     const data = await res.json();
     if (res.ok) {
-      showMsg('ok', 'Curso duplicado ✓');
-      setTimeout(() => router.push(`/dashboard/admin/courses/${data.id}`), 1000);
+      toast.success('Curso duplicado ✓', { id: toastId });
+      setTimeout(() => router.push(`/dashboard/admin/courses/${data.id}/modules`), 1000);
     } else {
-      showMsg('err', data.error);
+      toast.error(data.error, { id: toastId });
     }
   };
 
   const handleFinalize = async () => {
+    if (!validateForm()) return;
     setSaving(true);
     try {
       const res = await fetch(`/api/instructor/courses/${id}`, {
@@ -148,7 +175,7 @@ export default function AdminEditCoursePage() {
       if (!res.ok) throw new Error(data.error);
       router.push(`/dashboard/student/learn/${id}`);
     } catch (err: any) {
-      showMsg('err', err.message);
+      toast.error(err.message);
       setSaving(false);
     }
   };
@@ -167,6 +194,7 @@ export default function AdminEditCoursePage() {
 
   return (
     <>
+      <Toaster richColors position="top-right" />
       <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
           <Link href="/dashboard/admin/courses" className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2 mb-3">
@@ -200,11 +228,6 @@ export default function AdminEditCoursePage() {
         </div>
       </div>
 
-      {msg && (
-        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium border ${msg.type === 'ok' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
-          {msg.text}
-        </div>
-      )}
 
       {/* Quick nav */}
       <div className="flex gap-3 mb-6 flex-wrap">
@@ -222,7 +245,9 @@ export default function AdminEditCoursePage() {
 
       <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl p-6 space-y-5">
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Título *</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            Título <span className="text-red-500">*</span>
+          </label>
           <input
             value={form.title || ''}
             onChange={e => setForm({ ...form, title: e.target.value })}
@@ -230,7 +255,9 @@ export default function AdminEditCoursePage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Descripción del curso</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            Descripción del curso <span className="text-red-500">*</span>
+          </label>
           <textarea
             value={form.description || ''}
             onChange={e => setForm({ ...form, description: e.target.value })}
@@ -241,7 +268,7 @@ export default function AdminEditCoursePage() {
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-2">
-            Lección de muestra gratuita
+            Lección de muestra gratuita <span className="text-red-500">*</span>
             <span className="group relative">
                 <span className="cursor-help text-cyan-500">ⓘ</span>
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-black border border-white/10 rounded-lg text-[10px] text-gray-300 invisible group-hover:visible shadow-2xl">
@@ -260,7 +287,7 @@ export default function AdminEditCoursePage() {
         
         <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Imagen de portada (PNG/JPG/WEBP - Máx 5MB)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 italic">Imagen de portada (PNG/JPG/WEBP - Máx 2MB - Opcional)</label>
             <div className="flex items-center gap-4">
               <div className="w-32 h-20 bg-[#070d1a] border border-blue-500/20 rounded-xl overflow-hidden flex items-center justify-center relative group">
                 {form.thumbnailUrl ? (
@@ -294,7 +321,9 @@ export default function AdminEditCoursePage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Precio (MXN)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Precio (MXN) <span className="text-red-500">*</span>
+            </label>
             <input
               type="number"
               value={form.price || 0}
@@ -303,7 +332,9 @@ export default function AdminEditCoursePage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Duración (horas)</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Duración (horas) <span className="text-red-500">*</span>
+            </label>
             <input
               type="number"
               value={form.durationHours || 0}
@@ -314,13 +345,17 @@ export default function AdminEditCoursePage() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Categoría <span className="text-red-500">*</span>
+            </label>
             <select value={form.category || 'BUSINESS'} onChange={e => setForm({ ...form, category: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors">
               {CATEGORIES.map(c => <option key={c} value={c}>{CAT_LABELS[c]}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Nivel</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+              Nivel <span className="text-red-500">*</span>
+            </label>
             <select value={form.level || 'BEGINNER'} onChange={e => setForm({ ...form, level: e.target.value })} className="w-full bg-[#070d1a] border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors">
               {LEVELS.map(l => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
             </select>

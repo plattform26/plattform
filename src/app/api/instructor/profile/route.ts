@@ -5,18 +5,25 @@ import { getSession } from '@/lib/auth';
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'INSTRUCTOR') {
+    if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const profile = await prisma.instructorProfile.findUnique({
       where: { userId: session.userId },
-      include: { user: { select: { name: true, lastName: true, email: true } } }
+      include: { 
+        user: { 
+          select: { id: true, name: true, lastName: true, email: true } 
+        } 
+      }
     });
 
     if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    
     return NextResponse.json(profile);
+
   } catch (error) {
+    console.error('API /instructor/profile GET critical error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -24,12 +31,12 @@ export async function GET() {
 export async function PATCH(req: Request) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'INSTRUCTOR') {
+    if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { academyName, slug, description, institution, logoUrl, bannerUrl, linkedinUrl } = body;
+    const { academyName, slug, description, institution, logoUrl, bannerUrl, linkedinUrl, specialty } = body;
 
     if (slug) {
       // Check slug uniqueness
@@ -49,12 +56,13 @@ export async function PATCH(req: Request) {
         ...(logoUrl !== undefined ? { logoUrl } : {}),
         ...(bannerUrl !== undefined ? { bannerUrl } : {}),
         ...(linkedinUrl !== undefined ? { linkedinUrl } : {}),
+        ...(specialty !== undefined ? { specialty } : {}),
       },
     });
 
     return NextResponse.json(updatedProfile);
   } catch (error: any) {
-    console.error('API /instructor/profile error:', error);
+    console.error('API /instructor/profile PATCH error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

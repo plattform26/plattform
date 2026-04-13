@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import SignOutButton from './SignOutButton';
+import PasswordChangeModal from './PasswordChangeModal';
 
 interface User {
   name: string;
@@ -17,12 +18,6 @@ export default function ProfileMenu({ user, isCollapsed = false }: { user: User 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Modal Password States
-  const [passForm, setPassForm] = useState({ current: '', new: '', confirm: '' });
-  const [passLoading, setPassLoading] = useState(false);
-  const [passError, setPassError] = useState('');
-  const [passSuccess, setPassSuccess] = useState('');
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -32,36 +27,6 @@ export default function ProfileMenu({ user, isCollapsed = false }: { user: User 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPassError('');
-    setPassSuccess('');
-
-    if (passForm.new !== passForm.confirm) {
-      return setPassError('Las contraseñas no coinciden');
-    }
-
-    setPassLoading(true);
-    try {
-      const res = await fetch('/api/auth/change-password', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentPassword: passForm.current, newPassword: passForm.new })
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setPassSuccess('¡Contraseña actualizada con éxito!');
-      setPassForm({ current: '', new: '', confirm: '' });
-      setTimeout(() => setShowPasswordModal(false), 2000);
-    } catch (err: any) {
-      setPassError(err.message);
-    } finally {
-      setPassLoading(false);
-    }
-  };
 
   const initials = user?.name && user?.lastName ? `${user.name[0]}${user.lastName[0]}`.toUpperCase() : 'U';
   const roleLabel = user?.role === 'STUDENT' ? 'Alumno' : user?.role === 'INSTRUCTOR' ? 'Instructor' : 'Admin';
@@ -125,57 +90,15 @@ export default function ProfileMenu({ user, isCollapsed = false }: { user: User 
         </div>
       )}
 
-      {/* PASSWORD MODAL */}
+      {/* RENDERIZADO DEL MODAL ESTANDARIZADO (HAWK EYE) */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-[#070d1a]/90 backdrop-blur-md flex items-center justify-center z-[100] p-6 animate-fade-in">
-          <div className="bg-[#0d1524] border border-blue-500/20 w-full max-w-md rounded-3xl p-8 shadow-2xl relative">
-            <button 
-              onClick={() => setShowPasswordModal(false)}
-              className="absolute top-6 right-6 text-2xl text-gray-500 hover:text-white transition-colors"
-            >
-              ×
-            </button>
-            
-            <div className="mb-8">
-               <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tight">Cambiar contraseña</h3>
-               <p className="text-xs text-gray-500 italic">Asegúrate de usar al menos 8 caracteres robustos.</p>
-            </div>
-
-            {passError && <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl mb-6">{passError}</div>}
-            {passSuccess && <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold rounded-xl mb-6">{passSuccess}</div>}
-
-            <form onSubmit={handlePasswordChange} className="space-y-4">
-               <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Contraseña Actual</label>
-                  <input 
-                    type="password" required className="w-full bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:border-blue-500 outline-none"
-                    value={passForm.current} onChange={e => setPassForm({...passForm, current: e.target.value})}
-                  />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Nueva Contraseña</label>
-                  <input 
-                    type="password" required className="w-full bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:border-cyan-500 outline-none"
-                    value={passForm.new} onChange={e => setPassForm({...passForm, new: e.target.value})}
-                  />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Confirmar Nueva Contraseña</label>
-                  <input 
-                    type="password" required className="w-full bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:border-cyan-500 outline-none"
-                    value={passForm.confirm} onChange={e => setPassForm({...passForm, confirm: e.target.value})}
-                  />
-               </div>
-
-               <button 
-                 type="submit" disabled={passLoading}
-                 className="w-full py-4 mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:shadow-blue-500/20 transition-all disabled:opacity-50"
-               >
-                 {passLoading ? 'Procesando...' : 'Actualizar Contraseña'}
-               </button>
-            </form>
-          </div>
-        </div>
+        <PasswordChangeModal 
+          onClose={() => setShowPasswordModal(false)}
+          onSuccess={(msg) => {
+            // Se puede integrar un pequeño toast aquí si fuera necesario
+            setShowPasswordModal(false);
+          }}
+        />
       )}
     </div>
   );

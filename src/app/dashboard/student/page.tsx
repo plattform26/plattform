@@ -2,6 +2,8 @@ import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import StudentCourseRatingOrchestrator from '@/components/dashboard/StudentCourseRatingOrchestrator';
+import ManualRatingButton from '@/components/dashboard/ManualRatingButton';
 
 export default async function StudentDashboardPage() {
   const session = await getSession();
@@ -70,17 +72,29 @@ export default async function StudentDashboardPage() {
 
     const nextLessonId = allLessonIds.find((id: string) => !completedLessonIds.includes(id)) || allLessonIds[0];
 
+    const userRatingRecord = await prisma.courseRating.findFirst({
+        where: { courseId: en.courseId, userId: session.userId },
+        select: { rating: true }
+    });
+
     return { 
-      ...en.course, 
+      id: en.course.id,
+      title: en.course.title,
+      thumbnailUrl: en.course.thumbnailUrl,
+      category: en.course.category,
       progress, 
       nextLessonId,
       hasCertificate: en.course.certifications.length > 0,
+      userRating: userRatingRecord?.rating || null,
       instructorName: en.course.instructor?.name || 'Instructor' 
     };
   }));
 
   return (
     <div className="space-y-10">
+       {/* ORQUESTADOR DE RATING RETROACTIVO */}
+       <StudentCourseRatingOrchestrator courses={recentCourses} />
+
        <div>
         <h1 className="text-3xl font-space-grotesk font-bold">¡Hola, {userData.name}! 👋</h1>
         <p className="text-gray-400 mt-2">Bienvenido de nuevo a tu academia personal.</p>
@@ -114,33 +128,39 @@ export default async function StudentDashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentCourses.map(course => (
-              <Link 
+              <div 
                 key={course.id} 
-                href={`/dashboard/student/learn/${course.id}`}
-                className="bg-[#152035] border border-blue-500/20 rounded-2xl overflow-hidden hover:border-blue-500/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all flex flex-col group cursor-pointer"
+                className="bg-[#152035] border border-blue-500/20 rounded-2xl overflow-hidden hover:border-blue-500/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all flex flex-col group shadow-lg"
               >
-                 <div className="aspect-video bg-blue-900/30 relative">
-                   {course.thumbnailUrl ? (
-                     <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover" />
-                   ) : (
-                     <div className="w-full h-full flex items-center justify-center text-4xl">📚</div>
-                   )}
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                      <span className="text-xs font-bold bg-cyan-500 text-black px-2 py-0.5 rounded">{course.category}</span>
-                   </div>
-                 </div>
+                 <Link href={`/dashboard/student/learn/${course.id}`} className="block aspect-video bg-blue-900/30 relative">
+                    {course.thumbnailUrl ? (
+                      <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl">📚</div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                       <span className="text-xs font-bold bg-cyan-500 text-black px-2 py-0.5 rounded">{course.category}</span>
+                    </div>
+                 </Link>
                  <div className="p-5 flex-1 flex flex-col">
                     <div className="flex justify-between items-start mb-1 gap-2">
-                       <h3 className="font-bold text-lg leading-tight group-hover:text-cyan-400 transition-colors flex-1">{course.title}</h3>
+                       <Link href={`/dashboard/student/learn/${course.id}`} className="block flex-1 group">
+                          <h3 className="font-bold text-lg leading-tight group-hover:text-cyan-400 transition-colors">{course.title}</h3>
+                       </Link>
                        {course.hasCertificate && (
                            <span className="text-[8px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 font-black animate-pulse whitespace-nowrap shadow-[0_0_10px_rgba(34,197,94,0.2)]">
                                ✅ CERTIFICADO
                            </span>
                        )}
                     </div>
-                    <p className="text-xs text-gray-500 mb-4">Por {course.instructorName}</p>
+                    <p className="text-xs text-gray-500 mb-2">Por {course.instructorName}</p>
                     
-                    <div className="mt-auto space-y-4">
+                    {/* TRIGGER DE RATING SI ESTÁ COMPLETADO */}
+                    {course.progress === 100 && (
+                      <ManualRatingButton courseId={course.id} userRating={course.userRating} />
+                    )}
+                    
+                    <div className="mt-auto pt-4 space-y-4">
                       <div className="space-y-2">
                          <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-gray-400">
                            <span>Progreso</span>
@@ -151,14 +171,15 @@ export default async function StudentDashboardPage() {
                          </div>
                       </div>
                       
-                      <div 
-                         className="w-full py-3 bg-[#1e2a44] group-hover:bg-cyan-500 group-hover:text-black rounded-xl text-xs font-bold transition-all text-center"
+                      <Link 
+                         href={`/dashboard/student/learn/${course.id}`}
+                         className="block w-full py-3 bg-[#1e2a44] hover:bg-cyan-500 hover:text-black rounded-xl text-xs font-bold transition-all text-center"
                       >
                          Continuar →
-                      </div>
+                      </Link>
                     </div>
                  </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

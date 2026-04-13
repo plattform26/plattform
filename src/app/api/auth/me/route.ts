@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -21,7 +21,19 @@ export async function GET(req: Request) {
         
         if (resRefresh.ok) {
           console.log('DEBUG: Silent refresh successful');
-          session = await getSession(); // Intentar obtener sesiÃ³n de nuevo con el nuevo cookie
+          const data = await resRefresh.json();
+          if (data.user) {
+             return NextResponse.json({
+               authenticated: true,
+               userId: data.user.id,
+               name: data.user.name,
+               lastName: data.user.lastName,
+               role: data.user.role,
+               email: data.user.email,
+               hasActiveSubscription: data.hasActiveSubscription || false,
+               academySlug: data.academySlug || ''
+             });
+          }
         }
       }
     }
@@ -37,7 +49,8 @@ export async function GET(req: Request) {
         name: true, 
         lastName: true, 
         role: true, 
-        email: true 
+        email: true,
+        emailVerifiedAt: true
       }
     });
 
@@ -45,7 +58,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
-    // Verificar suscripciÃ³n si es INSTRUCTOR
+    // Verificar suscripción si es INSTRUCTOR
     let hasActiveSubscription = false;
     let academySlug = '';
     
@@ -70,6 +83,7 @@ export async function GET(req: Request) {
       lastName: user.lastName,
       role: user.role, // Primer nivel para el middleware
       email: user.email,
+      isEmailVerified: !!user.emailVerifiedAt,
       hasActiveSubscription, // Requerido por el middleware
       academySlug
     });
@@ -78,4 +92,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

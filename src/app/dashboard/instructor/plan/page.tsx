@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { serialize } from '@/lib/utils';
 import PlanClient from './PlanClient';
 
 const PLAN_ICONS: Record<string, string> = {
@@ -27,6 +28,10 @@ export default async function PlanPage() {
 
   const activeSub = profile?.subscriptions[0];
   const allPlans = await prisma.platformPlan.findMany({ where: { status: 'ACTIVE' }, orderBy: { monthlyPrice: 'asc' } });
+  
+  // Misión: Sanitización radical de Decimal (Prisma) para Componentes de Cliente
+  const serializedPlans = serialize(allPlans || []);
+  const serializedActivePlanId = serialize(activeSub?.plan.id || null);
 
   return (
     <>
@@ -88,7 +93,11 @@ export default async function PlanPage() {
       <div className="mb-4">
         <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Planes disponibles</div>
         <Suspense fallback={<div className="p-10 text-center animate-pulse text-cyan-500 font-mono text-xs uppercase tracking-widest">Sincronizando catálogo...</div>}>
-          <PlanClient plans={allPlans} activePlanId={activeSub?.plan.id} />
+          <PlanClient 
+            plans={serializedPlans} 
+            activePlanId={serializedActivePlanId} 
+            expirationDate={serialize(activeSub?.expiresAt || null)}
+          />
         </Suspense>
       </div>
     </>

@@ -171,10 +171,41 @@ function StudentsPageContent() {
                       <div className="space-y-4">
                         <p className="text-[10px] font-black text-gray-500 uppercase italic">Desglose de Progreso</p>
                         {student.enrollments.map((e: any) => (
-                          <div key={e.id} className="bg-white/3 border border-white/5 rounded-2xl p-5">
-                            <p className="text-[11px] font-black text-gray-300 uppercase mb-2">{e.course.title}</p>
-                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-400" style={{ width: '50%' }} />
+                          <div key={e.id} className="bg-white/5 border border-blue-500/10 rounded-2xl p-5 hover:border-cyan-500/30 transition-all group/course">
+                            <div className="flex items-center justify-between mb-3">
+                              <p className="text-[11px] font-black text-gray-300 uppercase group-hover/course:text-cyan-400 transition-colors">{e.course.title}</p>
+                              <div className="flex items-center gap-2">
+                                {e.hasCertificate && (
+                                  <span className="text-xs" title="Certificado Obtenido">🎓</span>
+                                )}
+                                <span className="text-[10px] font-black text-cyan-400">{e.progressPercentage}%</span>
+                              </div>
+                            </div>
+                            
+                            <div className="h-1.5 w-full bg-blue-900/20 rounded-full overflow-hidden mb-3">
+                              <div 
+                                className={`h-full transition-all duration-1000 ease-out ${e.progressPercentage === 100 ? 'bg-gradient-to-r from-green-500 to-emerald-400' : 'bg-gradient-to-r from-blue-600 to-cyan-400'}`}
+                                style={{ width: `${e.progressPercentage}%` }} 
+                              />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                               {e.progressPercentage === 100 ? (
+                                  <span className="text-[9px] font-black text-green-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
+                                    Curso Completado
+                                  </span>
+                               ) : (
+                                  <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">
+                                    En curso
+                                  </span>
+                               )}
+                               
+                               {e.hasCertificate && (
+                                  <span className="text-[9px] font-black bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded-lg border border-cyan-500/20 uppercase tracking-tighter">
+                                    Certificado Emitido
+                                  </span>
+                               )}
                             </div>
                           </div>
                         ))}

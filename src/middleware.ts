@@ -31,7 +31,15 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.url));
       }
 
-      const { role, hasActiveSubscription } = auth;
+      const { role, hasActiveSubscription, isEmailVerified } = auth;
+
+      // Misión: Blindaje de Acceso - Bloqueo de Dashboard si no está verificado
+      const isVerificationNotice = pathname === '/auth/verify-email-notice';
+      const isNewVerification = pathname === '/auth/new-verification';
+      
+      if (!isEmailVerified && !isVerificationNotice && !isNewVerification) {
+        return NextResponse.redirect(new URL('/auth/verify-email-notice', req.url));
+      }
 
       // 1. Redirección inteligente para la raíz '/dashboard'
       if (pathname === '/dashboard') {

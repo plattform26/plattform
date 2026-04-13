@@ -27,21 +27,34 @@ export default async function ClassroomLayout({
     redirect('/dashboard/student/courses');
   }
 
-  const course = await prisma.course.findUnique({
+  const courseData = await prisma.course.findUnique({
     where: { id: params.id },
-    include: {
+    select: {
+      id: true,
+      title: true,
       modules: {
         orderBy: { orderIndex: 'asc' },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          orderIndex: true,
           lessons: {
             orderBy: { orderIndex: 'asc' },
-          },
-        },
-      },
-    },
+            select: {
+              id: true,
+              title: true,
+              orderIndex: true
+            }
+          }
+        }
+      }
+    }
   });
 
-  if (!course) redirect('/dashboard/student/courses');
+  if (!courseData) redirect('/dashboard/student/courses');
+
+  // Sanitización Radical: Convertir a objeto plano para evitar errores de Decimal y optimizar transferencia
+  const course = JSON.parse(JSON.stringify(courseData));
 
   const progress = await prisma.progress.findMany({
     where: { userId: session.userId, courseId: params.id, completed: true },
@@ -60,7 +73,7 @@ export default async function ClassroomLayout({
   });
 
   const quizCompletedLessonIds = passedQuizAttempts
-    .map((a: any) => a.quiz.lessonId)
+    .map((a: any) => a.quiz?.lessonId)
     .filter(Boolean);
 
   const completedLessonIds = Array.from(new Set([
@@ -79,9 +92,12 @@ export default async function ClassroomLayout({
         completedLessonIds={completedLessonIds} 
         progressPercent={progressPercent}
         courseId={params.id}
+        userRole={session.role}
       >
         {children}
       </SidebarClient>
     </div>
   );
+
+
 }

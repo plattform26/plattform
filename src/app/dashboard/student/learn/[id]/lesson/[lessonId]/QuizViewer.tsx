@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CertificateDownloader from '@/components/CertificateDownloader';
+import RatingModal from '@/components/RatingModal';
+import StarRating from '@/components/StarRating';
 
 export default function QuizViewer({ 
   quiz, 
@@ -9,7 +11,8 @@ export default function QuizViewer({
   lessonId, 
   userId,
   studentName,
-  initialAttempt
+  initialAttempt,
+  userRating: initialRating
 }: { 
   quiz: any; 
   courseId: string; 
@@ -17,7 +20,10 @@ export default function QuizViewer({
   userId: string;
   studentName: string;
   initialAttempt?: any;
+  userRating?: number | null;
 }) {
+  const [localRating, setLocalRating] = useState<number | null>(initialRating || null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   // --- MÁQUINA DE ESTADOS (STATE MACHINE) ---
   // ESTADO NUEVO: initialAttempt es null
   // ESTADO REPROBADO: initialAttempt != null && !initialAttempt.passed
@@ -128,13 +134,20 @@ export default function QuizViewer({
     }
   };
 
-  // DEBUG: Auditoría de Datos
-  console.log("Datos del Quiz Recibidos en QuizViewer:", JSON.stringify(quiz, null, 2));
 
   // VISTA DE CERTIFICADO (APROBADO EXCELENCIA)
   if (showCertificate) {
     return (
       <div className="space-y-12 animate-in fade-in zoom-in duration-700 flex flex-col items-center py-20">
+        <RatingModal 
+          isOpen={showRatingModal}
+          onClose={() => setShowRatingModal(false)}
+          onSuccess={(rating) => setLocalRating(rating)}
+          courseId={courseId}
+          courseTitle={quiz.course?.title || 'Curso'}
+          instructorName={quiz.course?.instructor?.name || 'Instructor'}
+        />
+
         <div className="text-center space-y-6">
            <div className="text-8xl animate-pulse drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]">🏆</div>
            <h2 className="text-5xl font-space-grotesk font-black text-cyan-400 uppercase italic tracking-tighter">¡Excelencia Alcanzada!</h2>
@@ -143,20 +156,54 @@ export default function QuizViewer({
            </p>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 mt-10">
-           <button 
-             onClick={() => router.push(`/dashboard/student/learn/${courseId}`)}
-             className="px-8 py-5 bg-white/5 border border-white/10 text-gray-400 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-white hover:text-black transition-all shadow-xl"
-           >
-              ← Volver a las lecciones
-           </button>
-           
-           <CertificateDownloader 
-              studentName={studentName}
-              courseTitle={quiz.course?.title || 'Curso de Especialización'}
-              certificateCode={feedback.certCode || initialAttempt?.certification?.certificateCode || 'PLT-SYNC'}
-              finalScore={finalScore}
-           />
+        {/* ZONA DE CALIFICACIÓN Y DESCARGA */}
+        <div className="flex flex-col items-center gap-6 mt-10 p-10 bg-[#0d1524] border border-cyan-500/10 rounded-[3rem] shadow-2xl">
+            <div className="flex flex-col items-center gap-4">
+               {localRating ? (
+                 <div className="flex flex-col items-center gap-2">
+                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Valoración del curso</span>
+                   <div className="flex items-center gap-3">
+                      <span className="text-white font-bold italic">Tu calificación:</span>
+                      <StarRating value={localRating} readonly size="md" />
+                   </div>
+                 </div>
+               ) : (
+                  <button 
+                    onClick={() => setShowRatingModal(true)}
+                    className="flex items-center gap-2 text-[#FFD700] hover:text-cyan-400 transition-all font-black uppercase text-xs tracking-widest group"
+                  >
+                    <span className="text-xl group-hover:scale-125 transition-transform">⭐</span> Califícalo aquí
+                  </button>
+               )}
+            </div>
+
+            <div className="h-px w-32 bg-white/5"></div>
+
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+              <button 
+                onClick={() => router.push(`/dashboard/student/learn/${courseId}`)}
+                className="px-8 py-4 bg-white/5 border border-white/10 text-gray-400 font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-white hover:text-black transition-all"
+              >
+                  ← Lecciones
+              </button>
+              
+              {!localRating ? (
+                <button 
+                   onClick={() => setShowRatingModal(true)}
+                   className="px-10 py-5 bg-cyan-500 text-black font-black text-xs uppercase tracking-[0.2em] rounded-2xl hover:scale-105 transition-all shadow-xl shadow-cyan-500/20"
+                >
+                   🎓 VER Y DESCARGAR DIPLOMA
+                </button>
+              ) : (
+                <CertificateDownloader 
+                  studentName={studentName}
+                  courseTitle={quiz.course?.title || 'Curso de Especialización'}
+                  certificateCode={feedback.certCode || initialAttempt?.certification?.certificateCode || 'PLT-SYNC'}
+                  finalScore={finalScore}
+                  buttonText="🎓 VER Y DESCARGAR DIPLOMA"
+                />
+              )}
+            </div>
         </div>
       </div>
     );

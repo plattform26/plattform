@@ -9,13 +9,15 @@ export default function LessonClient({
   lessonId,
   prevLesson,
   nextLesson,
-  isCompletedInitial
+  isCompletedInitial,
+  userRole
 }: {
   courseId: string;
   lessonId: string;
   prevLesson: { id: string; title: string } | null;
   nextLesson: { id: string; title: string } | null;
   isCompletedInitial: boolean;
+  userRole: string;
 }) {
   const [completed, setCompleted] = useState(isCompletedInitial);
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,8 @@ export default function LessonClient({
       setLoading(false);
     }
   };
+
+  const canAccessQuiz = completed || userRole === 'ADMIN';
 
   return (
     <div className="bg-[#0a1f44]/40 backdrop-blur-md border border-blue-500/10 rounded-3xl p-8 transition-all">
@@ -84,7 +88,7 @@ export default function LessonClient({
              ) : (
                 <Link 
                    href={`/dashboard/student/learn/${courseId}/quiz`}
-                   className={`flex flex-col items-end gap-1 text-right transition-all transform hover:scale-105 ${completed ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}
+                   className={`flex flex-col items-end gap-1 text-right transition-all transform hover:scale-105 ${canAccessQuiz ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}
                 >
                    <span className="text-[10px] uppercase font-black text-amber-500 animate-pulse">Final del Camino</span>
                    <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-black text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_20px_rgba(245,158,11,0.3)]">

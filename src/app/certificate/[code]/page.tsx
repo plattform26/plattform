@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import PrintButton from '@/components/PrintButton';
 
 export default async function CertificatePrintPage({ params }: { params: { code: string } }) {
   const certificate = await prisma.certification.findUnique({
@@ -82,12 +83,7 @@ export default async function CertificatePrintPage({ params }: { params: { code:
           </div>
 
           <div className="print:hidden pt-10">
-             <button 
-                onClick={() => window.print()}
-                className="px-10 py-4 bg-cyan-600 text-white font-bold rounded-2xl shadow-xl hover:bg-cyan-500 transition-all hover:scale-105"
-             >
-                Imprimir Certificado / Guardar como PDF
-             </button>
+             <PrintButton />
           </div>
         </div>
       </div>

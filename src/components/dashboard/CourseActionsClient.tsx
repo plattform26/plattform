@@ -3,24 +3,35 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import UpgradePlanModal from './UpgradePlanModal';
 
 interface CourseActionsProps {
   courseId: string;
   status: string;
   enrollmentCount: number;
   role: 'ADMIN' | 'INSTRUCTOR';
+  planName?: string;
 }
 
-export default function CourseActionsClient({ courseId, status, enrollmentCount, role }: CourseActionsProps) {
+export default function CourseActionsClient({ courseId, status, enrollmentCount, role, planName }: CourseActionsProps) {
   const [loading, setLoading] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const router = useRouter();
 
   const isLocked = role === 'INSTRUCTOR' && (status === 'PUBLISHED' || status === 'HIBERNATED') && enrollmentCount > 0;
+  
+  // Restricción por suscripción: Solo Scale puede duplicar. Admins siempre pueden.
+  const isDuplicationRestricted = role === 'INSTRUCTOR' && planName !== 'scale';
 
   const handleAction = async (action: 'hibernate' | 'duplicate' | 'delete' | 'publish') => {
     if (loading) return;
     
+    if (action === 'duplicate' && isDuplicationRestricted) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     if (action === 'delete') {
       // Bloqueo de eliminación solo para Instructores
       if (role === 'INSTRUCTOR' && enrollmentCount > 0) {
@@ -55,13 +66,14 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
       if (res.ok) {
         if (action === 'duplicate') {
           const newCourse = await res.json();
-          router.push(`/dashboard/instructor/courses/${newCourse.id}/modules`);
+          const redirectRole = role.toLowerCase();
+          router.push(`/dashboard/${redirectRole}/courses/${newCourse.id}/modules`);
         } else {
           router.refresh();
         }
       } else {
         const err = await res.json();
-        alert(err.message || 'Error al procesar la acción');
+        alert(err.error || err.message || 'Error al procesar la acción');
       }
     } catch (error) {
       console.error('Action error:', error);
@@ -81,22 +93,31 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
         👁️ Vista Previa
       </Link>
 
-      {/* Botón Constructor - Con Lógica de Bloqueo */}
-      {isLocked ? (
-        <button
-          onClick={() => setShowLockModal(true)}
-          className="px-3 py-1.5 bg-blue-500/5 border border-blue-500/10 rounded-lg text-[10px] font-black transition-all text-gray-500 uppercase tracking-widest flex items-center gap-1.5 opacity-60 cursor-not-allowed"
-        >
-          🔒 CONSTRUCTOR
-        </button>
-      ) : (
-        <Link
-          href={`/dashboard/instructor/courses/${courseId}/modules`}
-          className="px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-500/50 rounded-lg text-[10px] font-black transition-all text-cyan-400 uppercase tracking-widest"
-        >
-          CONSTRUCTOR 🛠️
-        </Link>
-      )}
+      {/* Botón Constructor - Con Lógica de Bloqueo y Tooltip Informativo */}
+      <div className="relative group">
+        {isLocked ? (
+          <>
+            <button
+              onClick={() => setShowLockModal(true)}
+              className="px-3 py-1.5 bg-blue-500/5 border border-blue-500/10 rounded-lg text-[10px] font-black transition-all text-gray-500 uppercase tracking-widest flex items-center gap-1.5 opacity-60 hover:opacity-100 group-hover:bg-blue-500/10 group-hover:border-blue-500/20"
+            >
+              🔒 CONSTRUCTOR
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-black/95 border border-white/10 rounded-xl text-[9px] text-blue-300 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[100] shadow-2xl backdrop-blur-sm">
+                No se puede editar el curso dado que está en producción y con alumnos activos. 
+                Para realizar cambios estructurales, <span className="text-white font-bold">duplica el curso</span> (requiere Plan Scale) o contacta a soporte.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-black/95"></div>
+            </div>
+          </>
+        ) : (
+          <Link
+            href={`/dashboard/instructor/courses/${courseId}/modules`}
+            className="px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-500/50 rounded-lg text-[10px] font-black transition-all text-cyan-400 uppercase tracking-widest"
+          >
+            CONSTRUCTOR 🛠️
+          </Link>
+        )}
+      </div>
 
       {/* Acciones de Ciclo de Vida */}
       <div className="h-4 w-px bg-white/10 mx-1" />
@@ -120,13 +141,27 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
         </button>
       ) : null}
 
-      <button
-        onClick={() => handleAction('duplicate')}
-        disabled={loading}
-        className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:bg-blue-500/10 text-blue-400/80 transition-all uppercase"
-      >
-        📑 Duplicar
-      </button>
+      {/* Botón Duplicar con Restricción Visual */}
+      <div className="relative group">
+        <button
+          onClick={() => handleAction('duplicate')}
+          disabled={loading}
+          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase flex items-center gap-1.5 ${
+            isDuplicationRestricted 
+              ? 'border-gray-500/20 bg-gray-500/5 text-gray-500 hover:bg-gray-500/10' 
+              : 'border-blue-500/20 hover:bg-blue-500/10 text-blue-400/80'
+          }`}
+        >
+          {isDuplicationRestricted && <span>🔒</span>}
+          📑 Duplicar
+        </button>
+        
+        {isDuplicationRestricted && (
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/90 border border-white/10 rounded text-[9px] text-cyan-400 font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-xl">
+             Función exclusiva del Plan Scale
+          </div>
+        )}
+      </div>
 
       {(enrollmentCount === 0 || role === 'ADMIN') && (
         <button
@@ -138,7 +173,14 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
         </button>
       )}
 
-      {/* Modal de Bloqueo */}
+      {/* Upgrade Modal */}
+      <UpgradePlanModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+        featureName="Duplicación Masiva"
+      />
+
+      {/* Modal de Bloqueo de Edición */}
       {showLockModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-[#0d1524] border border-blue-500/20 rounded-3xl max-w-md w-full p-8 shadow-2xl relative">

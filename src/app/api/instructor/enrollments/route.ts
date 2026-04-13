@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
@@ -60,7 +60,24 @@ export async function GET(req: Request) {
           enrollmentCount: 0
         });
       }
-      studentMap.get(studentId).enrollments.push(e);
+
+      // Calculate progress for this specific enrollment
+      const totalLessons = e.course._count.lessons || 0;
+      const completedLessons = e.user.progressRecords.filter((pr: any) => 
+        pr.courseId === e.courseId && pr.completed
+      ).length;
+      
+      const progressPercentage = totalLessons > 0 
+        ? Math.min(100, Math.round((completedLessons / totalLessons) * 100)) 
+        : 0;
+
+      const hasCertificate = e.user.certifications.some((c: any) => c.courseId === e.courseId);
+
+      studentMap.get(studentId).enrollments.push({
+        ...e,
+        progressPercentage,
+        hasCertificate
+      });
       studentMap.get(studentId).enrollmentCount++;
     });
 
@@ -102,4 +119,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

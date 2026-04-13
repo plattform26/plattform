@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { sendPasswordChangeNotice } from '@/lib/mail';
 
 export async function POST(req: Request) {
   try {
@@ -41,6 +42,9 @@ export async function POST(req: Request) {
         data: { revokedAt: new Date() },
       })
     ]);
+
+    // Aviso de seguridad no bloqueante
+    await sendPasswordChangeNotice(resetToken.user.email);
 
     return NextResponse.json({ message: 'Password has been reset successfully' });
   } catch (error: any) {

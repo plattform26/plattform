@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { isCourseLocked } from '@/lib/course-protection';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -52,6 +53,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     
     if (session.role !== 'ADMIN' && quiz.course.instructorId !== session.userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    
+    // Lógica de Bloqueo de Edición (Seguridad en Producción)
+    const lock = await isCourseLocked(quiz.courseId, session.role);
+    if (lock.locked) {
+        return NextResponse.json({ 
+          error: 'CURSO_BLOQUEADO',
+          message: lock.reason 
+        }, { status: 403 });
     }
 
     // Validate totalScore if being changed
