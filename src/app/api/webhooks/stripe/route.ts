@@ -6,7 +6,8 @@ import {
   sendPaymentConfirmationEmail, 
   sendSaleNotificationToInstructor, 
   sendAdminTechnicalAlert,
-  sendPlanActivityEmail
+  sendPlanActivityEmail,
+  sendSaleNotificationToAdmin
 } from '@/lib/mail';
 import { Prisma } from '@prisma/client';
 
@@ -146,6 +147,9 @@ export async function POST(req: Request) {
           if (instructorUser) {
             await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title);
           }
+
+          // Misión: Blindaje de Negocio - Notificar al admin (Diego)
+          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount);
 
           console.log(`✅ SUCCESS: Pago procesado para User:${userId} en Course:${courseId}`);
         }

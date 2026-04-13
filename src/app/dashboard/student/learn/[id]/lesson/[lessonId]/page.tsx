@@ -201,7 +201,6 @@ export default async function LessonPage({
           lessonId={params.lessonId} 
           prevLesson={prevLesson} 
           nextLesson={nextLesson}
-          isCompletedInitial={isCompleted}
           userRole={session.role}
         />
       </div>

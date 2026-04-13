@@ -11,6 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const from = process.env.EMAIL_FROM || 'Plattform <soporte@plattform.mx>';
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
 const adminEmail = process.env.ADMIN_EMAIL || 'soporte@plattform.mx';
+const adminName = 'Diego'; // Admin name as requested
 // Deployment Trigger: Domain sync for plattform-rouge.vercel.app
 
 // Plantilla Base (Elegante y Profesional)
@@ -116,6 +117,23 @@ export async function sendInstructorRegistrationNoticeToAdmin(instructorName: st
   });
 }
 
+export async function sendStudentRegistrationNoticeToAdmin(studentName: string, studentEmail: string) {
+  await resend.emails.send({
+    from,
+    to: adminEmail,
+    subject: `🆕 Nuevo Alumno Registrado: ${studentName}`,
+    html: getBaseTemplate(`
+      <h1>Hola ${adminName}, tenemos un nuevo alumno</h1>
+      <p>Se ha registrado un nuevo estudiante en la plataforma:</p>
+      <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Nombre:</strong> ${studentName}</p>
+        <p><strong>Email:</strong> ${studentEmail}</p>
+      </div>
+      <a href="${appUrl}/dashboard/admin/users" class="button">Gestionar Usuarios</a>
+    `)
+  });
+}
+
 export async function sendInstructorApprovalEmail(email: string, name: string) {
   await resend.emails.send({
     from,
@@ -163,22 +181,155 @@ export async function sendWithdrawalRequestToAdmin(instructorId: string, instruc
   });
 }
 
+export async function sendFinalExamPassNoticeToAdmin(studentName: string, courseTitle: string, score: number) {
+  await resend.emails.send({
+    from,
+    to: adminEmail,
+    subject: `🎓 Examen Final Aprobado: ${studentName}`,
+    html: getBaseTemplate(`
+      <h1>¡Misión Cumplida! Un alumno ha aprobado</h1>
+      <p>El alumno <span class="highlight">${studentName}</span> ha pasado exitosamente la evaluación final.</p>
+      <div style="background: #fffdf2; border: 1px solid #fef08a; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Alumno:</strong> ${studentName}</p>
+        <p><strong>Curso:</strong> ${courseTitle}</p>
+        <p><strong>Calificación:</strong> ${score.toFixed(1)}/100</p>
+      </div>
+      <p>El diploma ha sido enviado automáticamente a su correo.</p>
+      <a href="${appUrl}/dashboard/admin" class="button">Ir al Panel</a>
+    `)
+  });
+}
+
+export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number) {
+  await resend.emails.send({
+    from,
+    to: adminEmail,
+    subject: `💰 Nueva Venta: ${courseTitle}`,
+    html: getBaseTemplate(`
+      <h1>¡Felicidades Diego, nueva venta realizada!</h1>
+      <p>El alumno <span class="highlight">${studentName}</span> ha comprado un curso.</p>
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Curso:</strong> ${courseTitle}</p>
+        <p><strong>Monto:</strong> $${amount} MXN</p>
+      </div>
+      <a href="${appUrl}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
+    `)
+  });
+}
+
 /* ==========================================
    LOGROS Y SUSCRIPCIONES
    ========================================== */
 
-export async function sendCertificateEmail(email: string, studentName: string, courseTitle: string, certificateLink: string) {
+export async function sendCertificateEmail(
+  email: string, 
+  studentName: string, 
+  courseTitle: string, 
+  certificateLink: string,
+  pdfAttachment?: { filename: string; content: Buffer }
+) {
   await resend.emails.send({
     from,
     to: email,
-    subject: `🎓 ¡Felicidades! Aquí tienes tu certificado de ${courseTitle}`,
+    subject: `🎓 ¡Felicidades! Aquí tienes tu certificación de ${courseTitle}`,
+    attachments: pdfAttachment ? [pdfAttachment] : [],
     html: getBaseTemplate(`
       <h1>¡Lo lograste, ${studentName}!</h1>
       <p>Has completado satisfactoriamente el curso <strong>${courseTitle}</strong>.</p>
-      <p>Tu dedicación ha dado frutos. Adjunto encontrarás el link para descargar tu constancia oficial expedida por Plattform.</p>
-      <a href="${certificateLink}" class="button">Descargar Certificado</a>
+      <p>Tu dedicación ha dado frutos. Adjunto encontrarás tu **certificado oficial** expedido por Plattform.</p>
+      <p>También puedes verlo y descargarlo en cualquier momento desde tu panel:</p>
+      <a href="${certificateLink}" class="button">Ver mis Certificados</a>
     `)
   });
+}
+
+/**
+ * Misión: Generación de Certificados Server-Side
+ * Dibuja un certificado profesional en PDF para ser enviado por correo.
+ */
+export async function generateCertificatePDF(
+  studentName: string, 
+  courseTitle: string, 
+  certificateCode: string,
+  finalScore?: number
+) {
+  // Import dinámico para evitar problemas en Edge Runtime si existieran, 
+  // aunque Next.js API routes usualmente corren en Node.
+  const { jsPDF } = await import('jspdf');
+  
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const width = doc.internal.pageSize.getWidth();
+  const height = doc.internal.pageSize.getHeight();
+
+  // 1. Fondos y Bordes
+  doc.setDrawColor(6, 182, 212); // Cyan 500
+  doc.setLineWidth(2);
+  doc.rect(5, 5, width - 10, height - 10);
+  
+  doc.setLineWidth(0.5);
+  doc.rect(7, 7, width - 14, height - 14);
+
+  // 2. Branding Superior
+  doc.setTextColor(6, 182, 212);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.text('ANTIGRAVITY ACADEMY', width / 2, 20, { align: 'center' });
+
+  // 3. Título Principal
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(30);
+  doc.text('CERTIFICADO DE APROBACIÓN', width / 2, 45, { align: 'center' });
+
+  // 4. Cuerpo
+  doc.setFontSize(12);
+  doc.setTextColor(100, 100, 100);
+  doc.text('Se otorga el presente a:', width / 2, 65, { align: 'center' });
+
+  doc.setFontSize(40);
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'bolditalic');
+  doc.text(studentName.toUpperCase(), width / 2, 85, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(100, 100, 100);
+  doc.text('Por haber completado satisfactoriamente el curso de:', width / 2, 105, { align: 'center' });
+
+  doc.setFontSize(24);
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'bold');
+  doc.text(courseTitle.toUpperCase(), width / 2, 125, { align: 'center' });
+
+  // 5. Detalles Inferiores
+  doc.setFontSize(10);
+  doc.setTextColor(150, 150, 150);
+  doc.text('ID de Certificación:', 20, height - 30);
+  doc.setTextColor(6, 182, 212);
+  doc.setFontSize(14);
+  doc.text(certificateCode, 20, height - 22);
+
+  if (finalScore !== undefined) {
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Calificación Final:', width / 2, height - 30, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(18);
+    doc.text(`${finalScore.toFixed(1)}/100`, width / 2, height - 22, { align: 'center' });
+  }
+
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.setFont('helvetica', 'italic');
+  doc.text('Emitido bajo validación Plattform 2026', width - 20, height - 22, { align: 'right' });
+
+  // Retornar como Buffer para Resend
+  const arrayBuffer = doc.output('arraybuffer');
+  return Buffer.from(arrayBuffer);
 }
 
 export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', planName: string) {

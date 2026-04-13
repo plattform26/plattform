@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { generateVerificationToken } from '@/lib/tokens';
-import { sendVerificationEmail, sendInstructorRegistrationNoticeToAdmin } from '@/lib/mail';
+import { sendVerificationEmail, sendInstructorRegistrationNoticeToAdmin, sendStudentRegistrationNoticeToAdmin } from '@/lib/mail';
 
 export async function POST(req: Request) {
   try {
@@ -44,6 +44,10 @@ export async function POST(req: Request) {
 
     if (role === 'STUDENT') {
       await sendVerificationEmail(user.email, verificationToken.token);
+      
+      // Misión: Blindaje de Comunicación - Notificar al admin (Diego)
+      await sendStudentRegistrationNoticeToAdmin(`${name} ${lastName}`, user.email);
+
       return NextResponse.json({
         message: 'Student registered successfully. Please verify your email.',
         redirectUrl: '/auth/verify-email',

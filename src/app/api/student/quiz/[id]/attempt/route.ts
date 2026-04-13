@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { 
+  generateCertificatePDF, 
+  sendCertificateEmail, 
+  sendFinalExamPassNoticeToAdmin 
+} from '@/lib/mail';
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -16,6 +21,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const quiz = await prisma.quiz.findUnique({
       where: { id: params.id },
       include: {
+        lesson: true,
+        course: {
+          select: { title: true }
+        },
         questions: {
           include: {
             options: true
@@ -148,6 +157,56 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           issuedAt: new Date()
         }
       });
+
+      // Misión: El Alumno lo logró - Empaquetado y Envío de Diploma
+      try {
+        // 1. Detectar si es Evaluación Final
+        const higherQuizzes = await prisma.courseLesson.count({
+          where: {
+            courseId: finalCourseId,
+            contentType: 'QUIZ',
+            orderIndex: { gt: quiz.lesson?.orderIndex || 0 }
+          }
+        });
+
+        if (higherQuizzes === 0) {
+          console.log(`[CERT] Final Evaluation detected for ${session.userId}. Generating PDF...`);
+          
+          const userFresh = await prisma.user.findUnique({
+            where: { id: session.userId },
+            select: { name: true, lastName: true, email: true }
+          });
+
+          if (userFresh) {
+            const studentFullName = `${userFresh.name} ${userFresh.lastName}`;
+            const pdfBuffer = await generateCertificatePDF(
+              studentFullName,
+              quiz.course.title,
+              certification.certificateCode,
+              scorePercentage
+            );
+
+            const downloadLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/student/certificates`;
+            
+            await sendCertificateEmail(
+              userFresh.email,
+              userFresh.name,
+              quiz.course.title,
+              downloadLink,
+              { 
+                filename: `Certificado_${quiz.course.title.replace(/\s+/g, '_')}.pdf`, 
+                content: pdfBuffer 
+              }
+            );
+
+            // 2. Notificar al Admin (Diego)
+            await sendFinalExamPassNoticeToAdmin(studentFullName, quiz.course.title, scorePercentage);
+          }
+        }
+      } catch (certError) {
+        console.error('Error in automatic certification delivery:', certError);
+        // We don't fail the request if email fails, but we log it
+      }
     }
 
     // MOTOR CIEGO: Si no aprobó, eliminamos correctAnswerId de la respuesta para el frontend

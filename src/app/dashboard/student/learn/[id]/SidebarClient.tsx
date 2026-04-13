@@ -1,17 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { CourseProgressProvider, useCourseProgress } from '@/context/CourseProgressContext';
 
-export default function SidebarClient({ 
-  course, 
-  completedLessonIds, 
-  progressPercent, 
-  courseId,
-  userRole,
-  children 
-}: { 
+export default function SidebarClient(props: { 
   course: any; 
   completedLessonIds: string[]; 
   progressPercent: number;
@@ -19,13 +13,38 @@ export default function SidebarClient({
   userRole: string;
   children: React.ReactNode; 
 }) {
+  return (
+    <CourseProgressProvider initialCompletedLessonIds={props.completedLessonIds}>
+      <SidebarInternal {...props} />
+    </CourseProgressProvider>
+  );
+}
+
+function SidebarInternal({ 
+  course, 
+  courseId,
+  userRole,
+  children 
+}: { 
+  course: any; 
+  courseId: string;
+  userRole: string;
+  children: React.ReactNode; 
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
+  const { completedLessonIds } = useCourseProgress();
+
+  // Calcular progreso en tiempo real
+  const progressPercent = useMemo(() => {
+    const totalLessons = course.modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0);
+    return totalLessons > 0 ? Math.round((completedLessonIds.length / totalLessons) * 100) : 0;
+  }, [course.modules, completedLessonIds]);
 
   // Determinar la ruta de retorno según el rol
   const getReturnPath = () => {
     if (userRole === 'INSTRUCTOR') return '/dashboard/instructor/courses';
-    if (userRole === 'ADMIN') return '/dashboard/admin/courses'; // Misión: Recalibración del Botón de Retorno
+    if (userRole === 'ADMIN') return '/dashboard/admin/courses';
     return '/dashboard/student/courses';
   };
 

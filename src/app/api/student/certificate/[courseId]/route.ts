@@ -1,5 +1,7 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
-import { sendCertificateEmail } from '@/lib/mail';
+import { sendCertificateEmail, generateCertificatePDF } from '@/lib/mail';
 
 export async function GET(req: Request, { params }: { params: { courseId: string } }) {
   try {
@@ -82,13 +84,43 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
       }
     });
 
-    // Misión: Logro del Alumno - Envío automático de Email
+    // Misión: Logro del Alumno - Envío automático de Email con PDF
     const course = await prisma.course.findUnique({ where: { id: params.courseId } });
     const user = await prisma.user.findUnique({ where: { id: session.userId } });
     
     if (course && user) {
+      const studentFullName = `${user.name} ${user.lastName}`;
       const downloadLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/student/certificates`;
-      await sendCertificateEmail(user.email, user.name, course.title, downloadLink);
+      
+      // Intentar enviar con PDF adjunto
+      try {
+        const bestAttempt = await prisma.quizAttempt.findFirst({
+            where: { userId: session.userId, courseId: params.courseId, passed: true },
+            orderBy: { scorePercentage: 'desc' }
+        });
+
+        const pdfBuffer = await generateCertificatePDF(
+          studentFullName,
+          course.title,
+          cert.certificateCode,
+          bestAttempt?.scorePercentage
+        );
+
+        await sendCertificateEmail(
+          user.email, 
+          user.name, 
+          course.title, 
+          downloadLink,
+          {
+            filename: `Certificado_${course.title.replace(/\s+/g, '_')}.pdf`,
+            content: pdfBuffer
+          }
+        );
+      } catch (emailError) {
+        console.error('Error sending certificate email with PDF:', emailError);
+        // Fallback to simple email if PDF fails
+        await sendCertificateEmail(user.email, user.name, course.title, downloadLink);
+      }
     }
 
     return NextResponse.json(cert);

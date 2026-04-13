@@ -3,45 +3,54 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useCourseProgress } from '@/context/CourseProgressContext';
 
 export default function LessonClient({
   courseId,
   lessonId,
   prevLesson,
   nextLesson,
-  isCompletedInitial,
   userRole
 }: {
   courseId: string;
   lessonId: string;
   prevLesson: { id: string; title: string } | null;
   nextLesson: { id: string; title: string } | null;
-  isCompletedInitial: boolean;
   userRole: string;
 }) {
-  const [completed, setCompleted] = useState(isCompletedInitial);
+  const { isLessonCompleted, toggleLesson } = useCourseProgress();
+  const completed = isLessonCompleted(lessonId);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleToggleComplete = async () => {
     setLoading(true);
+    const newStatus = !completed;
+
+    // Optimistic Update: Activamos visualmente de inmediato
+    toggleLesson(lessonId, newStatus);
+
     try {
       const res = await fetch('/api/student/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseId, lessonId, completed: !completed }),
+        body: JSON.stringify({ courseId, lessonId, completed: newStatus }),
       });
       
       if (res.ok) {
-        setCompleted(!completed);
         router.refresh();
         // Si marcamos como completada y hay siguiente, avanzar automáticamente
-        if (!completed && nextLesson) {
+        if (newStatus && nextLesson) {
            router.push(`/dashboard/student/learn/${courseId}/lesson/${nextLesson.id}`);
         }
+      } else {
+        // Revertir en caso de error
+        toggleLesson(lessonId, completed);
       }
     } catch (err) {
       console.error(err);
+      // Revertir en caso de error
+      toggleLesson(lessonId, completed);
     } finally {
       setLoading(false);
     }
@@ -91,7 +100,7 @@ export default function LessonClient({
                    className={`flex flex-col items-end gap-1 text-right transition-all transform hover:scale-105 ${canAccessQuiz ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}
                 >
                    <span className="text-[10px] uppercase font-black text-amber-500 animate-pulse">Final del Camino</span>
-                   <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-black text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                   <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-black text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_20_rgba(245,158,11,0.3)]">
                       🏆 REALIZAR EVALUACIÓN FINAL
                    </span>
                 </Link>
