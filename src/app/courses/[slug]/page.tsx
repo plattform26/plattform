@@ -7,7 +7,7 @@ import prisma from '@/lib/prisma';
 export default async function CourseDetail({ params }: { params: { slug: string } }) {
   const session = await getSession();
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001').replace(/\/$/, '');
   const res = await fetch(`${baseUrl}/api/courses/${params.slug}`, {
     cache: 'no-store'
   });

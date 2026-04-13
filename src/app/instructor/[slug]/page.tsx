@@ -9,7 +9,7 @@ export default async function InstructorProfile({ params }: { params: { slug: st
   const session = await getSession();
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001').replace(/\/$/, '');
     const res = await fetch(`${baseUrl}/api/instructor/${params.slug}`, {
         cache: 'no-store'
     });
