@@ -11,6 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const from = process.env.EMAIL_FROM || 'Plattform <soporte@plattform.mx>';
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
 const adminEmail = process.env.ADMIN_EMAIL || 'soporte@plattform.mx';
+// Deployment Trigger: Domain sync for plattform-rouge.vercel.app
 
 // Plantilla Base (Elegante y Profesional)
 const getBaseTemplate = (content: string) => `
