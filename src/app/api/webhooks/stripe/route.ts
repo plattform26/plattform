@@ -11,6 +11,7 @@ import {
 import { Prisma } from '@prisma/client';
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+// Total Reset Trigger: Domain sync & Webhook secret update for plattform-rouge.vercel.app
 
 export async function POST(req: Request) {
   console.log('¡WEBHOOK RECIBIDO!');
