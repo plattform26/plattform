@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import { sendInstructorApprovalEmail } from '@/lib/mail';

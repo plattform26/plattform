@@ -162,9 +162,16 @@ export default function AdminUsersPage() {
                          </div>
                       </td>
                       <td className="p-6">
-                         <div className={`flex items-center gap-2 text-xs font-bold ${user.status === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'ACTIVE' ? 'bg-green-400' : 'bg-red-400'} animate-pulse`}></span>
-                            {user.status === 'ACTIVE' ? 'ACTIVO' : 'SUSPENDIDO'}
+                         <div className={`flex items-center gap-2 text-xs font-bold ${
+                           user.status === 'ACTIVE' ? 'text-green-400' : 
+                           user.status === 'PENDING_APPROVAL' ? 'text-yellow-400' : 'text-red-400'
+                         }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              user.status === 'ACTIVE' ? 'bg-green-400' : 
+                              user.status === 'PENDING_APPROVAL' ? 'bg-yellow-400' : 'bg-red-400'
+                            } ${user.status !== 'SUSPENDED' ? 'animate-pulse' : ''}`}></span>
+                            {user.status === 'ACTIVE' ? 'ACTIVO' : 
+                             user.status === 'PENDING_APPROVAL' ? 'PENDIENTE' : 'SUSPENDIDO'}
                          </div>
                       </td>
                       <td className="p-6 text-sm text-gray-500 font-medium">
@@ -173,9 +180,28 @@ export default function AdminUsersPage() {
                       <td className="p-6 text-right">
                          <div className="flex justify-end gap-2">
                             <Link href={`/dashboard/admin/users/edit/${user.id}?role=${user.role.toLowerCase()}`} className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all text-gray-400 hover:text-white">EDITAR PERFIL</Link>
-                            {user.status === 'ACTIVE' ? (
+                            
+                            {user.status === 'PENDING_APPROVAL' && (
                                <button 
                                  onClick={async () => {
+                                    if(!confirm('¿Aprobar este instructor?')) return;
+                                    const res = await fetch(`/api/admin/users/${user.id}`, {
+                                       method: 'PATCH',
+                                       headers: { 'Content-Type': 'application/json' },
+                                       body: JSON.stringify({ status: 'ACTIVE' })
+                                    });
+                                    if (res.ok) fetchUsers();
+                                 }}
+                                 className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-green-500/10 border border-green-500/30 text-green-400 hover:bg-green-500/20 transition-all"
+                               >
+                                 APROBAR
+                               </button>
+                            )}
+
+                            {user.status === 'ACTIVE' && (
+                               <button 
+                                 onClick={async () => {
+                                    if(!confirm('¿Suspender cuenta?')) return;
                                     const res = await fetch(`/api/admin/users/${user.id}`, {
                                        method: 'PATCH',
                                        headers: { 'Content-Type': 'application/json' },
@@ -187,7 +213,9 @@ export default function AdminUsersPage() {
                                >
                                  SUSPENDER
                                </button>
-                            ) : (
+                            )}
+
+                            {user.status === 'SUSPENDED' && (
                                <button 
                                  onClick={async () => {
                                     const res = await fetch(`/api/admin/users/${user.id}`, {
@@ -199,7 +227,7 @@ export default function AdminUsersPage() {
                                  }}
                                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-green-500/20 hover:bg-green-500/10 text-green-400/80 hover:text-green-400 transition-all"
                                >
-                                 REACTIVAR
+                                 RE-ACTIVAR
                                </button>
                             )}
                          </div>

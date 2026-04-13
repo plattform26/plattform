@@ -33,6 +33,8 @@ export async function POST() {
       userId: session.user.id,
       role: session.user.role,
       email: session.user.email,
+      name: session.user.name || '',
+      lastName: session.user.lastName || '',
     });
 
     cookieStore.set('accessToken', newAccessToken, {

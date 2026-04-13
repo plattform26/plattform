@@ -7,6 +7,15 @@ export default async function NewAICoursePage() {
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
+  // Misión: Bloqueo de Ruta Preventivo (AI)
+  const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { status: true }
+  });
+  if (user?.status !== 'ACTIVE') {
+      redirect('/dashboard/instructor?error=PENDING_APPROVAL');
+  }
+
   const sub = await prisma.instructorSubscription.findFirst({
     where: { instructor: { userId: session.userId }, status: 'ACTIVE' },
     include: { plan: true }

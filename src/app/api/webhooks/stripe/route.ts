@@ -13,6 +13,8 @@ import { Prisma } from '@prisma/client';
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
+  console.log('¡WEBHOOK RECIBIDO!');
+
   const body = await req.text();
   const signature = headers().get('stripe-signature') as string;
 
@@ -20,6 +22,7 @@ export async function POST(req: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, WEBHOOK_SECRET || '');
+    console.log('Evento Stripe:', event.type);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
@@ -30,10 +33,21 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as any;
         const metadata = session.metadata;
+        const userId = metadata.userId;
+
+        console.log('--- 🛡️ WEBHOOK INBOUND: checkout.session.completed ---');
+        console.log(`Evento: ${event.id}`);
+        console.log(`UserId extraído: ${userId || 'N/A'}`);
+        console.log(`Tipo: ${metadata.transactionType || 'UNKNOWN'}`);
+
+        if (!userId) {
+          console.error('CRITICAL: Webhook arrived without userId in metadata.');
+          return NextResponse.json({ error: 'Missing userId in metadata' }, { status: 400 });
+        }
 
         // --- CASO 1: COMPRA DE CURSO ---
         if (metadata.transactionType === 'COURSE_PURCHASE') {
-          const { courseId, userId, couponCode } = metadata;
+          const { courseId, couponCode } = metadata;
 
           const course = await prisma.course.findUnique({
             where: { id: courseId },
@@ -44,7 +58,6 @@ export async function POST(req: Request) {
 
           const grossAmount = session.amount_total / 100;
           
-          // Calcular comision de plataforma basada en el plan ACTIVO del instructor
           const activeSub = await prisma.instructorSubscription.findFirst({
             where: { 
               instructor: { userId: course.instructorId },
@@ -57,7 +70,6 @@ export async function POST(req: Request) {
           const platformCommission = (grossAmount * commissionRate) / 100;
           const netAmount = grossAmount - platformCommission;
 
-          // Obtener detalles del Payment Intent para capturar el Transfer ID y Fees
           const expandedSession = await stripe.checkout.sessions.retrieve(session.id, {
             expand: ['payment_intent.latest_charge']
           });
@@ -65,9 +77,7 @@ export async function POST(req: Request) {
           const charge = pi?.latest_charge as any;
           const stripeTransferId = charge?.transfer as string;
 
-          // Transacción ACID
           await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-            // 1. Crear Enrollment
             await tx.enrollment.upsert({
               where: { userId_courseId: { userId, courseId } },
               update: { status: 'ACTIVE' },
@@ -79,7 +89,6 @@ export async function POST(req: Request) {
               }
             });
 
-            // 2. Crear Transacción
             await tx.transaction.create({
               data: {
                 userId,
@@ -97,7 +106,6 @@ export async function POST(req: Request) {
               }
             });
 
-            // 3. Notificación al Instructor
             await tx.notification.create({
               data: {
                 userId: course.instructorId,
@@ -109,7 +117,7 @@ export async function POST(req: Request) {
               }
             });
 
-            // 4. Actualizar estadística de suscripción
+            // Actualizar estadística de suscripción
             const instructorSubscription = await tx.instructorSubscription.findFirst({
                where: { instructor: { userId: course.instructorId }, status: 'ACTIVE' }
             });
@@ -120,71 +128,91 @@ export async function POST(req: Request) {
               });
             }
 
-            // 5. Incrementar usos de cupón si aplica
             if (couponCode) {
               await tx.coupon.update({
                 where: { courseId_code: { courseId, code: couponCode.toUpperCase() } },
                 data: { currentUses: { increment: 1 } }
-              }).catch(() => null); // Silenciar si no existe o algo falló
+              }).catch(() => null);
             }
           });
 
-          // Enviar correo de confirmación (fuera de la transacción por performance)
-          const user = await prisma.user.findUnique({ where: { id: userId } });
+          const userRecord = await prisma.user.findUnique({ where: { id: userId } });
           const instructorUser = await prisma.user.findUnique({ where: { id: course.instructorId } });
 
-          if (user) {
-            await sendPaymentConfirmationEmail(user.email, user.name, course.title, grossAmount);
+          if (userRecord) {
+            await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount);
           }
-
-          // Notificar al instructor sobre la venta
           if (instructorUser) {
-            await sendSaleNotificationToInstructor(instructorUser.email, user?.name || 'Un alumno', course.title);
+            await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title);
           }
 
-          console.log(`Enrollment manual/compra exitosa para User:${userId} en Course:${courseId}`);
+          console.log(`✅ SUCCESS: Pago procesado para User:${userId} en Course:${courseId}`);
         }
 
-        // --- CASO 2: SUSCRIPCIÓN DE INSTRUCTOR (NUEVA O UPGRADE/DOWNGRADE) ---
+        // --- CASO 2: SUSCRIPCIÓN DE INSTRUCTOR ---
         if (metadata.transactionType === 'INSTRUCTOR_SUBSCRIPTION') {
-          const { instructorSubscriptionId, planId, isUpgrade, previousSubscriptionId } = metadata;
+          const { planId } = metadata;
 
           const plan = await prisma.platformPlan.findUnique({ where: { id: planId } });
           if (!plan) throw new Error('Plan not found');
 
-          // Si es un Cambio de Plan (Upgrade o Downgrade Inmediato)
-          if (isUpgrade === 'true' && previousSubscriptionId) {
-            try {
-              // Cancelar la suscripción anterior de inmediato en Stripe
-              await stripe.subscriptions.cancel(previousSubscriptionId);
-              console.log(`Stripe: Suscripción antigua ${previousSubscriptionId} cancelada de inmediato.`);
-            } catch (err) {
-              console.error(`Error cancelando suscripción antigua ${previousSubscriptionId}:`, err);
-            }
-          }
-
-          const sub = await prisma.instructorSubscription.findUnique({
-             where: { id: instructorSubscriptionId },
-             include: { instructor: true }
+          // 1. Obtener o Crear Perfil de Instructor
+          let profile = await prisma.instructorProfile.findUnique({
+            where: { userId }
           });
 
-          if (!sub) throw new Error('Subscription ID not found');
+          if (!profile) {
+            const user = await prisma.user.findUnique({ where: { id: userId } });
+            if (!user) throw new Error('User not found for subscription');
+            
+            const slugBase = user.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-");
+            profile = await prisma.instructorProfile.create({
+              data: {
+                userId: user.id,
+                academyName: `${user.name} Academy`,
+                slug: `${slugBase}-${user.id.substring(0, 5)}`,
+                commissionRate: plan.commissionRate,
+              }
+            });
+          }
 
           const now = new Date();
           const thirtyDaysLater = new Date();
           thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
 
           await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-            // 1. Caducar registros anteriores del usuario
-            await tx.subscriptionRecord.updateMany({
-              where: { userId: sub.instructor.userId, status: 'ACTIVE' },
-              data: { status: 'EXPIRED', endDate: now }
+            // A. Caducar suscripciones anteriores
+            await tx.instructorSubscription.updateMany({
+              where: { instructorId: profile!.id, status: 'ACTIVE' },
+              data: { status: 'EXPIRED', expiresAt: now }
             });
 
-            // 2. Crear Nuevo Registro Histórico (Auditable)
+            // B. Upsert Suscripción Instructor (Puntero Principal)
+            await tx.instructorSubscription.upsert({
+              where: { id: metadata.instructorSubscriptionId || 'new-sub' },
+              update: {
+                status: 'ACTIVE',
+                planId: planId,
+                stripeSubscriptionId: session.subscription as string,
+                stripeCustomerId: session.customer as string,
+                startedAt: now,
+                expiresAt: thirtyDaysLater
+              },
+              create: {
+                instructorId: profile!.id,
+                planId: planId,
+                status: 'ACTIVE',
+                startedAt: now,
+                expiresAt: thirtyDaysLater,
+                stripeSubscriptionId: session.subscription as string,
+                stripeCustomerId: session.customer as string,
+              }
+            });
+
+            // C. Crear Registro Histórico
             await tx.subscriptionRecord.create({
               data: {
-                userId: sub.instructor.userId,
+                userId: userId,
                 planId: planId,
                 status: 'ACTIVE',
                 startDate: now,
@@ -193,31 +221,19 @@ export async function POST(req: Request) {
                 stripeSubscriptionId: session.subscription as string,
               }
             });
-
-            // 3. Actualizar la suscripción "Puntero" (Reinicio de Ciclo)
-            await tx.instructorSubscription.update({
-              where: { id: instructorSubscriptionId },
-              data: { 
-                status: 'ACTIVE',
-                planId: planId,
-                stripeSubscriptionId: session.subscription as string,
-                startedAt: now,
-                expiresAt: thirtyDaysLater // Reinicio local de ciclo
-              }
-            });
           });
 
-          // Notificar al instructor sobre su nuevo plan
-          const instructorUser = await prisma.user.findUnique({
-            where: { id: sub.instructor.userId }
-          });
+          const instructorUser = await prisma.user.findUnique({ where: { id: userId } });
           if (instructorUser) {
-            await sendPlanActivityEmail(
-              instructorUser.email, 
-              isUpgrade === 'true' ? 'UPGRADE' : 'WELCOME', 
-              plan.name
-            );
+            // Misión: Flujo de Aprobación
+            await prisma.user.update({
+              where: { id: userId },
+              data: { status: 'PENDING_APPROVAL' }
+            });
+            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name);
           }
+
+          console.log(`✅ SUCCESS: Suscripción Activada para User:${userId} (Plan:${plan.name})`);
         }
         break;
       }
@@ -299,8 +315,6 @@ export async function POST(req: Request) {
         });
 
         if (sub) {
-           // Si el plan ha cambiado (detectado por el metadata de Stripe o consultando DB)
-           // Aquí simplificamos: el webhook dispara una verificación de cupo
            const totalEnrollments = await prisma.enrollment.count({
               where: { course: { instructorId: sub.instructorId } }
            });
@@ -354,16 +368,8 @@ export async function POST(req: Request) {
         break;
       }
 
-      case 'payment_intent.payment_failed': {
-        const intent = event.data.object as any;
-        // Podríamos loguear esto en Transactions como FAILED si tenemos el sessionId o metadata
-        break;
-      }
-
       case 'account.updated': {
         const account = event.data.object as any;
-        
-        // Si el onboarding se completó (details_submitted es true)
         if (account.details_submitted) {
           const userId = account.metadata?.userId;
           if (userId) {
@@ -385,7 +391,6 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('Webhook processing error:', error);
     
-    // Misión: Sistema SOS y Alertas Técnicas
     await sendAdminTechnicalAlert(
       'STRIPE_WEBHOOK_PROCESSING_ERROR',
       `Error procesando evento ${event?.type || 'unknown'}`,

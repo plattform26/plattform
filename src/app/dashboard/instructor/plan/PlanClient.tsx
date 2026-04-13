@@ -20,31 +20,38 @@ export default function PlanClient({
   const activePlan = plans.find(p => p.id === activePlanId);
 
   useEffect(() => {
-    if (searchParams.get('upgrade') === 'true') {
-      setSuccess('¡Felicidades! Tu plan ha sido actualizado con éxito. Las nuevas funciones de tu academia ya están activas.');
+    const successParam = searchParams.get('success');
+    const canceledParam = searchParams.get('canceled');
+    
+    if (successParam === 'true') {
+      setSuccess('¡Felicidades! Tu suscripción ha sido activada/actualizada con éxito. Ya puedes disfrutar de todos los beneficios de tu plan.');
+    }
+    if (canceledParam === 'true') {
+      setError('El proceso de pago fue cancelado. No se realizaron cargos.');
     }
   }, [searchParams]);
 
-  const handleSubscribe = async (planName: string, confirmedDowngrade = false) => {
-    const targetPlan = plans.find(p => p.name === planName.toLowerCase());
+  const handleSubscribe = async (planId: string, confirmedDowngrade = false) => {
+    const targetPlan = plans.find(p => p.id === planId);
     
     // Si es un Downgrade y no ha sido confirmado aún, mostrar Modal de Advertencia
     if (activePlan && targetPlan && !confirmedDowngrade) {
         if (Number(targetPlan.monthlyPrice) < Number(activePlan.monthlyPrice)) {
-            setShowDowngradeModal(planName);
+            setShowDowngradeModal(planId);
             return;
         }
     }
 
-    setLoading(planName);
+    setLoading(planId);
     setError('');
+    setSuccess('');
     setShowDowngradeModal(null);
     
     try {
-      const res = await fetch('/api/checkout/subscription', {
+      const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planName }),
+        body: JSON.stringify({ planId }),
       });
       
       const data = await res.json();
@@ -118,21 +125,23 @@ export default function PlanClient({
                 </div>
               </div>
               {isCurrent ? (
-                <div className="mt-8 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex flex-col items-center gap-1 group/active">
-                   <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] group-hover/active:scale-110 transition-transform">✓ Beneficios Activos</span>
-                   <span className="text-[8px] text-gray-400 uppercase font-bold tracking-widest italic opacity-60">Gestiona desde tu perfil</span>
-                </div>
+                <button 
+                  disabled 
+                  className="mt-8 w-full py-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] opacity-80 cursor-default"
+                >
+                  Suscripción Activa
+                </button>
               ) : (
                 <button 
-                  onClick={() => handleSubscribe(plan.name)}
+                  onClick={() => handleSubscribe(plan.id)}
                   disabled={loading !== null}
-                  className="mt-8 w-full py-4 rounded-2xl bg-blue-600/10 border border-blue-500/10 text-[10px] font-black text-gray-400 hover:text-white hover:bg-blue-600 hover:border-blue-600 hover:scale-[1.02] transition-all disabled:opacity-50 uppercase tracking-[0.2em]"
+                  className="mt-8 w-full py-4 rounded-2xl bg-blue-600/10 border border-blue-500/10 text-[10px] font-black text-white hover:bg-blue-600 hover:border-blue-600 hover:scale-[1.02] transition-all disabled:opacity-50 uppercase tracking-[0.2em] shadow-lg shadow-blue-500/5"
                 >
                   {isProcessing ? (
                     <span className="flex items-center justify-center gap-2">
                        <span className="w-2 h-2 rounded-full bg-current animate-ping" /> Procesando...
                     </span>
-                  ) : `Migrar a ${plan.displayName}`}
+                  ) : (activePlan ? `Migrar a ${plan.displayName}` : `Obtener Plan ${plan.displayName}`)}
                 </button>
               )}
             </div>

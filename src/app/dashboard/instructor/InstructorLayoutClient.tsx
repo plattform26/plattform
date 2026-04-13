@@ -39,6 +39,21 @@ export default function InstructorLayoutClient({
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
     if (saved === 'true') setIsCollapsed(true);
+
+    // Misión Extra: Sincronización de Sesión Real-time
+    // Como el JWT es estático, consultamos /api/auth/me para ver si el status en DB cambió (ej. email verificado)
+    const refreshUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+        }
+      } catch (err) {
+        console.error('Error refreshing session:', err);
+      }
+    };
+    refreshUser();
   }, []);
 
   const toggleSidebar = () => {
@@ -107,7 +122,40 @@ export default function InstructorLayoutClient({
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto font-poppins">
+      <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto font-poppins relative">
+        {/* Misión: Banners de Alta Jerarquía y Sticky */}
+        <div className="sticky top-0 z-[60] flex flex-col shadow-2xl">
+          {/* Alerta por falta de Verificación */}
+          {!user?.isEmailVerified && (
+            <div className="bg-amber-500/10 backdrop-blur-md border-b border-amber-500/20 px-8 py-3 flex items-center justify-between group animate-pulse-slow">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">📧</span>
+                <p className="text-[11px] font-black uppercase tracking-widest text-amber-400">
+                  Cuenta no verificada. Por favor, revisa tu bandeja de entrada para activar todas las funciones.
+                </p>
+              </div>
+              <div className="text-[9px] font-bold text-amber-500/50 uppercase italic group-hover:text-amber-500 transition-colors cursor-default">
+                Acceso Limitado
+              </div>
+            </div>
+          )}
+
+          {/* Flujo de Aprobación - Banner Post-Pago */}
+          {user?.isEmailVerified && user?.status === 'PENDING_APPROVAL' && (
+            <div className="bg-blue-500/10 backdrop-blur-md border-b border-blue-500/20 px-8 py-3 flex items-center justify-between group">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">🛡️</span>
+                <p className="text-[11px] font-black uppercase tracking-widest text-blue-400">
+                  Tu suscripción está en proceso de validación manual. Pronto tendrás acceso a todas las funciones de publicación.
+                </p>
+              </div>
+              <div className="text-[9px] font-bold text-blue-500/50 uppercase italic group-hover:text-blue-500 transition-colors cursor-default">
+                Validación en Curso
+              </div>
+            </div>
+          )}
+        </div>
+
         <header className="h-16 flex items-center justify-between px-8 border-b border-blue-500/10 bg-[#070d1a]/80 backdrop-blur sticky top-0 z-40">
           <div className="text-sm font-medium text-gray-300 uppercase tracking-widest text-[10px]">
              {isAdm ? 'Consola de Comando Maestro' : 'Panel de Instructor'}

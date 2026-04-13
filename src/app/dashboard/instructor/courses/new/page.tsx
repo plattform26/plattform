@@ -12,6 +12,17 @@ export default async function NewCoursePage() {
 
   if (!isAdmin && !isInstructor) redirect('/dashboard/student');
 
+  // Misión: Bloqueo de Ruta Preventivo
+  if (isInstructor) {
+      const user = await prisma.user.findUnique({
+          where: { id: session.userId },
+          select: { status: true }
+      });
+      if (user?.status !== 'ACTIVE') {
+          redirect('/dashboard/instructor?error=PENDING_APPROVAL');
+      }
+  }
+
   let aiEnabled = false;
   let instructors: any[] = [];
 

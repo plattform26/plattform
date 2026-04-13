@@ -50,8 +50,7 @@ export async function POST(req: Request) {
       })
     ]);
 
-    // Send Welcome Email
-    await sendWelcomeEmail(user.email, user.name);
+    // await sendWelcomeEmail(user.email, user.name);
 
     return NextResponse.json({ message: 'Email verificado con éxito' });
   } catch (error: any) {

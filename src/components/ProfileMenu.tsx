@@ -28,7 +28,13 @@ export default function ProfileMenu({ user, isCollapsed = false }: { user: User 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const initials = user?.name && user?.lastName ? `${user.name[0]}${user.lastName[0]}`.toUpperCase() : 'U';
+  const initials = (() => {
+    const n = user?.name || '';
+    const l = user?.lastName || '';
+    if (n && l) return `${n[0]}${l[0]}`.toUpperCase();
+    if (n) return n[0].toUpperCase();
+    return 'U';
+  })();
   const roleLabel = user?.role === 'STUDENT' ? 'Alumno' : user?.role === 'INSTRUCTOR' ? 'Instructor' : 'Admin';
   const profileLink = user?.role === 'STUDENT' ? '/dashboard/student/profile' : '/dashboard/instructor/profile';
 

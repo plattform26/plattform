@@ -101,6 +101,21 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       }, { status: 403 });
     }
 
+    // Misión: Hardening de Candados (Seguridad en Servidor)
+    if (session.role === 'INSTRUCTOR' && body.status === 'PUBLISHED') {
+      const instructorUser = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { status: true }
+      });
+      
+      if (instructorUser?.status !== 'ACTIVE') {
+        return NextResponse.json({ 
+          error: 'ACCION_RESTRINGIDA', 
+          message: 'Tu cuenta requiere aprobación administrativa para publicar cursos.' 
+        }, { status: 403 });
+      }
+    }
+
     const updated = await prisma.course.update({
       where: { id: params.id },
       data: {

@@ -9,7 +9,8 @@ export default async function InstructorProfile({ params }: { params: { slug: st
   const session = await getSession();
 
   try {
-    const res = await fetch(`http://localhost:3001/api/instructor/${params.slug}`, {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+    const res = await fetch(`${baseUrl}/api/instructor/${params.slug}`, {
         cache: 'no-store'
     });
 
@@ -33,6 +34,35 @@ export default async function InstructorProfile({ params }: { params: { slug: st
 
   const initials = profile.name ? profile.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) : 'IP';
   const displayName = profile.academyName || profile.name;
+
+  // Misión: Cortesía Pública para Academias en Fase No-Activa
+  if (profile.status !== 'ACTIVE') {
+    return (
+        <div className="min-h-screen bg-[#070d1a] text-white font-poppins selection:bg-cyan-500/30 overflow-x-hidden p-8 flex items-center justify-center">
+             <div className="max-w-xl w-full p-12 bg-[#0d1524]/60 backdrop-blur-xl border border-blue-500/20 rounded-[40px] text-center shadow-2xl relative overflow-hidden group">
+                <div className="absolute -top-12 -left-12 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-1000"></div>
+                <div className="relative z-10 space-y-8">
+                    <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-xl shadow-blue-500/20">
+                        🛡️
+                    </div>
+                    <div className="space-y-4">
+                        <h1 className="text-3xl font-space-grotesk font-black italic uppercase tracking-tighter leading-tight italic">
+                            Academia en <span className="text-cyan-400">Validación</span>
+                        </h1>
+                        <p className="text-gray-400 font-medium leading-relaxed italic">
+                            Esta academia se encuentra actualmente en proceso de configuración y validación por nuestro equipo de calidad.
+                        </p>
+                    </div>
+                    <div className="pt-6 border-t border-white/5">
+                        <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] mb-4">Vuelve muy pronto para explorar el catálogo</p>
+                        <Link href="/" className="px-8 py-3 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase rounded-full hover:bg-white/10 transition-all tracking-widest leading-none">Volver al Inicio</Link>
+                    </div>
+                </div>
+                <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all duration-1000"></div>
+             </div>
+        </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#070d1a] text-white font-poppins selection:bg-cyan-500/30 overflow-x-hidden">

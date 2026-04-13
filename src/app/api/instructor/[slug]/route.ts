@@ -11,7 +11,8 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
           select: {
             name: true,
             lastName: true,
-            email: true
+            email: true,
+            status: true
           }
         }
       }
@@ -82,6 +83,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
       linkedinUrl: instructorProfile.linkedinUrl,
       specialty: instructorProfile.specialty || "Instructor Certificado",
       name: `${instructorProfile.user.name} ${instructorProfile.user.lastName}`,
+      status: instructorProfile.user.status,
       courses,
       metrics: {
         globalRating: Number(globalRating.toFixed(1)),

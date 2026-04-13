@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const publicPaths = ['/', '/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/courses'];
+const publicPaths = ['/', '/login', '/register', '/auth/verify-email', '/verify-email', '/forgot-password', '/reset-password', '/courses'];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -34,11 +34,11 @@ export async function middleware(req: NextRequest) {
       const { role, hasActiveSubscription, isEmailVerified } = auth;
 
       // Misión: Blindaje de Acceso - Bloqueo de Dashboard si no está verificado
-      const isVerificationNotice = pathname === '/auth/verify-email-notice';
+      const isVerificationNotice = pathname === '/auth/verify-email';
       const isNewVerification = pathname === '/auth/new-verification';
       
       if (!isEmailVerified && !isVerificationNotice && !isNewVerification) {
-        return NextResponse.redirect(new URL('/auth/verify-email-notice', req.url));
+        return NextResponse.redirect(new URL('/auth/verify-email', req.url));
       }
 
       // 1. Redirección inteligente para la raíz '/dashboard'

@@ -37,7 +37,9 @@ export default function NewVerificationPage() {
       if (!res.ok) {
         setError(data.error || 'Algo salió mal durante la verificación.');
       } else {
-        // Misión: UI/UX - Éxito tanto en nueva verificación como en ya verificada
+        // Misión: Sincronización Real-time tras éxito
+        await fetch('/api/auth/sync', { method: 'POST' }).catch(() => null);
+
         setSuccess(data.message || '¡Email verificado correctamente!');
         
         // Redirigir automáticamente tras un breve delay

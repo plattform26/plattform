@@ -29,6 +29,7 @@ export async function GET(req: Request) {
                name: data.user.name,
                lastName: data.user.lastName,
                role: data.user.role,
+               status: data.user.status,
                email: data.user.email,
                hasActiveSubscription: data.hasActiveSubscription || false,
                academySlug: data.academySlug || ''
@@ -50,6 +51,7 @@ export async function GET(req: Request) {
         lastName: true, 
         role: true, 
         email: true,
+        status: true,
         emailVerifiedAt: true
       }
     });
@@ -82,6 +84,7 @@ export async function GET(req: Request) {
       name: user.name,
       lastName: user.lastName,
       role: user.role, // Primer nivel para el middleware
+      status: user.status,
       email: user.email,
       isEmailVerified: !!user.emailVerifiedAt,
       hasActiveSubscription, // Requerido por el middleware

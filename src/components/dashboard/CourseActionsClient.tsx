@@ -11,9 +11,10 @@ interface CourseActionsProps {
   enrollmentCount: number;
   role: 'ADMIN' | 'INSTRUCTOR';
   planName?: string;
+  instructorStatus?: string;
 }
 
-export default function CourseActionsClient({ courseId, status, enrollmentCount, role, planName }: CourseActionsProps) {
+export default function CourseActionsClient({ courseId, status, enrollmentCount, role, planName, instructorStatus }: CourseActionsProps) {
   const [loading, setLoading] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -27,6 +28,11 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
   const handleAction = async (action: 'hibernate' | 'duplicate' | 'delete' | 'publish') => {
     if (loading) return;
     
+    if (action === 'publish' && instructorStatus !== 'ACTIVE') {
+      alert('🔒 Acción bloqueada: Tu cuenta requiere aprobación administrativa para publicar cursos.');
+      return;
+    }
+
     if (action === 'duplicate' && isDuplicationRestricted) {
       setShowUpgradeModal(true);
       return;
@@ -131,14 +137,27 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
         >
           ❄️ Hibernar
         </button>
-      ) : status === 'HIBERNATED' ? (
-        <button
-          onClick={() => handleAction('publish')}
-          disabled={loading}
-          className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-green-500/20 hover:bg-green-500/10 text-green-400/80 transition-all uppercase"
-        >
-          🚀 Publicar
-        </button>
+      ) : status === 'HIBERNATED' || status === 'DRAFT' ? (
+        <div className="relative group">
+          <button
+            onClick={() => handleAction('publish')}
+            disabled={loading || instructorStatus === 'PENDING_APPROVAL'}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase flex items-center gap-1.5 ${
+                instructorStatus === 'PENDING_APPROVAL'
+                ? 'border-gray-500/20 bg-gray-500/5 text-gray-500 cursor-not-allowed opacity-50'
+                : 'border-green-500/20 hover:bg-green-500/10 text-green-400/80'
+            }`}
+          >
+            {instructorStatus === 'PENDING_APPROVAL' && <span>🔒</span>}
+            🚀 Publicar
+          </button>
+          
+          {instructorStatus === 'PENDING_APPROVAL' && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-black/95 border border-white/10 rounded-xl text-[9px] text-yellow-400 font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
+                Disponible tras la aprobación del administrador
+            </div>
+          )}
+        </div>
       ) : null}
 
       {/* Botón Duplicar con Restricción Visual */}

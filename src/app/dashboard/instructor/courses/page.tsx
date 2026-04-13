@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { serialize } from '@/lib/utils';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
 import StarRating from '@/components/StarRating';
+import NewCourseButton from '@/components/dashboard/NewCourseButton';
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   PUBLISHED: { label: 'PUBLICADO', cls: 'text-green-400 bg-green-400/10 border border-green-400/20' },
@@ -16,6 +17,11 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
 export default async function InstructorCoursesPage() {
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { status: true }
+  });
 
   const instructorProfile = await prisma.instructorProfile.findUnique({
     where: { userId: session.userId },
@@ -53,12 +59,7 @@ export default async function InstructorCoursesPage() {
           <h1 className="text-2xl font-space-grotesk font-bold text-white">Mis cursos 📚</h1>
           <p className="text-gray-400 text-sm mt-1">{courses.length} curso{courses.length !== 1 ? 's' : ''} creado{courses.length !== 1 ? 's' : ''}</p>
         </div>
-        <Link
-          href="/dashboard/instructor/courses/new"
-          className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 hover:scale-105 transition-transform"
-        >
-          + Nuevo curso
-        </Link>
+        <NewCourseButton status={user?.status} />
       </div>
 
       <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl overflow-hidden">
@@ -126,6 +127,7 @@ export default async function InstructorCoursesPage() {
                         enrollmentCount={c._count.enrollments} 
                         role="INSTRUCTOR" 
                         planName={serialize(activePlan)}
+                        instructorStatus={user?.status}
                       />
                     </td>
                   </tr>

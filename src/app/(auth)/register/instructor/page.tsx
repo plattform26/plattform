@@ -12,7 +12,6 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
     email: '',
     password: '',
     role: 'INSTRUCTOR',
-    plan: 'STARTER',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -112,6 +111,7 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
               />
             </div>
           </div>
+          
 
           <div className="space-y-2">
             <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Correo Electrónico</label>
@@ -155,26 +155,12 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
             </div>
           </div>
 
-          <div className="p-6 bg-gradient-to-br from-[#0d1524] to-[#1e2a44] border border-cyan-500/20 rounded-2xl">
-            <label className="block font-bold text-cyan-400 uppercase tracking-widest text-[10px] mb-3">Suscripción SaaS Plattform</label>
-            <select
-              className="w-full bg-[#070d1a] border border-cyan-500/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 cursor-pointer transition-all"
-              value={formData.plan}
-              onChange={(e) => setFormData({...formData, plan: e.target.value})}
-            >
-              <option value="STARTER">Starter ($199 MXN/mes)</option>
-              <option value="GROWTH">Growth ($299 MXN/mes)</option>
-              <option value="SCALE">Scale ($999 MXN/mes)</option>
-            </select>
-            <p className="text-[10px] text-gray-500 mt-4 leading-normal italic">Al registrarte serás redirigido a Stripe para completar el pago de tu plan elegido.</p>
-          </div>
-
           <button
             type="submit"
             disabled={isLoading}
             className="w-full flex justify-center py-4 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-bold font-space-grotesk shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all disabled:opacity-50 mt-4"
           >
-            {isLoading ? 'Conectando con Stripe...' : 'Proceder al pago →'}
+            {isLoading ? 'Creando cuenta...' : 'Crear mi academia →'}
           </button>
         </form>
 

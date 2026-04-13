@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
 import StarRating from '@/components/StarRating';
+import NewCourseButton from '@/components/dashboard/NewCourseButton';
 
 export default async function InstructorDashboardPage() {
   const session = await getSession();
@@ -203,10 +204,10 @@ export default async function InstructorDashboardPage() {
         </div>
       </div>
 
-      <div className="bg-[#152035] border border-blue-500/20 rounded-2xl overflow-hidden mb-10">
+      <div className="bg-[#152035] border border-blue-500/20 rounded-2xl mb-10">
         <div className="p-5 border-b border-blue-500/10 flex items-center justify-between">
           <h3 className="font-semibold text-white">Cursos Recientes</h3>
-          <Link href="/dashboard/instructor/courses/new" className="px-4 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg text-xs font-bold shadow-lg hover:scale-105 transition-transform">+ Nuevo Curso</Link>
+          <NewCourseButton status={profile.user.status} />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm border-collapse">
@@ -259,6 +260,7 @@ export default async function InstructorDashboardPage() {
                       enrollmentCount={c._count.enrollments} 
                       role="INSTRUCTOR" 
                       planName={activeSub?.plan.name}
+                      instructorStatus={profile.user.status}
                     />
                   </td>
                 </tr>
