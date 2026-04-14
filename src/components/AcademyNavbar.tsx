@@ -17,7 +17,7 @@ export default function AcademyNavbar({ profile, session }: AcademyNavbarProps) 
     : '/dashboard/instructor';
 
   return (
-    <nav className="flex items-center justify-between px-6 md:px-12 h-16 bg-[#070d1a]/60 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
+    <nav className="flex items-center justify-between px-4 sm:px-10 h-16 bg-[#070d1a]/60 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
       {/* LOGO & BRANDING */}
       <Link href="/" className="flex items-center gap-2.5 group">
         {profile.logoUrl ? (
@@ -25,7 +25,7 @@ export default function AcademyNavbar({ profile, session }: AcademyNavbarProps) 
         ) : (
           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-[9px] font-black italic">P</div>
         )}
-        <span className="font-space-grotesk font-black text-lg tracking-tighter bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity uppercase text-center md:text-left">
+        <span className="font-space-grotesk font-black text-base sm:text-lg tracking-tighter bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity uppercase text-center md:text-left">
           {profile.academyName || 'PLATTFORM'}
         </span>
       </Link>
@@ -40,10 +40,10 @@ export default function AcademyNavbar({ profile, session }: AcademyNavbarProps) 
             Regresar al Dashboard 🏠
           </Link>
         ) : (
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link 
                 href="/" 
-                className="hidden md:block text-[10px] font-black text-gray-400 hover:text-white transition-colors uppercase tracking-[0.2em]"
+                className="hidden md:block text-[10px] font-black text-slate-300 hover:text-white transition-colors uppercase tracking-[0.2em]"
             >
                 Explorar plataformas 🚀
             </Link>

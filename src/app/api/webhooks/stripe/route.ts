@@ -144,22 +144,29 @@ export async function POST(req: Request) {
                   }
                 });
                 console.log(`[WEBHOOK] Uso de cupón registrado: ${couponCode} para User:${userId}`);
+                
+                // Guardar info para los correos
+                (session as any)._discountInfo = {
+                  code: coupon.code,
+                  percent: coupon.discountPercent
+                };
               }
             }
           });
 
           const userRecord = await prisma.user.findUnique({ where: { id: userId } });
           const instructorUser = await prisma.user.findUnique({ where: { id: course.instructorId } });
+          const discountInfo = (session as any)._discountInfo;
 
           if (userRecord) {
-            await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount);
+            await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount, discountInfo);
           }
           if (instructorUser) {
             await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title);
           }
 
           // Misión: Blindaje de Negocio - Notificar al admin (Diego)
-          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount);
+          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo);
 
           console.log(`✅ SUCCESS: Pago procesado para User:${userId} en Course:${courseId}`);
         }

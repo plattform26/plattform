@@ -132,7 +132,38 @@ export async function POST(req: Request) {
           }
         });
 
-        // 2. Notificación al Instructor
+        // 2. Crear Registro de Transacción (Costo 0)
+        await tx.transaction.create({
+          data: {
+            userId: session.userId,
+            courseId: courseId,
+            instructorId: course.instructorId,
+            paymentType: 'COURSE_PURCHASE',
+            grossAmount: 0,
+            netAmountToInstructor: 0,
+            platformCommissionAmount: 0,
+            paymentStatus: 'SUCCESS',
+            paymentProvider: 'STRIPE', // Marcamos como Stripe para consistencia aunque sea bypass
+            stripeSessionId: `free_${Date.now()}`,
+          }
+        });
+
+        // 3. Registrar uso de Cupón si existe
+        if (couponCode) {
+          const coupon = await tx.coupon.findUnique({
+            where: { code: couponCode.toUpperCase().trim() }
+          });
+          if (coupon) {
+            await tx.couponUsage.create({
+              data: {
+                userId: session.userId,
+                couponId: coupon.id
+              }
+            });
+          }
+        }
+
+        // 4. Notificación al Instructor
         await tx.notification.create({
           data: {
             userId: course.instructorId,
@@ -145,8 +176,9 @@ export async function POST(req: Request) {
         });
       });
 
-      // Redirigir directamente al éxito
-      const redirectUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '') + `/checkout/success?session_id=free_${Date.now()}`;
+      // Redirigir directamente al éxito pasando el ID del curso para reconexión visual en el éxito
+      const baseUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
+      const redirectUrl = `${baseUrl}/checkout/success?session_id=free&courseId=${courseId}`;
       return NextResponse.json({ url: redirectUrl });
     }
 

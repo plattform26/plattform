@@ -210,7 +210,7 @@ export async function sendFinalExamPassNoticeToAdmin(studentName: string, course
   });
 }
 
-export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number, baseUrl?: string) {
+export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number, discountInfo?: { code: string, percent: number }, baseUrl?: string) {
   const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
@@ -222,6 +222,7 @@ export async function sendSaleNotificationToAdmin(studentName: string, courseTit
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 12px; margin: 24px 0;">
         <p><strong>Curso:</strong> ${courseTitle}</p>
         <p><strong>Monto:</strong> $${amount} MXN</p>
+        ${discountInfo ? `<p><strong>Descuento aplicado:</strong> ${discountInfo.code} (-${discountInfo.percent}%)</p>` : ''}
       </div>
       <a href="${url}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
     `)
@@ -416,7 +417,7 @@ export async function sendPasswordChangeNotice(email: string) {
   });
 }
 
-export async function sendPaymentConfirmationEmail(email: string, name: string, courseTitle: string, amount: number, baseUrl?: string) {
+export async function sendPaymentConfirmationEmail(email: string, name: string, courseTitle: string, amount: number, discountInfo?: { code: string, percent: number }, baseUrl?: string) {
   const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
@@ -425,7 +426,10 @@ export async function sendPaymentConfirmationEmail(email: string, name: string, 
     html: getBaseTemplate(`
       <h1>¡Ya tienes acceso, ${name}!</h1>
       <p>Tu inscripción a <strong>${courseTitle}</strong> ha sido exitosa.</p>
-      <p>Inversión: $${amount} MXN</p>
+      <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Inversión:</strong> $${amount} MXN</p>
+        ${discountInfo ? `<p style="color: #059669; font-weight: 600;">Descuento aplicado: ${discountInfo.code} (-${discountInfo.percent}%)</p>` : ''}
+      </div>
       <a href="${url}/dashboard/student/courses" class="button">Empezar a aprender</a>
     `)
   });

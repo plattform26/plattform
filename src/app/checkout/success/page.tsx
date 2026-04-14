@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { getSession } from '@/lib/auth';
 
 export default async function SuccessPage({ searchParams }: { searchParams: { session_id?: string } }) {
   if (!searchParams.session_id) {
@@ -9,8 +10,29 @@ export default async function SuccessPage({ searchParams }: { searchParams: { se
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(searchParams.session_id);
-    const userId = session.metadata?.userId;
+    let session: any = null;
+    let userId = '';
+
+    if (searchParams.session_id === 'free') {
+      // Bypass Stripe para inscripciones gratuitas
+      const authSession = await getSession();
+      if (!authSession) redirect('/');
+      
+      userId = authSession.userId;
+      session = {
+        id: 'free',
+        metadata: {
+          userId,
+          courseId: searchParams.courseId,
+          paymentType: 'COURSE_PURCHASE'
+        },
+        payment_status: 'paid'
+      };
+    } else {
+      session = await stripe.checkout.sessions.retrieve(searchParams.session_id);
+      userId = session.metadata?.userId;
+    }
+
     const paymentType = session.metadata?.paymentType;
 
     if (session.payment_status !== 'paid' || !userId) {

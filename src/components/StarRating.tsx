@@ -81,7 +81,7 @@ export default function StarRating({
         {[1, 2, 3, 4, 5].map(index => renderStar(index))}
       </div>
       {showNumber && (
-        <span className="ml-2 text-sm font-bold text-gray-300">
+        <span className="ml-2 text-sm font-bold text-slate-200">
           {value.toFixed(1)}
         </span>
       )}

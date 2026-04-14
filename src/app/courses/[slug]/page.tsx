@@ -40,7 +40,7 @@ export default async function CourseDetail({ params }: { params: { slug: string 
   return (
     <div className="min-h-screen bg-[#070d1a] text-white">
       {/* NAV SIMPLE */}
-      <nav className="flex items-center justify-between px-10 h-16 bg-[#0a1f44] border-b border-blue-500/20 sticky top-0 z-50">
+      <nav className="flex items-center justify-between px-4 sm:px-10 h-16 bg-[#0a1f44] border-b border-blue-500/20 sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2 font-space-grotesk font-bold text-lg tracking-wider">
            <span className="bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">PLATTFORM</span>
         </Link>
@@ -58,7 +58,7 @@ export default async function CourseDetail({ params }: { params: { slug: string 
       </nav>
 
       {/* PORTADA DEL CURSO */}
-      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-10 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
         
         <div className="lg:col-span-2">
           {/* BADGE */}
@@ -69,23 +69,44 @@ export default async function CourseDetail({ params }: { params: { slug: string 
           <h1 className="font-space-grotesk text-4xl md:text-5xl font-extrabold leading-tight mb-6">
             {course.title}
           </h1>
-          <p className="text-gray-300 text-lg leading-relaxed mb-8">
+
+          {/* MOBILE PRICE & CTA (Visible only on < lg) */}
+          <div className="lg:hidden bg-[#152035] border border-blue-500/20 rounded-2xl p-6 mb-8">
+             <div className="flex items-center justify-between mb-4">
+                <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                  ${course.price} <span className="text-xs text-slate-400 font-normal">MXN</span>
+                </div>
+                <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest bg-cyan-400/10 px-2 py-1 rounded border border-cyan-400/20">Acceso Inmediato</div>
+             </div>
+             <Link
+                href={isEnrolled ? `/dashboard/student/learn/${course.id}` : checkoutUrl}
+                className={`w-full py-4 text-center text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                  isEnrolled 
+                  ? 'bg-green-600 text-white shadow-lg shadow-green-900/20' 
+                  : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-blue-500/30'
+                }`}
+              >
+                {isEnrolled ? 'Ir al aula →' : `Comprar por $${course.price} →`}
+              </Link>
+          </div>
+
+          <p className="text-slate-300 text-lg leading-relaxed mb-8">
             {course.description}
           </p>
 
-          <div className="flex flex-wrap items-center gap-6 mb-12 text-sm text-gray-400 border-b border-blue-500/20 pb-8">
+          <div className="flex flex-wrap items-center gap-6 mb-12 text-sm text-slate-400 border-b border-blue-500/20 pb-8">
             <div className="flex items-center gap-2">
               <span className="text-yellow-500 text-lg">★★★★★</span>
               <span className="font-semibold text-white">{course.stats.averageRating.toFixed(1)}</span>
-              <span>({course.stats.reviewCount} reseñas)</span>
+              <span className="text-slate-400">({course.stats.reviewCount} reseñas)</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xl">👥</span>
-              <span className="font-semibold text-white">{course.stats.studentCount}</span> alumnos
+              <span className="font-semibold text-white">{course.stats.studentCount}</span> <span className="text-slate-400">alumnos</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xl">⏱</span>
-              <span className="font-semibold text-white">{course.durationHours}</span> horas
+              <span className="font-semibold text-white">{course.durationHours}</span> <span className="text-slate-400">horas</span>
             </div>
           </div>
 
@@ -93,15 +114,15 @@ export default async function CourseDetail({ params }: { params: { slug: string 
           <div className="bg-[#152035] border border-blue-500/20 rounded-2xl overflow-hidden mb-12">
             {course.modules.map((mod: any, idx: number) => (
               <div key={mod.id} className={`border-b border-blue-500/10 ${idx === course.modules.length - 1 ? 'border-b-0' : ''}`}>
-                <div className="px-6 py-4 bg-[#1a2a45] font-semibold text-gray-200">
+                <div className="px-6 py-4 bg-[#1a2a45] font-semibold text-slate-200">
                   <span className="text-cyan-400 text-xs font-bold uppercase tracking-wider block mb-1">Módulo {mod.orderIndex}</span>
                   {mod.title}
                 </div>
                 <div className="bg-[#0f1829] flex flex-col">
                   {mod.lessons.map((lesson: any) => (
                     <div key={lesson.id} className="flex items-center gap-3 px-6 py-3 border-b border-blue-500/5 last:border-0 hover:bg-blue-500/5 transition-colors">
-                      <span className="text-gray-500 text-xs w-4">1.{lesson.orderIndex}</span>
-                      <span className="text-gray-300 text-sm flex-1">{lesson.title}</span>
+                      <span className="text-slate-500 text-xs w-4">1.{lesson.orderIndex}</span>
+                      <span className="text-slate-300 text-sm flex-1">{lesson.title}</span>
                       {lesson.isPreview ? (
                         <span className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Vista Previa</span>
                       ) : (
@@ -138,10 +159,10 @@ export default async function CourseDetail({ params }: { params: { slug: string 
                <div className="absolute bottom-2 left-2 text-[10px] bg-black/50 px-2 py-1 rounded text-cyan-300 font-bold uppercase tracking-wide">Video demo</div>
             </div>
             
-            <div className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-1">
-              ${course.price}
-            </div>
-            <div className="text-xs text-gray-400 mb-6">Precios en MXN, impuestos incluidos.</div>
+              <div className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-1">
+                ${course.price}
+              </div>
+              <div className="text-xs text-slate-400 mb-6">Precios en MXN, impuestos incluidos.</div>
 
             {isEnrolled ? (
               <Link
@@ -162,8 +183,8 @@ export default async function CourseDetail({ params }: { params: { slug: string 
 
             <hr className="border-blue-500/10 my-6" />
             
-            <div className="text-sm font-semibold text-gray-200 mb-4">Este curso incluye:</div>
-            <ul className="space-y-3 text-sm text-gray-400">
+            <div className="text-sm font-semibold text-slate-200 mb-4">Este curso incluye:</div>
+            <ul className="space-y-3 text-sm text-slate-400">
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">🎥</span> {course.durationHours} horas de video</li>
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">📄</span> {course.modules.reduce((acc: number, mod: any) => acc + mod.lessons.length, 0)} recursos descargables</li>
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">♾️</span> Acceso de por vida</li>

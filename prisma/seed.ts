@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +14,6 @@ async function main() {
     skipDuplicates: true,
   })
 
-  const bcrypt = require('bcryptjs');
   const passwordHash = await bcrypt.hash('Plattform2025', 12);
 
   // Usuario admin inicial
@@ -104,7 +104,7 @@ async function main() {
       title: 'Estrategia Empresarial en la Era Digital',
       slug: 'estrategia-empresarial-era-digital',
       description: 'Aprende a escalar tu negocio usando tecnología y herramientas digitales modernas. De 0 a 100.',
-      category: 'BUSINESS',
+      category: 'BUSINESS_ENTREPRENEURSHIP',
       level: 'INTERMEDIATE',
       price: 1499,
       status: 'PUBLISHED',
@@ -128,7 +128,7 @@ async function main() {
       title: 'Introducción al Uso de Claude — IA Práctica',
       slug: 'introduccion-claude-ia',
       description: 'Domina los LLMs en tu día a día, ahorra 10hrs a la semana.',
-      category: 'TECHNOLOGY',
+      category: 'TECH_INNOVATION',
       level: 'BEGINNER',
       price: 899,
       status: 'PUBLISHED',
@@ -271,7 +271,7 @@ async function main() {
       title: 'Finanzas Personales e Inversión desde Cero',
       slug: 'finanzas-personales',
       description: 'Controla tu dinero, crea presupuesto y empieza a invertir en ETFs.',
-      category: 'FINANCE',
+      category: 'FINANCE_ECONOMY',
       level: 'BEGINNER',
       price: 799,
       status: 'PUBLISHED',
@@ -283,14 +283,13 @@ async function main() {
   // Cupones de prueba
   if (c2) {
     await prisma.coupon.upsert({
-      where: { courseId_code: { courseId: c2.id, code: 'PROMO20' } },
+      where: { code: 'PROMO20' },
       update: {},
       create: {
         courseId: c2.id,
         code: 'PROMO20',
         discountPercent: 20,
-        maxUses: 100,
-        currentUses: 0,
+        usageLimit: 100,
       }
     });
   }
@@ -304,7 +303,7 @@ async function main() {
       title: 'Masterclass: Arquitectura SaaS con Next.js',
       slug: 'masterclass-saas-admin',
       description: 'Como administrador, enseño las tripas de Plattform.',
-      category: 'TECHNOLOGY',
+      category: 'TECH_INNOVATION',
       level: 'ADVANCED',
       price: 2499,
       status: 'PUBLISHED',

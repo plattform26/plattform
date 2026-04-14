@@ -92,7 +92,7 @@ export async function POST(req: Request) {
         title,
         slug,
         description: description || '',
-        category: category || 'BUSINESS',
+        category: category || 'OTHER',
         level: level || 'BEGINNER',
         price: Number(price),
         status: 'DRAFT',
