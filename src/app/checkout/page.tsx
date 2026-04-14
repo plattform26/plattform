@@ -42,10 +42,22 @@ function CheckoutContent() {
     setError('');
     
     try {
-      if (couponCode.toUpperCase() === 'PROMO20' && courseId) {
-        setAppliedCoupon({ code: 'PROMO20', discountPercent: 20 });
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: couponCode.toUpperCase().trim(),
+          courseId: courseId
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Cupón no válido');
+        setAppliedCoupon(null);
       } else {
-        setError('Cupón no válido o no aplicable a este curso');
+        setAppliedCoupon(data); // Contiene id, code, discountPercent, stripeCouponId
       }
     } catch (err) {
       setError('Error al validar el cupón');

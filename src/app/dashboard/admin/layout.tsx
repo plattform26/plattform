@@ -17,6 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { label: 'Transacciones', href: '/dashboard/admin/transactions', icon: '💸' },
     { label: 'Rentas', href: '/dashboard/admin/revenue/rent', icon: '🏢' },
     { label: 'Comisiones', href: '/dashboard/admin/revenue/commissions', icon: '💰' },
+    { label: 'Cupones', href: '/dashboard/admin/coupons', icon: '🎟️' },
     { label: 'Inscripción Manual', href: '/dashboard/admin/enrollments/manual', icon: '✍️' },
   ];
 

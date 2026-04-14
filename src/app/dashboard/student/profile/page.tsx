@@ -157,6 +157,8 @@ export default function StudentProfilePage({ impersonateId, isAdminMode = false 
         <PasswordChangeModal 
             onClose={() => setShowPasswordModal(false)}
             onSuccess={(msg) => setMessage({ type: 'success', text: msg })}
+            isAdminMode={isAdminMode}
+            targetUserId={impersonateId}
         />
       )}
     </div>

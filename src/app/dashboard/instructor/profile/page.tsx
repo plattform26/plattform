@@ -319,6 +319,8 @@ export default function ProfilePage({ impersonateId, isAdminMode = false }: { im
           <PasswordChangeModal 
             onClose={() => setShowPasswordModal(false)}
             onSuccess={(msg) => showMsg(msg)}
+            isAdminMode={isAdminMode}
+            targetUserId={impersonateId}
           />
       )}
     </div>

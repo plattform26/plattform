@@ -5,9 +5,11 @@ import { useState } from 'react';
 interface PasswordChangeModalProps {
   onClose: () => void;
   onSuccess: (msg: string) => void;
+  isAdminMode?: boolean;
+  targetUserId?: string;
 }
 
-export default function PasswordChangeModal({ onClose, onSuccess }: PasswordChangeModalProps) {
+export default function PasswordChangeModal({ onClose, onSuccess, isAdminMode = false, targetUserId }: PasswordChangeModalProps) {
   const [form, setForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -24,7 +26,8 @@ export default function PasswordChangeModal({ onClose, onSuccess }: PasswordChan
 
   const isMatching = form.newPassword === form.confirmPassword && form.newPassword !== '';
   const isValidLength = form.newPassword.length >= 8;
-  const canSubmit = isMatching && isValidLength && form.currentPassword !== '' && !loading;
+  // En modo admin no se requiere la contraseña actual
+  const canSubmit = isMatching && isValidLength && (isAdminMode || form.currentPassword !== '') && !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,13 +37,18 @@ export default function PasswordChangeModal({ onClose, onSuccess }: PasswordChan
     setError(null);
 
     try {
-      const res = await fetch('/api/auth/change-password', {
-        method: 'PATCH',
+      // Endpoint dinámico: Admin vs Usuario Normal
+      const endpoint = isAdminMode ? `/api/admin/users/${targetUserId}` : '/api/auth/change-password';
+      const method = 'PATCH';
+      
+      const payload = isAdminMode 
+        ? { password: form.newPassword }
+        : { currentPassword: form.currentPassword, newPassword: form.newPassword };
+
+      const res = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentPassword: form.currentPassword,
-          newPassword: form.newPassword,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -49,7 +57,7 @@ export default function PasswordChangeModal({ onClose, onSuccess }: PasswordChan
         throw new Error(data.error || 'No se pudo cambiar la contraseña');
       }
 
-      onSuccess('✓ Contraseña actualizada correctamente');
+      onSuccess(isAdminMode ? '✓ Contraseña de alumno actualizada por Admin' : '✓ Contraseña actualizada correctamente');
       setTimeout(onClose, 2000);
     } catch (err: any) {
       setError(err.message);
@@ -84,26 +92,28 @@ export default function PasswordChangeModal({ onClose, onSuccess }: PasswordChan
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* CURRENT PASSWORD (Mirror Login Structure) */}
-            <div className="space-y-2 text-sm">
-              <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Contraseña Actual</label>
-              <div className="relative">
-                <input 
-                  type={showCurrent ? "text" : "password"}
-                  value={form.currentPassword}
-                  onChange={e => setForm({ ...form, currentPassword: e.target.value })}
-                  className="block w-full px-4 pr-11 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
-                  placeholder="••••••••"
-                  required
-                />
-                <button 
-                  type="button"
-                  onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyan-400 transition-colors"
-                >
-                  {showCurrent ? "👁️" : "👁️‍🗨️"}
-                </button>
+            {!isAdminMode && (
+              <div className="space-y-2 text-sm">
+                <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Contraseña Actual</label>
+                <div className="relative">
+                  <input 
+                    type={showCurrent ? "text" : "password"}
+                    value={form.currentPassword}
+                    onChange={e => setForm({ ...form, currentPassword: e.target.value })}
+                    className="block w-full px-4 pr-11 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyan-400 transition-colors"
+                  >
+                    {showCurrent ? "👁️" : "👁️‍🗨️"}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* NEW PASSWORD (Mirror Login Structure) */}
             <div className="space-y-2 text-sm">

@@ -69,37 +69,52 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Ya estás inscrito en este curso' }, { status: 400 });
     }
 
-    // 3. Lógica de Cupones
-    let discountAmount = 0;
+    // 3. Lógica de Cupones Inteligente (Dual: Global o por Curso)
+    let stripeCouponId = null;
     let finalPrice = Number(course.price);
 
     if (couponCode) {
+      const normalizedCode = couponCode.toUpperCase().trim();
       const coupon = await prisma.coupon.findUnique({
-        where: {
-          courseId_code: {
-            courseId: courseId,
-            code: couponCode.toUpperCase(),
-          },
-        },
+        where: { code: normalizedCode },
       });
 
-      if (!coupon) {
-        return NextResponse.json({ error: 'Cupón no válido para este curso' }, { status: 400 });
+      if (!coupon || !coupon.isActive) {
+        return NextResponse.json({ error: 'Cupón no válido o inactivo' }, { status: 400 });
       }
 
-      // Validar expiración (si existe)
-      if (coupon.expiresAt && new Date() > coupon.expiresAt) {
+      // Validar Restricción por Curso
+      if (coupon.courseId && coupon.courseId !== courseId) {
+        return NextResponse.json({ error: 'Este cupón no aplica para este curso' }, { status: 400 });
+      }
+
+      // Validar expiración
+      if (coupon.expirationDate && new Date() > new Date(coupon.expirationDate)) {
         return NextResponse.json({ error: 'El cupón ha expirado' }, { status: 400 });
       }
 
-      // Validar usos
-      if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) {
-        return NextResponse.json({ error: 'El cupón ha alcanzado el límite de usos' }, { status: 400 });
+      // Validar uso previo por el usuario
+      const userUsage = await prisma.couponUsage.findFirst({
+        where: { userId: session.userId, couponId: coupon.id }
+      });
+
+      if (userUsage) {
+        return NextResponse.json({ error: 'Ya has utilizado este cupón' }, { status: 400 });
       }
 
-      // Aplicar descuento
-      discountAmount = (finalPrice * coupon.discountPercent) / 100;
+      // Validar límite de usos global
+      const usageCount = await prisma.couponUsage.count({
+        where: { couponId: coupon.id }
+      });
+
+      if (coupon.usageLimit && usageCount >= coupon.usageLimit) {
+        return NextResponse.json({ error: 'Límite de usos alcanzado para este cupón' }, { status: 400 });
+      }
+
+      // Aplicar descuento para lógica interna (Costo 0)
+      const discountAmount = (finalPrice * coupon.discountPercent) / 100;
       finalPrice = finalPrice - discountAmount;
+      stripeCouponId = coupon.stripeCouponId;
     }
 
     // 4. Manejo de Inscripción Gratuita (Precio 0)
@@ -135,7 +150,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: redirectUrl });
     }
 
-    // 5. Asegurar Existencia de Producto y Precio en Stripe
+    // 5. Asegurar Existencia de Producto y Precio en Stripe (Usando Precio ORIGINAL)
     let stripePriceId = (course as any).stripePriceId;
 
     if (!stripePriceId) {
@@ -151,7 +166,7 @@ export async function POST(req: Request) {
 
       const price = await stripe.prices.create({
         product: product.id,
-        unit_amount: Math.round(finalPrice * 100),
+        unit_amount: Math.round(Number(course.price) * 100), // Precio Base Original
         currency: 'mxn',
         metadata: { courseId: course.id }
       });
@@ -196,6 +211,7 @@ export async function POST(req: Request) {
       customer_email: session.email,
       success_url,
       cancel_url,
+      discounts: stripeCouponId ? [{ coupon: stripeCouponId }] : undefined,
       metadata: {
         courseId: courseId,
         userId: session.userId,

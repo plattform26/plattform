@@ -37,6 +37,7 @@ model User {
   sessions                  Session[]
   transactions              Transaction[]           @relation("StudentTransactions")
   subscriptionRecords       SubscriptionRecord[]
+  couponUsages              CouponUsage[]
   isCourtesy                Boolean                 @default(false) @map("is_courtesy")
   courtesyPlanId            String?                 @map("courtesy_plan_id")
   courtesyPlan              PlatformPlan?           @relation("UserCourtesyPlan", fields: [courtesyPlanId], references: [id])
@@ -442,17 +443,29 @@ model CourseRating {
 
 model Coupon {
   id              String    @id @default(uuid())
-  courseId        String    @map("course_id")
-  code            String
-  discountPercent Int       @map("discount_percent")
-  expiresAt       DateTime? @map("expires_at")
-  maxUses         Int?      @map("max_uses")
-  currentUses     Int       @default(0) @map("current_uses")
+  code            String    @unique
+  discountPercent Float     @map("discount_percent")
+  isActive        Boolean   @default(true) @map("is_active")
+  usageLimit      Int?      @map("usage_limit")
+  expirationDate  DateTime? @map("expiration_date")
+  stripeCouponId  String?   @map("stripe_coupon_id")
+  courseId        String?   @map("course_id")
   createdAt       DateTime  @default(now()) @map("created_at")
-  course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course          Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  usages          CouponUsage[]
 
-  @@unique([courseId, code])
   @@map("coupons")
+}
+
+model CouponUsage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  couponId  String   @map("coupon_id")
+  usedAt    DateTime @default(now()) @map("used_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+
+  @@map("coupon_usages")
 }
 
 model AIGenerationJob {

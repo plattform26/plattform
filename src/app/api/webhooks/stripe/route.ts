@@ -131,10 +131,20 @@ export async function POST(req: Request) {
             }
 
             if (couponCode) {
-              await tx.coupon.update({
-                where: { courseId_code: { courseId, code: couponCode.toUpperCase() } },
-                data: { currentUses: { increment: 1 } }
-              }).catch(() => null);
+              const coupon = await tx.coupon.findUnique({
+                where: { code: couponCode.toUpperCase().trim() }
+              });
+
+              if (coupon) {
+                // Registrar uso individual para seguimiento y prevención de duplicados
+                await tx.couponUsage.create({
+                  data: {
+                    userId: userId,
+                    couponId: coupon.id
+                  }
+                });
+                console.log(`[WEBHOOK] Uso de cupón registrado: ${couponCode} para User:${userId}`);
+              }
             }
           });
 
