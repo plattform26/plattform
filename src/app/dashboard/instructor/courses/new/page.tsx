@@ -12,18 +12,23 @@ export default async function NewCoursePage() {
 
   if (!isAdmin && !isInstructor) redirect('/dashboard/student');
 
-  // Misión: Bloqueo de Ruta Preventivo
+  // Misión: Bloqueo de Ruta Preventivo (Bypassed if Courtesy)
   if (isInstructor) {
       const user = await prisma.user.findUnique({
           where: { id: session.userId },
-          select: { status: true }
+          select: { status: true, isCourtesy: true, courtesyPlanId: true }
       });
-      if (user?.status !== 'ACTIVE') {
+      if (user?.status !== 'ACTIVE' && !user?.isCourtesy) {
           redirect('/dashboard/instructor?error=PENDING_APPROVAL');
+      }
+
+      // If courtesy, fetch the plan to check for AI features
+      if (user?.isCourtesy && user.courtesyPlanId) {
+          const courtesyPlan = await prisma.platformPlan.findUnique({ where: { id: user.courtesyPlanId } });
+          if (courtesyPlan?.aiEnabled) aiEnabled = true;
       }
   }
 
-  let aiEnabled = false;
   let instructors: any[] = [];
 
   if (isAdmin) {
@@ -37,7 +42,7 @@ export default async function NewCoursePage() {
           name: p.academyName || `${p.user.name} ${p.user.lastName}`
       }));
   } else {
-      // Instructor check
+      // Instructor check (Standard Stripe Sub)
       const sub = await prisma.instructorSubscription.findFirst({
         where: { 
           instructor: { userId: session.userId },

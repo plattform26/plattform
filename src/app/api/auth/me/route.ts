@@ -52,7 +52,9 @@ export async function GET(req: Request) {
         role: true, 
         email: true,
         status: true,
-        emailVerifiedAt: true
+        emailVerifiedAt: true,
+        isCourtesy: true,
+        courtesyPlanId: true
       }
     });
 
@@ -74,7 +76,7 @@ export async function GET(req: Request) {
           } 
         }
       });
-      hasActiveSubscription = (profile?.subscriptions?.length || 0) > 0;
+      hasActiveSubscription = (profile?.subscriptions?.length || 0) > 0 || user.isCourtesy;
       academySlug = profile?.slug || '';
     }
 
@@ -88,6 +90,8 @@ export async function GET(req: Request) {
       email: user.email,
       isEmailVerified: !!user.emailVerifiedAt,
       hasActiveSubscription, // Requerido por el middleware
+      isCourtesy: user.isCourtesy,
+      courtesyPlanId: user.courtesyPlanId,
       academySlug
     });
   } catch (error) {

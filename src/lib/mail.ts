@@ -11,6 +11,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const from = process.env.EMAIL_FROM || 'Plattform <soporte@plattform.mx>';
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
 const adminEmail = process.env.ADMIN_EMAIL || 'soporte@plattform.mx';
+
+// Helper to resolve URL with priority: provided baseUrl > Env Var
+const resolveUrl = (baseUrl?: string) => (baseUrl || appUrl).replace(/\/$/, '');
 const adminName = 'Diego'; // Admin name as requested
 // Deployment Trigger: Domain sync for plattform-rouge.vercel.app
 
@@ -53,8 +56,9 @@ const getBaseTemplate = (content: string) => `
    ALERTA SOS (CON RATE LIMITING)
    ========================================== */
 
-export async function sendAdminTechnicalAlert(type: string, message: string, details?: string) {
+export async function sendAdminTechnicalAlert(type: string, message: string, details?: string, baseUrl?: string) {
   try {
+    const url = resolveUrl(baseUrl);
     // Rate Limiting: Máximo un correo por hora para el mismo tipo de error
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
@@ -89,7 +93,7 @@ export async function sendAdminTechnicalAlert(type: string, message: string, det
           ${details ? `<p><strong>Detalles:</strong> <code style="font-size: 12px;">${details}</code></p>` : ''}
         </div>
         <p>Este es el primer aviso de este tipo en la última hora. Los fallos subsecuentes solo se registrarán en la base de datos para evitar spam.</p>
-        <a href="${appUrl}/dashboard/admin" class="button" style="background-color: #ef4444;">Ir al Panel Admin</a>
+        <a href="${url}/dashboard/admin" class="button" style="background-color: #ef4444;">Ir al Panel Admin</a>
       `)
     });
   } catch (error) {
@@ -101,8 +105,9 @@ export async function sendAdminTechnicalAlert(type: string, message: string, det
    GESTIÓN DE INSTRUCTORES (QA)
    ========================================== */
 
-export async function sendInstructorRegistrationNoticeToAdmin(instructorName: string, userId: string) {
-  const adminLink = `${appUrl}/dashboard/admin/users/${userId}`;
+export async function sendInstructorRegistrationNoticeToAdmin(instructorName: string, userId: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
+  const adminLink = `${url}/dashboard/admin/users/${userId}`;
 
   await resend.emails.send({
     from,
@@ -117,7 +122,8 @@ export async function sendInstructorRegistrationNoticeToAdmin(instructorName: st
   });
 }
 
-export async function sendStudentRegistrationNoticeToAdmin(studentName: string, studentEmail: string) {
+export async function sendStudentRegistrationNoticeToAdmin(studentName: string, studentEmail: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: adminEmail,
@@ -129,12 +135,13 @@ export async function sendStudentRegistrationNoticeToAdmin(studentName: string, 
         <p><strong>Nombre:</strong> ${studentName}</p>
         <p><strong>Email:</strong> ${studentEmail}</p>
       </div>
-      <a href="${appUrl}/dashboard/admin/users" class="button">Gestionar Usuarios</a>
+      <a href="${url}/dashboard/admin/users" class="button">Gestionar Usuarios</a>
     `)
   });
 }
 
-export async function sendInstructorApprovalEmail(email: string, name: string) {
+export async function sendInstructorApprovalEmail(email: string, name: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: email,
@@ -143,7 +150,7 @@ export async function sendInstructorApprovalEmail(email: string, name: string) {
       <h1>¡Bienvenido a la red de Instructores!</h1>
       <p>Hola ${name}, nos alegra informarte que tu cuenta ha sido revisada y aprobada por nuestro equipo.</p>
       <p>Ya tienes acceso total para crear cursos, configurar tu academia y empezar a transformar vidas con tu conocimiento.</p>
-      <a href="${appUrl}/dashboard/instructor/courses/new" class="button">Crear mi primer curso</a>
+      <a href="${url}/dashboard/instructor/courses/new" class="button">Crear mi primer curso</a>
     `)
   });
 }
@@ -152,7 +159,8 @@ export async function sendInstructorApprovalEmail(email: string, name: string) {
    VENTAS Y NOTIFICACIONES DE NEGOCIO
    ========================================== */
 
-export async function sendSaleNotificationToInstructor(email: string, studentName: string, courseTitle: string) {
+export async function sendSaleNotificationToInstructor(email: string, studentName: string, courseTitle: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: email,
@@ -161,12 +169,13 @@ export async function sendSaleNotificationToInstructor(email: string, studentNam
       <h1>¡Tienes un nuevo alumno!</h1>
       <p>Tu curso <span class="highlight">${courseTitle}</span> sigue creciendo.</p>
       <p>El alumno <span class="highlight">${studentName}</span> acaba de inscribirse. ¡Sigue así!</p>
-      <a href="${appUrl}/dashboard/instructor/revenue" class="button">Ver mis ingresos</a>
+      <a href="${url}/dashboard/instructor/revenue" class="button">Ver mis ingresos</a>
     `)
   });
 }
 
-export async function sendWithdrawalRequestToAdmin(instructorId: string, instructorName: string, email: string, amount: number) {
+export async function sendWithdrawalRequestToAdmin(instructorId: string, instructorName: string, email: string, amount: number, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: adminEmail,
@@ -176,12 +185,13 @@ export async function sendWithdrawalRequestToAdmin(instructorId: string, instruc
       <p>El instructor <span class="highlight">${instructorName}</span> (${instructorId}) ha solicitado un retiro de sus comisiones.</p>
       <p><strong>Monto solicitado:</strong> $${amount} MXN</p>
       <p>Email de contacto: ${email}</p>
-      <a href="${appUrl}/dashboard/admin/revenue/commissions" class="button">Gestionar Comisiones</a>
+      <a href="${url}/dashboard/admin/revenue/commissions" class="button">Gestionar Comisiones</a>
     `)
   });
 }
 
-export async function sendFinalExamPassNoticeToAdmin(studentName: string, courseTitle: string, score: number) {
+export async function sendFinalExamPassNoticeToAdmin(studentName: string, courseTitle: string, score: number, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: adminEmail,
@@ -195,12 +205,13 @@ export async function sendFinalExamPassNoticeToAdmin(studentName: string, course
         <p><strong>Calificación:</strong> ${score.toFixed(1)}/100</p>
       </div>
       <p>El diploma ha sido enviado automáticamente a su correo.</p>
-      <a href="${appUrl}/dashboard/admin" class="button">Ir al Panel</a>
+      <a href="${url}/dashboard/admin" class="button">Ir al Panel</a>
     `)
   });
 }
 
-export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number) {
+export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: adminEmail,
@@ -212,7 +223,7 @@ export async function sendSaleNotificationToAdmin(studentName: string, courseTit
         <p><strong>Curso:</strong> ${courseTitle}</p>
         <p><strong>Monto:</strong> $${amount} MXN</p>
       </div>
-      <a href="${appUrl}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
+      <a href="${url}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
     `)
   });
 }
@@ -354,7 +365,7 @@ export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UP
       <p>Este es un aviso automático para informarte sobre el estado de tu suscripción a Plattform.</p>
       <p>Plan actual: <span class="highlight">${planName}</span></p>
       <p>Si tienes alguna duda sobre los beneficios de tu plan, puedes revisarlos en tu panel administrativo.</p>
-      <a href="${appUrl}/dashboard/instructor/revenue" class="button">Ver mi Panel</a>
+      <a href="${url}/dashboard/instructor/revenue" class="button">Ver mi Panel</a>
     `)
   });
 }
@@ -363,8 +374,9 @@ export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UP
    AUTENTICACIÓN Y OTROS (EXISTENTES ACTUALIZADOS)
    ========================================== */
 
-export async function sendVerificationEmail(email: string, token: string) {
-  const confirmLink = `${appUrl}/auth/new-verification?token=${token}`;
+export async function sendVerificationEmail(email: string, token: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
+  const confirmLink = `${url}/auth/new-verification?token=${token}`;
   await resend.emails.send({
     from,
     to: email,
@@ -377,8 +389,9 @@ export async function sendVerificationEmail(email: string, token: string) {
   });
 }
 
-export async function sendPasswordResetEmail(email: string, token: string) {
-  const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
+export async function sendPasswordResetEmail(email: string, token: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
+  const resetLink = `${url}/auth/reset-password?token=${token}`;
   await resend.emails.send({
     from,
     to: email,
@@ -403,7 +416,8 @@ export async function sendPasswordChangeNotice(email: string) {
   });
 }
 
-export async function sendPaymentConfirmationEmail(email: string, name: string, courseTitle: string, amount: number) {
+export async function sendPaymentConfirmationEmail(email: string, name: string, courseTitle: string, amount: number, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: email,
@@ -412,12 +426,13 @@ export async function sendPaymentConfirmationEmail(email: string, name: string, 
       <h1>¡Ya tienes acceso, ${name}!</h1>
       <p>Tu inscripción a <strong>${courseTitle}</strong> ha sido exitosa.</p>
       <p>Inversión: $${amount} MXN</p>
-      <a href="${appUrl}/dashboard/student/courses" class="button">Empezar a aprender</a>
+      <a href="${url}/dashboard/student/courses" class="button">Empezar a aprender</a>
     `)
   });
 }
 
-export async function sendWelcomeEmail(email: string, name: string) {
+export async function sendWelcomeEmail(email: string, name: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
     to: email,
@@ -425,7 +440,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
     html: getBaseTemplate(`
       <h1>Hola ${name}, tu cuenta está lista</h1>
       <p>Gracias por unirte. Estamos emocionados de acompañarte en este viaje.</p>
-      <a href="${appUrl}/login" class="button">Explorar Cursos</a>
+      <a href="${url}/login" class="button">Explorar Cursos</a>
     `)
   });
 }

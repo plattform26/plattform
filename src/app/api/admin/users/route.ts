@@ -50,6 +50,9 @@ export async function GET(req: NextRequest) {
       email: u.email,
       role: u.role,
       status: u.status,
+      // Misión: Expansión de Gestión - Campos de Cortesía
+      isCourtesy: u.isCourtesy,
+      courtesyPlanId: u.courtesyPlanId,
       // Aquí está el truco: buscamos la especialidad en el perfil, con un fallback
       specialty: u.instructorProfile?.specialty || 'N/A',
       createdAt: u.createdAt.toISOString(),

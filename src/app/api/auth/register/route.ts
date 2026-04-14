@@ -39,14 +39,15 @@ export async function POST(req: Request) {
     // Misión: Blindaje de Acceso - Generar y Guardar Token en DB
     const verificationToken = await generateVerificationToken(user.email);
     
-    // Misión: Un solo email de verificación.
-    let shouldSendMainVerification = true;
+    // Misión: Detección de Origen para Emails Inteligentes
+    const origin = req.headers.get('origin') || req.headers.get('referer') || process.env.NEXTAUTH_URL || 'http://localhost:3001';
+    const baseUrl = new URL(origin).origin;
 
     if (role === 'STUDENT') {
-      await sendVerificationEmail(user.email, verificationToken.token);
+      await sendVerificationEmail(user.email, verificationToken.token, baseUrl);
       
       // Misión: Blindaje de Comunicación - Notificar al admin (Diego)
-      await sendStudentRegistrationNoticeToAdmin(`${name} ${lastName}`, user.email);
+      await sendStudentRegistrationNoticeToAdmin(`${name} ${lastName}`, user.email, baseUrl);
 
       return NextResponse.json({
         message: 'Student registered successfully. Please verify your email.',
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
       // Misión: Blindaje de Email - No enviar notificación al admin si es el mismo usuario
       const adminEmail = process.env.ADMIN_EMAIL || 'soporte@plattform.mx';
       if (user.email !== adminEmail) {
-        await sendInstructorRegistrationNoticeToAdmin(`${name} ${lastName}`, user.id);
+        await sendInstructorRegistrationNoticeToAdmin(`${name} ${lastName}`, user.id, baseUrl);
       }
 
       // 1. Create Instructor Profile with provided academyName or default
@@ -79,7 +80,7 @@ export async function POST(req: Request) {
       }
 
       // Enviar el correo final después de todo el trabajo pesado
-      await sendVerificationEmail(user.email, verificationToken.token);
+      await sendVerificationEmail(user.email, verificationToken.token, baseUrl);
 
       return NextResponse.json({
         message: 'Instructor registered successfully. Please verify your email.',

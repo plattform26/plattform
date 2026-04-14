@@ -37,6 +37,9 @@ model User {
   sessions                  Session[]
   transactions              Transaction[]           @relation("StudentTransactions")
   subscriptionRecords       SubscriptionRecord[]
+  isCourtesy                Boolean                 @default(false) @map("is_courtesy")
+  courtesyPlanId            String?                 @map("courtesy_plan_id")
+  courtesyPlan              PlatformPlan?           @relation("UserCourtesyPlan", fields: [courtesyPlanId], references: [id])
 
   @@index([email])
   @@index([role, status])
@@ -111,6 +114,7 @@ model PlatformPlan {
   subscriptionHistory InstructorSubscriptionHistory[]
   subscriptions       InstructorSubscription[]
   subscriptionRecords SubscriptionRecord[]
+  courtesyUsers       User[]               @relation("UserCourtesyPlan")
 
   @@map("platform_plans")
 }

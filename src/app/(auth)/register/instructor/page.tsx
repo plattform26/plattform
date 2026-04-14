@@ -15,14 +15,12 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setSuccess('');
 
     try {
       const res = await fetch('/api/auth/register', {
@@ -37,10 +35,9 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
         throw new Error(data.error || 'Error al registrarse');
       }
 
-      setSuccess(data.message);
 
       if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
+        router.push(data.redirectUrl);
       }
     } catch (err: any) {
       setError(err.message);
@@ -80,11 +77,6 @@ export default function InstructorRegisterPage({ searchParams }: { searchParams:
         {error && (
           <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl mb-6 text-xs font-semibold animate-shake">
             ⚠️ {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-500/10 border border-green-500/50 text-green-400 p-4 rounded-xl mb-6 text-xs font-semibold">
-            🎉 {success}
           </div>
         )}
 

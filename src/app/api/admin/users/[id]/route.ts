@@ -69,7 +69,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     const { 
         name, lastName, email, specialty, role, password, status, 
-        academyName, slug, description, institution, logoUrl, linkedinUrl 
+        academyName, slug, description, institution, logoUrl, linkedinUrl,
+        isCourtesy, courtesyPlanId
     } = await req.json();
 
     console.log(`🔍 [ADMIN_PATCH] Iniciando actualización segmentada para ID: ${params.id}`);
@@ -82,6 +83,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // Eliminado de la Fase 1: specialty ya no existe en la tabla User
     if (role !== undefined) userData.role = role;
     if (status !== undefined) userData.status = status;
+    
+    // Misión: Fortaleza en Campos de Cortesía
+    if (isCourtesy !== undefined) {
+      userData.isCourtesy = Boolean(isCourtesy);
+    }
+    
+    if (courtesyPlanId !== undefined) {
+      // Si llega como "" o "null" (string) o null, lo persistimos como null real
+      userData.courtesyPlanId = (courtesyPlanId === '' || courtesyPlanId === 'null') ? null : courtesyPlanId;
+    }
 
     if (password && password.trim() !== '') {
       userData.passwordHash = await bcrypt.hash(password, 12);
@@ -108,8 +119,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         }
 
     } catch (userError: any) {
-        console.error('🔥 ERROR AL ACTUALIZAR (User):', userError.message);
-        throw new Error(`Error en tabla User: ${userError.message}`);
+        console.error('🔥 [PRISMA_PATCH_USER_ERROR]:', userError.message);
+        console.error('📋 Datos intentados persistir:', JSON.stringify(userData, null, 2));
+        throw new Error(`Error en actualización de tabla User (Prisma): ${userError.message}`);
     }
 
     // FASE 2: Sincronización de Perfil si el rol es INSTRUCTOR
@@ -164,11 +176,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     return NextResponse.json(responseData);
 
-  } catch (error: any) {
-    console.error('🔥 ERROR CRÍTICO FINAL EN PATCH ADMIN:', error.message);
+    } catch (error: any) {
+    console.error('🔥 [ADMIN_API_FATAL_ERROR] Error crítico final en PATCH:', error.message);
+    if (error.stack) console.error('📋 STACK:', error.stack);
+    
     return NextResponse.json({ 
         error: 'Error al persistir cambios en el sistema', 
-        details: error.message 
+        details: error.message,
+        code: error.code || 'UNKNOWN_ERROR'
     }, { status: 500 });
   }
 }

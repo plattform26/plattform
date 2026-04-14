@@ -25,13 +25,22 @@ export default async function InstructorDashboardPage() {
   if (!profile) return <div>Perfil no encontrado</div>;
 
   const activeSub = profile.subscriptions[0];
+  const isCourtesy = profile.user.isCourtesy;
+  
+  // Misión: Lógica de Plan (Cortesía vs Stripe)
+  const courtesyPlan = isCourtesy && profile.user.courtesyPlanId 
+    ? await prisma.platformPlan.findUnique({ where: { id: profile.user.courtesyPlanId } })
+    : null;
+
+  const currentPlan = activeSub?.plan || courtesyPlan;
+  const planDisplayName = currentPlan?.displayName || 'Ninguno';
+  const studentLimit = currentPlan?.studentLimit ?? 0;
   
   // Total Enrollments (Alumnos-Materia)
   const totalEnrollmentsCount = await prisma.enrollment.count({
     where: { course: { instructorId: session.userId } }
   });
 
-  const studentLimit = activeSub?.plan.studentLimit ?? 0;
   const isUnlimited = studentLimit === -1;
   const usagePercent = isUnlimited ? 0 : (totalEnrollmentsCount / studentLimit) * 100;
   
@@ -109,8 +118,8 @@ export default async function InstructorDashboardPage() {
         <p className="text-gray-400 text-sm mt-1">Aquí está el estado de tu academia hoy.</p>
       </div>
 
-      {/* BANNER CRITICO: HIBERNACION */}
-      {isHibernated && (
+      {/* BANNER CRITICO: HIBERNACION (Bypassed if Courtesy) */}
+      {isHibernated && !isCourtesy && (
         <div className="mb-6 p-5 bg-red-600/20 border border-red-500/50 rounded-2xl flex items-center justify-between gap-4 animate-pulse">
            <div className="flex items-center gap-4">
               <span className="text-4xl">❄️</span>
@@ -123,8 +132,8 @@ export default async function InstructorDashboardPage() {
         </div>
       )}
 
-      {/* ALERTA PREVENTIVA: VENCIMIENTO (5 DIAS) */}
-      {!isHibernated && daysUntilExpiry !== null && daysUntilExpiry <= 5 && daysUntilExpiry >= 0 && (
+      {/* ALERTA PREVENTIVA: VENCIMIENTO (Bypassed if Courtesy) */}
+      {!isHibernated && !isCourtesy && daysUntilExpiry !== null && daysUntilExpiry <= 5 && daysUntilExpiry >= 0 && (
         <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-between gap-4">
            <div className="flex items-center gap-3">
               <span className="text-2xl">⏳</span>
@@ -137,8 +146,8 @@ export default async function InstructorDashboardPage() {
         </div>
       )}
 
-      {/* ALERTAS DE CAPACIDAD */}
-      {!isUnlimited && usagePercent >= 80 && (
+      {/* ALERTAS DE CAPACIDAD (Bypassed if Courtesy) */}
+      {!isUnlimited && !isCourtesy && usagePercent >= 80 && (
         <div className={`mb-6 p-4 rounded-xl border flex items-center justify-between gap-4 ${
           usagePercent >= 100 ? 'bg-red-500/10 border-red-500/50 text-red-100' :
           'bg-yellow-500/10 border-yellow-500/30 text-yellow-100'
@@ -160,8 +169,12 @@ export default async function InstructorDashboardPage() {
       <div className="bg-gradient-to-br from-[#06B6D4]/10 to-[#3B82F6]/10 border border-[#06B6D4]/30 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 mb-8">
          <span className="text-4xl shadow-cyan-500/50 drop-shadow-lg">💎</span>
          <div className="flex-1">
-           <div className="text-sm font-semibold text-cyan-400">Plan {activeSub?.plan.displayName || 'Ninguno'} — {activeSub?.status}</div>
-           <p className="text-xs text-gray-400 mt-1">Límite de alumnos-materia: <strong className="text-white">{activeSub?.plan.studentLimit === -1 ? 'Ilimitado' : `${totalEnrollmentsCount}/${activeSub?.plan.studentLimit}`}</strong></p>
+           <div className={`text-sm font-semibold ${isCourtesy ? 'text-yellow-400' : 'text-cyan-400'}`}>
+             Plan {planDisplayName} 
+             {isCourtesy && <span className="ml-2 text-[10px] bg-yellow-400/10 px-2 py-0.5 rounded border border-yellow-400/20 italic">Cortesía ADM</span>}
+             {!isCourtesy && activeSub && ` — ${activeSub.status}`}
+           </div>
+           <p className="text-xs text-gray-400 mt-1">Límite de alumnos-materia: <strong className="text-white">{studentLimit === -1 ? 'Ilimitado' : `${totalEnrollmentsCount}/${studentLimit}`}</strong></p>
          </div>
          <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
       </div>

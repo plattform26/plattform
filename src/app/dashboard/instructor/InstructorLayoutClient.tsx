@@ -140,8 +140,8 @@ export default function InstructorLayoutClient({
             </div>
           )}
 
-          {/* Flujo de Aprobación - Banner Post-Pago */}
-          {user?.isEmailVerified && user?.status === 'PENDING_APPROVAL' && (
+          {/* Flujo de Aprobación - Banner Post-Pago (Bypassed if Courtesy) */}
+          {user?.isEmailVerified && user?.status === 'PENDING_APPROVAL' && !user?.isCourtesy && (
             <div className="bg-blue-500/10 backdrop-blur-md border-b border-blue-500/20 px-8 py-3 flex items-center justify-between group">
               <div className="flex items-center gap-3">
                 <span className="text-xl">🛡️</span>

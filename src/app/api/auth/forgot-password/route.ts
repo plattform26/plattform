@@ -17,7 +17,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Si el correo existe, se ha enviado un enlace de recuperación.' });
     }
 
-    await sendPasswordResetEmail(email, token.token);
+    // Misión: Detección de Origen para Emails Inteligentes
+    const origin = req.headers.get('origin') || req.headers.get('referer') || process.env.NEXTAUTH_URL || 'http://localhost:3001';
+    const baseUrl = new URL(origin).origin;
+
+    await sendPasswordResetEmail(email, token.token, baseUrl);
 
     return NextResponse.json({ message: 'Si el correo existe, se ha enviado un enlace de recuperación.' });
   } catch (error: any) {
