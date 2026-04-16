@@ -344,7 +344,8 @@ export async function generateCertificatePDF(
   return Buffer.from(arrayBuffer);
 }
 
-export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', planName: string) {
+export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', planName: string, baseUrl?: string) {
+  const url = resolveUrl(baseUrl);
   const subjects = {
     WELCOME: '¡Bienvenido a tu nuevo Plan!',
     UPGRADE: 'Tu cambio de plan ha sido exitoso',

@@ -44,7 +44,7 @@ export default function InstructorLayoutClient({
     // Como el JWT es estático, consultamos /api/auth/me para ver si el status en DB cambió (ej. email verificado)
     const refreshUser = async () => {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setUser(data);
