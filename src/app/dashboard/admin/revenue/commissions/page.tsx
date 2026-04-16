@@ -9,10 +9,12 @@ export default function AdminRevenueCommissionsPage() {
     month: now.getMonth(),
     year: now.getFullYear(),
     instructorId: 'all',
-    status: 'all'
+    status: 'all',
+    search: ''
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [data, setData] = useState<{ metrics: any, instructors: any[] }>({
     metrics: { totalGross: 0, totalCommissions: 0, prevMonthCommissions: 0, salesCount: 0, averageSale: 0, isHistorical: false },
@@ -36,7 +38,8 @@ export default function AdminRevenueCommissionsPage() {
         month: String(filters.month),
         year: String(filters.year),
         instructorId: filters.instructorId,
-        status: filters.status
+        status: filters.status,
+        search: filters.search
       }).toString();
 
       const res = await fetch(`/api/admin/revenue/commissions?${query}`);
@@ -58,6 +61,14 @@ export default function AdminRevenueCommissionsPage() {
   useEffect(() => {
     fetchData();
   }, [filters]);
+
+  // Debounce para la búsqueda (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        setFilters(prev => ({ ...prev, search: searchInput }));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const months = [
     { label: 'Todo', value: 'all' },
@@ -82,14 +93,7 @@ export default function AdminRevenueCommissionsPage() {
     { label: '2026', value: '2026' }
   ];
 
-  const filteredInstructors = useMemo(() => {
-     if (!searchTerm) return data.instructors;
-     const lowerTerm = searchTerm.toLowerCase();
-     return data.instructors.filter(i => 
-        i.instructorName.toLowerCase().includes(lowerTerm) || 
-        i.academyName.toLowerCase().includes(lowerTerm)
-     );
-  }, [data.instructors, searchTerm]);
+  const filteredInstructors = data.instructors;
 
   // Cálculo de tendencia
   const trend = useMemo(() => {
@@ -136,57 +140,21 @@ export default function AdminRevenueCommissionsPage() {
           </div>
           
           <div className="flex flex-col md:flex-row gap-4 items-end">
-              <div className="flex flex-col gap-1.5 relative group">
-                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Instructor</span>
-                <div className="relative">
-                  <input 
-                    type="text"
-                    placeholder="Escribe 4+ letras..."
-                    className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-64 pl-10"
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val.length >= 4) {
-                        setSearchTerm(val);
-                      } else if (val.length === 0) {
-                        setSearchTerm('');
-                      }
-                    }}
-                  />
-                  <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                
-                {/* FLOATING LIST (COMBOBOX) */}
-                {searchTerm.length >= 4 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1524] border border-cyan-500/30 rounded-xl shadow-2xl z-[100] max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-2 border-b border-white/5 text-[9px] font-black text-gray-500 uppercase tracking-widest px-4">Resultados para "{searchTerm}"</div>
-                    {instructorsList
-                      .filter(i => (i.name + ' ' + i.lastName).toLowerCase().includes(searchTerm.toLowerCase()))
-                      .map(i => (
-                        <button 
-                          key={i.id}
-                          onClick={() => {
-                            setFilters(prev => ({ ...prev, instructorId: i.id }));
-                            setSearchTerm(''); // Close list
-                          }}
-                          className="w-full text-left px-4 py-3 hover:bg-cyan-500/10 text-xs transition-colors border-b border-white/5 last:border-0 group flex justify-between items-center"
-                        >
-                          <span className={`${filters.instructorId === i.id ? 'text-cyan-400 font-bold' : 'text-gray-300'}`}>{i.name} {i.lastName}</span>
-                          {filters.instructorId === i.id && <span className="text-[10px] text-cyan-400">✓</span>}
-                        </button>
-                      ))}
-                    {filters.instructorId !== 'all' && (
-                      <button 
-                         onClick={() => setFilters(prev => ({ ...prev, instructorId: 'all' }))}
-                         className="w-full text-left px-4 py-3 hover:bg-red-500/10 text-[10px] text-red-400 font-bold uppercase tracking-widest transition-colors"
-                      >
-                         Limpiar filtro ×
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+               <div className="flex flex-col gap-1.5 relative group">
+                 <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Buscador Universal</span>
+                 <div className="relative">
+                   <input 
+                     type="text"
+                     value={searchInput}
+                     placeholder="Buscar Instructor o Academia..."
+                     className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-72 pl-10"
+                     onChange={(e) => setSearchInput(e.target.value)}
+                   />
+                   <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                   </svg>
+                 </div>
+               </div>
              <div className="flex gap-2 mb-0.5">
                 <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-secondary/10 hover:border-secondary/50 hover:bg-secondary/10 transition-all uppercase tracking-widest leading-none">CSV</button>
              </div>
@@ -295,7 +263,7 @@ export default function AdminRevenueCommissionsPage() {
                    </tr>
                 ) : filteredInstructors.length === 0 ? (
                    <tr>
-                      <td colSpan={7} className="p-24 text-center text-gray-500 text-xs italic">No se encontraron resultados para "{searchTerm}"</td>
+                      <td colSpan={7} className="p-24 text-center text-gray-500 text-xs italic">No se encontraron resultados para "{searchInput}"</td>
                    </tr>
                 ) : filteredInstructors.map((comm) => (
                    <React.Fragment key={comm.instructorId}>

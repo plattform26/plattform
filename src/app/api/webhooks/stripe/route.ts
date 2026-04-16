@@ -71,14 +71,19 @@ export async function POST(req: Request) {
             include: { plan: true }
           });
           
-          const commissionRate = activeSub ? Number(activeSub.plan.commissionRate) : 15;
-          const platformCommission = (grossAmount * commissionRate) / 100;
-          const netAmount = grossAmount - platformCommission;
-
           const expandedSession = await stripe.checkout.sessions.retrieve(session.id, {
             expand: ['payment_intent.latest_charge']
           });
           const pi = expandedSession.payment_intent as any;
+          
+          // EXTRAER COMISIÓN REAL DE STRIPE (APPLICATION FEE)
+          // Stripe otorga el fee en centavos, convertimos a pesos/decimal
+          const commissionRate = activeSub ? Number(activeSub.plan.commissionRate) : 15;
+          const platformCommission = pi.application_fee_amount 
+            ? (pi.application_fee_amount / 100) 
+            : (grossAmount * commissionRate) / 100;
+            
+          const netAmount = grossAmount - platformCommission;
           const charge = pi?.latest_charge as any;
           const stripeTransferId = charge?.transfer as string;
 

@@ -84,13 +84,6 @@ export default async function AdminDashboardSummaryPage() {
              <p className="text-gray-400 mt-2 font-light tracking-wide">Estado global de tu ecosistema SaaS.</p>
           </div>
           
-          <div className="relative">
-             <input 
-               type="text" 
-               placeholder="🔍 Buscar usuarios, cursos o IDs..." 
-               className="w-80 bg-[#0d1524] border border-blue-500/20 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-all"
-             />
-          </div>
        </div>
 
        {/* KPIs GRID */}

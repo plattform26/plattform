@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { getEffectivePlan } from '@/lib/plan-utils';
 
 export async function POST(req: Request) {
   try {
@@ -224,6 +225,11 @@ export async function POST(req: Request) {
       ? { destination: instructorProfile.stripeConnectId }
       : undefined;
 
+    // 6.1 Cálculo Dinámico de Fee de Aplicación (SaaS Plattform)
+    const effectivePlan = await getEffectivePlan(course.instructorId);
+    const commissionRate = effectivePlan?.commissionRate || 15;
+    const applicationFeeCents = Math.round(finalPrice * (commissionRate / 100) * 100);
+
     // 7. Crear Stripe Session
     const baseUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
     
@@ -252,6 +258,7 @@ export async function POST(req: Request) {
       },
       payment_intent_data: transferData ? {
         transfer_data: transferData,
+        application_fee_amount: applicationFeeCents,
       } : undefined,
     });
 

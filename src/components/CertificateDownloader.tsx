@@ -28,7 +28,9 @@ export default function CertificateDownloader({
     const generateQR = async () => {
       try {
         // Generar QR que apunta a la nueva ruta de validación
-        const url = `https://plattform.mx/verify/${certificateCode}`;
+        // Generar QR que apunta a la ruta de validación del entorno
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const url = `${baseUrl}/verify/${certificateCode}`;
         const dataUrl = await QRCode.toDataURL(url, {
           width: 150,
           margin: 2,

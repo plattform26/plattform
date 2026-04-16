@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
     const year = searchParams.get('year');   // "2024"+ o "all"
     const instructorId = searchParams.get('instructorId');
     const status = searchParams.get('status');
+    const search = searchParams.get('search');
 
     const where: any = {};
 
@@ -54,6 +55,20 @@ export async function GET(req: NextRequest) {
       where.course = { ...where.course, status };
     }
 
+    // 2.1 Búsqueda Reactiva (Instructor + Academia)
+    if (search) {
+      where.course = {
+        ...where.course,
+        instructor: {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { instructorProfile: { academyName: { contains: search, mode: 'insensitive' } } }
+          ]
+        }
+      };
+    }
+
     // 3. Consulta de Enrollments con Relaciones Reales
     const enrollments = await db.enrollment.findMany({
       where,
@@ -70,7 +85,19 @@ export async function GET(req: NextRequest) {
                 id: true,
                 name: true,
                 lastName: true,
-                instructorProfile: { select: { academyName: true, commissionRate: true } }
+                isCourtesy: true,
+                courtesyPlan: { select: { name: true } },
+                instructorProfile: { 
+                  select: { 
+                    academyName: true, 
+                    commissionRate: true,
+                    subscriptions: {
+                      where: { status: 'ACTIVE' },
+                      select: { plan: { select: { name: true } } },
+                      take: 1
+                    }
+                  } 
+                }
               }
             }
           }
@@ -89,8 +116,21 @@ export async function GET(req: NextRequest) {
       const instructor = enr.course.instructor;
       if (!instructor) continue;
 
-      // Lógica de Comisión: Prioridad Profile -> Default (30%)
-      const platformRate = Number(instructor.instructorProfile?.commissionRate || 30);
+      // Lógica de Comisión: Prioridad Plan Activo (Starter 15%, Growth 10%, Scale 7%)
+      let platformRate = 15; // Default Starter
+      
+      const activePlanName = instructor.isCourtesy 
+        ? instructor.courtesyPlan?.name 
+        : instructor.instructorProfile?.subscriptions?.[0]?.plan?.name;
+
+      if (activePlanName === 'scale') platformRate = 7;
+      else if (activePlanName === 'growth') platformRate = 10;
+      else if (activePlanName === 'starter') platformRate = 15;
+      else {
+        // Fallback a commissionRate manual si existe en el perfil, sino 15%
+        platformRate = Number(instructor.instructorProfile?.commissionRate || 15);
+      }
+
       const platformCommission = price * (platformRate / 100);
       const netInstructor = price - platformCommission;
 
