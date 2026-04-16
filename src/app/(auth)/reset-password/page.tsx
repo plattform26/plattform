@@ -17,6 +17,8 @@ function ResetPasswordForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'loading') return;
+
     setStatus('loading');
     setMessage('');
 
@@ -54,52 +56,69 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-red-50 text-red-600 p-6 rounded-md shadow-md text-center max-w-sm">
-          Falta el token de seguridad mágico en el enlace. Intenta desde el email nuevamente.
+      <div className="min-h-screen flex items-center justify-center bg-[#070d1a] p-4 text-center">
+        <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-8 rounded-3xl shadow-lg max-w-sm">
+          <p className="font-bold mb-4">⚠️ Enlace Inválido</p>
+          <p className="text-sm opacity-80">Falta el token de seguridad en el enlace. Por favor, solicita uno nuevo desde la página de recuperación.</p>
+          <Link href="/forgot-password" title="Solicitar nuevo enlace" className="mt-6 inline-block font-bold text-cyan-400 hover:text-white transition-colors">Solicitar nuevo enlace</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Elegir Nueva Contraseña</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#070d1a] px-6">
+      <div className="mb-10 animate-fade-in text-center">
+        <Link href="/" className="flex items-center gap-2 font-space-grotesk font-bold text-3xl tracking-tighter">
+           <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-blue-700 bg-clip-text text-transparent italic">PLATTFORM</span>
+        </Link>
+      </div>
+
+      <div className="max-w-md w-full p-10 bg-[#0d1524] border border-blue-500/20 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+        <div className="mb-8">
+          <h2 className="text-2xl font-space-grotesk font-bold text-white mb-2">Nueva Contraseña</h2>
+          <p className="text-gray-400 text-sm">Define tu nueva clave de acceso para recuperar el control de tu cuenta.</p>
+        </div>
         
         {status === 'success' ? (
-          <div className="text-center">
-            <div className="bg-green-50 text-green-700 p-4 rounded-md mb-6">{message}</div>
-            <p className="text-sm text-gray-600 mb-4">Redirigiendo al inicio de sesión...</p>
-            <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-              Ir ahora
+          <div className="text-center animate-fade-in">
+            <div className="bg-cyan-500/10 border border-cyan-500/50 text-cyan-400 p-4 rounded-2xl mb-6 text-sm font-semibold">
+              ✨ {message}
+            </div>
+            <p className="text-gray-500 text-xs mb-4 italic">Redirigiendo al portal de acceso...</p>
+            <Link href="/login" className="inline-block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl font-bold shadow-lg transition-all text-center">
+              Ir al Login Ahora
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 text-sm">
             {status === 'error' && (
-              <div className="bg-red-50 text-red-500 p-4 rounded-md text-sm">{message}</div>
+              <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl mb-6 text-xs font-semibold animate-shake">
+                ⚠️ {message}
+              </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
+            <div className="space-y-2">
+              <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Nueva Contraseña</label>
               <input
                 type="password"
                 required
                 minLength={6}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+                placeholder="••••••••"
+                className="block w-full px-4 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+            <div className="space-y-2">
+              <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Confirmar Contraseña</label>
               <input
                 type="password"
                 required
                 minLength={6}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+                placeholder="••••••••"
+                className="block w-full px-4 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -108,9 +127,9 @@ function ResetPasswordForm() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50"
+              className="w-full flex justify-center py-4 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl font-bold shadow-lg active:scale-[0.98] transition-all disabled:opacity-50"
             >
-              {status === 'loading' ? 'Actualizando...' : 'Actualizar Contraseña'}
+              {status === 'loading' ? 'Actualizando...' : 'Establecer nueva clave →'}
             </button>
           </form>
         )}
@@ -122,8 +141,8 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500 font-medium text-sm">
-        Validando enlace de seguridad...
+      <div className="min-h-screen bg-[#070d1a] flex items-center justify-center text-white/50 font-bold text-[10px] tracking-[0.3em] uppercase">
+        Validando Seguridad del Portal...
       </div>
     }>
       <ResetPasswordForm />

@@ -14,18 +14,23 @@ interface AcademyNavbarProps {
 export default function AcademyNavbar({ profile, session }: AcademyNavbarProps) {
   const dashboardRoute = session?.role === 'ADMIN' 
     ? '/dashboard/admin' 
-    : '/dashboard/instructor';
+    : session?.role === 'INSTRUCTOR'
+    ? '/dashboard/instructor'
+    : '/dashboard/student';
+
+  const logoHref = session ? dashboardRoute : '/';
 
   return (
     <nav className="flex items-center justify-between px-4 sm:px-10 h-16 bg-[#070d1a]/60 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
       {/* LOGO & BRANDING */}
-      <Link href="/" className="flex items-center gap-2.5 group">
+      <div className="flex-shrink-0 min-w-fit flex items-center">
+        <Link href={logoHref} className="flex items-center gap-2.5 group flex-shrink-0 min-w-fit">
         {profile.logoUrl ? (
           <img src={profile.logoUrl} className="h-7 w-7 rounded-lg object-cover border border-white/10" alt="Logo" />
         ) : (
           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-[9px] font-black italic">P</div>
         )}
-        <span className="font-space-grotesk font-black text-base sm:text-lg tracking-tighter bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity uppercase text-center md:text-left">
+        <span className="font-space-grotesk font-black text-base sm:text-lg tracking-tighter bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity uppercase text-center md:text-left whitespace-nowrap">
           {profile.academyName || 'PLATTFORM'}
         </span>
       </Link>

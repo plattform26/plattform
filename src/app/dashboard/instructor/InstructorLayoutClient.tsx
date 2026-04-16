@@ -71,7 +71,10 @@ export default function InstructorLayoutClient({
       {/* SIDEBAR */}
       <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[#0d1524] border-r ${isAdm ? 'border-cyan-500/20' : 'border-blue-500/20'} flex flex-col hidden md:flex transition-all duration-300 relative group`}>
         <div className={`p-6 border-b border-blue-500/20 relative ${isCollapsed ? 'flex justify-center' : ''}`}>
-          <div className={`font-space-grotesk font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 transition-all ${isCollapsed ? 'text-xl' : 'text-2xl'}`}>
+          <Link 
+            href={isAdm ? "/dashboard/admin" : "/dashboard/instructor"} 
+            className={`font-space-grotesk font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 transition-all hover:opacity-80 cursor-pointer ${isCollapsed ? 'text-xl' : 'text-2xl'}`}
+          >
             {isCollapsed ? 'P' : (
               isAdm ? (
                 <>PLATTFORM<span className="text-[10px] align-top ml-1 text-blue-500 bg-blue-500/10 px-1 rounded">ADMIN</span></>
@@ -79,7 +82,7 @@ export default function InstructorLayoutClient({
                 <>PLATTFORM<span className="text-[10px] align-top ml-1 text-cyan-600">INSTRUCTOR</span></>
               )
             )}
-          </div>
+          </Link>
           
           <button 
             onClick={toggleSidebar}

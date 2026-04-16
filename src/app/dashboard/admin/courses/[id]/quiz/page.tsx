@@ -200,7 +200,7 @@ export default function AdminQuizBuilderPage() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = async () => {
-    console.log('💾 Botón de guardado presionado - Iniciando Sincronización Antigravity');
+    console.log('💾 Botón de guardado presionado - Iniciando Sincronización PLATTFORM');
     const err = validate();
     if (err) { showMsg('err', err); return; }
     
@@ -267,7 +267,7 @@ export default function AdminQuizBuilderPage() {
             ← VOLVER AL CURSO
           </Link>
           <h1 className="text-2xl font-space-grotesk font-black text-white italic uppercase tracking-tighter">
-            Constructor <span className="text-cyan-400">Antigravity</span> Quiz 📝
+            Constructor <span className="text-cyan-400">PLATTFORM</span> Quiz 📝
           </h1>
           <p className="text-gray-500 text-[9px] font-bold mt-1 uppercase tracking-widest leading-none">
             {quiz.questions.length} pregunta{quiz.questions.length !== 1 ? 's' : ''} configuradas

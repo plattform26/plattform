@@ -290,7 +290,7 @@ export async function generateCertificatePDF(
   doc.setTextColor(6, 182, 212);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.text('ANTIGRAVITY ACADEMY', width / 2, 20, { align: 'center' });
+  doc.text('PLATTFORM ACADEMY', width / 2, 20, { align: 'center' });
 
   // 3. Título Principal
   doc.setTextColor(0, 0, 0);
@@ -392,7 +392,7 @@ export async function sendVerificationEmail(email: string, token: string, baseUr
 
 export async function sendPasswordResetEmail(email: string, token: string, baseUrl?: string) {
   const url = resolveUrl(baseUrl);
-  const resetLink = `${url}/auth/reset-password?token=${token}`;
+  const resetLink = `${url}/reset-password?token=${token}`;
   await resend.emails.send({
     from,
     to: email,

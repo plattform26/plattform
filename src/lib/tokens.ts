@@ -38,7 +38,9 @@ export async function generatePasswordResetToken(email: string) {
   const expiresAt = new Date();
   expiresAt.setHours(expiresAt.getHours() + 1); // Expira en 1h
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ 
+    where: { email: email.toLowerCase() } 
+  });
   if (!user) return null;
 
   // Eliminar tokens previos usados o expirados para este usuario

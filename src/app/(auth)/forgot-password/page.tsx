@@ -10,6 +10,8 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'loading') return;
+    
     setStatus('loading');
     setMessage('');
 
@@ -35,33 +37,43 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Recuperar Contraseña</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#070d1a] px-6">
+      <div className="mb-10 animate-fade-in text-center">
+        <Link href="/" className="flex items-center gap-2 font-space-grotesk font-bold text-3xl tracking-tighter">
+           <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-blue-700 bg-clip-text text-transparent italic">PLATTFORM</span>
+        </Link>
+      </div>
+
+      <div className="max-w-md w-full p-10 bg-[#0d1524] border border-blue-500/20 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+        <div className="mb-8">
+          <h2 className="text-2xl font-space-grotesk font-bold text-white mb-2">Recuperar Acceso</h2>
+          <p className="text-gray-400 text-sm">Ingresa tu correo y te enviaremos instrucciones para restablecer tu clave.</p>
+        </div>
         
         {status === 'success' ? (
-          <div className="text-center">
-            <div className="bg-green-50 text-green-700 p-4 rounded-md mb-6">{message}</div>
-            <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-              Volver a Iniciar Sesión
+          <div className="text-center animate-fade-in">
+            <div className="bg-cyan-500/10 border border-cyan-500/50 text-cyan-400 p-4 rounded-2xl mb-6 text-sm font-semibold">
+              ✨ {message}
+            </div>
+            <Link href="/login" className="inline-block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl font-bold shadow-lg transition-all text-center">
+              Volver al Inicio de Sesión
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <p className="text-sm text-gray-600 text-center mb-6">
-              Ingresa tu correo y te enviaremos instrucciones.
-            </p>
-            
+          <form onSubmit={handleSubmit} className="space-y-6 text-sm">
             {status === 'error' && (
-              <div className="bg-red-50 text-red-500 p-4 rounded-md text-sm">{message}</div>
+              <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl mb-6 text-xs font-semibold animate-shake">
+                ⚠️ {message}
+              </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+            <div className="space-y-2">
+              <label className="block font-bold text-gray-500 uppercase tracking-widest text-[10px]">Correo Electrónico</label>
               <input
                 type="email"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-black"
+                placeholder="tu@email.com"
+                className="block w-full px-4 py-3 bg-[#152035] border border-blue-500/10 rounded-xl focus:outline-none focus:border-blue-500 text-white transition-all placeholder:text-gray-600"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -70,13 +82,13 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50"
+              className="w-full flex justify-center py-4 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl font-bold shadow-lg active:scale-[0.98] transition-all disabled:opacity-50"
             >
-              {status === 'loading' ? 'Enviando...' : 'Enviar enlace'}
+              {status === 'loading' ? 'Enviando enlace...' : 'Enviar enlace de recuperación →'}
             </button>
             
-            <div className="text-center mt-4">
-              <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">
+            <div className="text-center mt-6 pt-6 border-t border-blue-500/10">
+              <Link href="/login" className="text-xs font-bold text-cyan-400 hover:text-white transition-colors">
                 Llevarme de vuelta al Login
               </Link>
             </div>

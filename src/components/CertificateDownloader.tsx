@@ -70,8 +70,8 @@ export default function CertificateDownloader({
         style={{ display: 'none', width: '1000px', backgroundColor: 'white' }}
         className="p-16 border-[12px] border-double border-[#00f2ff] text-black text-center"
       >
-        <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-[8px] rotate-45 translate-x-4 text-black">VERIFICADO ANTIGRAVITY — AUTÉNTICO</div>
-        <p className="font-black tracking-[0.4em] uppercase text-xs mb-6 text-[#00f2ff]">ANTIGRAVITY ACADEMY</p>
+        <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-[8px] rotate-45 translate-x-4 text-black">VERIFICADO PLATTFORM — AUTÉNTICO</div>
+        <p className="font-black tracking-[0.4em] uppercase text-xs mb-6 text-[#00f2ff]">PLATTFORM ACADEMY</p>
         <h2 className="text-5xl font-black uppercase mb-8 tracking-tighter italic scale-y-110 text-black">CERTIFICADO DE APROBACIÓN</h2>
         <p className="text-gray-500 mb-2 font-bold uppercase tracking-widest text-[10px]">Se otorga el presente a:</p>
         <h1 className="text-6xl font-black uppercase mb-10 italic border-b-4 border-black/5 inline-block px-12 text-black">{studentName}</h1>

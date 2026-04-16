@@ -50,7 +50,7 @@ export default function StudentLayoutClient({
       {/* SIDEBAR */}
       <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[#0d1524] border-r border-blue-500/20 flex flex-col hidden md:flex transition-all duration-300 relative group`}>
         <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center' : 'px-6'} border-b border-blue-500/20 relative`}>
-          <Link href="/" className={`font-space-grotesk font-bold text-lg tracking-wider bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent transition-all ${isCollapsed ? 'scale-75' : ''}`}>
+          <Link href="/dashboard/student" className={`font-space-grotesk font-bold text-lg tracking-wider bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent transition-all ${isCollapsed ? 'scale-75' : ''}`}>
             {isCollapsed ? 'P' : 'PLATTFORM'}
           </Link>
           

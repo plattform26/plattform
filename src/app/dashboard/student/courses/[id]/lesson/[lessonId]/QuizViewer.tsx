@@ -100,7 +100,7 @@ export default function QuizViewer({ quizId, courseId }: QuizViewerProps) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#0b0e14] p-4 animate-in fade-in duration-700">
         <div id="certificate" className="max-w-4xl w-full bg-white text-black p-12 text-center border-[10px] border-double border-[#00f2ff] relative shadow-[0_0_50px_rgba(0,242,255,0.3)]">
-            <p className="tracking-[0.2em] font-serif text-gray-600 mb-4">ANTIGRAVITY ACADEMY</p>
+            <p className="tracking-[0.2em] font-serif text-gray-600 mb-4">PLATTFORM ACADEMY</p>
             <h2 className="text-4xl font-black mb-8 text-black">CERTIFICADO DE APROBACIÓN</h2>
             <Award className="mx-auto mb-6 text-[#7000ff]" size={80} />
             <p className="text-xl mb-4 italic text-gray-700">Se otorga el presente a:</p>
@@ -112,7 +112,7 @@ export default function QuizViewer({ quizId, courseId }: QuizViewerProps) {
                     <p className="font-bold border-t border-black pt-2">CALIFICACIÓN: {result.scorePercentage}/100</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-gray-500 italic">Verificado por Sistema de IA Antigravity 2026</p>
+                    <p className="text-sm text-gray-500 italic">Verificado por Sistema de IA PLATTFORM 2026</p>
                 </div>
             </div>
         </div>

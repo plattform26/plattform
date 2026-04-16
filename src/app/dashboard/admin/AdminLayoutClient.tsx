@@ -46,7 +46,7 @@ export default function AdminLayoutClient({
       {/* SIDEBAR */}
       <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[#0d1524] border-r border-blue-500/10 flex flex-col sticky top-0 h-screen transition-all duration-300 relative group`}>
         <div className={`p-8 border-b border-blue-500/10 relative ${isCollapsed ? 'flex justify-center' : ''}`}>
-           <Link href="/" className="font-space-grotesk font-bold tracking-tighter flex items-center">
+           <Link href="/dashboard/admin" className="font-space-grotesk font-bold tracking-tighter flex items-center">
               <span className={`bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent transition-all ${isCollapsed ? 'text-xl' : 'text-2xl'}`}>
                 {isCollapsed ? 'P' : 'PLATTFORM'}
               </span>
