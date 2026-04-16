@@ -57,7 +57,7 @@ export default function InstructorLayoutClient({
       }
     };
     refreshUser();
-  }, []);
+  }, [pathname]); // Sincronización absoluta ante cambios de ruta
 
   const toggleSidebar = () => {
     const newVal = !isCollapsed;
@@ -96,6 +96,21 @@ export default function InstructorLayoutClient({
           </button>
         </div>
 
+        {/* PLAN BADGE (SOURCE OF TRUTH) */}
+        {!isCollapsed && user?.role === 'INSTRUCTOR' && (
+          <div className="px-6 pt-6 pb-2">
+            <div className="bg-gradient-to-r from-blue-600/20 to-cyan-500/10 border border-blue-500/20 rounded-2xl p-4 flex flex-col gap-1 shadow-inner group/plan">
+                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] group-hover/plan:text-cyan-400 transition-colors">Estado de Plan</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span className="text-sm font-black text-white uppercase tracking-tighter">
+                    {user?.activePlanName || 'SIN PLAN'} {user?.isCourtesy && '(CORTESÍA)'}
+                  </span>
+                </div>
+            </div>
+          </div>
+        )}
+
         <nav className="flex-1 px-4 space-y-2 mt-4 custom-scrollbar overflow-y-auto overflow-x-hidden">
           {menu.map(item => {
             const isActive = pathname === item.path;
@@ -129,6 +144,28 @@ export default function InstructorLayoutClient({
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto font-poppins relative">
+        
+        {/* MISION: MURO DE PAGO (MANDATORY GATEKEEPER - ABSOLUTE PRIORITY) */}
+        {!isSyncing && user?.role === 'INSTRUCTOR' && !user?.activePlanName && (
+          <div className="fixed inset-0 z-[9999] bg-[#070d1a]/98 backdrop-blur-2xl flex items-center justify-center p-8 text-center overflow-hidden">
+             <div className="max-w-md space-y-8 animate-in fade-in zoom-in duration-500">
+                <div className="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center text-5xl mx-auto border border-cyan-500/20 shadow-2xl shadow-cyan-500/20">
+                  🔒
+                </div>
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Acceso Restringido</h2>
+                  <p className="text-lg font-bold text-cyan-400">Para poder avanzar y acceder a las funciones de la plataforma, debes elegir y pagar un plan.</p>
+                  <p className="text-sm text-gray-500 font-medium">Activa tu suscripción para desbloquear el panel de control, el generador de IA y la publicación de cursos.</p>
+                </div>
+                <Link 
+                  href="/pricing" 
+                  className="block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20 hover:scale-[1.02] transition-all"
+                >
+                  Ver Planes Disponibles
+                </Link>
+             </div>
+          </div>
+        )}
         {/* Misión: Banners de Alta Jerarquía y Sticky */}
         <div className="sticky top-0 z-[60] flex flex-col shadow-2xl">
           {/* Alerta por falta de Verificación (Misión: Flicker Zero) */}

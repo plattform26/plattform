@@ -65,19 +65,26 @@ export async function GET(req: Request) {
     // Verificar suscripción si es INSTRUCTOR
     let hasActiveSubscription = false;
     let academySlug = '';
+    let activePlanName = '';
     
     if (user.role === 'INSTRUCTOR') {
-      const profile = await prisma.instructorProfile.findUnique({
-        where: { userId: user.id },
-        include: { 
-          subscriptions: { 
-            where: { status: 'ACTIVE' },
-            take: 1
-          } 
-        }
-      });
-      hasActiveSubscription = (profile?.subscriptions?.length || 0) > 0 || user.isCourtesy;
-      academySlug = profile?.slug || '';
+      try {
+        const { getEffectivePlan } = await import('@/lib/plan-utils');
+        const plan = await getEffectivePlan(user.id);
+        
+        activePlanName = plan?.name || 'STARTER';
+        hasActiveSubscription = !!plan; // STARTER counts as a plan
+        
+        const profile = await prisma.instructorProfile.findUnique({
+          where: { userId: user.id },
+          select: { slug: true }
+        });
+        academySlug = profile?.slug || '';
+      } catch (innerError) {
+        console.error('Non-critical: Error fetching instructor plan details:', innerError);
+        activePlanName = 'STARTER';
+        hasActiveSubscription = true;
+      }
     }
 
     return NextResponse.json({
@@ -92,6 +99,7 @@ export async function GET(req: Request) {
       hasActiveSubscription, // Requerido por el middleware
       isCourtesy: user.isCourtesy,
       courtesyPlanId: user.courtesyPlanId,
+      activePlanName,
       academySlug
     });
   } catch (error) {

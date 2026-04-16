@@ -53,6 +53,7 @@ export default async function StudentCoursesPage() {
       hasCertificate: !!certification,
       hasPassedQuiz,
       userRating: userRatingRecord?.rating || null,
+      hasRated: !!userRatingRecord?.rating,
       instructorName: en.course.instructor?.name || 'Instructor' 
     };
   }));

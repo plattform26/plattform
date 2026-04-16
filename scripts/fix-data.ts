@@ -25,6 +25,7 @@ async function main() {
         academyName: `Academia de ${user.name}`,
         slug: slug,
         description: 'Perfil creado automáticamente durante el proceso de estabilización.',
+        commissionRate: 10,
       }
     });
     console.log(`Perfil creado para: ${user.email} con slug: ${slug}`);
@@ -37,27 +38,27 @@ async function main() {
     // Buscar un curso disponible (de Alejandro o Admin)
     const course = await prisma.course.findFirst({
         where: { 
-            instructor: { user: { email: { in: ['admin@plattform.com', 'alejandro@plattform.com'] } } }
+            instructor: { email: { in: ['admin@plattform.com', 'alejandro@plattform.com'] } }
         }
     });
 
     if (course) {
-        const existingEnrollment = await prisma.enrollment.findUnique({
-            where: { userId_courseId: { userId: student.id, courseId: course.id } }
-        });
+      const existingEnrollment = await prisma.enrollment.findUnique({
+          where: { userId_courseId: { userId: student.id, courseId: course.id } }
+      });
 
-        if (!existingEnrollment) {
-            await prisma.enrollment.create({
-                data: {
-                    userId: student.id,
-                    courseId: course.id,
-                    status: 'ACTIVE'
-                }
-            });
-            console.log(`Inscripción creada para alumno@plattform.com en el curso: ${course.title}`);
-        } else {
-            console.log('El alumno ya está inscrito en un curso.');
-        }
+      if (!existingEnrollment) {
+          await prisma.enrollment.create({
+              data: {
+                  userId: student.id,
+                  courseId: course.id,
+                  status: 'ACTIVE'
+              }
+          });
+          console.log(`Inscripción creada para alumno@plattform.com en el curso: ${course.title}`);
+      } else {
+          console.log('El alumno ya está inscrito en un curso.');
+      }
     } else {
         console.log('No se encontró un curso de Alejandro o Admin para la inscripción.');
     }

@@ -46,32 +46,29 @@ export default function StarRating({
     }
 
     return (
-      <button
+      <div
         key={index}
-        type="button"
-        disabled={readonly}
-        className={`${starClasses[size]} transition-all duration-150 ${
-          readonly ? 'cursor-default' : 'hover:scale-120 active:scale-95 cursor-pointer'
-        } relative flex items-center justify-center`}
+        className={`${starClasses[size]} transition-all duration-150 relative flex items-center justify-center ${
+          readonly ? 'cursor-default pointer-events-none' : 'hover:scale-110 active:scale-95 cursor-pointer'
+        }`}
         onMouseEnter={() => !readonly && setHoverValue(index)}
         onMouseLeave={() => !readonly && setHoverValue(null)}
         onClick={() => !readonly && onChange && onChange(index)}
       >
         {/* Base Star (Empty) */}
-        <span style={{ color: '#374151' }}>★</span>
+        <span className="text-gray-700">★</span>
         
         {/* Full/Partial Star Overlay */}
         <span 
-          className="absolute inset-x-0 top-0 overflow-hidden text-center" 
+          className="absolute inset-x-0 top-0 overflow-hidden text-center select-none" 
           style={{ 
             color: '#FFD700',
-            width: `${fillPercentage}%`,
-            transition: 'width 0.3s ease'
+            width: `${fillPercentage}%`
           }}
         >
           ★
         </span>
-      </button>
+      </div>
     );
   };
 

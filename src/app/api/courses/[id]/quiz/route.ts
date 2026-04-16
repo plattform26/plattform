@@ -98,7 +98,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
                       questionText: q.questionText,
                       questionType: q.questionType || 'SINGLE',
                       optionsJson: normalizedOptions, // Save as structured array for UI consistency
-                      correctAnswer: JSON.stringify(normalizedOptions.find(o => o.isCorrect) || normalizedOptions[0]),
+                      correctAnswer: JSON.stringify(normalizedOptions.find((o: any) => o.isCorrect) || normalizedOptions[0]),
                       points: Number(q.points) || 0,
                       orderIndex: i + 1,
                       options: {

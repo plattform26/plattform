@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { exportToCSV, exportToExcel } from '@/lib/export-utils';
@@ -17,6 +17,12 @@ export default function AdminUsersPage() {
   const [userToDelete, setUserToDelete] = useState<any>(null);
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Misión: Auditoría de Inscripciones (Deep Audit)
+  const [auditingUserId, setAuditingUserId] = useState<string | null>(null);
+  const [auditData, setAuditData] = useState<any[]>([]);
+  const [isAuditLoading, setIsAuditLoading] = useState(false);
+  const [isAuditError, setIsAuditError] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -130,6 +136,29 @@ export default function AdminUsersPage() {
     }
   };
 
+   const handleAudit = async (userId: string) => {
+    if (auditingUserId === userId) {
+      setAuditingUserId(null);
+      setAuditData([]);
+      setIsAuditError(false);
+      return;
+    }
+    setAuditingUserId(userId);
+    setIsAuditLoading(true);
+    setIsAuditError(false);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/audit`);
+      if (!res.ok) throw new Error('API Error');
+      const data = await res.json();
+      setAuditData(data);
+    } catch (err) {
+      console.error('Audit Fetch Error:', err);
+      setIsAuditError(true);
+    } finally {
+      setIsAuditLoading(false);
+    }
+  };
+
 
   const getColorByRole = (role: string) => {
      if (role === 'ADMIN') return 'text-red-400 bg-red-400/10';
@@ -198,6 +227,7 @@ export default function AdminUsersPage() {
                       <td colSpan={8} className="p-20 text-center text-gray-500 animate-pulse">Cargando base de datos de usuarios...</td>
                    </tr>
                 ) : users.map(user => (
+                    <Fragment key={user.id}>
                    <tr key={user.id} className="hover:bg-blue-600/5 transition-colors group">
                       <td className="p-6 whitespace-nowrap">
                          <div className="flex items-center gap-3">
@@ -273,7 +303,7 @@ export default function AdminUsersPage() {
                       <td className="p-6 text-sm text-gray-500 font-medium whitespace-nowrap">
                          {new Date(user.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="p-6 text-right min-w-[300px]">
+                      <td className="p-6 text-right min-w-[400px]">
                          <div className="flex justify-end gap-2">
                             <Link href={`/dashboard/admin/users/edit/${user.id}?role=${user.role.toLowerCase()}`} className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all text-gray-400 hover:text-white">EDITAR PERFIL</Link>
                             
@@ -311,6 +341,13 @@ export default function AdminUsersPage() {
                              )}
 
                              <button 
+                               onClick={() => handleAudit(user.id)}
+                               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border ${auditingUserId === user.id ? 'bg-cyan-500 border-cyan-400 text-white' : 'border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/10'} transition-all shadow-lg shadow-cyan-500/10`}
+                             >
+                               {auditingUserId === user.id ? 'CERRAR AUDITORÍA' : 'AUDITAR'}
+                             </button>
+
+                             <button 
                                onClick={() => {
                                   setUserToDelete(user);
                                   setShowDeleteModal(true);
@@ -319,10 +356,108 @@ export default function AdminUsersPage() {
                              >
                                ELIMINAR
                              </button>
-                         </div>
+                          </div>
                       </td>
                    </tr>
-                ))}
+
+                   {/* Fila de Auditoría Desplegable */}
+                   {auditingUserId === user.id && (
+                       <tr className="bg-cyan-500/[0.03] animate-in slide-in-from-top duration-300">
+                          <td colSpan={8} className="p-8 border-y border-cyan-500/10">
+                             <div className="flex flex-col gap-6">
+                                <div className="flex items-center justify-between">
+                                   <h4 className="text-sm font-black uppercase tracking-[0.2em] text-cyan-400 flex items-center gap-2">
+                                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                                      Auditoría de Aprendizaje: {user.name}
+                                   </h4>
+                                   <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                      ID: {user.id}
+                                   </span>
+                                </div>
+
+                                {isAuditLoading ? (
+                                   <div className="py-12 text-center text-gray-500 uppercase text-[10px] font-bold tracking-widest animate-pulse">
+                                      Consultando historial académico y financiero...
+                                   </div>
+                                ) : auditData.length === 0 ? (
+                                   <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                                      {isAuditError ? (
+                                          <div className="flex flex-col items-center gap-2">
+                                             <p className="text-red-400 font-black text-[10px] uppercase tracking-widest">Error al cargar datos de auditoría</p>
+                                             <button onClick={() => handleAudit(auditingUserId!)} className="text-[10px] text-cyan-400 underline uppercase font-bold">Reintentar</button>
+                                          </div>
+                                       ) : (
+                                          <p className="text-gray-600 font-black text-[10px] uppercase tracking-widest">Sin actividad registrada para este perfil.</p>
+                                       )}
+                                   </div>
+                                ) : (
+                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                       {auditData.map((audit: any) => (
+                                          <div key={`${audit.type}-${audit.courseId}`} className="bg-white/5 border border-blue-500/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all group/card shadow-xl shadow-black/20">
+                                             <div className="flex justify-between items-start mb-4">
+                                                <h5 className="text-xs font-black text-white uppercase tracking-tight leading-tight max-w-[150px] group-hover/card:text-cyan-400 transition-colors">
+                                                   {audit.courseTitle}
+                                                </h5>
+                                                <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${
+                                                   audit.paymentSource.includes('STATUS') ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400' :
+                                                   audit.paymentSource === 'BYPASS ADMIN' ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' :
+                                                   'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                                                } uppercase tracking-widest`}>
+                                                   {audit.paymentSource}
+                                                </span>
+                                             </div>
+
+                                             <div className="space-y-4">
+                                                <div className="flex justify-between items-end">
+                                                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                                      {audit.type === 'CREATION' ? 'Alumnos Inscritos' : 'Progreso Académico'}
+                                                   </span>
+                                                   <span className="text-xs font-black text-cyan-400">
+                                                      {audit.type === 'CREATION' ? audit.studentsCount : `${audit.progress}%`}
+                                                   </span>
+                                                </div>
+                                                
+                                                <div className="h-2 w-full bg-blue-900/20 rounded-full overflow-hidden mb-2">
+                                                   <div 
+                                                      className={`h-full transition-all duration-1000 ease-out ${audit.progress === 100 ? 'bg-gradient-to-r from-green-500 to-emerald-400' : 'bg-gradient-to-r from-blue-600 to-cyan-400'}`}
+                                                      style={{ width: `${audit.progress}%` }}
+                                                   />
+                                                </div>
+
+                                                <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/5">
+                                                   <div className="flex flex-wrap gap-2">
+                                                      {audit.type === 'ENROLLMENT' && audit.progress === 100 && (
+                                                         <span className="text-[8px] font-black text-green-400 uppercase tracking-widest flex items-center gap-1">
+                                                            <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
+                                                            COMPLETADO
+                                                         </span>
+                                                      )}
+                                                      {audit.type === 'ENROLLMENT' && audit.hasCertificate && (
+                                                         <span className="text-[8px] font-black bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded border border-cyan-500/20 uppercase tracking-tighter">
+                                                            CERTIFICADO EMITIDO
+                                                         </span>
+                                                      )}
+                                                      {audit.type === 'CREATION' && (
+                                                         <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">
+                                                            Catálogo Profesional
+                                                         </span>
+                                                      )}
+                                                   </div>
+                                                   <p className="text-[8px] text-gray-600 font-bold uppercase tracking-widest ml-auto">
+                                                      {audit.type === 'CREATION' ? 'Creación:' : 'Inscrito:'} {new Date(audit.enrolledAt).toLocaleDateString()}
+                                                   </p>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       ))}
+                                   </div>
+                                )}
+                             </div>
+                          </td>
+                       </tr>
+                    )}
+                   </Fragment>
+                 ))}
                 {(!loading && users.length === 0) && (
                    <tr>
                       <td colSpan={8} className="p-20 text-center text-gray-500 italic">No se encontraron usuarios con estos criterios.</td>

@@ -73,9 +73,9 @@ export default function AdminImpersonationPage({ params }: { params: { id: strin
       </div>
 
       {effectiveRole === 'instructor' ? (
-        <InstructorProfilePage impersonateId={id} isAdminMode={true} />
+        <InstructorProfilePage searchParams={{ impersonateId: id, isAdminMode: 'true' }} />
       ) : effectiveRole === 'student' ? (
-        <StudentProfilePage impersonateId={id} isAdminMode={true} />
+        <StudentProfilePage searchParams={{ impersonateId: id, isAdminMode: 'true' }} />
       ) : (
         <div className="p-20 text-center text-gray-500 uppercase text-[10px] font-black tracking-widest italic border border-dashed border-white/5 rounded-3xl">
           Esperando definición de identidad del sujeto...

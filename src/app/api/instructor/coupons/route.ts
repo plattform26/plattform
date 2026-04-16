@@ -51,8 +51,8 @@ export async function POST(req: Request) {
       code: code.toUpperCase(),
       discountPercent,
       courseId,
-      expiresAt: expiresAt ? new Date(expiresAt) : null,
-      maxUses: maxUses || null,
+      expirationDate: expiresAt ? new Date(expiresAt) : null,
+      usageLimit: maxUses ? parseInt(maxUses) : null,
     }
   });
 
@@ -76,7 +76,7 @@ export async function DELETE(req: Request) {
     include: { course: true }
   });
 
-  if (!coupon || coupon.course.instructorId !== session.userId) {
+  if (!coupon || !coupon.course || coupon.course.instructorId !== session.userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import RatingModal from '@/components/RatingModal';
+import StarRating from '@/components/StarRating';
 
 export default function CertificatePage() {
   const { id: courseId } = useParams();
@@ -100,7 +101,7 @@ export default function CertificatePage() {
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Valoración emitida</span>
                   <div className="flex items-center gap-4">
                      <span className="text-white font-bold text-sm italic">Tu calificación:</span>
-                     <StarRating value={userRating} readonly size="md" />
+                     <StarRating value={userRating || 0} readonly size="md" />
                   </div>
                 </div>
               ) : (

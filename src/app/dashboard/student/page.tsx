@@ -88,6 +88,7 @@ export default async function StudentDashboardPage() {
       nextLessonId,
       hasCertificate: en.course.certifications.length > 0,
       userRating: userRatingRecord?.rating || null,
+      hasRated: !!userRatingRecord?.rating,
       instructorName: en.course.instructor?.name || 'Instructor' 
     };
   }));

@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import PasswordChangeModal from '@/components/PasswordChangeModal';
 
-export default function StudentProfilePage({ impersonateId, isAdminMode = false }: { impersonateId?: string, isAdminMode?: boolean }) {
+export default function StudentProfilePage({ 
+  searchParams 
+}: { 
+  searchParams: { [key: string]: string | string[] | undefined } 
+}) {
+  const impersonateId = searchParams.impersonateId as string | undefined;
+  const isAdminMode = searchParams.isAdminMode === 'true';
   const [formData, setFormData] = useState({ name: '', lastName: '', email: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

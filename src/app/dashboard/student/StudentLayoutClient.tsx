@@ -98,7 +98,7 @@ export default function StudentLayoutClient({
       <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto relative">
         <header className="h-16 flex items-center justify-between px-8 border-b border-blue-500/10 bg-[#070d1a]/80 backdrop-blur sticky top-0 z-40">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-widest leading-none">
-             Centro de Aprendizaje <span className="text-cyan-400">v1.2</span>
+             Centro de Aprendizaje
           </div>
           <div className="flex items-center gap-4">
              <span className="text-xs font-semibold text-gray-400 hidden sm:block">¡Bienvenido!</span>

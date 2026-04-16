@@ -23,17 +23,12 @@ export default async function InstructorDashboardPage() {
   });
 
   if (!profile) return <div>Perfil no encontrado</div>;
-
-  const activeSub = profile.subscriptions[0];
   const isCourtesy = profile.user.isCourtesy;
-  
-  // Misión: Lógica de Plan (Cortesía vs Stripe)
-  const courtesyPlan = isCourtesy && profile.user.courtesyPlanId 
-    ? await prisma.platformPlan.findUnique({ where: { id: profile.user.courtesyPlanId } })
-    : null;
 
-  const currentPlan = activeSub?.plan || courtesyPlan;
-  const planDisplayName = currentPlan?.displayName || 'Ninguno';
+  const { getEffectivePlan } = await import('@/lib/plan-utils');
+  const currentPlan = await getEffectivePlan(session.userId);
+  
+  const planDisplayName = currentPlan?.displayName || currentPlan?.name || 'Ninguno';
   const studentLimit = currentPlan?.studentLimit ?? 0;
   
   // Total Enrollments (Alumnos-Materia)
@@ -48,6 +43,8 @@ export default async function InstructorDashboardPage() {
   const isHibernated = await prisma.course.count({
     where: { instructorId: session.userId, status: 'HIBERNATED' }
   }) > 0;
+  
+  const activeSub = profile.subscriptions[0];
   
   const daysUntilExpiry = activeSub?.expiresAt 
     ? Math.ceil((new Date(activeSub.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
@@ -176,7 +173,18 @@ export default async function InstructorDashboardPage() {
            </div>
            <p className="text-xs text-gray-400 mt-1">Límite de alumnos-materia: <strong className="text-white">{studentLimit === -1 ? 'Ilimitado' : `${totalEnrollmentsCount}/${studentLimit}`}</strong></p>
          </div>
-         <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
+
+         <div className="flex flex-col items-end gap-2">
+            <div className={`px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${
+              profile.stripeConnectId && profile.stripeOnboardingComplete 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : 'bg-red-500/10 border-red-500/30 text-red-500'
+            }`}>
+               <span className={`w-1.5 h-1.5 rounded-full ${profile.stripeConnectId && profile.stripeOnboardingComplete ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`} />
+               Status: {profile.stripeConnectId && profile.stripeOnboardingComplete ? 'CONECTADO STRIPE' : 'SIN VINCULAR'}
+            </div>
+            <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
+         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
@@ -272,7 +280,7 @@ export default async function InstructorDashboardPage() {
                       status={c.status} 
                       enrollmentCount={c._count.enrollments} 
                       role="INSTRUCTOR" 
-                      planName={activeSub?.plan.name}
+                      planName={currentPlan?.name}
                       instructorStatus={profile.user.status}
                     />
                   </td>

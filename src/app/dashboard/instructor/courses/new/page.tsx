@@ -43,16 +43,25 @@ export default async function NewCoursePage() {
           name: p.academyName || `${p.user.name} ${p.user.lastName}`
       }));
   } else {
-      // Instructor check (Standard Stripe Sub)
-      const sub = await prisma.instructorSubscription.findFirst({
-        where: { 
-          instructor: { userId: session.userId },
-          status: 'ACTIVE'
-        },
-        include: { plan: true },
+      // Instructor check (Courtesy First, then Standard Stripe Sub)
+      const user = await prisma.user.findUnique({
+          where: { id: session.userId },
+          select: { isCourtesy: true, courtesyPlan: { select: { aiEnabled: true } } }
       });
-      if (sub && sub.plan.aiEnabled) {
-        aiEnabled = true;
+
+      if (user?.isCourtesy && user.courtesyPlan?.aiEnabled) {
+          aiEnabled = true;
+      } else {
+          const sub = await prisma.instructorSubscription.findFirst({
+            where: { 
+              instructor: { userId: session.userId },
+              status: 'ACTIVE'
+            },
+            include: { plan: true },
+          });
+          if (sub && sub.plan.aiEnabled) {
+            aiEnabled = true;
+          }
       }
   }
 

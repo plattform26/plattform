@@ -150,37 +150,37 @@ export default function PlanClient({
       </div>
 
       {showDowngradeModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="bg-[#0b1221] border border-red-500/30 rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl shadow-red-500/10 relative overflow-hidden group">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-[#070d1a]/85 backdrop-blur-xl animate-fade-in">
+          <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl shadow-cyan-500/5 relative overflow-hidden group">
              {/* Decorative Background */}
-             <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-600/5 blur-[80px] rounded-full group-hover:bg-red-600/10 transition-all duration-700" />
+             <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-600/5 blur-[80px] rounded-full group-hover:bg-cyan-600/10 transition-all duration-700" />
              
              <div className="relative z-10 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 mb-8">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-yellow-500/10 border border-yellow-500/20 mb-8">
                    <span className="text-4xl">⚠️</span>
                 </div>
                 
-                <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter">¿Confirmar Downgrade?</h3>
+                <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter">¿CONFIRMAR BAJA DE PLAN?</h3>
                 
-                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light italic">
-                   Estás a punto de bajar de nivel al plan <span className="text-red-400 font-bold">{showDowngradeModal.toUpperCase()}</span>. 
+                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light tracking-wide">
+                   Estás a punto de bajar de nivel al plan <span className="text-cyan-400 font-bold">{plans.find(p => p.id === showDowngradeModal)?.displayName || 'Básico'}</span>. 
                    <br/><br/>
-                   <span className="text-white font-bold block mb-2">REGLAS DE REINICIO DE CICLO:</span>
-                   1. Se realizará un <span className="text-red-400 font-bold">cobro inmediato</span> por el monto total del nuevo plan.
-                   2. Tu ciclo de facturación <span className="text-cyan-400 font-bold">se reinicia hoy</span> (Hoy + 30 días).
-                   3. <span className="text-red-500 font-bold underline">Perderás el tiempo remanente</span> de tu plan actual prepagado.
+                   <span className="text-white font-black uppercase tracking-widest text-[10px] block mb-4 border-b border-white/5 pb-2">Reglas de reinicio de ciclo:</span>
+                   <span className="block mb-2">1. Se realizará un <span className="text-red-400 font-bold">cobro inmediato</span> por el monto total del nuevo plan.</span>
+                   <span className="block mb-2">2. Tu ciclo de facturación <span className="text-cyan-400 font-bold">se reinicia hoy</span> (Hoy + 30 días).</span>
+                   <span className="block mb-2">3. <span className="text-red-500 font-bold underline">Perderás el tiempo remanente</span> de tu plan actual prepagado.</span>
                 </p>
-
+ 
                 <div className="space-y-4">
                   <button 
                     onClick={() => handleSubscribe(showDowngradeModal, true)}
-                    className="w-full py-4 bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl text-xs font-black text-white hover:scale-105 transition-all shadow-xl shadow-red-600/20 uppercase tracking-widest"
+                    className="w-full py-5 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl text-xs font-black text-white hover:scale-105 transition-all shadow-xl shadow-red-600/20 uppercase tracking-[0.2em]"
                   >
                     Acepto perder mi tiempo actual y Reiniciar Ciclo
                   </button>
                   <button 
                     onClick={() => setShowDowngradeModal(null)}
-                    className="w-full py-4 text-gray-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
+                    className="w-full py-5 border border-cyan-500/50 hover:bg-cyan-500/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-[0.2em] transition-all"
                   >
                     Mantener mi plan actual
                   </button>

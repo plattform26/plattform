@@ -127,7 +127,7 @@ function SidebarInternal({
                {isSidebarOpen ? '❮ Ocultar' : '❯ Mostrar Temario'}
             </button>
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest hidden sm:block">
-               Plattform Learning Engine <span className="text-cyan-400">v1.2</span>
+               Plattform Learning Engine
             </div>
          </header>
 

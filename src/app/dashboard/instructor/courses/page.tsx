@@ -18,23 +18,30 @@ export default async function InstructorCoursesPage() {
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
-  const user = await prisma.user.findUnique({
+  const userFull = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { status: true }
+    select: { isCourtesy: true, courtesyPlan: { select: { name: true } }, status: true }
   });
 
-  const instructorProfile = await prisma.instructorProfile.findUnique({
-    where: { userId: session.userId },
-    include: {
-      subscriptions: {
-        where: { status: 'ACTIVE' },
-        include: { plan: true },
-        take: 1
+  let activePlanName = '';
+
+  if (userFull?.isCourtesy && userFull.courtesyPlan) {
+    activePlanName = userFull.courtesyPlan.name;
+  } else {
+    const instructorProfile = await prisma.instructorProfile.findUnique({
+      where: { userId: session.userId },
+      include: {
+        subscriptions: {
+          where: { status: 'ACTIVE' },
+          include: { plan: true },
+          take: 1
+        }
       }
-    }
-  });
+    });
+    activePlanName = instructorProfile?.subscriptions[0]?.plan.name || '';
+  }
 
-  const activePlan = instructorProfile?.subscriptions[0]?.plan.name;
+  const activePlan = activePlanName;
 
   const courses = await prisma.course.findMany({
     where: { instructorId: session.userId, deletedAt: null },
@@ -59,7 +66,7 @@ export default async function InstructorCoursesPage() {
           <h1 className="text-2xl font-space-grotesk font-bold text-white">Mis cursos 📚</h1>
           <p className="text-gray-400 text-sm mt-1">{courses.length} curso{courses.length !== 1 ? 's' : ''} creado{courses.length !== 1 ? 's' : ''}</p>
         </div>
-        <NewCourseButton status={user?.status} />
+        <NewCourseButton status={userFull?.status} />
       </div>
 
       <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl overflow-hidden">
@@ -127,7 +134,7 @@ export default async function InstructorCoursesPage() {
                         enrollmentCount={c._count.enrollments} 
                         role="INSTRUCTOR" 
                         planName={serialize(activePlan)}
-                        instructorStatus={user?.status}
+                        instructorStatus={userFull?.status}
                       />
                     </td>
                   </tr>

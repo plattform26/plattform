@@ -31,7 +31,7 @@ export default async function PlanPage() {
   
   // Misión: Sanitización radical de Decimal (Prisma) para Componentes de Cliente
   const serializedPlans = serialize(allPlans || []);
-  const serializedActivePlanId = serialize(activeSub?.plan.id || null);
+  const serializedActivePlanId = serialize(activeSub?.plan.id || undefined);
 
   return (
     <>
@@ -96,7 +96,7 @@ export default async function PlanPage() {
           <PlanClient 
             plans={serializedPlans} 
             activePlanId={serializedActivePlanId} 
-            expirationDate={serialize(activeSub?.expiresAt || null)}
+            expirationDate={activeSub?.expiresAt?.toISOString() || undefined}
           />
         </Suspense>
       </div>

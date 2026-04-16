@@ -36,14 +36,26 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // Subscription check for Instructors
     if (session.role === 'INSTRUCTOR') {
-        const sub = await prisma.instructorSubscription.findFirst({
-            where: { 
-                instructor: { userId: session.userId },
-                status: 'ACTIVE'
-            }
+        const user = await prisma.user.findUnique({
+            where: { id: session.userId },
+            select: { isCourtesy: true, status: true }
         });
-        if (!sub) {
-            errors.push('Debes tener una suscripción activa para publicar cursos. Ve a Configuración > Plan.');
+
+        if (user?.isCourtesy) {
+            // Courtesy users bypass the InstructorSubscription check
+            if (user.status !== 'ACTIVE') {
+                errors.push('Tu cuenta de cortesía debe estar activa para publicar cursos.');
+            }
+        } else {
+            const sub = await prisma.instructorSubscription.findFirst({
+                where: { 
+                    instructor: { userId: session.userId },
+                    status: 'ACTIVE'
+                }
+            });
+            if (!sub) {
+                errors.push('Debes tener una suscripción activa para publicar cursos. Ve a Configuración > Plan.');
+            }
         }
     }
 

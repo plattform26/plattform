@@ -39,7 +39,7 @@ async function main() {
       title: 'Certificación de Lógica Pura',
       slug: 'certificacion-logica-pura',
       description: 'Curso automatizado para validar el motor pedagógico.',
-      category: 'TECHNOLOGY',
+      category: 'TECH_INNOVATION',
       level: 'ADVANCED',
       price: 0,
       status: 'PUBLISHED',

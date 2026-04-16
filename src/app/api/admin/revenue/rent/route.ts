@@ -18,38 +18,47 @@ export async function GET(req: NextRequest) {
     const filterYear = url.searchParams.get('year');
 
     const now = new Date();
-    const targetMonth = filterMonth ? parseInt(filterMonth) : now.getMonth();
-    const targetYear = filterYear ? parseInt(filterYear) : now.getFullYear();
+    const targetMonth = filterMonth === 'all' ? 'all' : parseInt(filterMonth || now.getMonth().toString());
+    const targetYear = filterYear === 'all' ? 'all' : parseInt(filterYear || now.getFullYear().toString());
 
-    const firstDay = new Date(targetYear, targetMonth, 1);
-    const lastDay = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-    const firstDayYear = new Date(targetYear, 0, 1);
+    // 1. Cálculos de Métricas (KPIs) basados en Suscripciones Activas
+    const activeSubscriptions = await prisma.instructorSubscription.findMany({
+      where: { 
+        status: 'ACTIVE'
+      },
+      include: { plan: true }
+    });
 
-    // 1. Cálculos de Métricas (KPIs)
-    const [periodRent, yearRent, expiredCount] = await Promise.all([
-      prisma.transaction.aggregate({
-        _sum: { grossAmount: true },
-        where: {
-          paymentType: 'INSTRUCTOR_SUBSCRIPTION',
-          paymentStatus: 'SUCCESS',
-          createdAt: { gte: firstDay, lte: lastDay }
-        }
-      }),
-      prisma.transaction.aggregate({
-        _sum: { grossAmount: true },
-        where: {
-          paymentType: 'INSTRUCTOR_SUBSCRIPTION',
-          paymentStatus: 'SUCCESS',
-          createdAt: { gte: firstDayYear, lte: lastDay }
-        }
-      }),
-      prisma.instructorSubscription.count({
-        where: { status: { in: ['PAST_DUE', 'EXPIRED', 'CANCELLED'] } }
-      })
-    ]);
+    const totalIncome = activeSubscriptions.reduce((acc, sub) => acc + Number(sub.plan.monthlyPrice), 0);
+    
+    // Métricas de Utilidad (Stripe MX Fees: (Monto * 0.034 + 3) * 1.16)
+    const calcNetUtility = (amt: number) => {
+      if (amt <= 0) return 0;
+      const stripeFee = ((amt * 0.034) + 3) * 1.16;
+      return amt - stripeFee;
+    };
 
-    // 2. Detalle de Suscripciones con Conteo de Alumnos (Uso Real)
+    const netPlatformUtility = activeSubscriptions.reduce((acc, sub) => {
+      return acc + calcNetUtility(Number(sub.plan.monthlyPrice));
+    }, 0);
+
+    const expiredCount = await prisma.instructorSubscription.count({
+      where: { status: { in: ['PAST_DUE', 'EXPIRED', 'CANCELLED'] } }
+    });
+
+    // 2. Detalle de Suscripciones (Aplicar Filtros Temporales solo si no son 'all')
+    const whereClause: any = {};
+    if (targetYear !== 'all') {
+      const firstDay = new Date(targetYear, targetMonth === 'all' ? 0 : targetMonth, 1);
+      const lastDay = new Date(targetYear, targetMonth === 'all' ? 12 : targetMonth + 1, 0, 23, 59, 59);
+      whereClause.createdAt = {
+        gte: firstDay,
+        lte: lastDay
+      };
+    }
+
     const subscriptions = await prisma.instructorSubscription.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
       include: {
         instructor: {
@@ -75,8 +84,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       metrics: {
-        rentThisMonth: Number(periodRent._sum.grossAmount || 0),
-        accumulatedYear: Number(yearRent._sum.grossAmount || 0),
+        rentThisMonth: totalIncome,
+        netRevenueThisMonth: netPlatformUtility,
         expiredCount,
         selectedPeriod: { month: targetMonth, year: targetYear }
       },

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import OpenAI from 'openai';
+// @ts-ignore
+import pdfParse from 'pdf-parse';
 import slugify from 'slugify';
 import mammoth from 'mammoth';
 
@@ -10,6 +12,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  let generatedData: any = null;
   try {
     const session = await getSession();
     if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
@@ -20,16 +23,14 @@ export async function POST(req: Request) {
     const promptText = formData.get('promptText') as string;
     const files = formData.getAll('files') as File[];
 
-    const sub = await prisma.instructorSubscription.findFirst({
-      where: { instructor: { userId: session.userId }, status: 'ACTIVE' },
-      include: { plan: true }
-    });
+    const { getEffectivePlan } = await import('@/lib/plan-utils');
+    const activePlan = await getEffectivePlan(session.userId);
 
-    if (!sub || !sub.plan.aiEnabled) {
+    if (!activePlan || !activePlan.aiEnabled) {
       return NextResponse.json({ error: 'Actualiza a un plan con IA para usar esta función.' }, { status: 403 });
     }
 
-    const isScale = (sub && sub.plan.name === 'scale') || session.role === 'ADMIN';
+    const isScale = (activePlan && activePlan.name.toLowerCase() === 'scale') || session.role === 'ADMIN';
 
     if (files.length > 0 && !isScale) {
         return NextResponse.json({ error: 'La carga de documentos es exclusiva del plan Scale.' }, { status: 403 });
@@ -57,16 +58,8 @@ export async function POST(req: Request) {
           }
           
           if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-              console.log('Iniciando PDF Parsing (Webpack Escape Hatch)...');
-              // WEBPACK ESCAPE: Using eval(require) to bypass bundler issues with pdfjs-dist
-              const pdfLib = eval('require')('pdf-parse');
-              const PDFParse = pdfLib.PDFParse || pdfLib;
-              
-              if (typeof PDFParse !== 'function') {
-                throw new Error('No se pudo encontrar la función PDFParse en la librería (CJS).');
-              }
-
-              const data = await PDFParse(buffer);
+              console.log('Iniciando PDF Parsing...');
+              const data = await pdfParse(buffer);
               contextText += `\n--- CONTENIDO DE PDF: ${file.name} ---\n${data.text}\n`;
               console.log('PDF procesado con éxito.');
           } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) {
@@ -187,7 +180,7 @@ export async function POST(req: Request) {
           slug,
           description: generatedData.description || '',
           price: 999,
-          category: 'OTHER',
+          category: 'STRATEGY_BUSINESS', // Fixed from 'OTHER' to valid enum
           status: 'DRAFT',
           visibility: 'PUBLIC'
         }
@@ -279,7 +272,7 @@ export async function POST(req: Request) {
                   questionType: 'SINGLE',
                   points: points,
                   orderIndex: i + 1,
-                  correctAnswer: JSON.stringify(optionsData.find(o => o.isCorrect) || optionsData[0]),
+                  correctAnswer: JSON.stringify(optionsData.find((o: any) => o.isCorrect) || optionsData[0]),
                   optionsJson: optionsData, // Backfill para el frontend legacy
                   options: {
                     create: optionsData // Persistencia en tabla relacional real

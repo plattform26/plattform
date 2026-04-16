@@ -162,9 +162,14 @@ export default function CoursesPage() {
 
                   <div className="p-6 flex flex-col flex-1">
                     <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 italic">Por {course.instructorName}</div>
-                    <Link href={`/courses/${course.slug}`}>
-                       <h3 className="font-bold text-base leading-tight mb-4 flex-1 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{course.title}</h3>
-                    </Link>
+                     <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-bold text-slate-400 uppercase border border-white/5">
+                           {course.level === 'BEGINNER' ? 'Principiante' : course.level === 'INTERMEDIATE' ? 'Intermedio' : 'Avanzado'}
+                        </span>
+                     </div>
+                     <Link href={`/courses/${course.slug}`}>
+                        <h3 className="font-bold text-base leading-tight mb-4 flex-1 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{course.title}</h3>
+                     </Link>
 
                     <div className="flex items-center justify-between mt-auto mb-6">
                       <div className="flex items-center gap-1.5">

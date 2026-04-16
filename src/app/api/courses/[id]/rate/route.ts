@@ -117,7 +117,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json({
       ratings,
       myRating,
-      average: averageRaw._avg.value || 0,
+      average: averageRaw._avg.rating || 0,
       count: averageRaw._count.id,
       courseMeta: {
         title: course?.title,

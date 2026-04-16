@@ -6,8 +6,8 @@ import { exportToCSV, exportToExcel } from '@/lib/export-utils';
 export default function AdminRevenueCommissionsPage() {
   const now = new Date();
   const [filters, setFilters] = useState({
-    month: now.getMonth().toString(),
-    year: now.getFullYear().toString(),
+    month: now.getMonth(),
+    year: now.getFullYear(),
     instructorId: 'all',
     status: 'all'
   });
@@ -33,8 +33,8 @@ export default function AdminRevenueCommissionsPage() {
     setLoading(true);
     try {
       const query = new URLSearchParams({
-        month: filters.month,
-        year: filters.year,
+        month: String(filters.month),
+        year: String(filters.year),
         instructorId: filters.instructorId,
         status: filters.status
       }).toString();
@@ -109,7 +109,8 @@ export default function AdminRevenueCommissionsPage() {
        Neto: c.netAmount,
        'Tasa %': c.commissionRate
     }));
-    exportToCSV(exportData, `plattform-comisiones-${filters.month}-${filters.year}`);
+    const monthLabel = (filters.month as any) === 'all' ? 'total' : (filters.month as number) + 1;
+    exportToCSV(exportData, `plattform-comisiones-${monthLabel}-${filters.year}`);
   };
 
   const handleExportExcel = () => {
@@ -122,7 +123,8 @@ export default function AdminRevenueCommissionsPage() {
        Neto: c.netAmount,
        'Tasa %': c.commissionRate
     }));
-    exportToExcel(exportData, `plattform-comisiones-${filters.month}-${filters.year}`, 'Comisiones');
+    const monthLabel = (filters.month as any) === 'all' ? 'total' : (filters.month as number) + 1;
+    exportToExcel(exportData, `plattform-comisiones-${monthLabel}-${filters.year}`, 'Comisiones');
   };
 
   return (
@@ -134,44 +136,57 @@ export default function AdminRevenueCommissionsPage() {
           </div>
           
           <div className="flex flex-col md:flex-row gap-4 items-end">
-             <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 relative group">
                 <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Instructor</span>
-                <select 
-                  value={filters.instructorId} 
-                  onChange={(e) => setFilters(prev => ({ ...prev, instructorId: e.target.value }))}
-                  className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-48"
-                >
-                   <option value="all">Todos los Instructores</option>
-                   {instructorsList.map(i => (
-                     <option key={i.id} value={i.id}>{i.name} {i.lastName}</option>
-                   ))}
-                </select>
-             </div>
-             <div className="flex flex-col gap-1.5">
-                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Estado del Curso</span>
-                <select 
-                   value={filters.status} 
-                   onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                   className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-40"
-                >
-                   <option value="all">Todos</option>
-                   <option value="PUBLISHED">Publicados</option>
-                   <option value="DRAFT">Borradores</option>
-                   <option value="HIBERNATED">Hibernados</option>
-                </select>
-             </div>
-             <div className="relative group mb-0.5">
-                <input 
-                  type="text"
-                  placeholder="Filtrar por nombre..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all w-48 pl-10"
-                />
-                <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-             </div>
+                <div className="relative">
+                  <input 
+                    type="text"
+                    placeholder="Escribe 4+ letras..."
+                    className="bg-black/40 border border-secondary/20 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-500/50 transition-all w-64 pl-10"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val.length >= 4) {
+                        setSearchTerm(val);
+                      } else if (val.length === 0) {
+                        setSearchTerm('');
+                      }
+                    }}
+                  />
+                  <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                
+                {/* FLOATING LIST (COMBOBOX) */}
+                {searchTerm.length >= 4 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1524] border border-cyan-500/30 rounded-xl shadow-2xl z-[100] max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="p-2 border-b border-white/5 text-[9px] font-black text-gray-500 uppercase tracking-widest px-4">Resultados para "{searchTerm}"</div>
+                    {instructorsList
+                      .filter(i => (i.name + ' ' + i.lastName).toLowerCase().includes(searchTerm.toLowerCase()))
+                      .map(i => (
+                        <button 
+                          key={i.id}
+                          onClick={() => {
+                            setFilters(prev => ({ ...prev, instructorId: i.id }));
+                            setSearchTerm(''); // Close list
+                          }}
+                          className="w-full text-left px-4 py-3 hover:bg-cyan-500/10 text-xs transition-colors border-b border-white/5 last:border-0 group flex justify-between items-center"
+                        >
+                          <span className={`${filters.instructorId === i.id ? 'text-cyan-400 font-bold' : 'text-gray-300'}`}>{i.name} {i.lastName}</span>
+                          {filters.instructorId === i.id && <span className="text-[10px] text-cyan-400">✓</span>}
+                        </button>
+                      ))}
+                    {filters.instructorId !== 'all' && (
+                      <button 
+                         onClick={() => setFilters(prev => ({ ...prev, instructorId: 'all' }))}
+                         className="w-full text-left px-4 py-3 hover:bg-red-500/10 text-[10px] text-red-400 font-bold uppercase tracking-widest transition-colors"
+                      >
+                         Limpiar filtro ×
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
              <div className="flex gap-2 mb-0.5">
                 <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-secondary/10 hover:border-secondary/50 hover:bg-secondary/10 transition-all uppercase tracking-widest leading-none">CSV</button>
              </div>
@@ -185,17 +200,17 @@ export default function AdminRevenueCommissionsPage() {
              <div className="absolute top-6 right-6 flex gap-2 z-20">
                 <select 
                   value={filters.month} 
-                  onChange={(e) => setFilters(prev => ({ ...prev, month: e.target.value }))}
+                  onChange={(e) => setFilters(prev => ({ ...prev, month: parseInt(e.target.value) }))}
                   className="bg-black border border-cyan-500/30 text-white rounded-lg text-[10px] px-3 py-1.5 outline-none transition-all cursor-pointer hover:border-cyan-400 font-bold"
                 >
-                   {months.map(m => <option key={m.value} value={m.value} className="bg-black">{m.label}</option>)}
+                   {months.filter(m => m.value !== 'all').map(m => <option key={m.value} value={m.value} className="bg-black">{m.label}</option>)}
                 </select>
                 <select 
                   value={filters.year} 
-                  onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
+                  onChange={(e) => setFilters(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                   className="bg-black border border-cyan-500/30 text-white rounded-lg text-[10px] px-3 py-1.5 outline-none transition-all cursor-pointer hover:border-cyan-400 font-bold"
                 >
-                   {years.map(y => <option key={y.value} value={y.value} className="bg-black">{y.label}</option>)}
+                   {years.filter(y => y.value !== 'all').map(y => <option key={y.value} value={y.value} className="bg-black">{y.label}</option>)}
                 </select>
              </div>
 
@@ -206,11 +221,10 @@ export default function AdminRevenueCommissionsPage() {
                      ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.totalCommissions)}
                    </p>
                    
-                   {/* Indicador de Tendencia Dinámico (Ocultar si es histórico) */}
                    {!data.metrics.isHistorical && (
                     <div className={`mt-2 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest ${trend >= 0 ? 'text-cyan-400' : 'text-red-500'}`} suppressHydrationWarning>
                         <span>{trend >= 0 ? '↑' : '↓'} {Math.abs(trend).toFixed(1)}%</span>
-                        <span className="text-gray-600 font-medium whitespace-nowrap">vs {months.find(m => m.value === (parseInt(filters.month) === 0 ? '11' : (parseInt(filters.month) - 1).toString()))?.label}</span>
+                        <span className="text-gray-600 font-medium whitespace-nowrap">vs {months.find(m => m.value === String(Number(filters.month) === 0 ? 11 : Number(filters.month) - 1))?.label}</span>
                     </div>
                    )}
                    {data.metrics.isHistorical && (
@@ -340,7 +354,7 @@ export default function AdminRevenueCommissionsPage() {
                                  <div className="flex items-center justify-between mb-2">
                                     <h4 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.4em]">Detalle de Inscripciones (Real-Time)</h4>
                                     <span className="text-[10px] text-gray-600 font-mono">
-                                      Periodo: {filters.month === 'all' ? 'Todo' : months.find(m => m.value === filters.month)?.label} {filters.year === 'all' ? 'Histórico' : filters.year}
+                                      Periodo: {(filters.month as any) === 'all' ? 'Todo' : months.find(m => (m.value as any) === filters.month)?.label} {(filters.year as any) === 'all' ? 'Histórico' : filters.year}
                                     </span>
                                  </div>
                                  <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#0d1524]">

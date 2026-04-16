@@ -115,7 +115,7 @@ export default async function InstructorProfile({ params }: { params: { slug: st
 
                 <div className="flex flex-wrap justify-center items-center gap-4 py-4 border-b border-white/5 mb-4">
                     <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-xl">
-                        <StarRating value={profile.metrics?.globalRating || 0} readonly size="xs" />
+                        <StarRating value={profile.metrics?.globalRating || 0} readonly size="sm" />
                         <span className="text-[10px] font-bold text-yellow-500/80">{profile.metrics?.globalRating || 'N/A'}</span>
                     </div>
                     {profile.linkedinUrl && (
@@ -217,7 +217,7 @@ export default async function InstructorProfile({ params }: { params: { slug: st
                                 
                                 <div className="flex items-center gap-3 mb-5">
                                     <div className="flex items-center gap-1">
-                                        <StarRating value={course.averageRating} readonly size="xs" />
+                                        <StarRating value={course.averageRating} readonly size="sm" />
                                         <span className="text-[10px] font-bold text-white/40">{course.averageRating.toFixed(1)}</span>
                                     </div>
                                     <div className="h-2.5 w-[0.5px] bg-white/10"></div>

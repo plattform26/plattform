@@ -102,8 +102,7 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
         const pdfBuffer = await generateCertificatePDF(
           studentFullName,
           course.title,
-          cert.certificateCode,
-          bestAttempt?.scorePercentage
+          cert.certificateCode
         );
 
         await sendCertificateEmail(

@@ -182,8 +182,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             const pdfBuffer = await generateCertificatePDF(
               studentFullName,
               quiz.course.title,
-              certification.certificateCode,
-              scorePercentage
+              certification.certificateCode
             );
 
             const downloadLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/student/certificates`;

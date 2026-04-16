@@ -262,12 +262,10 @@ export async function sendCertificateEmail(
 export async function generateCertificatePDF(
   studentName: string, 
   courseTitle: string, 
-  certificateCode: string,
-  finalScore?: number
+  certificateCode: string
 ) {
-  // Import dinámico para evitar problemas en Edge Runtime si existieran, 
-  // aunque Next.js API routes usualmente corren en Node.
   const { jsPDF } = await import('jspdf');
+  const QRCode = await import('qrcode');
   
   const doc = new jsPDF({
     orientation: 'landscape',
@@ -278,68 +276,72 @@ export async function generateCertificatePDF(
   const width = doc.internal.pageSize.getWidth();
   const height = doc.internal.pageSize.getHeight();
 
-  // 1. Fondos y Bordes
-  doc.setDrawColor(6, 182, 212); // Cyan 500
-  doc.setLineWidth(2);
-  doc.rect(5, 5, width - 10, height - 10);
+  // 1. Fondo Dark Premium (#070d1a)
+  doc.setFillColor(7, 13, 26);
+  doc.rect(0, 0, width, height, 'F');
+
+  // 2. Bordes Neón (Cian)
+  doc.setDrawColor(0, 229, 255); // Neon Cyan #00e5ff
+  doc.setLineWidth(1.5);
+  doc.roundedRect(10, 10, width - 20, height - 20, 5, 5, 'D');
   
-  doc.setLineWidth(0.5);
-  doc.rect(7, 7, width - 14, height - 14);
+  doc.setDrawColor(0, 229, 255);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(15, 15, width - 30, height - 30, 4, 4, 'D');
 
-  // 2. Branding Superior
-  doc.setTextColor(6, 182, 212);
+  // 3. Branding Superior
+  doc.setTextColor(0, 229, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.text('PLATTFORM ACADEMY', width / 2, 20, { align: 'center' });
+  doc.text('OFFICIAL CERTIFICATION', width / 2, 25, { align: 'center' });
 
-  // 3. Título Principal
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(30);
-  doc.text('CERTIFICADO DE APROBACIÓN', width / 2, 45, { align: 'center' });
+  // 4. Título Principal
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(38);
+  doc.text('CERTIFICADO DE APROBACIÓN', width / 2, 50, { align: 'center' });
 
-  // 4. Cuerpo
+  // 5. Cuerpo
+  doc.setTextColor(156, 163, 175); // Gray 400
   doc.setFontSize(12);
-  doc.setTextColor(100, 100, 100);
-  doc.text('Se otorga el presente a:', width / 2, 65, { align: 'center' });
+  doc.text('Plattform Academy otorga el presente reconocimiento a:', width / 2, 70, { align: 'center' });
 
-  doc.setFontSize(40);
-  doc.setTextColor(0, 0, 0);
-  doc.setFont('helvetica', 'bolditalic');
-  doc.text(studentName.toUpperCase(), width / 2, 85, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(55);
+  doc.text(studentName.toUpperCase(), width / 2, 95, { align: 'center' });
 
-  doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 100, 100);
-  doc.text('Por haber completado satisfactoriamente el curso de:', width / 2, 105, { align: 'center' });
+  doc.setTextColor(156, 163, 175);
+  doc.setFontSize(12);
+  doc.text('Por haber completado con éxito el programa de:', width / 2, 115, { align: 'center' });
 
-  doc.setFontSize(24);
-  doc.setTextColor(0, 0, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.text(courseTitle.toUpperCase(), width / 2, 125, { align: 'center' });
+  doc.setTextColor(0, 229, 255);
+  doc.setFontSize(32);
+  doc.text(courseTitle.toUpperCase(), width / 2, 135, { align: 'center' });
 
-  // 5. Detalles Inferiores
-  doc.setFontSize(10);
-  doc.setTextColor(150, 150, 150);
-  doc.text('ID de Certificación:', 20, height - 30);
-  doc.setTextColor(6, 182, 212);
+  // 6. Footer / QR / Firma
+  const qrUrl = `https://plattform.mx/verify/${certificateCode}`;
+  const qrBase64 = await QRCode.toDataURL(qrUrl, {
+    margin: 1,
+    color: { dark: '#00e5ff', light: '#070d1a' }
+  });
+
+  doc.addImage(qrBase64, 'PNG', width / 2 - 15, height - 45, 30, 30);
+  doc.setTextColor(107, 114, 128); // Gray 500
+  doc.setFontSize(9);
+  doc.text('ID DE AUTORIDAD', 30, height - 32);
+  doc.setTextColor(0, 229, 255);
   doc.setFontSize(14);
-  doc.text(certificateCode, 20, height - 22);
-
-  if (finalScore !== undefined) {
-    doc.setFontSize(10);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Calificación Final:', width / 2, height - 30, { align: 'center' });
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
-    doc.text(`${finalScore.toFixed(1)}/100`, width / 2, height - 22, { align: 'center' });
-  }
-
+  doc.text(certificateCode, 30, height - 25);
+  doc.setTextColor(75, 85, 99); // Gray 600
   doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
-  doc.setFont('helvetica', 'italic');
-  doc.text('Emitido bajo validación Plattform 2026', width - 20, height - 22, { align: 'right' });
+  doc.text('Sello Digital: Plattform', 30, height - 18);
 
-  // Retornar como Buffer para Resend
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('PLATTFORM 2026', width - 30, height - 25, { align: 'right' });
+
   const arrayBuffer = doc.output('arraybuffer');
   return Buffer.from(arrayBuffer);
 }

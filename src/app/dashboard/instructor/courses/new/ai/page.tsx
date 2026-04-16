@@ -16,16 +16,31 @@ export default async function NewAICoursePage() {
       redirect('/dashboard/instructor?error=PENDING_APPROVAL');
   }
 
-  const sub = await prisma.instructorSubscription.findFirst({
-    where: { instructor: { userId: session.userId }, status: 'ACTIVE' },
-    include: { plan: true }
+  const userFull = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { isCourtesy: true, courtesyPlan: { select: { name: true, aiEnabled: true } } }
   });
 
-  if (!sub || !sub.plan.aiEnabled) {
-    redirect('/dashboard/instructor/courses/new');
+  let activePlan: any = null;
+  let isScale = false;
+
+  if (userFull?.isCourtesy && userFull.courtesyPlan) {
+      if (!userFull.courtesyPlan.aiEnabled) redirect('/dashboard/instructor/courses/new');
+      activePlan = userFull.courtesyPlan;
+      isScale = activePlan.name.toLowerCase() === 'scale';
+  } else {
+      const sub = await prisma.instructorSubscription.findFirst({
+        where: { instructor: { userId: session.userId }, status: 'ACTIVE' },
+        include: { plan: true }
+      });
+
+      if (!sub || !sub.plan.aiEnabled) {
+        redirect('/dashboard/instructor/courses/new');
+      }
+      activePlan = sub.plan;
+      isScale = activePlan.name.toLowerCase() === 'scale';
   }
 
-  const isScale = sub.plan.name === 'scale';
   const charLimit = isScale ? 10000 : 800; // Limits chars for UX
 
   return <AICourseWizard isScale={isScale} charLimit={charLimit} />;

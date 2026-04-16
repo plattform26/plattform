@@ -14,19 +14,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // 0. Verificar Plan de Suscripción (Solo para Instructores)
     if (session.role === 'INSTRUCTOR') {
-      const instructorProfile = await prisma.instructorProfile.findUnique({
-        where: { userId: session.userId },
-        include: {
-          subscriptions: {
-            where: { status: 'ACTIVE' },
-            include: { plan: true },
-            take: 1
-          }
-        }
-      });
+      const { getEffectivePlan } = await import('@/lib/plan-utils');
+      const plan = await getEffectivePlan(session.userId);
+      let activePlanName = plan?.name.toLowerCase() || '';
 
-      const activePlan = instructorProfile?.subscriptions[0]?.plan.name;
-      if (activePlan !== 'scale') {
+      if (activePlanName !== 'scale') {
         return NextResponse.json({ 
           error: 'La duplicación de cursos es un beneficio exclusivo del Plan Scale.',
           code: 'UPGRADE_REQUIRED'
@@ -94,7 +86,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           title: `Copia de ${raw.title}`,
           slug: `copia-de-${raw.slug}-${hash}`,
           description: raw.description || "",
-          category: String(raw.category || "OTHER"),
+          category: (raw.category || "STRATEGY_BUSINESS") as any,
           level: courseLevel,
           durationHours: raw.durationHours ? Number(raw.durationHours) : 0,
           price: Number(raw.price) || 0,

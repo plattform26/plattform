@@ -82,9 +82,12 @@ export default function EliteStudentLanding() {
       
       {/* HEADER ELITE */}
       <nav className="fixed top-0 left-0 right-0 h-20 bg-[#070d1a]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 sm:px-12 z-[100]">
+        {/* LOGO & BRANDING IRON FIX */}
         <div className="flex-shrink-0 min-w-fit flex items-center">
-          <Link href={user ? dashboardHref : "/"} className="flex items-center gap-2 group transition-all flex-shrink-0 min-w-fit">
-            <span className="font-space-grotesk font-black text-2xl tracking-tighter italic bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 bg-clip-text text-transparent group-hover:scale-105 transition-transform whitespace-nowrap">PLATTFORM</span>
+          <Link href={user ? dashboardHref : "/"} className="flex items-center gap-2.5 group flex-shrink-0 whitespace-nowrap">
+            <span className="font-space-grotesk font-black text-2xl tracking-tighter bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity uppercase whitespace-nowrap italic">
+              PLATTFORM
+            </span>
           </Link>
         </div>
         
@@ -221,11 +224,18 @@ export default function EliteStudentLanding() {
                                     </div>
 
                                     <div className="p-8">
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <div className="w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-[8px]">⭐</div>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-2">
+                                                <StarRating value={course.averageRating || 0} size="sm" readonly={true} />
+                                            </div>
                                             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Instructor: {course.instructorName}</span>
                                         </div>
-                                        <h3 className="font-space-grotesk text-xl font-bold mb-4 leading-tight group-hover:text-cyan-400 transition-colors">{course.title}</h3>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-bold text-slate-400 uppercase border border-white/5">
+                                                {course.level === 'BEGINNER' ? 'Principiante' : course.level === 'INTERMEDIATE' ? 'Intermedio' : 'Avanzado'}
+                                            </span>
+                                        </div>
+                                        <h3 className="font-space-grotesk text-xl font-bold mb-4 leading-tight group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{course.title}</h3>
                                         
                                         <div className="flex items-center justify-between mt-8 border-t border-white/5 pt-6">
                                             <div className="flex flex-col">

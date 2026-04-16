@@ -3,7 +3,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PasswordChangeModal from '@/components/PasswordChangeModal';
 
-export default function ProfilePage({ impersonateId, isAdminMode = false }: { impersonateId?: string, isAdminMode?: boolean }) {
+export default function ProfilePage({ 
+  searchParams 
+}: { 
+  searchParams: { [key: string]: string | string[] | undefined } 
+}) {
+  const impersonateId = searchParams.impersonateId as string | undefined;
+  const isAdminMode = searchParams.isAdminMode === 'true';
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
