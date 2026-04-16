@@ -1,12 +1,45 @@
 'use client';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export default function RefundsPage() {
+  const [user, setUser] = useState<any>(null);
+
+  const checkSession = async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated) {
+          setUser(data);
+        }
+      }
+    } catch (error) {
+      console.error('Session check error:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const getDashboardRoute = (role?: string) => {
+    switch (role) {
+      case 'ADMIN': return '/dashboard/admin';
+      case 'INSTRUCTOR': return '/dashboard/instructor';
+      case 'STUDENT': return '/dashboard/student';
+      default: return '/';
+    }
+  };
+
+  const dashboardHref = user ? getDashboardRoute(user.role) : '/';
+
   return (
     <div className="min-h-screen bg-[#070d1a] text-white selection:bg-cyan-500/30">
       <nav className="h-20 border-b border-white/5 flex items-center justify-between px-12 bg-[#070d1a]/80 backdrop-blur-md sticky top-0 z-50">
-        <Link href="/" className="font-space-grotesk font-black text-2xl tracking-tighter italic bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">PLATTFORM</Link>
-        <Link href="/" className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white">Volver al Inicio</Link>
+        <Link href={dashboardHref} className="font-space-grotesk font-black text-2xl tracking-tighter italic bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">PLATTFORM</Link>
+        <Link href={dashboardHref} className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white">
+          {user ? 'Regresar al Dashboard' : 'Volver al Inicio'}
+        </Link>
       </nav>
 
       <main className="max-w-4xl mx-auto py-24 px-6 md:px-0">

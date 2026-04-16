@@ -77,12 +77,10 @@ export async function middleware(req: NextRequest) {
       }
 
       if (pathname.startsWith('/dashboard/student')) {
-        // BYPASS DE PREVISUALIZACIÓN: Admins e Instructores pueden ver contenido de alumnos con ?preview=true
-        if (isPreview && (role === 'ADMIN' || role === 'INSTRUCTOR')) {
-          return NextResponse.next();
-        }
+        // PERMITIR: Estudiantes, Instructores y Admins pueden entrar a la zona de estudio.
+        const isAllowedRole = role === 'STUDENT' || role === 'INSTRUCTOR' || role === 'ADMIN';
 
-        if (role !== 'STUDENT' && role !== 'INSTRUCTOR' && role !== 'ADMIN') {
+        if (!isAllowedRole) {
            return NextResponse.redirect(new URL('/dashboard', req.url));
         }
       }

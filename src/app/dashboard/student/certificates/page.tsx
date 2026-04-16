@@ -5,7 +5,9 @@ import CertificateDownloader from '@/components/CertificateDownloader';
 
 export default async function StudentCertificatesPage() {
   const session = await getSession();
-  if (!session || session.role !== 'STUDENT') redirect('/login');
+  if (!session || (session.role !== 'STUDENT' && session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+    redirect('/login');
+  }
 
   // Query based on passed QuizAttempts as requested
   const passedAttempts = await prisma.quizAttempt.findMany({

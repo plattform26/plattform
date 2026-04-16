@@ -187,3 +187,57 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  try {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    // Prevención de Suicidio Administrativo
+    if (params.id === session.userId) {
+      return NextResponse.json({ error: 'No puedes borrar tu propia cuenta de administrador' }, { status: 400 });
+    }
+
+    const { reason } = await req.json();
+
+    // Iniciar Transacción Atómica de Borrado y Auditoría
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Capturar datos para el log
+      const userToBox = await tx.user.findUnique({
+        where: { id: params.id },
+        select: { email: true, name: true, lastName: true, role: true }
+      });
+
+      if (!userToBox) throw new Error('Usuario no encontrado');
+
+      // 2. Crear Log de Auditoría
+      await tx.deletedUserLog.create({
+        data: {
+          originalUserId: params.id,
+          email: userToBox.email,
+          name: `${userToBox.name} ${userToBox.lastName}`,
+          role: userToBox.role,
+          reason: reason || 'Sin motivo especificado'
+        }
+      });
+
+      // 3. Ejecutar Borrado (Cascada activada en el Schema)
+      await tx.user.delete({
+        where: { id: params.id }
+      });
+
+      return { success: true };
+    });
+
+    return NextResponse.json(result);
+
+  } catch (error: any) {
+    console.error('🔥 [ADMIN_DELETE_ERROR]:', error.message);
+    return NextResponse.json({ 
+      error: 'Error al eliminar usuario', 
+      details: error.message 
+    }, { status: 500 });
+  }
+}

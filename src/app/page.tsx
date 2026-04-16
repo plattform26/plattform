@@ -55,19 +55,26 @@ export default function EliteStudentLanding() {
     fetchCourses();
   };
 
-  const dashboardHref = user 
-    ? (user.role === 'ADMIN' ? '/dashboard/admin' : user.role === 'INSTRUCTOR' ? '/dashboard/instructor' : '/dashboard/student') 
-    : '/';
+  const getDashboardRoute = (role?: string) => {
+    switch (role) {
+      case 'ADMIN': return '/dashboard/admin';
+      case 'INSTRUCTOR': return '/dashboard/instructor';
+      case 'STUDENT': return '/dashboard/student';
+      default: return '/';
+    }
+  };
+
+  const dashboardHref = user ? getDashboardRoute(user.role) : '/';
 
   const masterAreas = [
-    { id: 'BUSINESS_ENTREPRENEURSHIP', label: 'Estrategia & Negocios', icon: '💼' },
+    { id: 'STRATEGY_BUSINESS', label: 'Estrategia & Negocios', icon: '💼' },
     { id: 'TECH_INNOVATION', label: 'Tech & Innovación', icon: '🚀' },
-    { id: 'DESIGN_CREATIVITY', label: 'Diseño & Media', icon: '🎨' },
-    { id: 'MARKETING_SALES', label: 'Marketing Digital', icon: '📈' },
-    { id: 'FINANCE_ECONOMY', label: 'Inversión & Fintech', icon: '💰' },
-    { id: 'PERSONAL_DEVELOPMENT', label: 'Alto Rendimiento', icon: '🧠' },
-    { id: 'WELLBEING_LIFESTYLE', label: 'Biohacking & Salud', icon: '🌿' },
-    { id: 'EDUCATION_PEDAGOGY', label: 'Liderazgo Académico', icon: '🏛️' }
+    { id: 'DESIGN_MEDIA', label: 'Diseño & Media', icon: '🎨' },
+    { id: 'DIGITAL_MARKETING', label: 'Marketing Digital', icon: '📈' },
+    { id: 'INVESTMENT_FINTECH', label: 'Inversión & Fintech', icon: '💰' },
+    { id: 'HIGH_PERFORMANCE', label: 'Alto Rendimiento', icon: '🧠' },
+    { id: 'BIOHACKING_HEALTH', label: 'Biohacking & Salud', icon: '🌿' },
+    { id: 'ACADEMIC_LEADERSHIP', label: 'Liderazgo Académico', icon: '🏛️' }
   ];
 
   return (

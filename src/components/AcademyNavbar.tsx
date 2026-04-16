@@ -12,12 +12,16 @@ interface AcademyNavbarProps {
 }
 
 export default function AcademyNavbar({ profile, session }: AcademyNavbarProps) {
-  const dashboardRoute = session?.role === 'ADMIN' 
-    ? '/dashboard/admin' 
-    : session?.role === 'INSTRUCTOR'
-    ? '/dashboard/instructor'
-    : '/dashboard/student';
+  const getDashboardRoute = (role?: string) => {
+    switch (role) {
+      case 'ADMIN': return '/dashboard/admin';
+      case 'INSTRUCTOR': return '/dashboard/instructor';
+      case 'STUDENT': return '/dashboard/student';
+      default: return '/';
+    }
+  };
 
+  const dashboardRoute = getDashboardRoute(session?.role);
   const logoHref = session ? dashboardRoute : '/';
 
   return (

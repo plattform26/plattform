@@ -4,7 +4,9 @@ import Link from 'next/link';
 
 export default async function StudentSupportPage() {
   const session = await getSession();
-  if (!session || session.role !== 'STUDENT') redirect('/login');
+  if (!session || (session.role !== 'STUDENT' && session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+    redirect('/login');
+  }
 
   const supportEmail = "soporte@plattform.mx";
   const whatsappNumber = "+525623194635";

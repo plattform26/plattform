@@ -7,12 +7,10 @@ import ManualRatingButton from '@/components/dashboard/ManualRatingButton';
 
 export default async function StudentCoursesPage() {
   const session = await getSession();
-  if (!session) redirect('/login');
+  if (!session || (session.role !== 'STUDENT' && session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+    redirect('/login');
+  }
   
-  // Si el usuario está autenticado pero no es un estudiante (ej: Admin o Instructor),
-  // enviarlo al enrutador inteligente de /dashboard en lugar de expulsarlo al login.
-  if (session.role !== 'STUDENT') redirect('/dashboard');
-
 
   const enrollments = await prisma.enrollment.findMany({
     where: { userId: session.userId, status: 'ACTIVE' },

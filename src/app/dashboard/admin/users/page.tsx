@@ -12,6 +12,12 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState<string>('');
   const [plans, setPlans] = useState<any[]>([]);
 
+  // Misión: Modal de Borrado Seguro
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
+  const [deleteReason, setDeleteReason] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -96,6 +102,31 @@ export default function AdminUsersPage() {
       }
     } catch (err) {
       console.error('Error updating user:', err);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userToDelete.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: deleteReason })
+      });
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== userToDelete.id));
+        setShowDeleteModal(false);
+        setUserToDelete(null);
+        setDeleteReason('');
+      } else {
+        const err = await res.json();
+        alert(`Error al borrar: ${err.error || 'Desconocido'}`);
+      }
+    } catch (err) {
+      console.error('Error deleting user:', err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -278,6 +309,16 @@ export default function AdminUsersPage() {
                                   RE-ACTIVAR
                                 </button>
                              )}
+
+                             <button 
+                               onClick={() => {
+                                  setUserToDelete(user);
+                                  setShowDeleteModal(true);
+                               }}
+                               className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-red-600/10 border border-red-600/30 text-red-500 hover:bg-red-600/20 hover:text-red-400 transition-all shadow-lg shadow-red-600/10 group-hover:shadow-red-600/20"
+                             >
+                               ELIMINAR
+                             </button>
                          </div>
                       </td>
                    </tr>
@@ -290,6 +331,57 @@ export default function AdminUsersPage() {
              </tbody>
           </table>
        </div>
+
+       {/* MODAL DE ELIMINACIÓN (Misión: UI Premium & Seguridad) */}
+       {showDeleteModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+             <div className="absolute inset-0 bg-[#070d1a]/80 backdrop-blur-sm" onClick={() => !isDeleting && setShowDeleteModal(false)} />
+             
+             <div className="relative bg-[#0d1524] border border-red-500/30 w-full max-w-md rounded-3xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
+                <div className="flex flex-col items-center text-center mb-6">
+                   <div className="w-16 h-16 bg-red-600/10 rounded-full flex items-center justify-center text-3xl mb-4 border border-red-600/20">
+                      ⚠️
+                   </div>
+                   <h2 className="text-xl font-bold text-white">¿Confirmar Eliminación?</h2>
+                   <p className="text-gray-400 text-sm mt-2">
+                      Estás a punto de borrar a <span className="text-white font-bold">{userToDelete?.name} {userToDelete?.lastName}</span>.
+                   </p>
+                   <p className="text-red-500/70 text-[10px] font-black uppercase tracking-widest mt-4 bg-red-500/5 px-3 py-1 rounded-full border border-red-500/10">
+                      Esta acción borrará cursos, inscripciones y datos vinculados.
+                   </p>
+                </div>
+
+                <div className="space-y-4">
+                   <div>
+                      <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Motivo de Eliminación</label>
+                      <textarea 
+                        value={deleteReason}
+                        onChange={(e) => setDeleteReason(e.target.value)}
+                        placeholder="Ej: Violación de términos, solicitud del usuario..."
+                        className="w-full bg-[#152035] border border-red-500/10 rounded-xl p-4 text-sm focus:outline-none focus:border-red-500 transition-all h-24 resize-none"
+                      />
+                   </div>
+
+                   <div className="flex gap-3">
+                      <button 
+                        onClick={() => setShowDeleteModal(false)}
+                        disabled={isDeleting}
+                        className="flex-1 py-3 rounded-xl border border-blue-500/10 hover:border-blue-500/30 text-xs font-bold transition-all uppercase"
+                      >
+                         Cancelar
+                      </button>
+                      <button 
+                        onClick={handleDeleteUser}
+                        disabled={isDeleting}
+                        className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all uppercase shadow-xl shadow-red-600/20"
+                      >
+                         {isDeleting ? 'Eliminando...' : 'Eliminar Usuario'}
+                      </button>
+                   </div>
+                </div>
+             </div>
+          </div>
+       )}
     </div>
   );
 }

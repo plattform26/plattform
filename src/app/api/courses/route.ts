@@ -70,6 +70,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { title, price, category, level, description, durationHours = 0, instructorId } = body;
 
+    console.log('[API_COURSES] Payload received:', { title, category, price });
+
     // Solo admin puede elegir instructor. Instructores normales usan su propio ID.
     const targetInstructorId = (session.role === 'ADMIN' && instructorId) ? instructorId : session.userId;
 
@@ -92,7 +94,7 @@ export async function POST(req: Request) {
         title,
         slug,
         description: description || '',
-        category: category || 'OTHER',
+        category: category || 'STRATEGY_BUSINESS',
         level: level || 'BEGINNER',
         price: Number(price),
         status: 'DRAFT',

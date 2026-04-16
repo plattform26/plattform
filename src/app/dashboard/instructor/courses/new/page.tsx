@@ -9,6 +9,7 @@ export default async function NewCoursePage() {
   
   const isAdmin = session.role === 'ADMIN';
   const isInstructor = session.role === 'INSTRUCTOR';
+  let aiEnabled = false;
 
   if (!isAdmin && !isInstructor) redirect('/dashboard/student');
 

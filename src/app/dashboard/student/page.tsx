@@ -7,7 +7,9 @@ import ManualRatingButton from '@/components/dashboard/ManualRatingButton';
 
 export default async function StudentDashboardPage() {
   const session = await getSession();
-  if (!session || session.role !== 'STUDENT') redirect('/login');
+  if (!session || (session.role !== 'STUDENT' && session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+    redirect('/login');
+  }
 
   const userData = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!userData) redirect('/login');

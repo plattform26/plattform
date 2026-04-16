@@ -47,6 +47,9 @@ export async function POST(req: Request) {
           return NextResponse.json({ error: 'Missing userId in metadata' }, { status: 400 });
         }
 
+        // --- Misión: Resolución de URL Dinámica ---
+        const url = session.success_url ? new URL(session.success_url).origin : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL);
+
         // --- CASO 1: COMPRA DE CURSO ---
         if (metadata.transactionType === 'COURSE_PURCHASE') {
           const { courseId, couponCode } = metadata;
@@ -159,14 +162,14 @@ export async function POST(req: Request) {
           const discountInfo = (session as any)._discountInfo;
 
           if (userRecord) {
-            await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount, discountInfo);
+            await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount, discountInfo, url);
           }
           if (instructorUser) {
-            await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title);
+            await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title, url);
           }
 
           // Misión: Blindaje de Negocio - Notificar al admin (Diego)
-          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo);
+          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo, url);
 
           console.log(`✅ SUCCESS: Pago procesado para User:${userId} en Course:${courseId}`);
         }
@@ -252,7 +255,7 @@ export async function POST(req: Request) {
               where: { id: userId },
               data: { status: 'PENDING_APPROVAL' }
             });
-            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name);
+            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, url);
           }
 
           console.log(`✅ SUCCESS: Suscripción Activada para User:${userId} (Plan:${plan.name})`);
@@ -294,7 +297,8 @@ export async function POST(req: Request) {
                   where: { id: sub.planId }
                 });
                 if (instructorUser && plan) {
-                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name);
+                  // Fallback url resolve inside loop if needed, but we can reuse the global one if using the same event origin
+                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name); 
                 }
               }
             }

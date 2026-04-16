@@ -14,6 +14,7 @@ export default function InstructorLayoutClient({
 }) {
   const pathname = usePathname();
   const [user, setUser] = useState<any>(session);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   const instructorMenu = [
     { name: 'Resumen', path: '/dashboard/instructor', icon: '💎' },
@@ -51,6 +52,8 @@ export default function InstructorLayoutClient({
         }
       } catch (err) {
         console.error('Error refreshing session:', err);
+      } finally {
+        setIsSyncing(false);
       }
     };
     refreshUser();
@@ -128,8 +131,8 @@ export default function InstructorLayoutClient({
       <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto font-poppins relative">
         {/* Misión: Banners de Alta Jerarquía y Sticky */}
         <div className="sticky top-0 z-[60] flex flex-col shadow-2xl">
-          {/* Alerta por falta de Verificación */}
-          {!user?.isEmailVerified && (
+          {/* Alerta por falta de Verificación (Misión: Flicker Zero) */}
+          {!isSyncing && !user?.isEmailVerified && (
             <div className="bg-amber-500/10 backdrop-blur-md border-b border-amber-500/20 px-8 py-3 flex items-center justify-between group animate-pulse-slow">
               <div className="flex items-center gap-3">
                 <span className="text-xl">📧</span>
@@ -144,7 +147,7 @@ export default function InstructorLayoutClient({
           )}
 
           {/* Flujo de Aprobación - Banner Post-Pago (Bypassed if Courtesy) */}
-          {user?.isEmailVerified && user?.status === 'PENDING_APPROVAL' && !user?.isCourtesy && (
+          {!isSyncing && user?.isEmailVerified && user?.status === 'PENDING_APPROVAL' && !user?.isCourtesy && (
             <div className="bg-blue-500/10 backdrop-blur-md border-b border-blue-500/20 px-8 py-3 flex items-center justify-between group">
               <div className="flex items-center gap-3">
                 <span className="text-xl">🛡️</span>

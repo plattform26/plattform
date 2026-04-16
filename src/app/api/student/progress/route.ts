@@ -29,7 +29,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = await getSession();
-    if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN')) {
+    if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN' && session.role !== 'INSTRUCTOR')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -38,6 +38,26 @@ export async function POST(req: Request) {
 
     if (!courseId || !lessonId) {
       return NextResponse.json({ error: 'Body mismatch' }, { status: 400 });
+    }
+
+    // --- Misión: Validación de Permisos de Vista Previa ---
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: { _count: { select: { lessons: true } } }
+    });
+
+    if (!course) throw new Error('Course not found');
+
+    // Si es Instructor, solo puede marcar progreso si es el dueño del curso o si está inscrito (Admin ignora esto)
+    if (session.role === 'INSTRUCTOR') {
+       const isOwner = course.instructorId === session.userId;
+       const enrollment = await prisma.enrollment.findUnique({
+          where: { userId_courseId: { userId: session.userId, courseId } }
+       });
+
+       if (!isOwner && !enrollment) {
+          return NextResponse.json({ error: 'No tienes permiso para registrar progreso en este curso' }, { status: 403 });
+       }
     }
 
     // Check if progress already exists and is already completed
@@ -54,12 +74,6 @@ export async function POST(req: Request) {
        // Si ya está completada e intentamos marcarla como tal, no hacer nada
        return NextResponse.json(existingProgress);
     }
-
-    // Total lessons for capping logic
-    const course = await prisma.course.findUnique({
-      where: { id: courseId },
-      include: { _count: { select: { lessons: true } } }
-    });
     
     // Count ONLY other lessons (excluding current if it's new)
     const completedCount = await prisma.progress.count({

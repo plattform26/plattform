@@ -117,7 +117,7 @@ export default function PlanClient({
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <span className="text-green-400">✓</span>
-                  {plan.commissionRate}% de comisión
+                  {Number(plan.commissionRate)}% de comisión
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   {plan.aiEnabled ? <span className="text-green-400">✓</span> : <span className="text-red-400">✗</span>}

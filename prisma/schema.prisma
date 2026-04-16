@@ -177,7 +177,7 @@ model Course {
   title             String
   slug              String
   description       String
-  category          CourseCategory          @default(OTHER)
+  category          CourseCategory          @default(STRATEGY_BUSINESS)
   level             CourseLevel             @default(BEGINNER)
   durationHours     Decimal?                @map("duration_hours") @db.Decimal(5, 1)
   price             Decimal                 @db.Decimal(10, 2)
@@ -333,9 +333,9 @@ model AdminManualEnrollment {
   reason    String?
   notes     String?
   createdAt DateTime @default(now()) @map("created_at")
-  admin     User     @relation("AdminCreator", fields: [adminId], references: [id])
-  course    Course   @relation(fields: [courseId], references: [id])
-  student   User     @relation("EnrolledStudent", fields: [studentId], references: [id])
+  admin     User     @relation("AdminCreator", fields: [adminId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   User     @relation("EnrolledStudent", fields: [studentId], references: [id], onDelete: Cascade)
 
   @@map("admin_manual_enrollments")
 }
@@ -546,15 +546,14 @@ enum CourseLevel {
 }
 
 enum CourseCategory {
-  BUSINESS_ENTREPRENEURSHIP
+  STRATEGY_BUSINESS
   TECH_INNOVATION
-  DESIGN_CREATIVITY
-  MARKETING_SALES
-  FINANCE_ECONOMY
-  PERSONAL_DEVELOPMENT
-  WELLBEING_LIFESTYLE
-  EDUCATION_PEDAGOGY
-  OTHER
+  DESIGN_MEDIA
+  DIGITAL_MARKETING
+  INVESTMENT_FINTECH
+  HIGH_PERFORMANCE
+  BIOHACKING_HEALTH
+  ACADEMIC_LEADERSHIP
 }
 
 enum ContentType {
@@ -641,4 +640,16 @@ model SystemAlert {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("system_alerts")
+}
+
+model DeletedUserLog {
+  id             String   @id @default(uuid())
+  originalUserId String   @map("original_user_id")
+  email          String
+  name           String
+  role           String
+  reason         String?
+  deletedAt      DateTime @default(now()) @map("deleted_at")
+
+  @@map("deleted_user_logs")
 }
