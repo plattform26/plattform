@@ -148,6 +148,10 @@ function InvalidCertificate({ id, reason }: { id: string, reason: string }) {
                 <div className="text-[10px] font-mono text-gray-500 bg-black/40 p-3 rounded-lg break-all">ID CONSULTADO: {id}</div>
             </div>
             <Link href="/" className="px-8 py-3 bg-white/5 border border-white/10 text-white hover:bg-white/10 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all">Volver al Inicio</Link>
+            
+            <p className="mt-8 text-gray-600 text-[10px] font-bold uppercase tracking-widest">
+                ¿Dudas sobre este documento? <Link href="/support" className="text-cyan-500 hover:text-cyan-400 underline underline-offset-4">Contacta a Soporte</Link>
+            </p>
         </div>
     );
 }

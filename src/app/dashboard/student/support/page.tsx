@@ -16,7 +16,7 @@ export default async function StudentSupportPage() {
     <div className="animate-fade-in space-y-12 pb-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-           <h1 className="text-3xl font-space-grotesk font-black text-white italic uppercase tracking-tighter">Centro de <span className="text-cyan-400">Ayuda Estudiantil</span></h1>
+           <h1 className="text-3xl font-space-grotesk font-black text-white italic uppercase tracking-tighter">Centro de <span className="text-cyan-400">Ayuda</span></h1>
            <p className="text-gray-400 text-sm mt-1 uppercase tracking-widest font-bold text-[10px] italic">Estamos aquí para acompañar tu proceso de aprendizaje.</p>
         </div>
       </div>
