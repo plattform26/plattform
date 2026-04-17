@@ -29,7 +29,7 @@ export default function CertificateDownloader({
       try {
         // Generar QR que apunta a la nueva ruta de validación
         // Generar QR que apunta a la ruta de validación del entorno
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
         const url = `${baseUrl}/verify/${certificateCode}`;
         const dataUrl = await QRCode.toDataURL(url, {
           width: 150,

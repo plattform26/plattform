@@ -320,7 +320,7 @@ export async function generateCertificatePDF(
   doc.text(courseTitle.toUpperCase(), width / 2, 135, { align: 'center' });
 
   // 6. Footer / QR / Firma
-  const qrUrl = `https://plattform.mx/verify/${certificateCode}`;
+  const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify/${certificateCode}`;
   const qrBase64 = await QRCode.toDataURL(qrUrl, {
     margin: 1,
     color: { dark: '#00e5ff', light: '#070d1a' }

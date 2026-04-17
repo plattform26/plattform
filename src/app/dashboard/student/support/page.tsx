@@ -29,7 +29,7 @@ export default async function StudentSupportPage() {
             <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
                ✉️
             </div>
-            <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">Atención Académica</h3>
+            <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">¿Necesitas ayuda?</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               ¿Tienes problemas con el acceso a tus cursos o dudas sobre tu certificación? Nuestro equipo de soporte está listo para asistirte vía email.
             </p>
@@ -63,7 +63,7 @@ export default async function StudentSupportPage() {
                 rel="noopener noreferrer"
                 className="inline-block px-8 py-4 bg-[#25D366] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#25D366]/20"
               >
-                Chat WhatsApp →
+                WhatsApp
               </a>
               <p className="mt-4 text-[11px] font-mono text-cyan-400/60 uppercase font-black">{whatsappNumber}</p>
             </div>

@@ -15,7 +15,7 @@ const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 // Total Reset Trigger: Domain sync & Webhook secret update for plattform-rouge.vercel.app
 
 export async function POST(req: Request) {
-  console.log('¡WEBHOOK RECIBIDO!');
+
 
   const body = await req.text();
   const signature = headers().get('stripe-signature') as string;
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, WEBHOOK_SECRET || '');
-    console.log('Evento Stripe:', event.type);
+
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
@@ -37,10 +37,7 @@ export async function POST(req: Request) {
         const metadata = session.metadata;
         const userId = metadata.userId;
 
-        console.log('--- 🛡️ WEBHOOK INBOUND: checkout.session.completed ---');
-        console.log(`Evento: ${event.id}`);
-        console.log(`UserId extraído: ${userId || 'N/A'}`);
-        console.log(`Tipo: ${metadata.transactionType || 'UNKNOWN'}`);
+
 
         if (!userId) {
           console.error('CRITICAL: Webhook arrived without userId in metadata.');
@@ -151,7 +148,7 @@ export async function POST(req: Request) {
                     couponId: coupon.id
                   }
                 });
-                console.log(`[WEBHOOK] Uso de cupón registrado: ${couponCode} para User:${userId}`);
+
                 
                 // Guardar info para los correos
                 (session as any)._discountInfo = {
@@ -263,7 +260,7 @@ export async function POST(req: Request) {
             await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, url);
           }
 
-          console.log(`✅ SUCCESS: Suscripción Activada para User:${userId} (Plan:${plan.name})`);
+
         }
         break;
       }
@@ -414,8 +411,7 @@ export async function POST(req: Request) {
         break;
       }
 
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+
     }
 
     return NextResponse.json({ received: true });
