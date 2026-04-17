@@ -6,6 +6,7 @@ import SignOutButton from './SignOutButton';
 import PasswordChangeModal from './PasswordChangeModal';
 
 interface User {
+  id?: string;
   name: string;
   lastName: string;
   email: string;
@@ -36,7 +37,13 @@ export default function ProfileMenu({ user, isCollapsed = false }: { user: User 
     return 'U';
   })();
   const roleLabel = user?.role === 'STUDENT' ? 'Alumno' : user?.role === 'INSTRUCTOR' ? 'Instructor' : 'Admin';
-  const profileLink = user?.role === 'STUDENT' ? '/dashboard/student/profile' : '/dashboard/instructor/profile';
+  const profileLink = user?.role === 'STUDENT' 
+    ? '/dashboard/student/profile' 
+    : user?.role === 'INSTRUCTOR' 
+      ? '/dashboard/instructor/profile' 
+      : `/dashboard/admin/users/edit/${user?.id || (user as any)?.userId}?role=admin`;
+
+
 
   return (
     <div className="relative" ref={menuRef}>

@@ -81,23 +81,32 @@ export default function AdminLayoutClient({
           })}
         </nav>
 
-        <div className="p-6 border-t border-blue-500/10">
-           <div className={`flex items-center gap-3 rounded-xl bg-blue-500/5 border border-blue-500/10 mb-4 ${isCollapsed ? 'p-2 justify-center' : 'px-4 py-3'}`}>
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                 {session.name?.[0] || 'A'}
-              </div>
-              {!isCollapsed && (
-                <div className="overflow-hidden">
-                   <p className="text-xs font-bold truncate">{session.name} {session.lastName}</p>
-                   <p className="text-[10px] text-gray-500 truncate">{session.email}</p>
-                </div>
-              )}
-           </div>
-           
-           <SignOutButton className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-all uppercase tracking-widest ${isCollapsed ? 'text-center' : ''}`}>
-              {isCollapsed ? '🚪' : 'Cerrar Sesión'}
-           </SignOutButton>
-        </div>
+         <div className="p-6 border-t border-blue-500/10">
+            <div className={`flex items-center gap-3 rounded-xl bg-blue-500/5 border border-blue-500/10 mb-4 ${isCollapsed ? 'p-2 justify-center' : 'px-4 py-3'}`}>
+               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                  {session.name?.[0] || 'A'}
+               </div>
+               {!isCollapsed && (
+                 <div className="overflow-hidden">
+                    <p className="text-xs font-bold truncate">{session.name} {session.lastName}</p>
+                    <p className="text-[10px] text-gray-500 truncate">{session.email}</p>
+                 </div>
+               )}
+            </div>
+
+            {/* Mision: Mi Perfil v7.1 */}
+            <Link 
+               href={`/dashboard/admin/users/edit/${(session as any).userId}?role=admin`}
+               className={`w-full flex items-center gap-2 mb-2 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-cyan-400 hover:text-white hover:bg-cyan-500/10 transition-all border border-cyan-500/20 px-4 ${isCollapsed ? 'justify-center' : ''}`}
+            >
+               {isCollapsed ? '👤' : '👤 Mi Perfil'}
+            </Link>
+            
+            <SignOutButton className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-all uppercase tracking-widest ${isCollapsed ? 'text-center' : ''}`}>
+               {isCollapsed ? '🚪' : 'Cerrar Sesión'}
+            </SignOutButton>
+         </div>
+
       </aside>
 
       {/* MAIN CONTENT */}

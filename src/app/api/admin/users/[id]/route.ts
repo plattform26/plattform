@@ -125,6 +125,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     // FASE 2: Sincronización de Perfil si el rol es INSTRUCTOR
+    // Solo procedemos si el usuario final es INSTRUCTOR despues del PATCH
     if (updatedUser.role === 'INSTRUCTOR') {
         const profileData: any = {};
         if (academyName !== undefined) profileData.academyName = academyName;
@@ -133,7 +134,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         if (institution !== undefined) profileData.institution = institution;
         if (logoUrl !== undefined) profileData.logoUrl = logoUrl;
         if (linkedinUrl !== undefined) profileData.linkedinUrl = linkedinUrl;
-        if (specialty !== undefined) profileData.specialty = specialty; // Añadido a la Fase 2
+        if (specialty !== undefined) profileData.specialty = specialty;
 
         try {
             const existingProfile = await prisma.instructorProfile.findUnique({
@@ -152,7 +153,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
                     data: {
                         userId: params.id,
                         academyName: academyName || `Academia de ${updatedUser.name}`,
-                        slug: slug || `${updatedUser.name.toLowerCase()}-${userData.lastName?.toLowerCase() || 'profile'}-${Date.now().toString().slice(-4)}`,
+                        slug: slug || `${updatedUser.name.toLowerCase()}-${updatedUser.lastName?.toLowerCase() || 'profile'}-${Date.now().toString().slice(-4)}`,
                         commissionRate: 15.00,
                         specialty: specialty || '',
                         ...profileData
@@ -164,7 +165,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             console.error('🔥 ERROR AL ACTUALIZAR (InstructorProfile):', profileError.message);
             throw new Error(`Error en tabla InstructorProfile: ${profileError.message}`);
         }
+    } else {
+        console.log(`ℹ️ [ADMIN_PATCH] Omitiendo Fase 2: El usuario tiene rol ${updatedUser.role}`);
     }
+
 
     console.log(`--- ACCIÓN ADMIN: Usuario [${params.id}] actualizado por el Administrador [${session.userId}] ---`);
 
