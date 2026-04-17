@@ -5,13 +5,30 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import UpgradePlanModal from '@/components/dashboard/UpgradePlanModal';
 
-const CATEGORIES = ['BUSINESS','TECHNOLOGY','MARKETING','FINANCE','LEADERSHIP','DESIGN','OTHER'];
+const CATEGORIES = [
+  'STRATEGY_BUSINESS',
+  'TECH_INNOVATION',
+  'DESIGN_MEDIA',
+  'DIGITAL_MARKETING',
+  'INVESTMENT_FINTECH',
+  'HIGH_PERFORMANCE',
+  'BIOHACKING_HEALTH',
+  'ACADEMIC_LEADERSHIP'
+];
 const LEVELS = ['BEGINNER','INTERMEDIATE','ADVANCED'];
 const STATUS_OPTIONS = ['DRAFT','PUBLISHED','HIBERNATED'];
 const CAT_LABELS: Record<string,string> = {
-  BUSINESS:'Negocios',TECHNOLOGY:'Tecnología',MARKETING:'Marketing',
-  FINANCE:'Finanzas',LEADERSHIP:'Liderazgo',DESIGN:'Diseño',OTHER:'Otro'
+  STRATEGY_BUSINESS: 'Estrategia y Negocios',
+  TECH_INNOVATION: 'Tecnología e Innovación',
+  DESIGN_MEDIA: 'Diseño y Media',
+  DIGITAL_MARKETING: 'Marketing Digital',
+  INVESTMENT_FINTECH: 'Inversión y Fintech',
+  HIGH_PERFORMANCE: 'Alto Rendimiento',
+  BIOHACKING_HEALTH: 'Biohacking y Salud',
+  ACADEMIC_LEADERSHIP: 'Liderazgo Académico'
 };
+const OTHER_CAT_FALLBACK = 'STRATEGY_BUSINESS'; // Fallback for legacy categories
+
 const LEVEL_LABELS: Record<string,string> = {
   BEGINNER:'Principiante',INTERMEDIATE:'Intermedio',ADVANCED:'Avanzado'
 };

@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import { sendVerificationEmail } from '@/lib/mail';
 
 /**
  * GET /api/admin/users
- * Lista usuarios con filto por rol y búsqueda.
+ * Lista usuarios con filtro por rol, búsqueda y actividad real.
  */
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -29,7 +32,6 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // Consulta simplificada para evitar errores de relación compleja o tipos no serializables
     const users = await prisma.user.findMany({
       where,
       include: {
@@ -41,8 +43,6 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-
-    // Mapear para facilitar consumo en el cliente y asegurar tipos planos (Blindaje de Datos)
     const cleanUsers = users.map(u => ({
       id: u.id,
       name: u.name,
@@ -50,31 +50,89 @@ export async function GET(req: NextRequest) {
       email: u.email,
       role: u.role,
       status: u.status,
-      // Misión: Expansión de Gestión - Campos de Cortesía
       isCourtesy: u.isCourtesy,
       courtesyPlanId: u.courtesyPlanId,
-      // Aquí está el truco: buscamos la especialidad en el perfil, con un fallback
       specialty: u.instructorProfile?.specialty || 'N/A',
       createdAt: u.createdAt.toISOString(),
+      lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null, // Misión: Tracking v7.0
       _count: {
         courses: u._count?.courses || 0,
         enrollments: u._count?.enrollments || 0
       }
     }));
 
-
-    // Serialización profunda para evitar errores de red (Next.js 500) en listas largas con tipos complejos
-    const finalResponse = JSON.parse(JSON.stringify(cleanUsers));
-
-    return NextResponse.json(finalResponse);
+    return NextResponse.json(cleanUsers);
   } catch (error: any) {
-    // Diagnóstico de Terminal (Indispensable)
     console.error('❌ ERROR CRÍTICO EN LISTA ADMIN:', error.message);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+/**
+ * POST /api/admin/users
+ * Misión: Expansión Administrativa v7.0 - Creación Manual de Usuarios
+ */
+export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session || session.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { name, lastName, email, password, role } = await req.json();
+
+    if (!name || !email || !password || !role) {
+      return NextResponse.json({ error: 'Campos obligatorios faltantes' }, { status: 400 });
+    }
+
+    // Identificar si ya existe
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return NextResponse.json({ error: 'El correo electrónico ya está registrado' }, { status: 400 });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
     
+    // Si es ADMIN, se crea verificado. Si no, pendiente de verificación.
+    const isVerified = role === 'ADMIN';
+    const emailVerifiedAt = isVerified ? new Date() : null;
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        lastName: lastName || '',
+        email,
+        passwordHash,
+        role,
+        status: 'ACTIVE',
+        emailVerifiedAt,
+      }
+    });
+
+    // Si no es admin, enviamos correo de verificación
+    if (!isVerified) {
+      const tokenValue = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+      await prisma.verificationToken.create({
+        data: {
+          email: user.email,
+          token: tokenValue,
+          expiresAt,
+        }
+      });
+
+      await sendVerificationEmail(user.email, tokenValue);
+    }
+
     return NextResponse.json({ 
-      error: 'Internal Server Error',
-      details: error.message 
-    }, { status: 500 });
+      id: user.id, 
+      message: isVerified ? 'Usuario creado y verificado' : 'Usuario creado. Correo de verificación enviado.' 
+    });
+
+  } catch (error: any) {
+    console.error('❌ ERROR AL CREAR USUARIO:', error.message);
+    return NextResponse.json({ error: 'Error al crear usuario', details: error.message }, { status: 500 });
   }
 }
 

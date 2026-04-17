@@ -24,6 +24,13 @@ export default function AdminUsersPage() {
   const [isAuditLoading, setIsAuditLoading] = useState(false);
   const [isAuditError, setIsAuditError] = useState(false);
 
+  // Misión: Expansión Administrativa v7.0 (Creación de Usuarios)
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createForm, setCreateForm] = useState({
+     name: '', lastName: '', email: '', password: '', role: 'STUDENT'
+  });
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -76,7 +83,8 @@ export default function AdminUsersPage() {
        Especialidad: u.specialty || '',
        Estado: u.status,
        'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? (u._count?.courses ?? 0) : (u._count?.enrollments ?? 0),
-       'Registrado El': new Date(u.createdAt).toLocaleDateString()
+       'Registrado El': new Date(u.createdAt).toLocaleDateString(),
+       'Última Conexión': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Nunca'
     }));
     exportToCSV(exportData, 'plattform-usuarios-2025');
   };
@@ -91,6 +99,7 @@ export default function AdminUsersPage() {
        Estado: u.status,
        'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? (u._count?.courses ?? 0) : (u._count?.enrollments ?? 0),
        'Registrado El': new Date(u.createdAt).toLocaleDateString(),
+       'Última Conexión': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Nunca',
        Courtesy: u.isCourtesy ? 'YES' : 'NO'
     }));
     exportToExcel(exportData, 'plattform-usuarios-2025', 'Usuarios');
@@ -136,6 +145,32 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!createForm.name || !createForm.email || !createForm.password) return;
+    setIsCreating(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createForm)
+      });
+      if (res.ok) {
+        setShowCreateModal(false);
+        setCreateForm({ name: '', lastName: '', email: '', password: '', role: 'STUDENT' });
+        fetchUsers();
+        alert('Usuario creado exitosamente');
+      } else {
+        const err = await res.json();
+        alert(`Error: ${err.error}`);
+      }
+    } catch (err) {
+      console.error('Error creating user:', err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
    const handleAudit = async (userId: string) => {
     if (auditingUserId === userId) {
       setAuditingUserId(null);
@@ -175,6 +210,9 @@ export default function AdminUsersPage() {
           </div>
           
           <div className="flex gap-3">
+             <button onClick={() => setShowCreateModal(true)} className="px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/20 hover:scale-105 transition-all uppercase tracking-widest leading-none flex items-center gap-2">
+                <span>➕</span> Crear Usuario
+             </button>
              <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-blue-500/10 hover:border-blue-500/50 hover:bg-blue-600/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
              <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
           </div>
@@ -217,7 +255,7 @@ export default function AdminUsersPage() {
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Cursos/Inscrip</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Estado</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Cortesía</th>
-                   <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Fecha Reg</th>
+                   <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Reg/Conexión</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400 text-right">Acciones</th>
                 </tr>
              </thead>
@@ -300,9 +338,12 @@ export default function AdminUsersPage() {
                             <span className="text-gray-700 font-black text-[9px] tracking-widest uppercase">N/A</span>
                          )}
                       </td>
-                      <td className="p-6 text-sm text-gray-500 font-medium whitespace-nowrap">
-                         {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
+                      <td className="p-6 text-xs text-gray-500 font-medium whitespace-nowrap">
+                          <p>{new Date(user.createdAt).toLocaleDateString()}</p>
+                          <p className="text-[9px] text-cyan-500/70 font-black tracking-tighter uppercase mt-1">
+                             {user.lastLoginAt ? `Última: ${new Date(user.lastLoginAt).toLocaleDateString()}` : 'Sin conexión'}
+                          </p>
+                       </td>
                       <td className="p-6 text-right min-w-[400px]">
                          <div className="flex justify-end gap-2">
                             <Link href={`/dashboard/admin/users/edit/${user.id}?role=${user.role.toLowerCase()}`} className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-blue-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all text-gray-400 hover:text-white">EDITAR PERFIL</Link>
@@ -517,6 +558,113 @@ export default function AdminUsersPage() {
              </div>
           </div>
        )}
+
+        {/* MODAL DE CREACIÓN DE USUARIO (v7.0) */}
+        {showCreateModal && (
+           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-[#070d1a]/90 backdrop-blur-xl" onClick={() => !isCreating && setShowCreateModal(false)} />
+              
+              <div className="relative bg-[#0d1524] border border-cyan-500/30 w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl animate-in fade-in slide-in-from-bottom-10 duration-500 overflow-hidden">
+                 <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 blur-3xl -mr-10 -mt-10" />
+                 
+                 <div className="flex flex-col items-center text-center mb-10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-xl shadow-blue-600/20 rotate-3">
+                       👤
+                    </div>
+                    <h2 className="text-2xl font-space-grotesk font-black text-white uppercase tracking-tighter">Crear Usuario Nuevo</h2>
+                    <p className="text-gray-400 text-xs mt-2 font-medium">Registra alumnos, instructores o administradores manualmente.</p>
+                 </div>
+
+                 <form onSubmit={handleCreateUser} className="space-y-5">
+                    <div className="grid grid-cols-2 gap-4">
+                       <div>
+                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block ml-1">Nombre</label>
+                          <input 
+                            required
+                            type="text" 
+                            value={createForm.name}
+                            onChange={(e) => setCreateForm({...createForm, name: e.target.value})}
+                            placeholder="Ej: Juan"
+                            className="w-full bg-[#152035] border border-blue-500/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
+                          />
+                       </div>
+                       <div>
+                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block ml-1">Apellidos</label>
+                          <input 
+                            type="text" 
+                            value={createForm.lastName}
+                            onChange={(e) => setCreateForm({...createForm, lastName: e.target.value})}
+                            placeholder="Ej: Pérez"
+                            className="w-full bg-[#152035] border border-blue-500/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
+                          />
+                       </div>
+                    </div>
+
+                    <div>
+                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block ml-1">Email</label>
+                       <input 
+                         required
+                         type="email" 
+                         value={createForm.email}
+                         onChange={(e) => setCreateForm({...createForm, email: e.target.value})}
+                         placeholder="correo@ejemplo.com"
+                         className="w-full bg-[#152035] border border-blue-500/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
+                       />
+                    </div>
+
+                    <div>
+                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block ml-1">Password Temporal</label>
+                       <input 
+                         required
+                         type="password" 
+                         value={createForm.password}
+                         onChange={(e) => setCreateForm({...createForm, password: e.target.value})}
+                         placeholder="••••••••"
+                         className="w-full bg-[#152035] border border-blue-500/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
+                       />
+                    </div>
+
+                    <div>
+                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block ml-1">Rol de Usuario</label>
+                       <div className="grid grid-cols-3 gap-2 p-1 bg-[#152035] rounded-2xl border border-white/5">
+                          {[
+                             { id: 'STUDENT', label: 'Alumno' },
+                             { id: 'INSTRUCTOR', label: 'Instructor' },
+                             { id: 'ADMIN', label: 'Admin' }
+                          ].map(role => (
+                             <button
+                               key={role.id}
+                               type="button"
+                               onClick={() => setCreateForm({...createForm, role: role.id})}
+                               className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${createForm.role === role.id ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/20' : 'text-gray-500 hover:text-white'}`}
+                             >
+                                {role.label}
+                             </button>
+                          ))}
+                       </div>
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
+                       <button 
+                         type="button"
+                         onClick={() => setShowCreateModal(false)}
+                         disabled={isCreating}
+                         className="flex-1 py-4 rounded-2xl border border-white/5 hover:border-white/10 text-xs font-bold text-gray-400 transition-all uppercase tracking-widest"
+                       >
+                          Cancelar
+                       </button>
+                       <button 
+                         type="submit"
+                         disabled={isCreating}
+                         className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-black text-xs font-black transition-all uppercase tracking-widest shadow-xl shadow-blue-600/20 hover:scale-[1.02]"
+                       >
+                          {isCreating ? 'Procesando...' : 'Crear Usuario'}
+                       </button>
+                    </div>
+                 </form>
+              </div>
+           </div>
+        )}
     </div>
   );
 }
