@@ -2,149 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-
-// ── Rich Text Toolbar ──────────────────────────────────────────────────────
-const COLORS = ['#ffffff','#06B6D4','#3B82F6','#4ade80','#f59e0b','#f87171','#e879f9','#a3a3a3'];
-
-function RichEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const colorRef = useRef<HTMLInputElement>(null);
-
-  const exec = (cmd: string, val?: string) => {
-    if (cmd === 'foreColor' && !val) {
-      colorRef.current?.click();
-      return;
-    }
-    document.execCommand(cmd, false, val);
-    ref.current?.focus();
-    emitChange();
-  };
-
-  const editTitleNode = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Logic to select title could go here if needed
-  };
-
-  const emitChange = useCallback(() => {
-    if (ref.current) {
-      const html = ref.current.innerHTML;
-      if (html !== value) {
-        onChange(html);
-      }
-    }
-  }, [onChange, value]);
-
-  // Sync external value once on mount
-  useEffect(() => {
-    if (ref.current && ref.current.innerHTML !== value) {
-      ref.current.innerHTML = value || '';
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const clearFormat = () => {
-    document.execCommand('removeFormat', false);
-    document.execCommand('unlink', false);
-    emitChange();
-  };
-
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 10 * 1024 * 1024) return alert('Máximo 10MB permitido');
-    
-    // Check if image already exists
-    if (ref.current?.innerHTML.includes('<img')) {
-      return alert('Solo se permite una (1) imagen por lección');
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      exec('insertImage', reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const hasImage = ref.current?.innerHTML.includes('<img');
-
-  return (
-    <div className="border border-blue-500/20 rounded-xl overflow-hidden bg-[#070d1a]">
-      <input 
-        type="file" 
-        accept="image/*" 
-        id="lesson-image-upload" 
-        className="hidden" 
-        onChange={handleImage} 
-      />
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-blue-500/15 bg-[#0a1220]">
-        {[
-          { label: 'B', cmd: 'bold', title: 'Negrita', cls: 'font-bold' },
-          { label: 'I', cmd: 'italic', title: 'Cursiva', cls: 'italic' },
-          { label: 'U', cmd: 'underline', title: 'Subrayado', cls: 'underline' },
-        ].map(b => (
-          <button key={b.cmd} title={b.title} onMouseDown={e => { e.preventDefault(); exec(b.cmd); }}
-            className={`w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors ${b.cls}`}
-          >{b.label}</button>
-        ))}
-        <div className="w-px h-5 bg-blue-500/20 mx-1" />
-        <button title="Título H2" onMouseDown={e => { e.preventDefault(); exec('formatBlock', 'h2'); }}
-          className="px-2 h-7 rounded text-[11px] text-white hover:bg-blue-500/20 transition-colors font-bold">H2</button>
-        <button title="Título H3" onMouseDown={e => { e.preventDefault(); exec('formatBlock', 'h3'); }}
-          className="px-2 h-7 rounded text-[11px] text-white hover:bg-blue-500/20 transition-colors font-bold">H3</button>
-        <div className="w-px h-5 bg-blue-500/20 mx-1" />
-        <button title="Lista bullets" onMouseDown={e => { e.preventDefault(); exec('insertUnorderedList'); }}
-          className="w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors">•≡</button>
-        <button title="Lista numerada" onMouseDown={e => { e.preventDefault(); exec('insertOrderedList'); }}
-          className="w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors">1≡</button>
-        <button title="Aumentar sangría" onMouseDown={e => { e.preventDefault(); exec('indent'); }}
-          className="w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors">→|</button>
-        <button title="Quitar sangría" onMouseDown={e => { e.preventDefault(); exec('outdent'); }}
-          className="w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors">|←</button>
-        <div className="w-px h-5 bg-blue-500/20 mx-1" />
-        <div className="relative" title="Color de texto">
-          <button
-            onMouseDown={e => { e.preventDefault(); exec('foreColor'); }}
-            className="w-7 h-7 rounded text-xs text-white hover:bg-blue-500/20 transition-colors flex items-center justify-center"
-          >
-            <span className="border-b-2 border-cyan-400 pb-0.5">A</span>
-          </button>
-          <input
-            ref={colorRef}
-            type="color"
-            className="absolute opacity-0 w-0 h-0"
-            onInput={e => exec('foreColor', (e.target as HTMLInputElement).value)}
-          />
-        </div>
-        <div className="w-px h-5 bg-blue-500/20 mx-1" />
-        <button title="Limpiar formato" onMouseDown={e => { e.preventDefault(); clearFormat(); }}
-          className="w-7 h-7 rounded text-[10px] text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors">✕A</button>
-        <button 
-          title="Insertar Imagen (Máx 10MB)" 
-          onMouseDown={e => { 
-            e.preventDefault(); 
-            if(hasImage) {
-              alert('Límite alcanzado: Solo una imagen por lección');
-              return;
-            }
-            document.getElementById('lesson-image-upload')?.click(); 
-          }}
-          disabled={hasImage}
-          className={`w-7 h-7 rounded text-xs transition-colors ${hasImage ? 'opacity-30 cursor-not-allowed grayscale' : 'text-white hover:bg-blue-500/20'}`}
-        >🖼️</button>
-      </div>
-      {/* Editor */}
-      <div
-        ref={ref}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={emitChange}
-        className="min-h-[180px] p-4 text-sm text-gray-200 focus:outline-none leading-relaxed"
-        style={{ fontFamily: "'Poppins', sans-serif" }}
-      />
-    </div>
-  );
-}
+import BuilderRichEditor from '@/components/builder/BuilderRichEditor';
 
 // ── Lesson Editor ──────────────────────────────────────────────────────────
 function LessonEditor({
@@ -266,7 +124,7 @@ function LessonEditor({
                 onChange={e => setData({ ...data, summary: e.target.value })}
                 placeholder="Lo más importante de esta lección..."
                 rows={2}
-                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600 resize-none font-light"
+                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-4 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600 resize-none font-light"
               />
             </div>
             <div>
@@ -276,14 +134,14 @@ function LessonEditor({
                 onChange={e => setData({ ...data, funFact: e.target.value })}
                 placeholder="Un dato extra que los sorprenda..."
                 rows={2}
-                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600 resize-none font-light"
+                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-4 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600 resize-none font-light"
               />
             </div>
           </div>
 
           <div>
             <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Contenido de la lección</label>
-            <RichEditor
+            <BuilderRichEditor
               value={data.contentText}
               onChange={v => setData(prev => ({ ...prev, contentText: v }))}
             />

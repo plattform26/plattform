@@ -32,6 +32,7 @@ export const metadata: Metadata = {
 };
 
 import StructuredData from "@/components/StructuredData";
+import SessionManager from "@/components/auth/SessionManager";
 
 export default function RootLayout({
   children,
@@ -42,8 +43,10 @@ export default function RootLayout({
     <html lang="es" className={`${poppins.variable} ${spaceGrotesk.variable} scroll-smooth`}>
       <body className="font-poppins bg-[#070d1a] text-white antialiased min-h-screen">
         <StructuredData />
+        <SessionManager />
         {children}
       </body>
     </html>
   );
 }
+

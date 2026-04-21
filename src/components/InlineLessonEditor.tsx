@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import BuilderRichEditor from './builder/BuilderRichEditor';
 
 interface Lesson {
   id: string;
@@ -102,12 +103,11 @@ export default function InlineLessonEditor({ lesson }: { lesson: Lesson }) {
               )}
 
               {lesson.contentType !== 'QUIZ' && (
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest ml-1">Contenido (HTML soportado)</label>
-                  <textarea 
+                  <BuilderRichEditor 
                     value={formData.content}
-                    onChange={e => setFormData({...formData, content: e.target.value})}
-                    className="w-full bg-[#152035] border border-blue-500/10 rounded-2xl px-6 py-4 text-white focus:border-cyan-500 outline-none transition-all h-64 font-light leading-relaxed scrollbar-thin"
+                    onChange={html => setFormData({...formData, content: html})}
                     placeholder="Escribe el contenido de la lección aquí..."
                   />
                 </div>

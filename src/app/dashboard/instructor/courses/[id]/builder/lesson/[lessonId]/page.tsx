@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BuilderRichEditor from '@/components/builder/BuilderRichEditor';
 
 export default function BuilderLessonPage() {
   const { id: courseId, lessonId } = useParams();
@@ -208,40 +209,9 @@ export default function BuilderLessonPage() {
                          {saving && <span className="text-[8px] font-black text-cyan-500 uppercase tracking-widest animate-pulse">Escribiendo en disco...</span>}
                     </div>
                     
-                    {/* TOOLBAR */}
-                    <div className="flex flex-wrap gap-2 mb-4 bg-[#070d1a] p-3 rounded-2xl border border-white/5">
-                        <button onClick={() => document.execCommand('bold')} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white font-bold" title="Negrita">B</button>
-                        <button onClick={() => document.execCommand('italic')} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white italic" title="Cursiva">I</button>
-                        <button onClick={() => document.execCommand('underline')} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white underline" title="Subrayado">U</button>
-                        <div className="w-[1px] h-6 bg-white/10 mx-1 self-center"></div>
-                        <button onClick={() => document.execCommand('formatBlock', false, 'h1')} className="px-2 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white text-[10px] font-black" title="Título 1">H1</button>
-                        <button onClick={() => document.execCommand('formatBlock', false, 'h2')} className="px-2 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white text-[10px] font-black" title="Título 2">H2</button>
-                        <button onClick={() => document.execCommand('formatBlock', false, 'p')} className="px-2 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-white text-[10px] font-black" title="Párrafo">P</button>
-                            <div className="w-[1px] h-6 bg-white/10 mx-1 self-center"></div>
-                            <div className="flex items-center gap-2 px-2">
-                                 <input 
-                                    type="color" 
-                                    onChange={e => document.execCommand('foreColor', false, e.target.value)}
-                                    className="w-6 h-6 bg-transparent border-0 p-0 cursor-pointer"
-                                    title="Color de Texto"
-                                 />
-                            </div>
-                            <div className="w-[1px] h-6 bg-white/10 mx-1 self-center"></div>
-                            <button 
-                                onClick={insertDYK} 
-                                className="px-3 h-8 flex items-center justify-center rounded-lg bg-purple-600/20 text-purple-400 text-[9px] font-black uppercase hover:bg-purple-600/40 transition-all font-inter"
-                                title="Insertar ¿Sabías que?"
-                            >
-                                💡 DYK Block
-                            </button>
-                        </div>
-
-                    <div 
-                        contentEditable
-                        onInput={e => setLesson({ ...lesson, contentText: e.currentTarget.innerHTML })}
-                        onBlur={e => updateLesson({ contentText: e.currentTarget.innerHTML })}
-                        dangerouslySetInnerHTML={{ __html: lesson.contentText }}
-                        className="w-full h-[500px] bg-[#070d1a] border border-blue-500/5 rounded-3xl p-10 text-gray-300 font-light leading-relaxed outline-none focus:border-cyan-500/30 transition-all overflow-y-auto shadow-inner prose prose-invert max-w-none"
+                    <BuilderRichEditor 
+                        value={lesson.contentText}
+                        onChange={html => setLesson({ ...lesson, contentText: html })}
                     />
                 </div>
 
