@@ -43,22 +43,49 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    const cleanUsers = users.map(u => ({
-      id: u.id,
-      name: u.name,
-      lastName: u.lastName,
-      email: u.email,
-      role: u.role,
-      status: u.status,
-      isCourtesy: u.isCourtesy,
-      courtesyPlanId: u.courtesyPlanId,
-      specialty: u.instructorProfile?.specialty || 'N/A',
-      createdAt: u.createdAt.toISOString(),
-      lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null, // Misión: Tracking v7.0
-      _count: {
-        courses: u._count?.courses || 0,
-        enrollments: u._count?.enrollments || 0
+    const cleanUsers = await Promise.all(users.map(async u => {
+      let activePlanName = 'SIN PLAN';
+      let planOrigin = 'NINGUNO';
+      let planKeyDate = null;
+      let planKeyLabel = '—';
+
+      const { getEffectivePlan } = await import('@/lib/plan-utils');
+      const plan = await getEffectivePlan(u.id);
+
+      if (plan) {
+        activePlanName = plan.displayName;
+        if (plan.status === 'COURTESY') {
+          planOrigin = 'CORTESÍA';
+          planKeyLabel = 'Desde';
+          planKeyDate = u.createdAt.toISOString(); // Or use a specific grant date if available
+        } else {
+          planOrigin = 'PAGO_STRIPE';
+          planKeyLabel = 'Vence';
+          planKeyDate = plan.expiresAt ? plan.expiresAt.toISOString() : null;
+        }
       }
+
+      return {
+        id: u.id,
+        name: u.name,
+        lastName: u.lastName,
+        email: u.email,
+        role: u.role,
+        status: u.status,
+        isCourtesy: u.isCourtesy,
+        courtesyPlanId: u.courtesyPlanId,
+        activePlanName,
+        planOrigin,
+        planKeyLabel,
+        planKeyDate,
+        specialty: u.instructorProfile?.specialty || 'N/A',
+        createdAt: u.createdAt.toISOString(),
+        lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,
+        _count: {
+          courses: u._count?.courses || 0,
+          enrollments: u._count?.enrollments || 0
+        }
+      };
     }));
 
     return NextResponse.json(cleanUsers);

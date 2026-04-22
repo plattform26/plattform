@@ -15,8 +15,9 @@ export default async function InstructorDashboardPage() {
     include: {
       user: true,
       subscriptions: {
-        where: { status: 'ACTIVE' },
+        where: { status: { in: ['ACTIVE', 'PAUSED'] } },
         include: { plan: true },
+        orderBy: { createdAt: 'desc' },
         take: 1,
       },
     },
@@ -46,8 +47,8 @@ export default async function InstructorDashboardPage() {
   
   const activeSub = profile.subscriptions[0];
   
-  const daysUntilExpiry = activeSub?.expiresAt 
-    ? Math.ceil((new Date(activeSub.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+  const daysUntilExpiry = (activeSub?.status === 'ACTIVE' && activeSub?.expiresAt) 
+    ? Math.ceil((new Date(activeSub.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     : null;
 
   // STATS
@@ -125,7 +126,7 @@ export default async function InstructorDashboardPage() {
                  <p className="text-sm text-red-100/80">Tus cursos son invisibles y el acceso a la IA ha sido bloqueado por falta de pago o exceso de cupo.</p>
               </div>
            </div>
-           <Link href="/dashboard/instructor/plan" className="px-6 py-2 bg-red-500 hover:bg-red-400 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-red-500/20 uppercase tracking-widest">Regularizar Suscripción</Link>
+           <Link href="/dashboard/instructor/finances" className="px-6 py-2 bg-red-500 hover:bg-red-400 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-red-500/20 uppercase tracking-widest">Regularizar Suscripción</Link>
         </div>
       )}
 
@@ -139,7 +140,7 @@ export default async function InstructorDashboardPage() {
                  <p className="text-xs text-orange-200/60">Asegúrate de renovar para evitar la hibernación automática de tus cursos.</p>
               </div>
            </div>
-           <Link href="/dashboard/instructor/plan" className="text-xs font-bold text-orange-300 hover:text-orange-200 underline">Gestionar renovación →</Link>
+           <Link href="/dashboard/instructor/finances" className="text-xs font-bold text-orange-300 hover:text-orange-200 underline">Gestionar renovación →</Link>
         </div>
       )}
 
@@ -159,7 +160,7 @@ export default async function InstructorDashboardPage() {
                 </p>
              </div>
           </div>
-          <Link href="/dashboard/instructor/plan" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">Upgrade →</Link>
+          <Link href="/dashboard/instructor/finances" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">Upgrade →</Link>
         </div>
       )}
 
@@ -183,7 +184,7 @@ export default async function InstructorDashboardPage() {
                <span className={`w-1.5 h-1.5 rounded-full ${profile.stripeConnectId && profile.stripeOnboardingComplete ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`} />
                Status: {profile.stripeConnectId && profile.stripeOnboardingComplete ? 'CONECTADO STRIPE' : 'SIN VINCULAR'}
             </div>
-            <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
+            <Link href="/dashboard/instructor/finances" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
          </div>
       </div>
 
@@ -228,7 +229,11 @@ export default async function InstructorDashboardPage() {
       <div className="bg-[#152035] border border-blue-500/20 rounded-2xl mb-10">
         <div className="p-5 border-b border-blue-500/10 flex items-center justify-between">
           <h3 className="font-semibold text-white">Cursos Recientes</h3>
-          <NewCourseButton status={profile.user.status} />
+          <NewCourseButton 
+             status={profile.user.status} 
+             planName={currentPlan?.name}
+             isCourtesy={profile.user.isCourtesy}
+          />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm border-collapse">
@@ -281,6 +286,7 @@ export default async function InstructorDashboardPage() {
                       enrollmentCount={c._count.enrollments} 
                       role="INSTRUCTOR" 
                       planName={currentPlan?.name}
+                      isCourtesy={profile.user.isCourtesy}
                       instructorStatus={profile.user.status}
                     />
                   </td>

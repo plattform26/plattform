@@ -49,6 +49,7 @@ export default function EditCoursePage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [role, setRole] = useState<'ADMIN' | 'INSTRUCTOR' | null>(null);
+  const [activePlanName, setActivePlanName] = useState<string>('');
 
   // Misión: Validación de Claridad Total
   const validateForm = () => {
@@ -75,7 +76,10 @@ export default function EditCoursePage() {
     // Fetch session for role
     fetch('/api/auth/me')
       .then(r => r.json())
-      .then(s => setRole(s.role));
+      .then(s => {
+        setRole(s.role);
+        setActivePlanName(s.activePlanName || '');
+      });
 
     fetch(`/api/instructor/courses/${id}`)
       .then(r => r.json())
@@ -176,8 +180,7 @@ export default function EditCoursePage() {
     }
   };
 
-  const activePlan = course?.instructor?.instructorProfile?.subscriptions?.[0]?.plan?.name;
-  const isDuplicationRestricted = activePlan !== 'scale';
+  const isDuplicationRestricted = activePlanName.toLowerCase() !== 'scale' && role !== 'ADMIN';
 
   const handleDuplicate = async () => {
     if (isDuplicationRestricted) {

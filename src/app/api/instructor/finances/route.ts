@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
@@ -19,8 +19,9 @@ export async function GET(req: Request) {
       include: {
         user: true,
         subscriptions: {
-          where: { status: 'ACTIVE' },
+          where: { status: { in: ['ACTIVE', 'PAUSED'] } },
           include: { plan: true },
+          orderBy: { createdAt: 'desc' },
           take: 1,
         },
       },
@@ -29,24 +30,20 @@ export async function GET(req: Request) {
     if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
 
     // --- AUTOMATED STRIPE SYNC ---
-    // If we have a connect ID but onboarding is not marked as complete, sync with Stripe
     if (profile.stripeConnectId && !profile.stripeOnboardingComplete) {
       try {
         const { stripe } = await import('@/lib/stripe');
         const account = await stripe.accounts.retrieve(profile.stripeConnectId);
         
         if (account.details_submitted) {
-          // Update DB silently
           await prisma.instructorProfile.update({
             where: { id: profile.id },
             data: { stripeOnboardingComplete: true }
           });
-          // Update memory object for immediate UI response
           profile.stripeOnboardingComplete = true;
         }
       } catch (stripeError) {
         console.error('Silently failed to sync with Stripe:', stripeError);
-        // We continue anyway to avoid blocking the dashboard for temporary Stripe issues
       }
     }
 
@@ -54,7 +51,12 @@ export async function GET(req: Request) {
     const monthlyRent = Number(activeSub?.plan.monthlyPrice || 0);
 
     // Calc Next Billing/Expiration
-    const expirationDate = activeSub?.expiresAt || (activeSub?.startedAt ? new Date(new Date(activeSub.startedAt).setMonth(new Date(activeSub.startedAt).getMonth() + 1)) : null);
+    let expirationDate = activeSub?.expiresAt || (activeSub?.startedAt ? new Date(new Date(activeSub.startedAt).setMonth(new Date(activeSub.startedAt).getMonth() + 1)) : null);
+    
+    // Si hay cortesía, ignoramos el vencimiento del plan pagado para efectos de visualización primaria
+    if (profile.user.isCourtesy) {
+      expirationDate = null;
+    }
 
     // Lifetime Aggregations
     const aggregations = await prisma.transaction.aggregate({
@@ -74,7 +76,7 @@ export async function GET(req: Request) {
     const totalCommission = Number(aggregations._sum.platformCommissionAmount || 0);
     const netEarnings = Number(aggregations._sum.netAmountToInstructor || 0);
 
-    // Monthly Aggregations (Strict Calendar Month)
+    // Monthly Aggregations
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -95,7 +97,7 @@ export async function GET(req: Request) {
     const monthlyGross = Number(monthlyAggregations._sum.grossAmount || 0);
     const monthlyNet = Number(monthlyAggregations._sum.netAmountToInstructor || 0);
 
-    // Transactions Log - All successful historical sales
+    // Transactions Log
     const transactions = await prisma.transaction.findMany({
       where: { 
           instructorId: userId,
@@ -136,4 +138,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

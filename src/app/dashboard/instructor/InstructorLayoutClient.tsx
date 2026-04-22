@@ -104,7 +104,24 @@ export default function InstructorLayoutClient({
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
                   <span className="text-sm font-black text-white uppercase tracking-tighter">
-                    {user?.activePlanName || 'SIN PLAN'} {user?.isCourtesy && '(CORTESÍA)'}
+                    {user?.isCourtesy ? 'CORTESÍA' : (
+                      <>
+                        {user?.activePlanName && user.activePlanName !== 'SIN PLAN' ? (
+                          <>
+                            {user.activePlanName}
+                            {user.activePlanExpiresAt && (
+                              <div className="text-[9px] text-cyan-400/60 font-bold mt-0.5 lowercase tracking-wider">
+                                Vence: {new Date(user.activePlanExpiresAt).toLocaleDateString('es-MX')}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="text-[9px] text-red-500/70 font-black mt-0.5 uppercase tracking-tighter bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
+                            SIN PLAN ACTIVO
+                          </div>
+                        )}
+                      </>
+                    )}
                   </span>
                 </div>
             </div>
@@ -145,29 +162,29 @@ export default function InstructorLayoutClient({
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 h-screen overflow-y-auto font-poppins relative">
         
-        {/* MISION: MURO DE PAGO (MANDATORY GATEKEEPER - ABSOLUTE PRIORITY) */}
-        {!isSyncing && user?.role === 'INSTRUCTOR' && !user?.activePlanName && (
-          <div className="fixed inset-0 z-[9999] bg-[#070d1a]/98 backdrop-blur-2xl flex items-center justify-center p-8 text-center overflow-hidden">
-             <div className="max-w-md space-y-8 animate-in fade-in zoom-in duration-500">
-                <div className="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center text-5xl mx-auto border border-cyan-500/20 shadow-2xl shadow-cyan-500/20">
-                  🔒
-                </div>
-                <div className="space-y-4">
-                  <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Acceso Restringido</h2>
-                  <p className="text-lg font-bold text-cyan-400">Para poder avanzar y acceder a las funciones de la plataforma, debes elegir y pagar un plan.</p>
-                  <p className="text-sm text-gray-500 font-medium">Activa tu suscripción para desbloquear el panel de control, el generador de IA y la publicación de cursos.</p>
-                </div>
-                <Link 
-                  href="/pricing" 
-                  className="block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20 hover:scale-[1.02] transition-all"
-                >
-                  Ver Planes Disponibles
-                </Link>
+        {/* Misión: Banner de Soft-Lock (Reemplazo de Muro de Pago) */}
+        {!isSyncing && user?.role === 'INSTRUCTOR' && (
+          (!user?.activePlanName || user.activePlanName === 'SIN PLAN' || 
+           (!user?.isCourtesy && user?.activePlanExpiresAt && (new Date(user.activePlanExpiresAt).getTime() < Date.now())))
+        ) && (
+          <div className="bg-red-600/10 border-b border-red-600/20 px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4 animate-in slide-in-from-top duration-500 sticky top-0 z-[70] backdrop-blur-xl">
+             <div className="flex items-center gap-3">
+                <span className="text-xl">🔒</span>
+                <p className="text-[11px] font-black uppercase tracking-widest text-red-400">
+                  Acceso Restringido: <span className="text-white opacity-60">Funciones de creación y edición bloqueadas hasta activar un plan vigente.</span>
+                </p>
              </div>
+             <Link 
+               href="/dashboard/instructor/finances" 
+               className="px-4 py-1.5 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-600/20 hover:scale-105 transition-all"
+             >
+               Activar Plan Ahora →
+             </Link>
           </div>
         )}
+
         {/* Misión: Banners de Alta Jerarquía y Sticky */}
-        <div className="sticky top-0 z-[60] flex flex-col shadow-2xl">
+        <div className="flex flex-col shadow-2xl relative z-[60]">
           {/* Alerta por falta de Verificación (Misión: Flicker Zero) */}
           {!isSyncing && !user?.isEmailVerified && (
             <div className="bg-amber-500/10 backdrop-blur-md border-b border-amber-500/20 px-8 py-3 flex items-center justify-between group animate-pulse-slow">

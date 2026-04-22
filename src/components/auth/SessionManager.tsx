@@ -6,7 +6,7 @@ import { AlertTriangle, Clock, ShieldCheck, LogOut } from 'lucide-react';
 
 const SESSION_TIMEOUT = 15 * 60; // 15 minutos en segundos
 const WARNING_THRESHOLD = 2 * 60; // 2 minutos antes del cierre
-const REFRESH_INTERVAL = 5 * 60; // 5 minutos para refresh automático
+const REFRESH_INTERVAL = 10 * 60; // 10 minutos para refresh automático
 
 export default function SessionManager() {
   const [timeLeft, setTimeLeft] = useState(SESSION_TIMEOUT);
@@ -15,21 +15,36 @@ export default function SessionManager() {
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastRefreshRef = useRef<number>(Date.now());
+  const isRefreshingRef = useRef<boolean>(false);
+  const failedAttemptsRef = useRef<number>(0);
   const router = useRouter();
 
   // Función para renovar el token en el servidor
   const refreshSession = useCallback(async () => {
+    if (isRefreshingRef.current || failedAttemptsRef.current >= 3) return false;
+    
+    isRefreshingRef.current = true;
+    // Actualizamos el ref inmediatamente para evitar reintentos por actividad mientras la petición está en vuelo
+    lastRefreshRef.current = Date.now();
+
     try {
       const res = await fetch('/api/auth/refresh', { method: 'POST' });
       if (res.ok) {
-        lastRefreshRef.current = Date.now();
+        failedAttemptsRef.current = 0;
         console.log('Session Heartbeat: Token renovado con éxito.');
         return true;
+      } else {
+        // Si hay un 401 o similar, incrementamos fallos para dejar de intentar pronto
+        failedAttemptsRef.current += 1;
+        console.warn(`Session Heartbeat: Fallo en renovación (${res.status}).`);
+        return false;
       }
-      return false;
     } catch (error) {
+      failedAttemptsRef.current += 1;
       console.error('Error refreshing session:', error);
       return false;
+    } finally {
+      isRefreshingRef.current = false;
     }
   }, []);
 
@@ -48,12 +63,12 @@ export default function SessionManager() {
 
   // Reset del timer por actividad
   const resetTimer = useCallback(() => {
-    if (isExpired) return;
+    if (isExpired || failedAttemptsRef.current >= 3) return;
 
     setTimeLeft(SESSION_TIMEOUT);
     setShowWarning(false);
 
-    // Si han pasado más de 5 minutos desde el último refresh, lo hacemos ahora
+    // Si han pasado más de X minutos desde el último refresh, lo hacemos ahora
     if (Date.now() - lastRefreshRef.current > REFRESH_INTERVAL * 1000) {
       refreshSession();
     }

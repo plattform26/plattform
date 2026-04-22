@@ -229,6 +229,39 @@ export async function sendSaleNotificationToAdmin(studentName: string, courseTit
   });
 }
 
+export async function sendSubscriptionNotificationToAdmin(
+  instructorName: string, 
+  instructorEmail: string, 
+  planName: string, 
+  amount: number, 
+  expiresAt: Date, 
+  baseUrl?: string
+) {
+  const url = resolveUrl(baseUrl);
+  const formattedDate = expiresAt.toLocaleDateString('es-MX', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+
+  await resend.emails.send({
+    from,
+    to: adminEmail,
+    subject: `💳 Nueva Suscripción: ${instructorName} - Plan ${planName}`,
+    html: getBaseTemplate(`
+      <h1>Nueva Transacción de Suscripción</h1>
+      <p>Diego, se ha procesado un pago de suscripción en la plataforma.</p>
+      <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Instructor:</strong> ${instructorName} (${instructorEmail})</p>
+        <p><strong>Plan:</strong> ${planName}</p>
+        <p><strong>Monto:</strong> $${amount} MXN</p>
+        <p><strong>Nueva Vigencia:</strong> ${formattedDate}</p>
+      </div>
+      <a href="${url}/dashboard/admin/users" class="button">Gestionar Usuarios</a>
+    `)
+  });
+}
+
 /* ==========================================
    LOGROS Y SUSCRIPCIONES
    ========================================== */
@@ -346,19 +379,31 @@ export async function generateCertificatePDF(
   return Buffer.from(arrayBuffer);
 }
 
-export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', planName: string, baseUrl?: string) {
+export async function sendPlanActivityEmail(
+  email: string, 
+  type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', 
+  planName: string, 
+  expiresAt?: Date, 
+  baseUrl?: string
+) {
   const url = resolveUrl(baseUrl);
   const subjects = {
-    WELCOME: '¡Bienvenido a tu nuevo Plan!',
-    UPGRADE: 'Tu cambio de plan ha sido exitoso',
-    RENEWAL: 'Tu suscripción ha sido renovada'
+    WELCOME: '¡Bienvenido a tu suscripción en Plattform!',
+    UPGRADE: 'Actualización de Plan exitosa',
+    RENEWAL: 'Renovación de suscripción confirmada'
   };
 
   const titles = {
-    WELCOME: `¡Felicidades por elegir el Plan ${planName}!`,
-    UPGRADE: `Ya estás disfrutando del Plan ${planName}`,
-    RENEWAL: 'Ciclo de facturación renovado'
+    WELCOME: `Activación de Plan ${planName}`,
+    UPGRADE: `Tu academia ahora es nivel ${planName}`,
+    RENEWAL: 'Suscripción renovada exitosamente'
   };
+
+  const formattedDate = expiresAt ? expiresAt.toLocaleDateString('es-MX', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }) : null;
 
   await resend.emails.send({
     from,
@@ -366,10 +411,13 @@ export async function sendPlanActivityEmail(email: string, type: 'WELCOME' | 'UP
     subject: subjects[type],
     html: getBaseTemplate(`
       <h1>${titles[type]}</h1>
-      <p>Este es un aviso automático para informarte sobre el estado de tu suscripción a Plattform.</p>
-      <p>Plan actual: <span class="highlight">${planName}</span></p>
-      <p>Si tienes alguna duda sobre los beneficios de tu plan, puedes revisarlos en tu panel administrativo.</p>
-      <a href="${url}/dashboard/instructor/revenue" class="button">Ver mi Panel</a>
+      <p>Estimado Instructor, le informamos que el estatus de su suscripción en nuestra plataforma ha sido actualizado satisfactoriamente.</p>
+      <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; margin: 24px 0;">
+        <p><strong>Plan Actual:</strong> <span class="highlight">${planName}</span></p>
+        ${formattedDate ? `<p><strong>Vencimiento Oficial:</strong> ${formattedDate}</p>` : ''}
+      </div>
+      <p>Su academia cuenta ahora con todos los beneficios y capacidades correspondientes a su nivel de suscripción. Puede gestionar sus cursos y alumnos desde su panel de control.</p>
+      <a href="${url}/dashboard/instructor/finances" class="button">Ir a mi Panel de Control</a>
     `)
   });
 }

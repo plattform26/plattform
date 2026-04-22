@@ -9,48 +9,73 @@ export async function GET(req: Request) {
     const category = searchParams.get('category');
     const level = searchParams.get('level');
 
-    let baseSql = `
-      SELECT 
-        c.id, c.title, c.slug, c.description, c.category, c.level, c.price, c.currency, c.thumbnail_url as "thumbnailUrl",
-        i.academy_name as "instructorName",
-        COALESCE((SELECT AVG(rating) FROM course_ratings WHERE course_id = c.id), 0) as "averageRating",
-        COALESCE((SELECT COUNT(*) FROM enrollments WHERE course_id = c.id), 0) as "studentCount"
-      FROM courses c
-      JOIN instructor_profiles i ON c.instructor_id = i.user_id
-      WHERE c.status = 'PUBLISHED' 
-        AND c.visibility = 'PUBLIC' 
-        AND c.deleted_at IS NULL
-    `;
+    // Misión: Motor de Visibilidad v8.2 - Implementación vía Prisma Client
+    const coursesRaw = await prisma.course.findMany({
+      where: {
+        status: 'PUBLISHED',
+        deletedAt: null,
+        // Si hay una query de búsqueda, aplicamos el filtro
+        ...(query ? {
+          OR: [
+            { title: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+          ]
+        } : {}),
+        ...(category ? { category: category as any } : {}),
+        ...(level ? { level: level as any } : {}),
+      },
+      include: {
+        instructor: {
+           include: {
+              instructorProfile: {
+                 select: { academyName: true }
+              }
+           }
+        },
+        _count: {
+          select: { enrollments: true }
+        },
+        ratings: {
+          select: { rating: true }
+        }
+      },
+      // Orden por fecha por defecto (v8.2)
+      orderBy: { createdAt: 'desc' }
+    });
 
-    const args: any[] = [];
-    let argIndex = 1;
+    // Procesamos para calcular promedios y formatear nombres
+    const courses = coursesRaw.map(c => {
+      const instructorName = c.instructor?.instructorProfile?.academyName || 'Plattform Expert';
+      const avgRating = c.ratings.length > 0 
+        ? c.ratings.reduce((acc, curr) => acc + curr.rating, 0) / c.ratings.length 
+        : 0;
 
-    if (query) {
-      baseSql += ` AND to_tsvector('spanish', c.title || ' ' || c.description) @@ plainto_tsquery('spanish', $${argIndex++})`;
-      args.push(query);
-    }
-    if (category) {
-      baseSql += ` AND c.category = CAST($${argIndex++} AS "CourseCategory")`;
-      args.push(category);
-    }
-    if (level) {
-      baseSql += ` AND c.level = CAST($${argIndex++} AS "CourseLevel")`;
-      args.push(level);
-    }
+      return {
+        id: c.id,
+        title: c.title,
+        slug: c.slug,
+        description: c.description,
+        category: c.category,
+        level: c.level,
+        price: Number(c.price),
+        currency: c.currency,
+        thumbnailUrl: c.thumbnailUrl,
+        instructorName,
+        averageRating: avgRating,
+        studentCount: c._count.enrollments
+      };
+    });
 
-    baseSql += ` ORDER BY "studentCount" DESC`;
+    // Ordenamiento Final: Calificados primero, luego recientes (v8.2)
+    courses.sort((a, b) => {
+      if (b.averageRating !== a.averageRating) return b.averageRating - a.averageRating;
+      return 0; // Ya están ordenados por createdAt en la query de Prisma
+    });
 
-    const coursesRaw = await prisma.$queryRawUnsafe<any[]>(baseSql, ...args);
+    // Límite de 8 para el home/landing
+    const result = (!query && !category && !level) ? courses.slice(0, 8) : courses;
 
-    // Convert decimal/bigint from Postgres back to plain numbers or strings
-    const courses = coursesRaw.map((c: any) => ({
-      ...c,
-      price: Number(c.price),
-      averageRating: Number(c.averageRating),
-      studentCount: Number(c.studentCount),
-    }));
-
-    return NextResponse.json(courses);
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error('API /courses error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

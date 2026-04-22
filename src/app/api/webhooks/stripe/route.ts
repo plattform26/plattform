@@ -7,7 +7,8 @@ import {
   sendSaleNotificationToInstructor, 
   sendAdminTechnicalAlert,
   sendPlanActivityEmail,
-  sendSaleNotificationToAdmin
+  sendSaleNotificationToAdmin,
+  sendSubscriptionNotificationToAdmin
 } from '@/lib/mail';
 import { Prisma } from '@prisma/client';
 
@@ -257,7 +258,18 @@ export async function POST(req: Request) {
               where: { id: userId },
               data: { status: 'PENDING_APPROVAL' }
             });
-            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, url);
+
+            // Notificaciones Asíncronas
+            const expiresAt = thirtyDaysLater;
+            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, expiresAt, url);
+            await sendSubscriptionNotificationToAdmin(
+              instructorUser.name,
+              instructorUser.email,
+              plan.name,
+              Number(plan.monthlyPrice),
+              expiresAt,
+              url
+            );
           }
 
 
@@ -299,8 +311,16 @@ export async function POST(req: Request) {
                   where: { id: sub.planId }
                 });
                 if (instructorUser && plan) {
-                  // Fallback url resolve inside loop if needed, but we can reuse the global one if using the same event origin
-                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name); 
+                  // Notificaciones Asíncronas
+                  const expiresAt = sub.expiresAt || new Date(); // Fallback date for safety
+                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name, sub.expiresAt ?? undefined); 
+                  await sendSubscriptionNotificationToAdmin(
+                    instructorUser.name,
+                    instructorUser.email,
+                    plan.name,
+                    Number(plan.monthlyPrice),
+                    expiresAt
+                  );
                 }
               }
             }

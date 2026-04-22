@@ -11,22 +11,36 @@ interface CourseActionsProps {
   enrollmentCount: number;
   role: 'ADMIN' | 'INSTRUCTOR';
   planName?: string;
+  isCourtesy?: boolean;
   instructorStatus?: string;
 }
 
-export default function CourseActionsClient({ courseId, status, enrollmentCount, role, planName, instructorStatus }: CourseActionsProps) {
+export default function CourseActionsClient({ 
+  courseId, 
+  status, 
+  enrollmentCount, 
+  role, 
+  planName, 
+  isCourtesy,
+  instructorStatus 
+}: CourseActionsProps) {
   const [loading, setLoading] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const router = useRouter();
 
-  const isLocked = role === 'INSTRUCTOR' && (status === 'PUBLISHED' || status === 'HIBERNATED') && enrollmentCount > 0;
+  // Misión: Lógica de Bloqueo por Mantenimiento (Alumnos activos)
+  const isEditingLocked = role === 'INSTRUCTOR' && (status === 'PUBLISHED' || status === 'HIBERNATED') && enrollmentCount > 0;
+  
+  // Misión: Soft-Lock por Suscripción (SIN PLAN)
+  // Admins son inmunes.
+  const isSoftLocked = role === 'INSTRUCTOR' && !isCourtesy && (!planName || planName === 'SIN PLAN' || planName === 'STARTER');
   
   // Restricción por suscripción: Solo Scale puede duplicar. Admins siempre pueden.
-  const isDuplicationRestricted = role === 'INSTRUCTOR' && planName !== 'scale';
+  const isDuplicationRestricted = role === 'INSTRUCTOR' && planName?.toLowerCase() !== 'scale';
 
   const handleAction = async (action: 'hibernate' | 'duplicate' | 'delete' | 'publish') => {
-    if (loading) return;
+    if (loading || isSoftLocked) return;
     
     if (action === 'publish' && instructorStatus !== 'ACTIVE') {
       alert('🔒 Acción bloqueada: Tu cuenta requiere aprobación administrativa para publicar cursos.');
@@ -39,12 +53,12 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
     }
 
     if (action === 'delete') {
-      // Bloqueo de eliminación solo para Instructores
-      if (role === 'INSTRUCTOR' && enrollmentCount > 0) {
-        alert('No se puede eliminar un curso con alumnos activos.');
+      // Bloqueo total de eliminación para Instructores (Misión: Admin Role Armor v8.3)
+      if (role !== 'ADMIN') {
+        alert('🔒 Acción prohibida: Solo los administradores de la plataforma pueden eliminar cursos físicos.');
         return;
       }
-      if (!confirm('¿Estás seguro de eliminar este curso? Esta acción es irreversible.')) return;
+      if (!confirm('🛑 ATENCIÓN: Esta es una ELIMINACIÓN FÍSICA PERMANENTE. Se borrarán alumnos, módulos y progreso. ¿Confirmar destrucción total?')) return;
     }
 
     setLoading(true);
@@ -101,7 +115,19 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
 
       {/* Botón Constructor - Con Lógica de Bloqueo y Tooltip Informativo */}
       <div className="relative group">
-        {isLocked ? (
+        {isSoftLocked ? (
+          <div className="relative group/soft-lock">
+            <button
+               disabled
+               className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-[10px] font-black text-gray-500 opacity-60 cursor-not-allowed uppercase tracking-widest"
+            >
+               🔒 CONSTRUCTOR
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-black border border-white/10 rounded-lg text-[9px] text-red-400 font-bold text-center opacity-0 group-hover/soft-lock:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+               Requiere plan activo para editar.
+            </div>
+          </div>
+        ) : isEditingLocked ? (
           <>
             <button
               onClick={() => setShowLockModal(true)}
@@ -182,11 +208,15 @@ export default function CourseActionsClient({ courseId, status, enrollmentCount,
         )}
       </div>
 
-      {(enrollmentCount === 0 || role === 'ADMIN') && (
+      {role === 'ADMIN' && (
         <button
           onClick={() => handleAction('delete')}
-          disabled={loading}
-          className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/20 hover:bg-red-500/10 text-red-400/80 transition-all uppercase"
+          disabled={loading || isSoftLocked}
+          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase ${
+             isSoftLocked
+             ? 'border-gray-500/20 bg-gray-500/5 text-gray-700 cursor-not-allowed grayscale'
+             : 'border-red-500/20 hover:bg-red-500/10 text-red-500 font-black shadow-lg shadow-red-500/10'
+          }`}
         >
           🗑️ Eliminar
         </button>

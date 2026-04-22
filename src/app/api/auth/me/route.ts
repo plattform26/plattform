@@ -66,14 +66,19 @@ export async function GET(req: Request) {
     let hasActiveSubscription = false;
     let academySlug = '';
     let activePlanName = '';
+    let activePlanExpiresAt = null;
+    let isPlanPaused = false;
+    let pausedRemainingDays: number | null = null;
     
     if (user.role === 'INSTRUCTOR') {
       try {
         const { getEffectivePlan } = await import('@/lib/plan-utils');
         const plan = await getEffectivePlan(user.id);
         
-        activePlanName = plan?.name || 'STARTER';
-        hasActiveSubscription = !!plan; // STARTER counts as a plan
+        activePlanName = plan?.displayName || 'SIN PLAN';
+        activePlanExpiresAt = plan?.expiresAt || null;
+        isPlanPaused = false; // No longer used
+        hasActiveSubscription = !!plan; 
         
         const profile = await prisma.instructorProfile.findUnique({
           where: { userId: user.id },
@@ -100,6 +105,8 @@ export async function GET(req: Request) {
       isCourtesy: user.isCourtesy,
       courtesyPlanId: user.courtesyPlanId,
       activePlanName,
+      activePlanExpiresAt,
+      isPlanPaused,
       academySlug
     });
   } catch (error) {

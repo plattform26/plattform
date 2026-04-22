@@ -130,6 +130,7 @@ model InstructorSubscription {
   stripeSubscriptionId String?            @map("stripe_subscription_id")
   stripeCustomerId     String?            @map("stripe_customer_id")
   activeStudentCount   Int                @default(0) @map("active_student_count")
+  pausedRemainingDays  Int                @default(0) @map("paused_remaining_days")
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
   instructor           InstructorProfile  @relation(fields: [instructorId], references: [id], onDelete: Cascade)
@@ -595,6 +596,7 @@ enum SubscriptionStatus {
   PAST_DUE
   CANCELLED
   EXPIRED
+  PAUSED
 }
 
 enum QuestionType {
@@ -652,4 +654,14 @@ model DeletedUserLog {
   deletedAt      DateTime @default(now()) @map("deleted_at")
 
   @@map("deleted_user_logs")
+}
+
+model CourseDeletionLog {
+  id          String   @id @default(uuid())
+  courseId    String   @map("course_id")
+  courseTitle String   @map("course_title")
+  adminEmail  String   @map("admin_email")
+  deletedAt   DateTime @default(now()) @map("deleted_at")
+
+  @@map("course_deletion_logs")
 }

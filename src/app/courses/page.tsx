@@ -122,14 +122,14 @@ export default function CoursesPage() {
                Todos los Cursos
              </button>
              {[
-                { id: 'BUSINESS_ENTREPRENEURSHIP', label: 'Negocios y Emprendimiento' },
+                { id: 'STRATEGY_BUSINESS', label: 'Estrategia y Negocios' },
                 { id: 'TECH_INNOVATION', label: 'Tecnología e Innovación' },
-                { id: 'DESIGN_CREATIVITY', label: 'Diseño y Creatividad' },
-                { id: 'MARKETING_SALES', label: 'Marketing y Ventas' },
-                { id: 'FINANCE_ECONOMY', label: 'Finanzas y Economía' },
-                { id: 'PERSONAL_DEVELOPMENT', label: 'Desarrollo Personal' },
-                { id: 'WELLBEING_LIFESTYLE', label: 'Bienestar y Estilo de Vida' },
-                { id: 'EDUCATION_PEDAGOGY', label: 'Educación y Pedagogía' }
+                { id: 'DESIGN_MEDIA', label: 'Diseño y Media' },
+                { id: 'DIGITAL_MARKETING', label: 'Marketing Digital' },
+                { id: 'INVESTMENT_FINTECH', label: 'Inversión y Fintech' },
+                { id: 'HIGH_PERFORMANCE', label: 'Alto Rendimiento' },
+                { id: 'BIOHACKING_HEALTH', label: 'Biohacking y Salud' },
+                { id: 'ACADEMIC_LEADERSHIP', label: 'Liderazgo Académico' }
              ].map(cat => (
                <button key={cat.id} onClick={() => setCategory(cat.id)}
                   className={`px-6 py-2.5 rounded-full text-[10px] font-black border transition-all whitespace-nowrap uppercase tracking-widest ${category === cat.id ? 'bg-gradient-to-r from-cyan-500 to-blue-600 border-transparent text-white shadow-xl shadow-cyan-500/20' : 'bg-transparent border-blue-500/10 text-slate-300 hover:text-white hover:bg-blue-500/5'}`}

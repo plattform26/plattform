@@ -107,7 +107,26 @@ function FinancesContent() {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-[#0d1524] border border-blue-500/20 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-6 opacity-10 text-4xl group-hover:scale-110 transition-transform">💎</div>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Estado de Suscripción</p>
+                <h2 className="text-2xl font-space-grotesk font-black text-white tracking-tighter italic uppercase">
+                  {profile.user.isCourtesy ? 'Cortesía 🔥' : (activeSub?.plan?.name || 'Starter')}
+                </h2>
+                <div className="mt-4 flex flex-col gap-1">
+                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+                    {profile.user.isCourtesy ? 'Acceso Premium Total' : (
+                      expirationDate 
+                        ? `Vencimiento: ${new Date(expirationDate).toLocaleDateString('es-MX')}`
+                        : 'Sin vencimiento activo'
+                    )}
+                  </span>
+                  {activeSub?.status === 'PAUSED' && (
+                    <span className="text-[9px] font-black text-amber-500 uppercase italic animate-pulse">Plan Pausado (Remanente: {activeSub.pausedRemainingDays} días)</span>
+                  )}
+                </div>
+            </div>
             <div className="bg-[#161b22] border border-white/5 p-10 rounded-[3rem] shadow-3xl">
                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-4 italic">Ventas Brutas</p>
                 <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">${totalSales.toLocaleString()}</h2>

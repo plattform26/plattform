@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { serialize } from '@/lib/utils';
+import { getEffectivePlan } from '@/lib/plan-utils';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
 import StarRating from '@/components/StarRating';
 import NewCourseButton from '@/components/dashboard/NewCourseButton';
@@ -18,30 +19,15 @@ export default async function InstructorCoursesPage() {
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
-  const userFull = await prisma.user.findUnique({
-    where: { id: session.userId },
-    select: { isCourtesy: true, courtesyPlan: { select: { name: true } }, status: true }
-  });
-
-  let activePlanName = '';
-
-  if (userFull?.isCourtesy && userFull.courtesyPlan) {
-    activePlanName = userFull.courtesyPlan.name;
-  } else {
-    const instructorProfile = await prisma.instructorProfile.findUnique({
-      where: { userId: session.userId },
-      include: {
-        subscriptions: {
-          where: { status: 'ACTIVE' },
-          include: { plan: true },
-          take: 1
-        }
-      }
-    });
-    activePlanName = instructorProfile?.subscriptions[0]?.plan.name || '';
-  }
-
-  const activePlan = activePlanName;
+  const [plan, user] = await Promise.all([
+    getEffectivePlan(session.userId),
+    prisma.user.findUnique({ 
+      where: { id: session.userId }, 
+      select: { status: true, isCourtesy: true } 
+    })
+  ]);
+  
+  const planName = plan?.name || 'SIN PLAN';
 
   const courses = await prisma.course.findMany({
     where: { instructorId: session.userId, deletedAt: null },
@@ -66,7 +52,11 @@ export default async function InstructorCoursesPage() {
           <h1 className="text-2xl font-space-grotesk font-bold text-white">Mis cursos 📚</h1>
           <p className="text-gray-400 text-sm mt-1">{courses.length} curso{courses.length !== 1 ? 's' : ''} creado{courses.length !== 1 ? 's' : ''}</p>
         </div>
-        <NewCourseButton status={userFull?.status} />
+        <NewCourseButton 
+           status={user?.status} 
+           planName={planName} 
+           isCourtesy={user?.isCourtesy} 
+        />
       </div>
 
       <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl overflow-hidden">
@@ -133,8 +123,9 @@ export default async function InstructorCoursesPage() {
                         status={c.status} 
                         enrollmentCount={c._count.enrollments} 
                         role="INSTRUCTOR" 
-                        planName={serialize(activePlan)}
-                        instructorStatus={userFull?.status}
+                        planName={serialize(planName)}
+                        isCourtesy={user?.isCourtesy}
+                        instructorStatus={user?.status}
                       />
                     </td>
                   </tr>

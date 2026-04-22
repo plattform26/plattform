@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { toast, Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 
 const CATEGORIES = [
   'STRATEGY_BUSINESS',
@@ -44,6 +44,24 @@ export default function AdminEditCoursePage() {
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+           const data = await res.json();
+           setUserRole(data.role || null);
+        }
+      } catch (err) {
+        console.error('Error fetching user for role check:', err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // Misión: Validación de Claridad Total
   const validateForm = () => {
@@ -83,7 +101,21 @@ export default function AdminEditCoursePage() {
           visibility: d.visibility,
         });
       });
+    
+    fetchStudents();
   }, [id]);
+
+  const fetchStudents = async () => {
+    setLoadingStudents(true);
+    try {
+      const res = await fetch(`/api/admin/courses/${id}/students`);
+      if (res.ok) setStudents(await res.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!validateForm()) return;
@@ -153,16 +185,37 @@ export default function AdminEditCoursePage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm('¿Eliminar este curso? Esta acción no se puede deshacer.')) return;
+  const handleAdminHardDeleteCourse = async () => {
+    if (!confirm('🛑 ATENCIÓN: Esta es una ELIMINACIÓN FÍSICA PERMANENTE. Se borrarán módulos, lecciones, exámenes y progreso de todos los alumnos. ¿Confirmar destrucción total?')) return;
     setDeleting(true);
-    const res = await fetch(`/api/instructor/courses/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      toast.success('Curso eliminado');
+    const toastId = toast.loading('Ejecutando limpieza total...');
+    try {
+      const res = await fetch(`/api/admin/courses/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success(data.message, { id: toastId });
       router.push('/dashboard/admin/courses');
-    } else {
-      toast.error('Error al eliminar');
+    } catch (err: any) {
+      toast.error(err.message, { id: toastId });
       setDeleting(false);
+    }
+  };
+
+  const handleDeleteEnrollment = async (studentId: string, studentEmail: string) => {
+    if (!confirm(`¿Eliminar la inscripción de "${studentEmail}" de este curso? El alumno perderá acceso y su progreso será eliminado.`)) return;
+    
+    const toastId = toast.loading('Eliminando acceso...');
+    try {
+      const res = await fetch(`/api/admin/courses/${id}/students?userId=${studentId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('Inscripción eliminada ✓', { id: toastId });
+        fetchStudents();
+      } else {
+        const data = await res.json();
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      toast.error(err.message, { id: toastId });
     }
   };
 
@@ -238,9 +291,12 @@ export default function AdminEditCoursePage() {
           <button onClick={handleDuplicate} className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 rounded-xl text-gray-300 text-xs font-bold transition-colors">
             📋 Duplicar
           </button>
-          <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-xl text-red-400 text-xs font-bold transition-colors disabled:opacity-60">
-            🗑 Eliminar
-          </button>
+          
+          {userRole === 'ADMIN' && (
+            <button onClick={handleAdminHardDeleteCourse} disabled={deleting} className="px-4 py-2 bg-red-500 shadow-xl shadow-red-500/20 rounded-xl text-white text-xs font-black transition-all disabled:opacity-60 uppercase tracking-widest">
+              🗑 Eliminar Permanentemente
+            </button>
+          )}
         </div>
       </div>
 
@@ -378,6 +434,7 @@ export default function AdminEditCoursePage() {
           </div>
         </div>
 
+
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-blue-500/10">
           <button
             onClick={handleSave}
@@ -394,6 +451,66 @@ export default function AdminEditCoursePage() {
           >
             {saving ? 'Guardando...' : 'Finalizar y ver curso →'}
           </button>
+        </div>
+      </div>
+
+      {/* SECCIÓN DE ALUMNOS INSCRITOS */}
+      <div className="mt-12 bg-[#0d1524] border border-blue-500/10 rounded-[32px] overflow-hidden shadow-2xl animate-fade-in text-left">
+        <div className="p-8 border-b border-blue-500/10 flex items-center justify-between bg-blue-500/5">
+          <div>
+            <h2 className="text-lg font-bold text-white uppercase tracking-widest">Alumnos Inscritos</h2>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Control Maestro de Accesos</p>
+          </div>
+          <span className="bg-blue-500/20 text-blue-400 px-4 py-1 rounded-full text-xs font-black">{students.length} Total</span>
+        </div>
+        
+        <div className="p-0">
+          {loadingStudents ? (
+            <div className="p-20 text-center text-gray-600 animate-pulse font-bold uppercase text-[10px] tracking-widest">
+              Consultando base de alumnos...
+            </div>
+          ) : students.length === 0 ? (
+            <div className="p-20 text-center border-b border-blue-500/10">
+               <p className="text-gray-600 italic">No hay alumnos inscritos en este curso todavía.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-blue-500/10 text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+                    <th className="px-8 py-4">Alumno</th>
+                    <th className="px-8 py-4">Email</th>
+                    <th className="px-8 py-4">Inscrito el</th>
+                    <th className="px-8 py-4">Último Acceso</th>
+                    <th className="px-8 py-4 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-blue-500/5">
+                  {students.map((s) => (
+                    <tr key={s.id} className="hover:bg-white/[0.02] transition-colors group">
+                      <td className="px-8 py-4">
+                        <div className="font-bold text-gray-200">{s.name} {s.lastName}</div>
+                      </td>
+                      <td className="px-8 py-4 text-gray-400 text-sm">{s.email}</td>
+                      <td className="px-8 py-4 text-gray-500 text-sm">{new Date(s.enrolledAt).toLocaleDateString()}</td>
+                      <td className="px-8 py-4 text-gray-500 text-sm">{s.lastLoginAt ? new Date(s.lastLoginAt).toLocaleDateString() : 'Nunca'}</td>
+                      <td className="px-8 py-4 text-right">
+                        {userRole === 'ADMIN' && (
+                          <button 
+                            title="Eliminar inscripción física"
+                            onClick={() => handleDeleteEnrollment(s.id, s.email)}
+                            className="w-8 h-8 flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-lg text-white transition-all transform active:scale-95 shadow-lg shadow-red-500/20 ml-auto"
+                          >
+                            <span className="font-bold text-lg leading-none">×</span>
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </>

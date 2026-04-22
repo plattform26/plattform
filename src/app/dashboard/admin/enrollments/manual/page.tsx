@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { toast } from 'sonner';
 import { exportToCSV } from '@/lib/export-utils';
 
 export default function AdminManualEnrollmentPage() {
@@ -15,6 +17,8 @@ export default function AdminManualEnrollmentPage() {
     notes: ''
   });
   const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [studentExists, setStudentExists] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
@@ -32,8 +36,42 @@ export default function AdminManualEnrollmentPage() {
     if (res.ok) setHistory(await res.json());
   };
 
+  const handleSearchUser = async () => {
+    if (!formData.email || !formData.email.includes('@')) return;
+    
+    setSearching(true);
+    setStudentExists(false);
+    setMessage({ type: '', text: '' });
+    
+    try {
+      const res = await fetch(`/api/admin/users?q=${formData.email}`);
+      const data = await res.json();
+      
+      if (res.ok && data.length > 0) {
+        const u = data.find((user: any) => user.email.toLowerCase() === formData.email.toLowerCase());
+        if (u) {
+          setFormData(prev => ({...prev, name: u.name, lastName: u.lastName}));
+          setStudentExists(true);
+          toast.success('Usuario identificado ✓');
+        } else {
+           setStudentExists(false);
+        }
+      } else {
+        setStudentExists(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSearching(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!studentExists) {
+      setMessage({ type: 'error', text: 'No se puede inscribir: El usuario no existe en la base de datos.' });
+      return;
+    }
     setLoading(true);
     setMessage({ type: '', text: '' });
 
@@ -47,8 +85,9 @@ export default function AdminManualEnrollmentPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setMessage({ type: 'success', text: data.message });
+      toast.success(data.message);
       setFormData({ email: '', name: '', lastName: '', courseId: '', reason: '', notes: '' });
+      setStudentExists(false);
       fetchHistory();
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -90,55 +129,69 @@ export default function AdminManualEnrollmentPage() {
              )}
 
              <form onSubmit={handleSubmit} className="space-y-4">
-                 {/* BÚSQUEDA DE USUARIO POR EMAIL */}
-                 <div className="space-y-2">
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Email del Alumno</label>
-                    <div className="flex gap-2">
-                       <input 
-                         type="email" required placeholder="estudiante@email.com"
-                         className="flex-1 bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-cyan-500 placeholder:text-gray-600"
-                         value={formData.email} 
-                         onChange={e => {
-                            setFormData({...formData, email: e.target.value});
-                            if (e.target.value.includes('@')) {
-                               fetch(`/api/admin/users?q=${e.target.value}`)
-                                 .then(res => res.json())
-                                 .then(data => {
-                                    if (data.users && data.users.length > 0) {
-                                       const u = data.users.find((user: any) => user.email === e.target.value);
-                                       if (u) setFormData(prev => ({...prev, name: u.name, lastName: u.lastName}));
-                                    }
-                                 });
-                            }
-                         }}
-                       />
-                    </div>
-                    <p className="text-[9px] text-blue-500/60 italic ml-1">Si el correo existe, el sistema autocompletará el nombre.</p>
-                 </div>
+                  <div className="space-y-2">
+                     <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Email del Alumno</label>
+                     <div className="flex gap-2">
+                        <input 
+                          type="email" required placeholder="estudiante@email.com"
+                          className={`flex-1 bg-[#152035] border ${studentExists ? 'border-green-500/30' : 'border-blue-500/10'} rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-cyan-500 placeholder:text-gray-600 transition-colors`}
+                          value={formData.email} 
+                          onChange={e => {
+                             setFormData({...formData, email: e.target.value, name: '', lastName: ''});
+                             setStudentExists(false);
+                          }}
+                          onBlur={handleSearchUser}
+                        />
+                        <button 
+                          type="button" 
+                          onClick={handleSearchUser}
+                          disabled={searching}
+                          className="px-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-colors"
+                        >
+                          {searching ? '...' : '🔍'}
+                        </button>
+                     </div>
+                      {!studentExists && formData.email.includes('@') && !searching && (
+                        <div className="mt-3 p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl animate-fade-in">
+                           <p className="text-[10px] font-bold text-purple-400 uppercase leading-relaxed">
+                              ✨ Usuario nuevo identificado. 
+                           </p>
+                           <p className="text-[9px] text-gray-400 mt-1 italic">Ingresa el nombre y apellido para crear la cuenta e inscribir simultáneamente.</p>
+                        </div>
+                     )}
+                     {studentExists && (
+                        <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest transition-all">✓ Usuario existente verificado</p>
+                     )}
+                  </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-2">
-                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest italic">(Si es nuevo) Nombre</label>
-                      <input 
-                        type="text" placeholder="Nombre"
-                        className="w-full bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                        value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
-                      />
-                   </div>
-                   <div className="space-y-2">
-                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest italic">Apellidos</label>
-                      <input 
-                        type="text" placeholder="Apellidos"
-                        className="w-full bg-[#152035] border border-blue-500/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                        value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})}
-                      />
-                   </div>
+                    <div className="space-y-2">
+                       <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest italic">{!studentExists ? <span className="text-purple-400">Nombre (Requerido) *</span> : 'Nombre'}</label>
+                       <input 
+                         type="text" 
+                         required={!studentExists}
+                         placeholder="Nombre"
+                         className={`w-full bg-[#152035] border ${!studentExists ? 'border-purple-500/20' : 'border-blue-500/10'} rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500 placeholder:text-gray-600 transition-all`}
+                         value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest italic">{!studentExists ? <span className="text-purple-400">Apellidos (Requerido) *</span> : 'Apellidos'}</label>
+                       <input 
+                         type="text" 
+                         required={!studentExists}
+                         placeholder="Apellidos"
+                         className={`w-full bg-[#152035] border ${!studentExists ? 'border-purple-500/20' : 'border-blue-500/10'} rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-blue-500 placeholder:text-gray-600 transition-all`}
+                         value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})}
+                       />
+                    </div>
                 </div>
 
                 <div className="space-y-2 pt-4">
                    <label className="block text-[10px] font-bold text-cyan-500 uppercase tracking-[0.2em]">Curso a Inscribir</label>
                    <select 
-                     required className="w-full bg-[#152035] border border-cyan-500/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-cyan-500 text-white cursor-pointer"
+                     required 
+                     className="w-full bg-[#152035] border border-cyan-500/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-cyan-500 text-white cursor-pointer transition-opacity"
                      value={formData.courseId} onChange={e => setFormData({...formData, courseId: e.target.value})}
                    >
                       <option value="">-- Seleccionar curso --</option>
@@ -165,12 +218,13 @@ export default function AdminManualEnrollmentPage() {
                    />
                 </div>
 
-                <button 
-                  type="submit" disabled={loading}
-                  className="w-full py-4 mt-6 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-50 uppercase tracking-[0.2em] text-xs"
-                >
-                   {loading ? 'Generando Acceso...' : 'Confirmar Inscripción'}
-                </button>
+                 <button 
+                   type="submit" 
+                   disabled={loading || !formData.email || !formData.courseId}
+                   className="w-full py-4 mt-6 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-50 uppercase tracking-[0.2em] text-xs"
+                 >
+                    {loading ? 'Procesando...' : (studentExists ? 'Confirmar Inscripción' : 'Crear Usuario e Inscribir')}
+                 </button>
              </form>
           </div>
 

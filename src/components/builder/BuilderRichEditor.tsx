@@ -87,8 +87,8 @@ const BuilderRichEditor: React.FC<BuilderRichEditorProps> = ({
     { label: '1≡', title: 'Numeración', cmd: 'insertOrderedList' },
     { label: '→|', title: 'Indentar', cmd: 'indent' },
     { label: '|←', title: 'Desindentar', cmd: 'outdent' },
-    { label: '🖼️', title: 'Insertar Imagen', cmd: 'insertImage' },
-    { label: 'XA', title: 'Limpiar', cmd: 'removeFormat' },
+    { label: '🖼️', title: 'Insertar Imagen', cmd: 'insertImage', val: '' },
+    { label: 'XA', title: 'Limpiar', cmd: 'removeFormat', val: '' },
   ];
 
   const fontSizes = [
@@ -180,7 +180,7 @@ const BuilderRichEditor: React.FC<BuilderRichEditorProps> = ({
         suppressContentEditableWarning
         className="rich-editor-content"
         onInput={handleInput}
-        placeholder={placeholder}
+        data-placeholder={placeholder}
       />
     </div>
   );

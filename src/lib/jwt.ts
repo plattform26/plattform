@@ -8,6 +8,9 @@ export interface JwtPayload {
   email: string;
   name?: string;
   lastName?: string;
+  expirationDate?: string | Date;
+  pausedRemainingDays?: number;
+  subscriptionStatus?: string;
 }
 
 export function signAccessToken(payload: JwtPayload) {

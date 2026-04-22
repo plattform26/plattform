@@ -22,8 +22,10 @@ export async function POST(req: NextRequest) {
 
     // 1. Buscar o Crear Alumno
     let student = await prisma.user.findUnique({ where: { email } });
+    let isNewUser = false;
     
     if (!student) {
+      isNewUser = true;
       const passwordHash = await bcrypt.hash('Plattform2025', 12);
       student = await prisma.user.create({
         data: {
@@ -56,19 +58,26 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Registrar en AdminManualEnrollment para historial/auditoría
+    // Añadimos una nota si el usuario fue creado en el proceso
+    const auditNotes = isNewUser 
+      ? `[AUTO-CREATED USER] ${notes || ''}`.trim()
+      : notes;
+
     await prisma.adminManualEnrollment.create({
       data: {
         adminId: session.userId,
         studentId: student.id,
         courseId,
         reason,
-        notes
+        notes: auditNotes
       }
     });
 
     return NextResponse.json({ 
       success: true, 
-      message: `Inscripción exitosa para ${student.email}`,
+      message: isNewUser 
+        ? `Usuario creado e inscrito: ${student.email}`
+        : `Inscripción exitosa para ${student.email}`,
       enrollment 
     });
 

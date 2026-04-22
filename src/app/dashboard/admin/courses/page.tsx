@@ -12,6 +12,22 @@ export default function AdminCoursesPage() {
   const [search, setSearch] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const router = useRouter();
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+           const data = await res.json();
+           setUserRole(data.role || null);
+        }
+      } catch (err) {
+        console.error('Error fetching user for role check:', err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // Misión: Detalle de Alumnos por Curso v7.0
   const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
@@ -85,10 +101,44 @@ export default function AdminCoursesPage() {
         const err = await res.json();
         alert(err.error || 'Error al duplicar el curso');
       }
-    } catch (err) {
-      console.error('Error duplicating course:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAdminHardDeleteCourse = async (id: string, title: string) => {
+    if (!confirm(`🛑 ATENCIÓN: Esta es una ELIMINACIÓN FÍSICA PERMANENTE de "${title}". Se borrarán módulos, lecciones, exámenes y progreso de todos los alumnos de forma irreversible. ¿Confirmar destrucción total?`)) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/courses/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      alert(data.message);
+      fetchCourses();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteEnrollment = async (courseId: string, studentId: string, studentEmail: string) => {
+    if (!confirm(`¿Eliminar la inscripción de "${studentEmail}" de este curso? El alumno perderá acceso inmediato y su progreso será borrado físicamente.`)) return;
+    
+    try {
+      const res = await fetch(`/api/admin/courses/${courseId}/students?userId=${studentId}`, { method: 'DELETE' });
+      if (res.ok) {
+        alert('Inscripción eliminada ✓');
+        fetchStudents(courseId);
+        // Actualizar el contador en la tabla principal
+        setCourses(prev => prev.map(c => c.id === courseId ? { ...c, _count: { ...c._count, enrollments: Math.max(0, c._count.enrollments - 1) } } : c));
+      } else {
+        const data = await res.json();
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      alert(err.message);
     }
   };
 
@@ -256,7 +306,7 @@ export default function AdminCoursesPage() {
                           <span className="text-sm font-bold text-cyan-400/80">${Number(course.price).toLocaleString()}</span>
                        </td>
                        <td className="p-6 text-right">
-                          <div className="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity flex-wrap max-w-[400px]">
+                          <div className="flex justify-end gap-2 flex-wrap max-w-[400px]">
                               {/* Vista Previa */}
                               <Link 
                                  href={`/dashboard/student/learn/${course.id}?preview=true`} 
@@ -301,15 +351,15 @@ export default function AdminCoursesPage() {
                                  📑 Duplicar
                               </button>
 
-                              {/* Eliminar */}
-                              {course.status !== 'ARCHIVED' && (
+                               {/* Eliminar (Hard Delete) - EXCLUSIVO ADMIN */}
+                               {userRole === 'ADMIN' && (
                                  <button 
-                                   onClick={() => handleStatusChange(course.id, 'ARCHIVED')}
-                                   className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/20 hover:bg-red-500/10 text-red-400/80 hover:text-red-400 transition-all uppercase"
+                                   onClick={() => handleAdminHardDeleteCourse(course.id, course.title)}
+                                   className="px-3 py-1.5 rounded-lg text-[10px] font-black border border-red-500/30 bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest shadow-lg shadow-red-500/10"
                                  >
                                    🗑️ Eliminar
                                  </button>
-                              )}
+                               )}
                           </div>
                        </td>
                     </tr>
@@ -345,11 +395,22 @@ export default function AdminCoursesPage() {
                                                      <p className="text-[9px] text-gray-500 font-mono">{student.email}</p>
                                                   </div>
                                                </div>
-                                               <div className="text-right">
-                                                  <p className="text-[8px] text-gray-600 font-bold uppercase tracking-tighter">Último acceso</p>
-                                                  <p className={`text-[10px] font-black ${student.lastLoginAt ? 'text-cyan-400' : 'text-gray-700'}`}>
-                                                     {student.lastLoginAt ? new Date(student.lastLoginAt).toLocaleDateString() : 'NUNCA'}
-                                                  </p>
+                                               <div className="flex items-center gap-3">
+                                                  {userRole === 'ADMIN' && (
+                                                    <button 
+                                                      title="Expulsar alumno del curso"
+                                                      onClick={() => handleDeleteEnrollment(course.id, student.id, student.email)}
+                                                      className="w-6 h-6 flex items-center justify-center bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded-md transition-all transform active:scale-90"
+                                                    >
+                                                       <span className="font-bold leading-none">×</span>
+                                                    </button>
+                                                  )}
+                                                  <div className="text-right">
+                                                     <p className="text-[8px] text-gray-600 font-bold uppercase tracking-tighter">Último acceso</p>
+                                                     <p className={`text-[10px] font-black ${student.lastLoginAt ? 'text-cyan-400' : 'text-gray-700'}`}>
+                                                        {student.lastLoginAt ? new Date(student.lastLoginAt).toLocaleDateString() : 'NUNCA'}
+                                                     </p>
+                                                  </div>
                                                </div>
                                             </div>
                                          ))}

@@ -254,7 +254,7 @@ export default function AdminUsersPage() {
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Especialidad</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Cursos/Inscrip</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Estado</th>
-                   <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Cortesía</th>
+                                       <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Plan y Acceso</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400">Reg/Conexión</th>
                    <th className="p-6 text-xs font-bold uppercase tracking-widest text-gray-400 text-right">Acciones</th>
                 </tr>
@@ -308,31 +308,53 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="p-6 min-w-[200px]">
                          {user.role === 'INSTRUCTOR' ? (
-                            <div className="flex flex-col gap-2">
-                               <label className="flex items-center gap-2 cursor-pointer group">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={user.isCourtesy}
-                                    onChange={(e) => handleUpdateUser(user.id, { isCourtesy: e.target.checked })}
-                                    className="w-4 h-4 rounded border-blue-500/30 bg-blue-500/10 checked:bg-cyan-500 transition-all cursor-pointer"
-                                  />
-                                  <span className={`text-[10px] font-black uppercase tracking-tighter ${user.isCourtesy ? 'text-cyan-400' : 'text-gray-600'}`}>
-                                     {user.isCourtesy ? 'Habilitada' : 'No activa'}
+                            <div className="flex flex-col gap-3">
+                               {/* ETIQUETA DE PLAN */}
+                               <div className="flex flex-col gap-1">
+                                  <span className={`text-[10px] font-black uppercase tracking-tighter ${user.planOrigin === 'CORTESÍA' ? 'text-yellow-400' : user.planOrigin === 'PAGO_STRIPE' ? 'text-cyan-400' : 'text-gray-500'}`}>
+                                     {user.activePlanName}
                                   </span>
-                               </label>
-                               
-                               {user.isCourtesy && (
-                                  <select
-                                    value={user.courtesyPlanId || ''}
-                                    onChange={(e) => handleUpdateUser(user.id, { courtesyPlanId: e.target.value })}
-                                    className="bg-[#152035] border border-cyan-500/20 rounded-lg px-2 py-1 text-[9px] font-bold text-cyan-200 focus:outline-none focus:border-cyan-500 transition-all uppercase tracking-widest"
-                                  >
-                                     <option value="">Seleccionar Plan</option>
-                                     {plans.map(p => (
-                                        <option key={p.id} value={p.id}>{p.displayName}</option>
-                                     ))}
-                                  </select>
-                               )}
+                                  <div className="flex items-center gap-2">
+                                     <span className={`px-2 py-0.5 rounded text-[8px] font-black border tracking-widest uppercase ${
+                                       user.planOrigin === 'CORTESÍA' ? 'bg-yellow-400/10 border-yellow-400/20 text-yellow-500' : 
+                                       user.planOrigin === 'PAGO_STRIPE' ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-500' : 
+                                       'bg-red-500/10 border-red-500/20 text-red-500'
+                                     }`}>
+                                        {user.planOrigin === 'NINGUNO' ? 'SIN PLAN' : user.planOrigin}
+                                     </span>
+                                     {user.planKeyDate && (
+                                        <span className="text-[9px] text-gray-600 font-bold lowercase tracking-tighter">
+                                           {user.planKeyLabel}: {new Date(user.planKeyDate).toLocaleDateString()}
+                                        </span>
+                                     )}
+                                  </div>
+                               </div>
+
+                               {/* CONTROLES DE CORTESÍA (COMPACTOS) */}
+                               <div className="flex items-center gap-3 pt-2 border-t border-white/5">
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                     <input 
+                                       type="checkbox" 
+                                       checked={user.isCourtesy}
+                                       onChange={(e) => handleUpdateUser(user.id, { isCourtesy: e.target.checked })}
+                                       className="w-3.5 h-3.5 rounded border-blue-500/30 bg-blue-500/10 checked:bg-cyan-500 transition-all"
+                                     />
+                                     <span className="text-[9px] font-bold text-gray-500">CORTESÍA</span>
+                                  </label>
+                                  
+                                  {user.isCourtesy && (
+                                     <select
+                                       value={user.courtesyPlanId || ''}
+                                       onChange={(e) => handleUpdateUser(user.id, { courtesyPlanId: e.target.value })}
+                                       className="bg-[#152035] border border-cyan-500/20 rounded-md px-1 py-0.5 text-[8px] font-bold text-cyan-200 outline-none"
+                                     >
+                                        <option value="">( PLAN )</option>
+                                        {plans.map(p => (
+                                           <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                     </select>
+                                  )}
+                               </div>
                             </div>
                          ) : (
                             <span className="text-gray-700 font-black text-[9px] tracking-widest uppercase">N/A</span>

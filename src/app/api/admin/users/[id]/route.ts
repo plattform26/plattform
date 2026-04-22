@@ -102,14 +102,32 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     let updatedUser;
     const oldUser = await prisma.user.findUnique({ where: { id: params.id } }); // Obtener estado previo
 
-    try {
-        updatedUser = await prisma.user.update({
-            where: { id: params.id },
-            data: userData
-        });
-        console.log("✅ [ADMIN_PATCH] Fase 1 (User) completada exitosamente");
+        try {
+            updatedUser = await prisma.user.update({
+                where: { id: params.id },
+                data: userData
+            });
+            console.log("✅ [ADMIN_PATCH] Fase 1 (User) completada exitosamente");
 
-        // Misión: Notificación de Activación de Instructor
+            // --- LÓGICA DE SIMPLIFICACIÓN DE PLANES (Misión: Borrón y Cuenta Nueva) ---
+            const wasCourtesy = oldUser?.isCourtesy;
+            const isNowCourtesy = updatedUser.isCourtesy;
+
+            if (!wasCourtesy && isNowCourtesy) {
+              console.log("🎟️ [COURTESY_LOGIC] Activando Cortesía - Invalidando planes previos");
+              await prisma.instructorSubscription.updateMany({
+                where: { 
+                  instructor: { userId: params.id }, 
+                  status: { in: ['ACTIVE', 'PAUSED'] } 
+                },
+                data: { status: 'CANCELLED', expiresAt: new Date(0) }
+              });
+            } else if (wasCourtesy && !isNowCourtesy) {
+              console.log("🚫 [COURTESY_LOGIC] Cortesía Desactivada - El usuario queda sin plan");
+            }
+            // -------------------------------------------------------------------------
+
+            // Misión: Notificación de Activación de Instructor
         if (
           oldUser?.status === 'PENDING_APPROVAL' && 
           updatedUser.status === 'ACTIVE' && 
