@@ -178,7 +178,7 @@ export async function POST(req: Request) {
       });
 
       // Redirigir directamente al éxito pasando el ID del curso para reconexión visual en el éxito
-      const baseUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
+      const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
       const redirectUrl = `${baseUrl}/checkout/success?session_id=free&courseId=${courseId}`;
       return NextResponse.json({ url: redirectUrl });
     }
@@ -231,7 +231,7 @@ export async function POST(req: Request) {
     const applicationFeeCents = Math.round(finalPrice * (commissionRate / 100) * 100);
 
     // 7. Crear Stripe Session
-    const baseUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
+    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
     
     // IMPORTANTE: Stripe requiere URLs absolutas
     const success_url = `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;

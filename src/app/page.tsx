@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StarRating from '@/components/StarRating';
+import { Clock } from 'lucide-react';
 
 export default function EliteStudentLanding() {
   const router = useRouter();
@@ -218,9 +219,25 @@ export default function EliteStudentLanding() {
                                     {/* Thumbnail Glow */}
                                     <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
                                     
-                                    <div className="relative h-48 bg-[#152035] flex items-center justify-center text-6xl group-hover:scale-105 transition-transform duration-700">
-                                        {masterAreas.find(a => a.id === course.category)?.icon || '📚'}
+                                    <div className="relative h-48 bg-[#152035] flex items-center justify-center overflow-hidden">
+                                        {course.thumbnailUrl ? (
+                                            <img 
+                                                src={course.thumbnailUrl} 
+                                                alt={course.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-blue-900/20 to-cyan-900/20 flex items-center justify-center text-5xl">
+                                                {masterAreas.find(a => a.id === course.category)?.icon || '📚'}
+                                            </div>
+                                        )}
                                         <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-cyan-400 border border-white/10">Curso</div>
+                                        {course.durationHours > 0 && (
+                                            <div className="absolute bottom-4 left-4 bg-[#0d1524]/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-[9px] font-bold text-slate-200 border border-white/10 flex items-center gap-1.5">
+                                                <Clock className="w-3 h-3 text-cyan-400" />
+                                                <span>{course.durationHours}h de lecciones</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="p-8">
@@ -228,7 +245,7 @@ export default function EliteStudentLanding() {
                                             <div className="flex items-center gap-2">
                                                 <StarRating value={course.averageRating || 0} size="sm" readonly={true} />
                                             </div>
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Instructor: {course.instructorName}</span>
+                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest truncate max-w-[150px]">Instructor: {course.instructorName}</span>
                                         </div>
                                         <div className="flex items-center gap-2 mb-2">
                                             <span className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-bold text-slate-400 uppercase border border-white/5">

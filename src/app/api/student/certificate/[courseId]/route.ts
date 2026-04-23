@@ -90,7 +90,7 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
     
     if (course && user) {
       const studentFullName = `${user.name} ${user.lastName}`;
-      const downloadLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/student/certificates`;
+      const downloadLink = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || ''}/dashboard/student/certificates`;
       
       // Intentar enviar con PDF adjunto
       try {

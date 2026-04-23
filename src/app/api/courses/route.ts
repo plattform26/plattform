@@ -62,7 +62,8 @@ export async function GET(req: Request) {
         thumbnailUrl: c.thumbnailUrl,
         instructorName,
         averageRating: avgRating,
-        studentCount: c._count.enrollments
+        studentCount: c._count.enrollments,
+        durationHours: c.durationHours
       };
     });
 

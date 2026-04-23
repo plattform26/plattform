@@ -2,22 +2,60 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { Clock } from 'lucide-react';
 
 // Componente SSR que recupera el curso
 export default async function CourseDetail({ params }: { params: { slug: string } }) {
   const session = await getSession();
 
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001').replace(/\/$/, '');
-  const res = await fetch(`${baseUrl}/api/courses/${params.slug}`, {
-    cache: 'no-store'
+  // Misión: Debugging Slug v1.0
+  console.log('[DEBUG] Loading course detail for slug:', params.slug);
+
+  // 1. Búsqueda DIRECTA en Prisma por SLUG (Misión: Precisión v1.1)
+  const courseData = await prisma.course.findFirst({
+    where: {
+      slug: params.slug,
+      status: 'PUBLISHED',
+      // Removido visibility: 'PUBLIC' por instrucción del usuario para evitar 404 en cursos privados
+      deletedAt: null,
+    },
+    include: {
+      instructor: {
+        include: {
+          instructorProfile: true,
+        },
+      },
+      modules: {
+        orderBy: { orderIndex: 'asc' },
+        include: {
+          lessons: {
+            orderBy: { orderIndex: 'asc' },
+          },
+        },
+      },
+    },
   });
 
-  if (!res.ok) {
-    if (res.status === 404) return notFound();
-    return <div className="p-10 text-red-500">Error loading course</div>;
+  if (!courseData) {
+    return notFound();
   }
 
-  const course = await res.json();
+  // 2. Cálculo de Estadísticas (Consistente con la API)
+  const ratingStats = await prisma.courseRating.aggregate({
+    where: { courseId: courseData.id },
+    _avg: { rating: true },
+    _count: { id: true },
+  });
+
+  const studentCount = await prisma.enrollment.count({
+    where: { courseId: courseData.id },
+  });
+
+  const stats = {
+    averageRating: Number(ratingStats._avg.rating || 0),
+    reviewCount: Number(ratingStats._count.id),
+    studentCount: Number(studentCount),
+  };
 
   let isEnrolled = false;
   if (session) {
@@ -25,12 +63,42 @@ export default async function CourseDetail({ params }: { params: { slug: string 
       where: {
         userId_courseId: {
           userId: session.userId,
-          courseId: course.id,
+          courseId: courseData.id,
         }
       }
     });
     isEnrolled = !!enrollment || session.role === 'ADMIN';
   }
+
+  // 3. Sanitización de Contenido (Blindaje de Negocio)
+  // Si no está inscrito, ocultamos campos sensibles de las lecciones que no son preview
+  const sanitizedModules = courseData.modules.map((mod) => ({
+    ...mod,
+    lessons: mod.lessons.map((lesson) => {
+      if (isEnrolled || lesson.isPreview) {
+        return lesson;
+      }
+      return {
+        ...lesson,
+        contentText: null,
+        videoUrl: null,
+      };
+    }),
+  }));
+
+  const course = {
+    ...courseData,
+    price: Number(courseData.price),
+    instructor: {
+      name: `${courseData.instructor.name} ${courseData.instructor.lastName}`,
+      academyName: courseData.instructor.instructorProfile?.academyName,
+      institution: courseData.instructor.instructorProfile?.institution,
+      description: courseData.instructor.instructorProfile?.description,
+      instructorProfile: courseData.instructor.instructorProfile,
+    },
+    modules: sanitizedModules,
+    stats,
+  };
 
   // Lógica de redirección para el botón
   const checkoutUrl = session 
@@ -105,8 +173,8 @@ export default async function CourseDetail({ params }: { params: { slug: string 
               <span className="font-semibold text-white">{course.stats.studentCount}</span> <span className="text-slate-400">alumnos</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xl">⏱</span>
-              <span className="font-semibold text-white">{course.durationHours}</span> <span className="text-slate-400">horas</span>
+              <Clock className="w-5 h-5 text-cyan-400" />
+              <span className="font-semibold text-white">{Number(course.durationHours)}</span> <span className="text-slate-400">horas de lecciones</span>
             </div>
           </div>
 
@@ -154,9 +222,24 @@ export default async function CourseDetail({ params }: { params: { slug: string 
         {/* COLUMNA DERECHA (FLOATING CHECKOUT) */}
         <div>
           <div className="sticky top-24 bg-[#152035] border border-blue-500/30 rounded-2xl p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-            <div className="aspect-video bg-gradient-to-br from-cyan-900 to-blue-900 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden group cursor-pointer">
-               <span className="text-4xl group-hover:scale-110 transition-transform">▶️</span>
-               <div className="absolute bottom-2 left-2 text-[10px] bg-black/50 px-2 py-1 rounded text-cyan-300 font-bold uppercase tracking-wide">Video demo</div>
+            {/* PORTADA DEL CURSO (Reemplaza al video fantasma) */}
+            <div className="aspect-video bg-[#0a1f44] rounded-xl mb-6 relative overflow-hidden group">
+               {course.thumbnailUrl ? (
+                 <img 
+                    src={course.thumbnailUrl} 
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                 />
+               ) : (
+                 <div className="w-full h-full bg-gradient-to-br from-cyan-900/40 to-blue-900/40 flex flex-col items-center justify-center p-6 text-center gap-4">
+                    <Clock className="w-12 h-12 text-cyan-500/50" />
+                    <span className="font-space-grotesk font-bold text-lg text-cyan-400/60 uppercase tracking-tighter italic">
+                      {course.title}
+                    </span>
+                 </div>
+               )}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+               <div className="absolute bottom-2 left-2 text-[10px] bg-cyan-500 px-2 py-1 rounded text-white font-bold uppercase tracking-wide">Curso Certificado</div>
             </div>
             
               <div className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-1">
@@ -185,7 +268,7 @@ export default async function CourseDetail({ params }: { params: { slug: string 
             
             <div className="text-sm font-semibold text-slate-200 mb-4">Este curso incluye:</div>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">🎥</span> {course.durationHours} horas de video</li>
+              <li className="flex items-center gap-3"><Clock className="w-4 h-4 text-cyan-400" /> {Number(course.durationHours)} horas de lecciones</li>
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">📄</span> {course.modules.reduce((acc: number, mod: any) => acc + mod.lessons.length, 0)} recursos descargables</li>
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">♾️</span> Acceso de por vida</li>
               <li className="flex items-center gap-3"><span className="text-cyan-400 text-lg">🎓</span> Certificado de finalización</li>

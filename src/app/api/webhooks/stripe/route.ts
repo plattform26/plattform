@@ -8,7 +8,8 @@ import {
   sendAdminTechnicalAlert,
   sendPlanActivityEmail,
   sendSaleNotificationToAdmin,
-  sendSubscriptionNotificationToAdmin
+  sendSubscriptionNotificationToAdmin,
+  sendInstructorRegistrationNoticeToAdmin
 } from '@/lib/mail';
 import { Prisma } from '@prisma/client';
 
@@ -205,8 +206,13 @@ export async function POST(req: Request) {
           }
 
           const now = new Date();
-          const thirtyDaysLater = new Date();
-          thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+          let expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 30); // Fallback de seguridad
+
+          if (session.subscription) {
+            const stripeSub = await stripe.subscriptions.retrieve(session.subscription as string) as any;
+            expiresAt = new Date(stripeSub.current_period_end * 1000);
+          }
 
           await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             // A. Caducar suscripciones anteriores
@@ -224,14 +230,14 @@ export async function POST(req: Request) {
                 stripeSubscriptionId: session.subscription as string,
                 stripeCustomerId: session.customer as string,
                 startedAt: now,
-                expiresAt: thirtyDaysLater
+                expiresAt: expiresAt
               },
               create: {
                 instructorId: profile!.id,
                 planId: planId,
                 status: 'ACTIVE',
                 startedAt: now,
-                expiresAt: thirtyDaysLater,
+                expiresAt: expiresAt,
                 stripeSubscriptionId: session.subscription as string,
                 stripeCustomerId: session.customer as string,
               }
@@ -244,7 +250,7 @@ export async function POST(req: Request) {
                 planId: planId,
                 status: 'ACTIVE',
                 startDate: now,
-                endDate: thirtyDaysLater,
+                endDate: expiresAt,
                 amountPaid: plan.monthlyPrice,
                 stripeSubscriptionId: session.subscription as string,
               }
@@ -253,15 +259,23 @@ export async function POST(req: Request) {
 
           const instructorUser = await prisma.user.findUnique({ where: { id: userId } });
           if (instructorUser) {
-            // Misión: Flujo de Aprobación
+            // Misión: Flujo de Aprobación Inteligente
+            // Si ya es ACTIVE, se mantiene ACTIVE (renovación). Si es nuevo/otro, pasa a PENDING_APPROVAL.
+            const newStatus = instructorUser.status === 'ACTIVE' ? 'ACTIVE' : 'PENDING_APPROVAL';
+
             await prisma.user.update({
               where: { id: userId },
-              data: { status: 'PENDING_APPROVAL' }
+              data: { status: newStatus }
             });
 
             // Notificaciones Asíncronas
-            const expiresAt = thirtyDaysLater;
             await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, expiresAt, url);
+            
+            if (newStatus === 'PENDING_APPROVAL') {
+              // Notificar a Diego para validación manual de nuevo instructor
+              await sendInstructorRegistrationNoticeToAdmin(instructorUser.name, userId, url);
+            }
+
             await sendSubscriptionNotificationToAdmin(
               instructorUser.name,
               instructorUser.email,

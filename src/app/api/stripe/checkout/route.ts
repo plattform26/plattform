@@ -75,8 +75,8 @@ export async function POST(req: Request) {
         planId: plan.id,
         transactionType: 'INSTRUCTOR_SUBSCRIPTION'
       },
-      success_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/instructor/plan?success=true`,
-      cancel_url: `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/dashboard/instructor/plan?canceled=true`,
+      success_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?success=true`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?canceled=true`,
     });
 
     return NextResponse.json({ url: checkoutSession.url });

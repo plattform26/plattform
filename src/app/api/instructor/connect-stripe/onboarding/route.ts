@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
     }
 
     // 3. Generar el Account Link para el onboarding
-    const baseUrl = (process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
+    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
     
     // Validar URLs para Stripe
     const refresh_url = `${baseUrl}/dashboard/instructor/finances?connect=refresh`;

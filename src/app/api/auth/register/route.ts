@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const verificationToken = await generateVerificationToken(user.email);
     
     // Misión: Detección de Origen para Emails Inteligentes
-    const origin = req.headers.get('origin') || req.headers.get('referer') || process.env.NEXTAUTH_URL || 'http://localhost:3001';
+    const origin = req.headers.get('origin') || req.headers.get('referer') || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '';
     const baseUrl = new URL(origin).origin;
 
     if (role === 'STUDENT') {
