@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken';
 
-export const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'plattform-secret-2025';
+// Misión Crítica: Bloquear el arranque si no hay secreto configurado
+if (!process.env.NEXTAUTH_SECRET || process.env.NEXTAUTH_SECRET.trim() === '') {
+  throw new Error('FATAL: NEXTAUTH_SECRET no configurado. La aplicación no puede iniciar sin una clave de firma segura.');
+}
+
+export const JWT_SECRET = process.env.NEXTAUTH_SECRET;
 
 export interface JwtPayload {
   userId: string;
@@ -26,6 +31,8 @@ export function verifyToken(token: string): JwtPayload | null {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     return decoded;
   } catch (error) {
+    // Retornamos null en lugar de lanzar error para que el middleware maneje la redirección al login
     return null;
   }
 }
+

@@ -356,7 +356,7 @@ model Transaction {
   paymentStatus            PaymentStatus   @default(PENDING) @map("payment_status")
   paymentProvider          PaymentProvider @default(STRIPE) @map("payment_provider")
   stripePaymentIntentId    String?         @map("stripe_payment_intent_id")
-  stripeSessionId          String?         @map("stripe_session_id")
+  stripeSessionId          String?         @unique @map("stripe_session_id")
   stripeTransferId         String?         @map("stripe_transfer_id")
   createdAt                DateTime        @default(now()) @map("created_at")
   updatedAt                DateTime        @updatedAt @map("updated_at")
@@ -466,7 +466,18 @@ model CouponUsage {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, couponId])
   @@map("coupon_usages")
+}
+
+model StripeEventLog {
+  id            String   @id @default(uuid())
+  stripeEventId String   @unique @map("stripe_event_id")
+  eventType     String   @map("event_type")
+  processedAt   DateTime @default(now()) @map("processed_at")
+  
+  @@index([stripeEventId])
+  @@map("stripe_event_logs")
 }
 
 model AIGenerationJob {

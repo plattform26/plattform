@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+
+// 1. Blindaje de Payload (Zod Strict)
+const progressSchema = z.object({
+  courseId: z.string().uuid(),
+  lessonId: z.string().uuid(),
+  completed: z.boolean(),
+}).strict();
 
 export async function GET(req: Request) {
   try {
@@ -28,27 +36,70 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // 1. Validar Sesión
     const session = await getSession();
     if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN' && session.role !== 'INSTRUCTOR')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // 2. Validar Payload (Zod)
     const body = await req.json();
-    const { courseId, lessonId, completed } = body;
-
-    if (!courseId || !lessonId) {
-      return NextResponse.json({ error: 'Body mismatch' }, { status: 400 });
+    const validation = progressSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Payload inválido', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
 
-    // --- Misión: Validación de Permisos de Vista Previa ---
+    const { courseId, lessonId, completed } = validation.data;
+
+    // 3. Integrity Guard (Universal para todos los roles)
+    // Validamos que la lección realmente pertenezca al curso indicado para evitar datos corruptos.
+    const lessonBelongsToCourse = await prisma.courseLesson.findFirst({
+      where: { 
+        id: lessonId, 
+        courseId: courseId 
+      },
+      select: { id: true }
+    });
+
+    if (!lessonBelongsToCourse) {
+      return NextResponse.json({ 
+        error: 'Integridad fallida: La lección no pertenece al curso especificado' 
+      }, { status: 403 });
+    }
+
+    // 4. Obtener información del curso (Necesaria para el cap de 100%)
     const course = await prisma.course.findUnique({
       where: { id: courseId },
       include: { _count: { select: { lessons: true } } }
     });
 
-    if (!course) throw new Error('Course not found');
+    if (!course) {
+      return NextResponse.json({ error: 'Curso no encontrado' }, { status: 404 });
+    }
 
-    // Si es Instructor, solo puede marcar progreso si es el dueño del curso o si está inscrito (Admin ignora esto)
+    // 5. Enrollment Guard (Solo para STUDENT y ADMIN)
+    if (session.role === 'STUDENT' || session.role === 'ADMIN') {
+      const enrollment = await prisma.enrollment.findUnique({
+        where: {
+          userId_courseId: {
+            userId: session.userId,
+            courseId: courseId
+          }
+        }
+      });
+
+      // Solo se permite progreso si la inscripción está ACTIVE o COMPLETED
+      if (!enrollment || (enrollment.status !== 'ACTIVE' && enrollment.status !== 'COMPLETED')) {
+        return NextResponse.json({ 
+          error: 'Acceso denegado: Se requiere una inscripción activa para registrar progreso' 
+        }, { status: 403 });
+      }
+    }
+
+    // 6. Ownership/Enrollment Guard (Solo para INSTRUCTOR)
     if (session.role === 'INSTRUCTOR') {
        const isOwner = course.instructorId === session.userId;
        const enrollment = await prisma.enrollment.findUnique({
@@ -56,11 +107,13 @@ export async function POST(req: Request) {
        });
 
        if (!isOwner && !enrollment) {
-          return NextResponse.json({ error: 'No tienes permiso para registrar progreso en este curso' }, { status: 403 });
+          return NextResponse.json({ 
+            error: 'Acceso denegado: Como instructor, debes ser dueño del curso o estar inscrito para registrar progreso' 
+          }, { status: 403 });
        }
     }
 
-    // Check if progress already exists and is already completed
+    // 7. Lógica de Persistencia (Upsert)
     const existingProgress = await prisma.progress.findUnique({
       where: {
         userId_lessonId: {
@@ -70,12 +123,12 @@ export async function POST(req: Request) {
       }
     });
 
+    // Evitar re-procesar si ya está completada
     if (existingProgress?.completed && !!completed) {
-       // Si ya está completada e intentamos marcarla como tal, no hacer nada
        return NextResponse.json(existingProgress);
     }
     
-    // Count ONLY other lessons (excluding current if it's new)
+    // Calcular porcentaje para el cap de seguridad
     const completedCount = await prisma.progress.count({
       where: { 
         userId: session.userId, 
@@ -85,14 +138,12 @@ export async function POST(req: Request) {
       }
     });
 
-    const totalLessons = course?._count.lessons || 0;
+    const totalLessons = course._count.lessons || 0;
 
     if (completed && completedCount >= totalLessons) {
-        // Bloquear incremento si el total de OTRAS lecciones ya es igual al total (teóricamente imposible pero seguro)
-        return NextResponse.json({ error: 'Progress capped at 100%' }, { status: 400 });
+        return NextResponse.json({ error: 'Progreso máximo alcanzado (100%)' }, { status: 400 });
     }
 
-    // Upsert progress
     const record = await prisma.progress.upsert({
       where: {
         userId_lessonId: {
@@ -114,8 +165,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(record);
-  } catch (error) {
-    console.error('API /student/progress error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+  } catch (error: any) {
+    console.error('❌ ERROR CRÍTICO EN /student/progress:', error.message);
+    return NextResponse.json({ 
+      error: 'Error interno del servidor',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+    }, { status: 500 });
   }
 }
+

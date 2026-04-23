@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { checkAiQuota } from '@/lib/ai-quota';
 import OpenAI from 'openai';
 // @ts-ignore
 import pdfParse from 'pdf-parse';
@@ -35,6 +36,34 @@ export async function POST(req: Request) {
     if (files.length > 0 && !isScale) {
         return NextResponse.json({ error: 'La carga de documentos es exclusiva del plan Scale.' }, { status: 403 });
     }
+
+    // --- RATE LIMITING (PRISMA GUARD) ---
+    const quotaCheck = await checkAiQuota(session.userId);
+    if (!quotaCheck.allowed) {
+      const messages = {
+        hourly_limit: 'Has alcanzado el límite horario de generaciones con IA (5 por hora). Intenta de nuevo en unos minutos.',
+        monthly_limit: 'Has alcanzado el límite mensual de generaciones con IA (30 por mes). Contáctanos en soporte@plattform.mx si necesitas una ampliación.',
+      };
+      
+      return NextResponse.json(
+        { 
+          error: messages[quotaCheck.reason!], 
+          reason: quotaCheck.reason,
+          resetAt: quotaCheck.resetAt 
+        }, 
+        { status: 429 }
+      );
+    }
+
+    // --- RESERVA DE CUOTA (Job Initial Record) ---
+    const job = await prisma.aIGenerationJob.create({
+      data: {
+        instructorId: session.userId,
+        promptInput: { text: promptText },
+        generationType: 'SCALE_PRO_AI_V3',
+        status: 'PROCESSING'
+      }
+    });
 
     if (files.length > 5) {
         return NextResponse.json({ error: 'Límite de 5 documentos excedido.' }, { status: 400 });
@@ -285,12 +314,10 @@ export async function POST(req: Request) {
         console.log('--- QUIZ ATÓMICO PERSISTIDO CON ÉXITO ---');
       }
 
-      await tx.aIGenerationJob.create({
+      await tx.aIGenerationJob.update({
+        where: { id: job.id },
         data: {
-          instructorId: session.userId,
           courseId: newCourse.id,
-          promptInput: { text: promptText },
-          generationType: 'SCALE_PRO_AI_V3',
           status: 'COMPLETED',
           responseJson: generatedData
         }
@@ -306,13 +333,13 @@ export async function POST(req: Request) {
     console.error('Message:', error.message);
     console.error('Stack:', error.stack);
     
-    // Obtenemos un fragmento del JSON para diagnóstico
-    let jsonSnippet = 'No generado';
-    try {
-      if (typeof generatedData === 'object') {
-        jsonSnippet = JSON.stringify(generatedData).substring(0, 150) + '...';
-      }
-    } catch (e) {}
+    // --- CLEANUP: Mark job as FAILED if possible ---
+    if (typeof job !== 'undefined' && job?.id) {
+      await prisma.aIGenerationJob.update({
+        where: { id: job.id },
+        data: { status: 'FAILED' }
+      }).catch(e => console.error('Error updating job to FAILED:', e));
+    }
 
     return NextResponse.json({ 
       error: 'Error en la persistencia del curso generado.', 
