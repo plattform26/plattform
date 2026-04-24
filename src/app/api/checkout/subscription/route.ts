@@ -10,14 +10,14 @@ export async function POST(req: Request) {
        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planName } = await req.json(); // 'starter', 'growth', 'scale'
+    const { planId } = await req.json();
     
-    if (!planName) {
-      return NextResponse.json({ error: 'Falta planName' }, { status: 400 });
+    if (!planId) {
+      return NextResponse.json({ error: 'Falta planId' }, { status: 400 });
     }
 
     const platformPlan = await prisma.platformPlan.findUnique({
-      where: { name: planName.toLowerCase() }
+      where: { id: planId }
     });
 
     if (!platformPlan) {

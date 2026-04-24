@@ -48,7 +48,7 @@ export default function PlanClient({
     setShowDowngradeModal(null);
     
     try {
-      const res = await fetch('/api/stripe/checkout', {
+      const res = await fetch('/api/checkout/subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planId }),

@@ -173,8 +173,13 @@ export async function POST(req: Request) {
 
           await prisma.$transaction(async (tx) => {
             await tx.instructorSubscription.updateMany({ where: { instructorId: profile!.id, status: 'ACTIVE' }, data: { status: 'EXPIRED', expiresAt: now } });
+            
+            if (!metadata.instructorSubscriptionId) {
+              throw new Error('Missing instructorSubscriptionId in metadata for INSTRUCTOR_SUBSCRIPTION');
+            }
+
             await tx.instructorSubscription.upsert({
-              where: { id: metadata.instructorSubscriptionId || 'new-sub' },
+              where: { id: metadata.instructorSubscriptionId },
               update: { status: 'ACTIVE', planId, stripeSubscriptionId: session.subscription as string, stripeCustomerId: session.customer as string, startedAt: now, expiresAt },
               create: { instructorId: profile!.id, planId, status: 'ACTIVE', startedAt: now, expiresAt, stripeSubscriptionId: session.subscription as string, stripeCustomerId: session.customer as string }
             });
