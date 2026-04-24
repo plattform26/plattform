@@ -203,3 +203,32 @@ stripe trigger checkout.session.completed
 # El log del servidor debe mostrar: ℹ️ Evento [ID] ya procesado previamente.
 # La respuesta HTTP debe ser 200 OK con { "received": true, "duplicate": true }.
 ```
+
+---
+
+## Hallazgo 10 — Dependencias Vulnerables (Hardening)
+Este parche endurece la postura de seguridad del proyecto eliminando librerías con vulnerabilidades críticas y aplicando parches forzosos a dependencias transitivas.
+
+### Verificación de Auditoría
+Ejecuta el siguiente comando para verificar que las vulnerabilidades críticas han sido mitigadas:
+```bash
+npm audit --omit=dev
+```
+
+**Resultado esperado:**
+*   `0` vulnerabilidades en librerías de terceros (excepto Next.js).
+*   **Next.js (Pendiente)**: El reporte mostrará vulnerabilidades en `next` (v14.2.35). Esto es esperado ya que el fix requiere migrar a v15.5.15+, lo cual es un breaking change agendado para una sesión dedicada.
+
+### Componentes Aplicados:
+1.  **Eliminación de `xlsx`**: Se removió la librería SheetJS (vulnerable a Prototype Pollution) y se reemplazó por exportación CSV nativa con soporte BOM para compatibilidad directa con Excel.
+2.  **Actualización de `resend`**: De `6.9.4` a `6.12.2`.
+3.  **Overrides de Seguridad (Fuerza Bruta)**:
+    *   `@xmldom/xmldom`: Forzado a `0.9.10` (Parcha vulnerabilidades de parsing XML).
+    *   `uuid`: Forzado a `14.0.0` (Parcha vulnerabilidad en cadena de `svix`).
+    *   `dompurify`: Forzado a `3.4.1` (Parcha vulnerabilidad en cadena de `jspdf`).
+
+### Validación de Funcionalidad:
+Para asegurar que los parches no rompieron la lógica de negocio, verificar:
+1.  **Exportación**: Ir a cualquier tabla de Admin (Usuarios, Transacciones, etc.) y descargar el reporte CSV. Verificar que abre correctamente en Excel con acentos y ñ.
+2.  **Certificados**: Descargar un certificado de curso. Verificar que el PDF se genera y descarga correctamente.
+3.  **Emails**: Realizar una acción que envíe correo (ej. reset password). Verificar que el correo llega correctamente (validación de `resend`).
