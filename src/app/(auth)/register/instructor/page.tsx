@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function InstructorRegisterPage({ searchParams }: { searchParams: { canceled?: string } }) {
+export default function InstructorRegisterPage(props: { searchParams: Promise<{ canceled?: string }> }) {
+  const searchParams = use(props.searchParams);
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',

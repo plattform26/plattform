@@ -3,7 +3,8 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { sendCertificateEmail, generateCertificatePDF } from '@/lib/mail';
 
-export async function GET(req: Request, { params }: { params: { courseId: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -18,7 +19,8 @@ export async function GET(req: Request, { params }: { params: { courseId: string
   }
 }
 
-export async function POST(req: Request, { params }: { params: { courseId: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || session.role !== 'STUDENT') {

@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     });
 
     // Set Cookies
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

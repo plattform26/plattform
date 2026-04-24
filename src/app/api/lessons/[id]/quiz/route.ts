@@ -39,10 +39,8 @@ async function checkQuizPermissions(lessonId: string) {
 }
 
 // GET: Fetch quiz and questions for a specific lesson (Admin/Instructor Only)
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const auth = await checkQuizPermissions(params.id);
     if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -71,10 +69,8 @@ export async function GET(
 }
 
 // POST: Create or Update Quiz metadata for a lesson
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const auth = await checkQuizPermissions(params.id);
     if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -115,10 +111,8 @@ export async function POST(
 }
 
 // PATCH: Update Quiz metadata partial
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const auth = await checkQuizPermissions(params.id);
     if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });

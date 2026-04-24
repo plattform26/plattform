@@ -2,11 +2,12 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-export default async function LearnCourseRedirect({ 
-  params 
-}: { 
-  params: { id: string } 
-}) {
+export default async function LearnCourseRedirect(
+  props: { 
+    params: Promise<{ id: string }> 
+  }
+) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) redirect('/login');
 

@@ -3,7 +3,8 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
@@ -50,7 +51,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {

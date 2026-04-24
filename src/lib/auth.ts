@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { verifyToken, JwtPayload } from './jwt';
 
 export async function getSession(): Promise<JwtPayload | null> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('accessToken')?.value;
 
   if (!token) return null;

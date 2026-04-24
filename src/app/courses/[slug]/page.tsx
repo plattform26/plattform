@@ -5,7 +5,8 @@ import prisma from '@/lib/prisma';
 import { Clock } from 'lucide-react';
 
 // Componente SSR que recupera el curso
-export default async function CourseDetail({ params }: { params: { slug: string } }) {
+export default async function CourseDetail(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const session = await getSession();
 
   // Misión: Debugging Slug v1.0

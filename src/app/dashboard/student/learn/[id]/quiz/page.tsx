@@ -4,11 +4,12 @@ import { redirect, notFound } from 'next/navigation';
 import QuizViewer from '../lesson/[lessonId]/QuizViewer';
 import Link from 'next/link';
 
-export default async function FinalQuizPage({ 
-  params 
-}: { 
-  params: { id: string } 
-}) {
+export default async function FinalQuizPage(
+  props: { 
+    params: Promise<{ id: string }> 
+  }
+) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) redirect('/login');
 
@@ -28,7 +29,7 @@ export default async function FinalQuizPage({
   });
 
   // Si no hay quiz sin lección, buscamos CUALQUIER quiz del curso como fallback
-  const finalQuiz = quiz || await prisma.quiz.findFirst({
+  const finalQuiz = quiz || (await prisma.quiz.findFirst({
     where: { courseId: params.id },
     include: {
       questions: { 
@@ -37,7 +38,7 @@ export default async function FinalQuizPage({
       },
       course: true
     }
-  });
+  }));
 
   // Buscar intentos previos del alumno para este quiz
   const initialAttempt = finalQuiz ? await prisma.quizAttempt.findFirst({

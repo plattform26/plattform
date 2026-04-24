@@ -6,7 +6,8 @@ import { getSession } from '@/lib/auth';
  * PATCH /api/admin/courses/[id]
  * Actualiza el estado del curso.
  */
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getSession();
   if (!session || session.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -31,7 +32,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
  * DELETE /api/admin/courses/[id]
  * Misión: Control Maestro v8.0 - Hard Delete con Auditoría
  */
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   if (session.role !== 'ADMIN') {

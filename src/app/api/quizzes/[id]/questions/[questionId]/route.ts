@@ -2,7 +2,11 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
-export async function PATCH(req: Request, { params }: { params: { id: string, questionId: string } }) {
+export async function PATCH(
+  req: Request,
+  props: { params: Promise<{ id: string, questionId: string }> }
+) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || session.role !== 'INSTRUCTOR') {
@@ -58,7 +62,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string, qu
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string, questionId: string } }) {
+export async function DELETE(
+  req: Request,
+  props: { params: Promise<{ id: string, questionId: string }> }
+) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || session.role !== 'INSTRUCTOR') {

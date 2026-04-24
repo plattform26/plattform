@@ -2,11 +2,12 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect, notFound } from 'next/navigation';
 
-export default async function BuilderPreviewPage({ 
-  params 
-}: { 
-  params: { id: string } 
-}) {
+export default async function BuilderPreviewPage(
+  props: { 
+    params: Promise<{ id: string }> 
+  }
+) {
+  const params = await props.params;
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 

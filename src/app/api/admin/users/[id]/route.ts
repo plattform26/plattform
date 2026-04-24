@@ -4,7 +4,8 @@ import { getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import { sendInstructorApprovalEmail } from '@/lib/mail';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     console.log("🔍 [ADMIN_API] Iniciando búsqueda para ID:", params.id);
 
@@ -60,7 +61,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || session.role !== 'ADMIN') {
@@ -210,7 +212,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || session.role !== 'ADMIN') {

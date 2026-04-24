@@ -7,7 +7,8 @@ import {
   sendFinalExamPassNoticeToAdmin 
 } from '@/lib/mail';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN')) {

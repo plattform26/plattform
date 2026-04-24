@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import PasswordChangeModal from '@/components/PasswordChangeModal';
 
-export default function StudentProfilePage({ 
-  searchParams 
-}: { 
-  searchParams: { [key: string]: string | string[] | undefined } 
-}) {
+export default function StudentProfilePage(
+  props: { 
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }> 
+  }
+) {
+  const searchParams = use(props.searchParams);
   const impersonateId = searchParams.impersonateId as string | undefined;
   const isAdminMode = searchParams.isAdminMode === 'true';
   const [formData, setFormData] = useState({ name: '', lastName: '', email: '' });

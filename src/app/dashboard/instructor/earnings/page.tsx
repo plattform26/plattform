@@ -3,11 +3,12 @@ import ExportEarningsButton from './ExportEarningsButton';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 
-export default async function InstructorEarningsPage({ 
-  searchParams 
-}: { 
-  searchParams: { month?: string, year?: string } 
-}) {
+export default async function InstructorEarningsPage(
+  props: { 
+    searchParams: Promise<{ month?: string, year?: string }> 
+  }
+) {
+  const searchParams = await props.searchParams;
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 

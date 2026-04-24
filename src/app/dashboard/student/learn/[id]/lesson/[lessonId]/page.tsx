@@ -20,11 +20,12 @@ function getEmbedUrl(url: string) {
   return url;
 }
 
-export default async function LessonPage({ 
-  params 
-}: { 
-  params: { id: string; lessonId: string } 
-}) {
+export default async function LessonPage(
+  props: { 
+    params: Promise<{ id: string; lessonId: string }> 
+  }
+) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) redirect('/login');
 

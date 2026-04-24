@@ -3,13 +3,18 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import SidebarClient from './SidebarClient';
 
-export default async function ClassroomLayout({ 
-  children, 
-  params 
-}: { 
-  children: React.ReactNode; 
-  params: { id: string } 
-}) {
+export default async function ClassroomLayout(
+  props: { 
+    children: React.ReactNode; 
+    params: Promise<{ id: string }> 
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const session = await getSession();
   if (!session) redirect('/login');
 
@@ -98,6 +103,4 @@ export default async function ClassroomLayout({
       </SidebarClient>
     </div>
   );
-
-
 }

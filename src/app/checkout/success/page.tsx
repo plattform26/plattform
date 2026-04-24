@@ -4,7 +4,10 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 
-export default async function SuccessPage({ searchParams }: { searchParams: { session_id?: string; courseId?: string } }) {
+export default async function SuccessPage(
+  props: { searchParams: Promise<{ session_id?: string; courseId?: string }> }
+) {
+  const searchParams = await props.searchParams;
   if (!searchParams.session_id) {
     redirect('/');
   }

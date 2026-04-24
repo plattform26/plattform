@@ -3,7 +3,8 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
@@ -61,66 +62,68 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    try {
-      const session = await getSession();
-      if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-  
-      const { id } = params;
-      const lesson = await prisma.courseLesson.findUnique({
-        where: { id },
-        include: { course: true }
-      });
-  
-      if (!lesson) {
-        return NextResponse.json({ error: 'Lección no encontrada' }, { status: 404 });
-      }
-  
-      if (session.role !== 'ADMIN' && lesson.course.instructorId !== session.userId) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-  
-      return NextResponse.json(lesson);
-    } catch (error) {
-      console.error('Get lesson error:', error);
-      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  try {
+    const session = await getSession();
+    if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { id } = params;
+    const lesson = await prisma.courseLesson.findUnique({
+      where: { id },
+      include: { course: true }
+    });
+
+    if (!lesson) {
+      return NextResponse.json({ error: 'Lección no encontrada' }, { status: 404 });
+    }
+
+    if (session.role !== 'ADMIN' && lesson.course.instructorId !== session.userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    return NextResponse.json(lesson);
+  } catch (error) {
+    console.error('Get lesson error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-    try {
-      const session = await getSession();
-      if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-  
-      const { id } = params;
-      const lesson = await prisma.courseLesson.findUnique({
-        where: { id },
-        include: { 
-          course: { include: { _count: { select: { enrollments: true } } } } 
-        }
-      });
-  
-      if (!lesson) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-      if (session.role !== 'ADMIN' && lesson.course.instructorId !== session.userId) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-
-      // Lógica de Bloqueo de Eliminación (Seguridad en Producción)
-      const lock = await isCourseLocked(lesson.courseId, session.role);
-      if (lock.locked) {
-          return NextResponse.json({ 
-            error: 'CURSO_BLOQUEADO',
-            message: lock.reason
-          }, { status: 403 });
-      }
-  
-      await prisma.courseLesson.delete({ where: { id } });
-      return NextResponse.json({ success: true });
-    } catch (error) {
-      return NextResponse.json({ error: 'Error al eliminar lección' }, { status: 500 });
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  try {
+    const session = await getSession();
+    if (!session || (session.role !== 'INSTRUCTOR' && session.role !== 'ADMIN')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { id } = params;
+    const lesson = await prisma.courseLesson.findUnique({
+      where: { id },
+      include: { 
+        course: { include: { _count: { select: { enrollments: true } } } } 
+      }
+    });
+
+    if (!lesson) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (session.role !== 'ADMIN' && lesson.course.instructorId !== session.userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Lógica de Bloqueo de Eliminación (Seguridad en Producción)
+    const lock = await isCourseLocked(lesson.courseId, session.role);
+    if (lock.locked) {
+        return NextResponse.json({ 
+          error: 'CURSO_BLOQUEADO',
+          message: lock.reason
+        }, { status: 403 });
+    }
+
+    await prisma.courseLesson.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Error al eliminar lección' }, { status: 500 });
+  }
 }
