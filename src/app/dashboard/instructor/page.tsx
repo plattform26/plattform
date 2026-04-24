@@ -40,8 +40,10 @@ export default async function InstructorDashboardPage() {
   const isUnlimited = studentLimit === -1;
   const usagePercent = isUnlimited ? 0 : (totalEnrollmentsCount / studentLimit) * 100;
   
-  // LOGICA DE BANNERS (Universal Policy)
-  const isHibernated = await prisma.course.count({
+  // LOGICA DE BLOQUEO (BUG B FIX)
+  const isSystemLocked = !currentPlan || usagePercent >= 100;
+
+  const hasManuallyHibernatedCourses = await prisma.course.count({
     where: { instructorId: session.userId, status: 'HIBERNATED' }
   }) > 0;
   
@@ -117,7 +119,7 @@ export default async function InstructorDashboardPage() {
       </div>
 
       {/* BANNER CRITICO: HIBERNACION (Bypassed if Courtesy) */}
-      {isHibernated && !isCourtesy && (
+      {isSystemLocked && !isCourtesy && (
         <div className="mb-6 p-5 bg-red-600/20 border border-red-500/50 rounded-2xl flex items-center justify-between gap-4 animate-pulse">
            <div className="flex items-center gap-4">
               <span className="text-4xl">❄️</span>
@@ -126,12 +128,12 @@ export default async function InstructorDashboardPage() {
                  <p className="text-sm text-red-100/80">Tus cursos son invisibles y el acceso a la IA ha sido bloqueado por falta de pago o exceso de cupo.</p>
               </div>
            </div>
-           <Link href="/dashboard/instructor/finances" className="px-6 py-2 bg-red-500 hover:bg-red-400 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-red-500/20 uppercase tracking-widest">Regularizar Suscripción</Link>
+           <Link href="/dashboard/instructor/plan" className="px-6 py-2 bg-red-500 hover:bg-red-400 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-red-500/20 uppercase tracking-widest">Regularizar Suscripción</Link>
         </div>
       )}
 
       {/* ALERTA PREVENTIVA: VENCIMIENTO (Bypassed if Courtesy) */}
-      {!isHibernated && !isCourtesy && daysUntilExpiry !== null && daysUntilExpiry <= 5 && daysUntilExpiry >= 0 && (
+      {!isSystemLocked && !isCourtesy && daysUntilExpiry !== null && daysUntilExpiry <= 5 && daysUntilExpiry >= 0 && (
         <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-between gap-4">
            <div className="flex items-center gap-3">
               <span className="text-2xl">⏳</span>
@@ -140,12 +142,12 @@ export default async function InstructorDashboardPage() {
                  <p className="text-xs text-orange-200/60">Asegúrate de renovar para evitar la hibernación automática de tus cursos.</p>
               </div>
            </div>
-           <Link href="/dashboard/instructor/finances" className="text-xs font-bold text-orange-300 hover:text-orange-200 underline">Gestionar renovación →</Link>
+           <Link href="/dashboard/instructor/plan" className="text-xs font-bold text-orange-300 hover:text-orange-200 underline">Gestionar renovación →</Link>
         </div>
       )}
 
       {/* ALERTAS DE CAPACIDAD (Bypassed if Courtesy) */}
-      {!isUnlimited && !isCourtesy && usagePercent >= 80 && (
+      {!isSystemLocked && !isUnlimited && !isCourtesy && usagePercent >= 80 && (
         <div className={`mb-6 p-4 rounded-xl border flex items-center justify-between gap-4 ${
           usagePercent >= 100 ? 'bg-red-500/10 border-red-500/50 text-red-100' :
           'bg-yellow-500/10 border-yellow-500/30 text-yellow-100'
@@ -160,7 +162,7 @@ export default async function InstructorDashboardPage() {
                 </p>
              </div>
           </div>
-          <Link href="/dashboard/instructor/finances" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">Upgrade →</Link>
+          <Link href="/dashboard/instructor/plan" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors">Upgrade →</Link>
         </div>
       )}
 
@@ -184,7 +186,7 @@ export default async function InstructorDashboardPage() {
                <span className={`w-1.5 h-1.5 rounded-full ${profile.stripeConnectId && profile.stripeOnboardingComplete ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`} />
                Status: {profile.stripeConnectId && profile.stripeOnboardingComplete ? 'CONECTADO STRIPE' : 'SIN VINCULAR'}
             </div>
-            <Link href="/dashboard/instructor/finances" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
+            <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
          </div>
       </div>
 
