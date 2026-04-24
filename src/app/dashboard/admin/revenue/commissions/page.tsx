@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import { exportToCSV } from '@/lib/export-utils';
 
 export default function AdminRevenueCommissionsPage() {
   const now = new Date();
@@ -117,19 +117,6 @@ export default function AdminRevenueCommissionsPage() {
     exportToCSV(exportData, `plattform-comisiones-${monthLabel}-${filters.year}`);
   };
 
-  const handleExportExcel = () => {
-    const exportData = filteredInstructors.map(c => ({
-       Instructor: c.instructorName,
-       Academia: c.academyName,
-       Ventas: c.salesCount,
-       Bruto: c.grossAmount,
-       Comisión: c.platformCommission,
-       Neto: c.netAmount,
-       'Tasa %': c.commissionRate
-    }));
-    const monthLabel = (filters.month as any) === 'all' ? 'total' : (filters.month as number) + 1;
-    exportToExcel(exportData, `plattform-comisiones-${monthLabel}-${filters.year}`, 'Comisiones');
-  };
 
   return (
     <div className="space-y-10">

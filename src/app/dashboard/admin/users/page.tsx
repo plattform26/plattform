@@ -3,7 +3,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import { exportToCSV } from '@/lib/export-utils';
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -89,21 +89,6 @@ export default function AdminUsersPage() {
     exportToCSV(exportData, 'plattform-usuarios-2025');
   };
 
-  const handleExportExcel = () => {
-    const exportData = users.map(u => ({
-       ID: u.id,
-       Nombre: `${u.name} ${u.lastName}`,
-       Email: u.email,
-       Rol: u.role,
-       Especialidad: u.specialty || '',
-       Estado: u.status,
-       'Cursos/Inscrip': u.role === 'INSTRUCTOR' ? (u._count?.courses ?? 0) : (u._count?.enrollments ?? 0),
-       'Registrado El': new Date(u.createdAt).toLocaleDateString(),
-       'Última Conexión': u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Nunca',
-       Courtesy: u.isCourtesy ? 'YES' : 'NO'
-    }));
-    exportToExcel(exportData, 'plattform-usuarios-2025', 'Usuarios');
-  };
 
   const handleUpdateUser = async (userId: string, data: any) => {
     try {
@@ -214,7 +199,6 @@ export default function AdminUsersPage() {
                 <span>➕</span> Crear Usuario
              </button>
              <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-blue-500/10 hover:border-blue-500/50 hover:bg-blue-600/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
-             <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
           </div>
        </div>
 

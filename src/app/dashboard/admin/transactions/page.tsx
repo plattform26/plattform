@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import { exportToCSV } from '@/lib/export-utils';
 
 export default function AdminTransactionsPage() {
   const [txs, setTxs] = useState<any[]>([]);
@@ -63,28 +63,6 @@ export default function AdminTransactionsPage() {
     exportToCSV(exportData, `plattform-ledger-${new Date().toISOString().split('T')[0]}`);
   };
 
-  const handleExportExcel = () => {
-    const exportData = txs.map(t => {
-       const planName = t.user.instructorProfile?.subscriptions[0]?.plan?.displayName || 'Plattform';
-       return {
-          ID: t.id,
-          Fecha: new Date(t.createdAt).toLocaleString(),
-          Usuario: `${t.user.name} ${t.user.lastName}`,
-          Rol: t.user.role,
-          Email: t.user.email,
-          Tipo: t.paymentType === 'COURSE_PURCHASE' ? 'Venta de Curso' : 'Renta Instructor',
-          Detalle: t.paymentType === 'COURSE_PURCHASE' 
-             ? `Inscripción: ${t.course?.title || 'Curso'}` 
-             : `💎 Renta Mensual - ${planName}`,
-          'Monto Bruto': t.grossAmount,
-          'Comisión Plattform': t.platformCommissionAmount,
-          'Neto Instructor': t.netAmountToInstructor,
-          Estado: t.paymentStatus,
-          'Stripe ID': t.stripePaymentIntentId || t.stripeSessionId || 'Manual/Log'
-       };
-    });
-    exportToExcel(exportData, `plattform-ledger-${new Date().toISOString().split('T')[0]}`, 'Transacciones');
-  };
 
   return (
     <div className="space-y-10">
@@ -96,7 +74,6 @@ export default function AdminTransactionsPage() {
           
           <div className="flex gap-3">
              <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-blue-500/10 hover:border-blue-500/50 hover:bg-blue-600/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
-             <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
           </div>
        </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import { exportToCSV } from '@/lib/export-utils';
 
 export default function AdminRevenueRentPage() {
   const now = new Date();
@@ -83,22 +83,6 @@ export default function AdminRevenueRentPage() {
     exportToCSV(exportData, `plattform-rentas-precision-${monthLabel}-${filters.year}`);
   };
 
-  const handleExportExcel = () => {
-    const exportData = processedSubs.map(s => ({
-       ID: s.id,
-       Instructor: `${s.instructor.user.name} ${s.instructor.user.lastName}`,
-       'Academia': s.instructor.academyName,
-       Plan: s.plan.displayName,
-       Monto: s.plan.monthlyPrice,
-       Estado: s.status,
-       'Alumnos/:Límite': `${s.totalEnrollments}/${s.plan.studentLimit === -1 ? '∞' : s.plan.studentLimit}`,
-       'Registro': s.registrationDate.toLocaleDateString(),
-       'Antigüedad (Meses)': s.seniorityMonths,
-       'Vence El': s.expiresAt ? new Date(s.expiresAt).toLocaleDateString() : 'N/A'
-    }));
-    const monthLabel = filters.month === 'all' ? 'total' : (filters.month as number) + 1;
-    exportToExcel(exportData, `plattform-rentas-${monthLabel}-${filters.year}`, 'Rentas');
-  };
 
   return (
     <div className="space-y-10">
@@ -128,7 +112,6 @@ export default function AdminRevenueRentPage() {
            
            <div className="flex gap-3">
               <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-blue-500/10 hover:border-blue-500/50 hover:bg-blue-600/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
-              <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
            </div>
         </div>
 

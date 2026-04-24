@@ -3,7 +3,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { exportToCSV, exportToExcel } from '@/lib/export-utils';
+import { exportToCSV } from '@/lib/export-utils';
 import StarRating from '@/components/StarRating';
 
 export default function AdminCoursesPage() {
@@ -165,19 +165,6 @@ export default function AdminCoursesPage() {
     exportToCSV(exportData, 'plattform-cursos-2025');
   };
 
-  const handleExportExcel = () => {
-    const exportData = courses.map(c => ({
-       ID: c.id,
-       Título: c.title,
-       Instructor: `${c.instructor.name} ${c.instructor.lastName}`,
-       Categoría: c.category,
-       Estado: c.status,
-       Alumnos: c._count.enrollments,
-       Precio: `$${c.price} ${c.currency}`,
-       'Creado El': new Date(c.createdAt).toLocaleDateString()
-    }));
-    exportToExcel(exportData, 'plattform-cursos-2025', 'Cursos');
-  };
 
   const getStatusBadge = (status: string) => {
      const styles: any = {
@@ -215,7 +202,6 @@ export default function AdminCoursesPage() {
                 <span>➕</span> Crear Curso
               </Link>
               <button onClick={handleExportCSV} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-blue-500/10 hover:border-blue-500/50 hover:bg-blue-600/10 transition-all uppercase tracking-widest leading-none">Exportar CSV</button>
-              <button onClick={handleExportExcel} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0d1524] border border-green-500/10 hover:border-green-500/50 hover:bg-green-600/10 transition-all uppercase tracking-widest leading-none">Exportar Excel</button>
            </div>
        </div>
 
