@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { createSubscriptionSessionSchema } from '@/lib/validations/checkout';
 
 export async function POST(req: Request) {
   try {
@@ -10,11 +11,17 @@ export async function POST(req: Request) {
        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planId } = await req.json();
-    
-    if (!planId) {
-      return NextResponse.json({ error: 'Falta planId' }, { status: 400 });
+    const body = await req.json();
+    const validation = createSubscriptionSessionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { planId } = validation.data;
 
     const platformPlan = await prisma.platformPlan.findUnique({
       where: { id: planId }

@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
 import { getEffectivePlan } from '@/lib/plan-utils';
+import { createCheckoutSessionSchema } from '@/lib/validations/checkout';
 
 export async function POST(req: Request) {
   try {
@@ -11,11 +12,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Debes iniciar sesión para comprar' }, { status: 401 });
     }
 
-    const { courseId, couponCode } = await req.json();
+    const body = await req.json();
+    const validation = createCheckoutSessionSchema.safeParse(body);
 
-    if (!courseId) {
-      return NextResponse.json({ error: 'Falta courseId' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { courseId, couponCode } = validation.data;
 
     // 1. Verificar que el curso exista y esté publicado
     const course = await prisma.course.findUnique({

@@ -2,13 +2,21 @@ import { NextResponse } from 'next/server';
 import { generatePasswordResetToken } from '@/lib/tokens';
 import { sendPasswordResetEmail } from '@/lib/mail';
 
+import { forgotPasswordSchema } from '@/lib/validations/auth';
+
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    const body = await req.json();
+    const validation = forgotPasswordSchema.safeParse(body);
+    
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { email } = validation.data;
 
     const token = await generatePasswordResetToken(email);
 

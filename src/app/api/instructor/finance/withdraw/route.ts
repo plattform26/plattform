@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { sendWithdrawalRequestToAdmin, sendAdminTechnicalAlert } from '@/lib/mail';
+import { withdrawSchema } from '@/lib/validations/checkout';
 
 /**
  * Misión: Notificaciones de Ventas y Retiros
@@ -15,11 +16,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const { amount } = await req.json();
+    const body = await req.json();
+    const validation = withdrawSchema.safeParse(body);
 
-    if (!amount || amount <= 0) {
-      return NextResponse.json({ error: 'Monto inválido' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { amount } = validation.data;
 
     // 1. Obtener datos del instructor
     const user = await prisma.user.findUnique({

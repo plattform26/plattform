@@ -3,13 +3,21 @@ import prisma from '@/lib/prisma';
 import { getVerificationTokenByToken } from '@/lib/tokens';
 import { sendWelcomeEmail } from '@/lib/mail';
 
+import { verifyEmailSchema } from '@/lib/validations/auth';
+
 export async function POST(req: Request) {
   try {
-    const { token } = await req.json();
+    const body = await req.json();
+    const validation = verifyEmailSchema.safeParse(body);
 
-    if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { token } = validation.data;
 
     const verificationToken = await getVerificationTokenByToken(token);
     

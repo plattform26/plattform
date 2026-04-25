@@ -5,13 +5,21 @@ import { signAccessToken, signRefreshToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
 import crypto from 'crypto';
 
+import { loginSchema } from '@/lib/validations/auth';
+
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    const body = await req.json();
+    const validation = loginSchema.safeParse(body);
+    
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { email, password } = validation.data;
 
     const user = await prisma.user.findUnique({
       where: { email },

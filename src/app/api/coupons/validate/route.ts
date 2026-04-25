@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { validateCouponSchema } from '@/lib/validations/checkout';
 
 export async function POST(req: Request) {
   try {
@@ -9,11 +10,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Debes iniciar sesión' }, { status: 401 });
     }
 
-    const { code, courseId } = await req.json();
+    const body = await req.json();
+    const validation = validateCouponSchema.safeParse(body);
 
-    if (!code) {
-      return NextResponse.json({ error: 'Código requerido' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { code, courseId } = validation.data;
 
     const normalizedCode = code.toUpperCase().trim();
 

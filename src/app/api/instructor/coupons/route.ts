@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { instructorCouponSchema } from '@/lib/validations/checkout';
 
 export async function GET() {
   const session = await getSession();
@@ -31,11 +32,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { code, discountPercent, courseId, expiresAt, maxUses } = await req.json();
+  const body = await req.json();
+  const validation = instructorCouponSchema.safeParse(body);
 
-  if (!code || !discountPercent || !courseId) {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+  if (!validation.success) {
+    return NextResponse.json({ 
+      error: 'Datos inválidos', 
+      details: validation.error.format() 
+    }, { status: 400 });
   }
+
+  const { code, discountPercent, courseId, expiresAt, maxUses } = validation.data;
 
   // Verify course ownership
   const course = await prisma.course.findUnique({
@@ -48,11 +55,11 @@ export async function POST(req: Request) {
 
   const coupon = await prisma.coupon.create({
     data: {
-      code: code.toUpperCase(),
+      code,
       discountPercent,
       courseId,
       expirationDate: expiresAt ? new Date(expiresAt) : null,
-      usageLimit: maxUses ? parseInt(maxUses) : null,
+      usageLimit: maxUses || null,
     }
   });
 

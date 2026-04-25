@@ -3,13 +3,21 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { sendPasswordChangeNotice } from '@/lib/mail';
 
+import { resetPasswordSchema } from '@/lib/validations/auth';
+
 export async function POST(req: Request) {
   try {
-    const { token, newPassword } = await req.json();
+    const body = await req.json();
+    const validation = resetPasswordSchema.safeParse(body);
 
-    if (!token || !newPassword) {
-      return NextResponse.json({ error: 'Token and new password are required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { token, newPassword } = validation.data;
 
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token },
