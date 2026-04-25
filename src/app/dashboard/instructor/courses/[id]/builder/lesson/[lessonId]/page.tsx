@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BuilderRichEditor from '@/components/builder/BuilderRichEditor';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 export default function BuilderLessonPage() {
   const { id: courseId, lessonId } = useParams();
@@ -54,7 +55,7 @@ export default function BuilderLessonPage() {
     const res = await fetch(`/api/instructor/lessons/${lessonId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(sanitizePayload(updates))
     });
     if (res.ok) {
         setMsg('✓ Sincronizado');

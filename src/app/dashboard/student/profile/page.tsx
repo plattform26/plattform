@@ -8,9 +8,13 @@ export default function StudentProfilePage(
     searchParams: Promise<{ [key: string]: string | string[] | undefined }> 
   }
 ) {
-  const searchParams = use(props.searchParams);
-  const impersonateId = searchParams.impersonateId as string | undefined;
-  const isAdminMode = searchParams.isAdminMode === 'true';
+  // Fix: Resolver searchParams condicionalmente (Promise vs Object)
+  const resolvedSearchParams = (props.searchParams instanceof Promise) 
+    ? use(props.searchParams) 
+    : (props.searchParams as any);
+
+  const impersonateId = resolvedSearchParams?.impersonateId as string | undefined;
+  const isAdminMode = resolvedSearchParams?.isAdminMode === 'true';
   const [formData, setFormData] = useState({ name: '', lastName: '', email: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -22,7 +26,8 @@ export default function StudentProfilePage(
       setLoading(true);
       // Endpoint dinámico: Admin vs Estudiante
       const endpoint = isAdminMode ? `/api/admin/users/${impersonateId}` : '/api/auth/me';
-      const res = await fetch(endpoint);
+      // Agregar credentials para persistencia de sesión
+      const res = await fetch(endpoint, { credentials: 'include' });
       const data = await res.json();
 
       if (isAdminMode) {
@@ -56,6 +61,7 @@ export default function StudentProfilePage(
       // Endpoint dinámico para guardar
       const endpoint = isAdminMode ? `/api/admin/users/${impersonateId}` : '/api/student/profile';
       const res = await fetch(endpoint, {
+        credentials: 'include', // Agregar credentials
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

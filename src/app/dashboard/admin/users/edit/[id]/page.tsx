@@ -32,7 +32,7 @@ export default function AdminImpersonationPage(props: { params: Promise<{ id: st
        try {
          setLoading(true);
          // 1. Obtener datos del usuario objetivo
-         const res = await fetch(`/api/admin/users/${id}`);
+         const res = await fetch(`/api/admin/users/${id}`, { credentials: 'include' });
          const data = await res.json();
          
          if (res.ok && !data.error) {
@@ -49,7 +49,7 @@ export default function AdminImpersonationPage(props: { params: Promise<{ id: st
          }
 
          // 2. Obtener mi propia identidad para seguridad (self-edit detection)
-         const resMe = await fetch('/api/auth/me');
+         const resMe = await fetch('/api/auth/me', { credentials: 'include' });
          const dataMe = await resMe.json();
          if (dataMe.authenticated) {
             setCurrentUser(dataMe);
@@ -72,7 +72,8 @@ export default function AdminImpersonationPage(props: { params: Promise<{ id: st
          const res = await fetch(`/api/admin/users/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(formData),
+            credentials: 'include'
          });
          if (res.ok) {
             alert('Datos base actualizados exitosamente');

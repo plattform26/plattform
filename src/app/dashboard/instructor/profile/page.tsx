@@ -2,15 +2,20 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import PasswordChangeModal from '@/components/PasswordChangeModal';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 export default function ProfilePage(
     props: { 
       searchParams: Promise<{ [key: string]: string | string[] | undefined }> 
     }
 ) {
-    const searchParams = use(props.searchParams);
-    const impersonateId = searchParams.impersonateId as string | undefined;
-    const isAdminMode = searchParams.isAdminMode === 'true';
+    // Bug A Fix: Resolver searchParams condicionalmente (Promise vs Object)
+    const resolvedSearchParams = (props.searchParams instanceof Promise) 
+        ? use(props.searchParams) 
+        : (props.searchParams as any);
+
+    const impersonateId = resolvedSearchParams?.impersonateId as string | undefined;
+    const isAdminMode = resolvedSearchParams?.isAdminMode === 'true';
     const [profile, setProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -41,7 +46,9 @@ export default function ProfilePage(
           
           // Determinar endpoint según el modo
           const endpoint = isAdminMode ? `/api/admin/users/${impersonateId}` : '/api/instructor/profile';
-          const res = await fetch(endpoint);
+          
+          // Bug B Fix: Agregar credentials
+          const res = await fetch(endpoint, { credentials: 'include' });
           
           if (!res.ok) {
               throw new Error(`Error del servidor (${res.status})`);
@@ -101,13 +108,16 @@ export default function ProfilePage(
       try {
           if (isAdminMode) {
               // En modo admin usamos el endpoint de actualización universal
+              const payload = sanitizePayload({
+                  ...personalForm,
+                  ...academyForm
+              });
+
               const res = await fetch(`/api/admin/users/${impersonateId}`, {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      ...personalForm,
-                      ...academyForm
-                  }),
+                  body: JSON.stringify(payload),
+                  credentials: 'include'
               });
               if (res.ok) {
                   showMsg('✓ Perfil actualizado por Administrador');
@@ -118,15 +128,17 @@ export default function ProfilePage(
           } else {
               // Modo instructor estándar (paralelo)
               const [resPersonal, resAcademy] = await Promise.all([
-                  fetch('/api/instructor/profile/personal', {
+                   fetch('/api/instructor/profile/personal', {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(personalForm),
+                      credentials: 'include'
                   }),
                   fetch('/api/instructor/profile', {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(academyForm),
+                      credentials: 'include'
                   })
               ]);
 

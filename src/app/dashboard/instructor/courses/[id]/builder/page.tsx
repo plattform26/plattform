@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useBuilder } from './layout';
 import Link from 'next/link';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 export default function BuilderIndexPage() {
   const { course, refetch } = useBuilder();
@@ -12,7 +13,7 @@ export default function BuilderIndexPage() {
     const res = await fetch(`/api/instructor/courses/${course.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(sanitizePayload(updates))
     });
     if (res.ok) await refetch();
     setSaving(false);

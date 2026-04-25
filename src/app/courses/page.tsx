@@ -153,10 +153,20 @@ export default function CoursesPage() {
               return (
                 <div key={course.id} className="group bg-[#0d1524] border border-blue-500/10 rounded-2xl overflow-hidden hover:border-cyan-500/30 hover:shadow-[0_20px_50px_rgba(6,182,212,0.1)] transition-all flex flex-col relative">
                   <Link href={`/courses/${course.slug}`} className="cursor-pointer">
-                    <div className="h-44 bg-gradient-to-br from-[#0a1f44] to-blue-900 flex items-center justify-center text-6xl relative overflow-hidden">
-                       <span className="group-hover:scale-110 transition-transform duration-500">🎓</span>
+                    <div className="h-44 relative overflow-hidden">
+                       {course.thumbnailUrl ? (
+                          <img 
+                            src={course.thumbnailUrl} 
+                            alt={course.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                       ) : (
+                          <div className="h-full w-full bg-gradient-to-br from-[#0a1f44] to-blue-900 flex items-center justify-center text-6xl">
+                             <span className="group-hover:scale-110 transition-transform duration-500">🎓</span>
+                          </div>
+                       )}
                        <span className="absolute top-3 left-3 bg-cyan-600/20 text-cyan-400 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-cyan-500/20">{course.category}</span>
-                       <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                       <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     </div>
                   </Link>
 

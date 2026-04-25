@@ -16,7 +16,7 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
 
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/admin/users/${id}`);
+        const res = await fetch(`/api/admin/users/${id}`, { credentials: 'include' });
         if (res.ok) {
             const data = await res.json();
             setUser(data);
@@ -53,7 +53,8 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
         const res = await fetch(`/api/admin/users/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
+            body: JSON.stringify(form),
+            credentials: 'include'
         });
         if (res.ok) {
             setMsg('✓ Usuario actualizado con éxito');
@@ -78,7 +79,8 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
         const res = await fetch(`/api/admin/instructors/${user?.instructorProfile?.id}/manage-plan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ planId: form.planId })
+            body: JSON.stringify({ planId: form.planId }),
+            credentials: 'include'
         });
         if (res.ok) {
             setMsg('✓ Plan actualizado correctamente');

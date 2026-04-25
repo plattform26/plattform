@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import BuilderRichEditor from '@/components/builder/BuilderRichEditor';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 // ── Lesson Editor ──────────────────────────────────────────────────────────
 function LessonEditor({
@@ -30,7 +31,7 @@ function LessonEditor({
     const res = await fetch(`/api/lessons/${lesson.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, moduleId }),
+      body: JSON.stringify(sanitizePayload({ ...data, moduleId })),
     });
     const d = await res.json();
     if (res.ok) {
@@ -178,7 +179,7 @@ function ModuleBlock({
     await fetch(`/api/modules/${mod.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: titleVal }),
+      body: JSON.stringify(sanitizePayload({ title: titleVal })),
     });
     onTitleChange(mod.id, titleVal);
     setEditTitle(false);

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 const LETTERS = 'ABCDEFGHIJKLMNO';
 
@@ -216,13 +217,17 @@ export default function QuizBuilderPage() {
       const res = await fetch(`/api/courses/${courseId}/quiz`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify(sanitizePayload({ 
               ...quiz, 
               questions: quiz.questions.map(q => ({
                   ...q,
-                  optionsJson: q.options.map(o => o.text)
+                  optionsJson: q.options.map((o, idx) => ({
+                      optionText: o.text || '',
+                      isCorrect: q.correctAnswer.includes(idx),
+                      orderIndex: idx + 1
+                  }))
               }))
-          })
+          }))
       });
 
       if (!res.ok) {

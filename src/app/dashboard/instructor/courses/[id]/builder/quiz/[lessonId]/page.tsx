@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 export default function BuilderQuizPage() {
   const { id: courseId, lessonId } = useParams();
@@ -42,11 +43,11 @@ export default function BuilderQuizPage() {
     const res = await fetch(`/api/lessons/${lessonId}/quiz`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: JSON.stringify(sanitizePayload({
             title: quiz.title,
             passingScore: quiz.passingScore,
             totalScore: quiz.totalScore
-        })
+        }))
     });
     if (res.ok) {
         setShowSuccessModal(true);
@@ -89,7 +90,7 @@ export default function BuilderQuizPage() {
     await fetch('/api/quiz-questions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(q)
+        body: JSON.stringify(sanitizePayload(q))
     });
     setSaving(false);
   };

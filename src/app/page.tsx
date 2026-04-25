@@ -156,12 +156,12 @@ export default function EliteStudentLanding() {
                         <h2 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.5em] mb-4">Catálogo de Cursos</h2>
                         <h3 className="font-space-grotesk text-4xl font-bold leading-tight">Explora las 8 Áreas de <span className="italic">Transformación Digital.</span></h3>
                     </div>
-                    <button 
-                        onClick={() => setCategory('')}
+                    <Link 
+                        href="/courses"
                         className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors pb-1 border-b border-white/10"
                     >
                         Ver todo el catálogo
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -331,7 +331,7 @@ export default function EliteStudentLanding() {
                         <svg className="w-4 h-4 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.309 1.656zm6.224-3.82c1.554.921 3.141 1.407 4.811 1.408h.005c5.405 0 9.803-4.397 9.806-9.803.003-2.621-1.02-5.084-2.871-6.938-1.851-1.854-4.312-2.878-6.932-2.879h-.005c-5.405 0-9.803 4.398-9.806 9.806-.001 1.83.504 3.618 1.459 5.2l-.994 3.635 3.727-.977zm11.232-6.502c-.272-.136-1.61-.794-1.86-.885-.25-.091-.432-.136-.613.136-.182.273-.704.885-.863 1.067-.158.182-.317.204-.589.068-.272-.136-1.15-.424-2.19-1.354-.809-.722-1.355-1.614-1.514-1.886-.158-.272-.017-.42.119-.556.122-.122.272-.318.408-.477.136-.159.182-.272.272-.454l.068-.136c.091-.182.046-.341-.023-.477-.068-.136-.613-1.477-.84-2.022-.222-.534-.447-.461-.613-.471l-.523-.008c-.182 0-.477.068-.727.341-.25.273-.954.932-.954 2.272 0 1.341.977 2.636 1.114 2.818.136.182 1.921 2.934 4.659 4.114.651.28 1.158.448 1.554.573.654.208 1.25.179 1.721.108.524-.078 1.61-.659 1.837-1.295.227-.636.227-1.182.159-1.295-.069-.114-.249-.182-.522-.318z"/></svg>
                     </a>
                     <a 
-                        href="mailto:soporte@platform.mx" 
+                        href="mailto:soporte@plattform.mx" 
                         className="flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all group"
                     >
                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-blue-400">Email Support</span>

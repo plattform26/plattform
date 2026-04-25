@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BuilderRichEditor from './builder/BuilderRichEditor';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 interface Lesson {
   id: string;
@@ -30,7 +31,7 @@ export default function InlineLessonEditor({ lesson }: { lesson: Lesson }) {
       const res = await fetch(`/api/lessons/${lesson.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(sanitizePayload(formData))
       });
 
       if (res.ok) {
