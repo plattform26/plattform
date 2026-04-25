@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { createModuleSchema } from '@/lib/validations/courses';
 
 export async function POST(req: Request) {
   try {
@@ -11,11 +12,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { courseId, title, orderIndex } = body;
+    const validation = createModuleSchema.safeParse(body);
 
-    if (!courseId || !title) {
-      return NextResponse.json({ error: 'courseId and title are required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { courseId, title, orderIndex } = validation.data;
 
     // Verify course access
     const where: any = { id: courseId, deletedAt: null };

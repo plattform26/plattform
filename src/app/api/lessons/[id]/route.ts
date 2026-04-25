@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { updateLessonSchema } from '@/lib/validations/courses';
 
 export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -13,7 +14,16 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
 
     const { id } = params;
     const body = await req.json();
-    const { title, subtitle, contentText, videoUrl, isPreview, contentType, durationMinutes, moduleId, orderIndex, summary, funFact } = body;
+    const validation = updateLessonSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { title, subtitle, contentText, videoUrl, isPreview, contentType, durationMinutes, moduleId, orderIndex, summary, funFact } = validation.data;
 
     // Verify ownership/permission
     const lesson = await prisma.courseLesson.findUnique({

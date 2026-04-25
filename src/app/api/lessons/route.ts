@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { createLessonSchema } from '@/lib/validations/courses';
 
 export async function POST(req: Request) {
   try {
@@ -11,11 +12,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { courseId, moduleId, title, subtitle, contentText, videoUrl, contentType, orderIndex, durationMinutes, isPreview } = body;
+    const validation = createLessonSchema.safeParse(body);
 
-    if (!courseId || !title) {
-      return NextResponse.json({ error: 'courseId and title are required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { courseId, moduleId, title, subtitle, contentText, videoUrl, contentType, orderIndex, durationMinutes, isPreview } = validation.data;
 
     // Verify course belongs to instructor
     const course = await prisma.course.findUnique({

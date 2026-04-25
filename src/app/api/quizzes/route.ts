@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { createQuizSchema } from '@/lib/validations/courses';
 
 export async function POST(req: Request) {
   try {
@@ -11,17 +12,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { courseId, lessonId, title, passingScore = 70, totalScore, scoreDistribution = 'AUTOMATIC' } = body;
+    const validation = createQuizSchema.safeParse(body);
 
-    if (!courseId || !title) {
-      return NextResponse.json({ error: 'courseId and title are required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
 
-    // Validate totalScore: must be 10 or 100
-    const ts = Number(totalScore);
-    if (ts !== 10 && ts !== 100) {
-      return NextResponse.json({ error: 'totalScore must be 10 or 100' }, { status: 400 });
-    }
+    const { courseId, lessonId, title, passingScore, totalScore, scoreDistribution } = validation.data;
 
     // Verify course belongs to instructor
     const where: any = { id: courseId, deletedAt: null };

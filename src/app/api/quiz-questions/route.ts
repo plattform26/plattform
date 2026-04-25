@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { createQuizQuestionSchema, updateQuizQuestionSchema } from '@/lib/validations/courses';
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +11,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { quizId, questionText, questionType, optionsJson, correctAnswer, points, orderIndex } = await req.json();
+    const body = await req.json();
+    const validation = createQuizQuestionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { quizId, questionText, questionType, optionsJson, correctAnswer, points, orderIndex } = validation.data;
 
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },
@@ -54,7 +65,17 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, ...data } = await req.json();
+    const body = await req.json();
+    const validation = updateQuizQuestionSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { id, ...data } = validation.data;
     
     const questionToUpdate = await prisma.quizQuestion.findUnique({
       where: { id },
