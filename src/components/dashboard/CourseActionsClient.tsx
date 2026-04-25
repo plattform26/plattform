@@ -105,10 +105,10 @@ export default function CourseActionsClient({
   return (
     <div className="flex items-center gap-2 justify-end flex-wrap">
       {/* Botón Vista Previa - Siempre disponible */}
-      <Link
-        href={`/dashboard/student/learn/${courseId}?preview=true`}
+      <Link 
+        href={`/dashboard/instructor/courses/${courseId}/preview`}
         target="_blank"
-        className="px-3 py-1.5 bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 rounded-lg text-[10px] font-black transition-all text-green-400 uppercase tracking-widest"
+        className="flex-1 px-4 py-3 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-xl font-bold text-center hover:bg-cyan-500/20 transition-all text-xs uppercase tracking-widest"
       >
         👁️ Vista Previa
       </Link>

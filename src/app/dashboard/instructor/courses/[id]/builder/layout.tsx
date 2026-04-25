@@ -93,8 +93,8 @@ export default function BuilderLayout({ children }: { children: React.ReactNode 
                 {(() => {
                     const firstLessonId = course.modules?.[0]?.lessons?.[0]?.id || course.lessons?.[0]?.id;
                     const previewUrl = firstLessonId 
-                        ? `/dashboard/student/learn/${courseId}/lesson/${firstLessonId}?preview=true`
-                        : `/courses/${course.slug}?preview=true`;
+                        ? `/dashboard/instructor/courses/${courseId}/preview/lesson/${firstLessonId}`
+                        : `/dashboard/instructor/courses/${courseId}/preview`;
                     
                     return (
                         <Link 

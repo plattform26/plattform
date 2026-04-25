@@ -48,11 +48,18 @@ export async function POST(req: Request) {
     }
 
     // 1. Verificar si ya tiene suscripción activa o crear una nueva
+    // Priorizamos la ACTIVE si existe, de lo contrario la más reciente
     let sub = await prisma.instructorSubscription.findFirst({
-        where: { instructorId: instructorProfile.id }
+        where: { instructorId: instructorProfile.id },
+        orderBy: [
+          { status: 'asc' },   // ACTIVE precede a CANCELLED/EXPIRED alfabéticamente
+          { createdAt: 'desc' } // La más reciente en caso de empate
+        ]
     });
 
     if (!sub) {
+       // Si es primera vez, creamos el registro con el plan solicitado
+       // pero con status PAST_DUE hasta que el webhook confirme el pago.
        sub = await prisma.instructorSubscription.create({
          data: {
            instructorId: instructorProfile.id,
@@ -62,11 +69,10 @@ export async function POST(req: Request) {
          }
        });
     } else {
-        // Si ya existe, actualizamos el plan objetivo
-        sub = await prisma.instructorSubscription.update({
-            where: { id: sub.id },
-            data: { planId: platformPlan.id }
-        });
+        // SEGURIDAD: Si ya existe una suscripción (especialmente si está ACTIVE),
+        // NO sobrescribimos el planId aquí. El cambio de plan solo debe ocurrir
+        // en el webhook tras la validación del pago. 
+        // El planId solicitado viaja en los metadatos de Stripe (línea 114).
     }
 
     // 2. Crear Stripe Customer si no tiene
@@ -110,6 +116,7 @@ export async function POST(req: Request) {
       success_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?success=true`,
       cancel_url: `${process.env.NEXTAUTH_URL}/dashboard/instructor/plan?canceled=true`,
       metadata: {
+        userId: session.userId,
         instructorSubscriptionId: sub.id,
         planId: platformPlan.id,
         transactionType: 'INSTRUCTOR_SUBSCRIPTION',

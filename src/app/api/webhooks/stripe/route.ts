@@ -45,9 +45,17 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as any;
         const metadata = session.metadata;
-        const userId = metadata.userId;
+        let userId = metadata.userId;
 
-        if (!userId) throw new Error('Missing userId in metadata');
+        if (!userId) {
+          // Fallback para sesiones legacy o de instructor sin userId en metadatos
+          const sub = await prisma.instructorSubscription.findUnique({
+            where: { id: metadata.instructorSubscriptionId },
+            include: { instructor: true }
+          });
+          if (!sub) throw new Error('Cannot resolve userId: metadata.userId missing and subscription not found');
+          userId = sub.instructor.userId;
+        }
 
         const url = session.success_url ? new URL(session.success_url).origin : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL);
 
@@ -165,18 +173,38 @@ export async function POST(req: Request) {
           }
 
           const now = new Date();
-          let expiresAt = new Date();
+          let expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Default +30 días
           if (session.subscription) {
             const stripeSub = await stripe.subscriptions.retrieve(session.subscription as string) as any;
-            expiresAt = new Date(stripeSub.current_period_end * 1000);
+            const periodEnd = stripeSub.current_period_end ?? stripeSub.items?.data?.[0]?.current_period_end;
+            const calculatedDate = periodEnd ? new Date(periodEnd * 1000) : null;
+            
+            expiresAt = (calculatedDate && !isNaN(calculatedDate.getTime()))
+              ? calculatedDate
+              : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Fallback seguro
           }
 
           await prisma.$transaction(async (tx) => {
-            await tx.instructorSubscription.updateMany({ where: { instructorId: profile!.id, status: 'ACTIVE' }, data: { status: 'EXPIRED', expiresAt: now } });
-            
+            // 1. Validación y Fallback de ID de Suscripción (Soporte para sesiones legacy)
             if (!metadata.instructorSubscriptionId) {
-              throw new Error('Missing instructorSubscriptionId in metadata for INSTRUCTOR_SUBSCRIPTION');
+              const activeSub = await tx.instructorSubscription.findFirst({
+                where: { instructorId: profile!.id, status: 'ACTIVE' }
+              });
+              if (!activeSub) {
+                throw new Error('Missing instructorSubscriptionId in metadata and no active subscription found');
+              }
+              metadata.instructorSubscriptionId = activeSub.id;
             }
+
+            // 2. SEGURIDAD: Expiramos cualquier OTRA suscripción activa, pero NO la que estamos procesando.
+            await tx.instructorSubscription.updateMany({ 
+              where: { 
+                instructorId: profile!.id, 
+                status: 'ACTIVE',
+                NOT: { id: metadata.instructorSubscriptionId as string } 
+              }, 
+              data: { status: 'EXPIRED', expiresAt: now } 
+            });
 
             await tx.instructorSubscription.upsert({
               where: { id: metadata.instructorSubscriptionId },
