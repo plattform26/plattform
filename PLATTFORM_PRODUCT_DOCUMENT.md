@@ -97,13 +97,18 @@ Estructura relacional optimizada para integridad y auditoría:
 ## 7. Modelo de Negocio
 
 ### Planes de Plataforma (`PlatformPlan`)
-*   **Starter**: Límites básicos para nuevos creadores.
-*   **Growth**: Aumenta límites de alumnos y activa IA.
-*   **Scale**: Límites extendidos y soporte prioritario.
-*   *Nota: Los precios y límites específicos son configurables dinámicamente en la base de datos.*
+
+| Plan | Precio | Límite de Alumnos | IA | Comisión |
+|---|---|---|---|---|
+| Starter | $199 MXN/mes | Hasta 20 alumnos | No incluida | 15% por venta |
+| Growth | $299 MXN/mes | Hasta 100 alumnos | No incluida | 10% por venta |
+| Scale | $999 MXN/mes | Ilimitados | Kit completo IA Powerhouse | 7% por venta |
+
+> [!NOTE]
+> Solo el plan Scale incluye acceso a las funciones de generación de cursos con IA.
 
 ### Comisiones
-La plataforma retiene un porcentaje de cada venta gestionada (`platformCommissionAmount`). Este porcentaje se define por plan (ej. 15%) y se calcula automáticamente en cada transacción exitosa.
+La plataforma retiene un porcentaje de cada venta gestionada (`platformCommissionAmount`). Este porcentaje se define por plan y se calcula automáticamente en cada transacción exitosa.
 
 ---
 
