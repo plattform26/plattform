@@ -6,6 +6,7 @@ import {
   sendCertificateEmail, 
   sendFinalExamPassNoticeToAdmin 
 } from '@/lib/mail';
+import { quizAttemptSchema } from '@/lib/validations/profiles';
 
 export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -16,8 +17,16 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     }
 
     const body = await req.json();
-    console.log('DEBUG: Quiz Attempt Payload:', body);
-    const { answers, courseId: bodyCourseId } = body;
+    const validation = quizAttemptSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { answers, courseId: bodyCourseId } = validation.data;
 
     const quiz = await prisma.quiz.findUnique({
       where: { id: params.id },

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { adminManagePlanSchema } from '@/lib/validations/admin';
 
 export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -10,7 +11,17 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planId } = await req.json(); // planId here is the 'name' field: starter, growth, scale
+    const body = await req.json();
+    const validation = adminManagePlanSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { planId } = validation.data; // planId here is the 'name' field: starter, growth, scale
 
     const instructorProfileId = params.id;
 

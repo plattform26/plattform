@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { studentUpdateProfileSchema } from '@/lib/validations/profiles';
 
 export async function PATCH(req: NextRequest) {
   const session = await getSession();
@@ -9,11 +10,17 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { name, lastName } = await req.json();
+    const body = await req.json();
+    const validation = studentUpdateProfileSchema.safeParse(body);
 
-    if (!name || !lastName) {
-      return NextResponse.json({ error: 'Nombre y apellidos son obligatorios' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { name, lastName } = validation.data;
 
     const updatedUser = await prisma.user.update({
       where: { id: session.userId },

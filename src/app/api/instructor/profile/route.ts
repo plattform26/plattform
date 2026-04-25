@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { instructorUpdateProfileSchema } from '@/lib/validations/profiles';
 
 export async function GET() {
   try {
@@ -36,7 +37,16 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { academyName, slug, description, institution, logoUrl, bannerUrl, linkedinUrl, specialty } = body;
+    const validation = instructorUpdateProfileSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { academyName, slug, description, institution, logoUrl, bannerUrl, linkedinUrl, specialty } = validation.data;
 
     if (slug) {
       // Check slug uniqueness

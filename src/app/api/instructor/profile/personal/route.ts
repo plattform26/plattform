@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { instructorUpdatePersonalSchema } from '@/lib/validations/profiles';
 
 export async function PATCH(req: Request) {
   try {
@@ -9,7 +10,17 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, lastName, email, specialty } = await req.json();
+    const body = await req.json();
+    const validation = instructorUpdatePersonalSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { name, lastName, email, specialty } = validation.data;
 
     // Actualización ultra-segura usando el cliente de Prisma (Sin SQL Raw)
     const updatedUser = await prisma.user.update({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
+import { adminManualEnrollmentSchema } from '@/lib/validations/admin';
 
 /**
  * POST /api/admin/enrollments/manual
@@ -14,11 +15,17 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { email, name, lastName, courseId, reason, notes } = await req.json();
+    const body = await req.json();
+    const validation = adminManualEnrollmentSchema.safeParse(body);
 
-    if (!email || !courseId) {
-      return NextResponse.json({ error: 'Email y Curso son requeridos' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { email, name, lastName, courseId, reason, notes } = validation.data;
 
     // 1. Buscar o Crear Alumno
     let student = await prisma.user.findUnique({ where: { email } });

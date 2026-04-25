@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import { sendInstructorApprovalEmail } from '@/lib/mail';
+import { adminUpdateUserSchema } from '@/lib/validations/admin';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -69,11 +70,21 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
+    const body = await req.json();
+    const validation = adminUpdateUserSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
     const { 
         name, lastName, email, specialty, role, password, status, 
         academyName, slug, description, institution, logoUrl, linkedinUrl,
         isCourtesy, courtesyPlanId
-    } = await req.json();
+    } = validation.data;
 
     console.log(`🔍 [ADMIN_PATCH] Iniciando actualización segmentada para ID: ${params.id}`);
 

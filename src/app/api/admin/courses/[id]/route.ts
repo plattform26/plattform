@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { adminUpdateCourseSchema } from '@/lib/validations/admin';
 
 /**
  * PATCH /api/admin/courses/[id]
@@ -15,7 +16,17 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
 
   const { id } = params;
   try {
-    const { status } = await req.json(); // PUBLISHED, HIBERNATED, ARCHIVED
+    const body = await req.json();
+    const validation = adminUpdateCourseSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const { status } = validation.data; // PUBLISHED, HIBERNATED, ARCHIVED
 
     const course = await prisma.course.update({
       where: { id },

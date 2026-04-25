@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/mail';
+import { adminCreateUserSchema } from '@/lib/validations/admin';
 
 /**
  * GET /api/admin/users
@@ -106,11 +107,17 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { name, lastName, email, password, role } = await req.json();
+    const body = await req.json();
+    const validation = adminCreateUserSchema.safeParse(body);
 
-    if (!name || !email || !password || !role) {
-      return NextResponse.json({ error: 'Campos obligatorios faltantes' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
     }
+
+    const { name, lastName, email, password, role } = validation.data;
 
     // Identificar si ya existe
     const existing = await prisma.user.findUnique({ where: { email } });
