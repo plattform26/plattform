@@ -86,3 +86,16 @@ export const syncQuizSchema = z.object({
     points: z.number().min(0).max(100),
   })).min(1, 'El examen debe tener al menos una pregunta'),
 }).strict();
+
+export const updateCourseSchema = z.object({
+  title: z.string().min(1, 'El título no puede estar vacío').max(200).optional(),
+  description: z.string().max(10000).optional().nullable(),
+  category: z.string().max(100).optional().nullable(),
+  level: z.string().max(50).optional().nullable(),
+  price: z.coerce.number().min(0, 'El precio no puede ser negativo').optional(),
+  durationHours: z.coerce.number().min(0).optional(),
+  thumbnailUrl: z.string().url('URL de miniatura inválida').optional().nullable(),
+  previewText: z.string().max(500).optional().nullable(),
+  visibility: z.enum(['PUBLIC', 'PRIVATE']).optional(),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'HIBERNATED', 'ARCHIVED']).optional(),
+}).strict();

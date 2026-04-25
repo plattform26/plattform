@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { isCourseLocked } from '@/lib/course-protection';
+import { updateCourseSchema } from '@/lib/validations/courses';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -80,7 +81,17 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    const bodyRaw = await req.json();
+    const validation = updateCourseSchema.safeParse(bodyRaw);
+
+    if (!validation.success) {
+      return NextResponse.json({ 
+        error: 'Datos inválidos', 
+        details: validation.error.format() 
+      }, { status: 400 });
+    }
+
+    const body = validation.data;
 
     const where: any = { id: params.id, deletedAt: null };
     if (session.role !== 'ADMIN') {
