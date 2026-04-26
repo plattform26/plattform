@@ -25,6 +25,13 @@ export default function ProfilePage(
     const [savedMsg, setSavedMsg] = useState('');
     const [showPasswordModal, setShowPasswordModal] = useState(false);
 
+    const [modal, setModal] = useState<{
+      type: 'alert' | 'confirm';
+      title: string;
+      message: string;
+      onConfirm?: () => void;
+    } | null>(null);
+
     const slugify = (text: string) => {
       return text
         .toString()
@@ -103,35 +110,7 @@ export default function ProfilePage(
       setTimeout(() => setSavedMsg(''), 3000);
     };
 
-    const handleSaveChanges = async () => {
-      // 1. Validar academyName requerido
-      if (!academyForm.academyName?.trim()) {
-        alert('El nombre de la academia es requerido.');
-        return;
-      }
-
-      // 2. Validar LinkedIn — solo vacío o URL de LinkedIn válida
-      const linkedinVal = academyForm.linkedinUrl?.trim();
-      if (linkedinVal && !/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/.test(linkedinVal)) {
-        alert('El campo LinkedIn debe ser una URL válida de LinkedIn (https://linkedin.com/in/tu-perfil) o dejarse vacío.');
-        return;
-      }
-
-      // 3. Alertas de campos opcionales vacíos
-      const camposVacios = [];
-      if (!personalForm.specialty?.trim()) camposVacios.push('Especialidad Profesional');
-      if (!linkedinVal) camposVacios.push('LinkedIn');
-      if (!academyForm.institution?.trim()) camposVacios.push('Institución/Universidad');
-      if (!academyForm.description?.trim()) camposVacios.push('Misión y Visión');
-
-      if (camposVacios.length > 0) {
-        const continuar = window.confirm(
-          `Los siguientes campos están vacíos:\n\n• ${camposVacios.join('\n• ')}\n\nTe recomendamos llenarlos para tener un perfil más completo para tus alumnos.\n\n¿Deseas guardar de todas formas?`
-        );
-        if (!continuar) return;
-      }
-
-      // 4. Proceder con el guardado normal
+    const ejecutarGuardado = async () => {
       setIsSaving(true);
       try {
           if (isAdminMode) {
@@ -185,10 +164,62 @@ export default function ProfilePage(
       }
     };
 
+    const handleSaveChanges = async () => {
+      // 1. Validar academyName requerido
+      if (!academyForm.academyName?.trim()) {
+        setModal({
+          type: 'alert',
+          title: 'Campo requerido',
+          message: 'El nombre de la academia es requerido para continuar.',
+        });
+        return;
+      }
+
+      // 2. Validar LinkedIn — solo vacío o URL de LinkedIn válida
+      const linkedinVal = academyForm.linkedinUrl?.trim();
+      if (linkedinVal && !/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/.test(linkedinVal)) {
+        setModal({
+          type: 'alert',
+          title: 'LinkedIn Inválido',
+          message: 'El campo LinkedIn debe ser una URL válida de LinkedIn (https://linkedin.com/in/tu-perfil) o dejarse vacío.',
+        });
+        return;
+      }
+
+      // 3. Alertas de campos opcionales vacíos
+      const camposVacios = [];
+      if (!personalForm.specialty?.trim()) camposVacios.push('Especialidad Profesional');
+      if (!linkedinVal) camposVacios.push('LinkedIn');
+      if (!academyForm.institution?.trim()) camposVacios.push('Institución/Universidad');
+      if (!academyForm.description?.trim()) camposVacios.push('Misión y Visión');
+
+      if (camposVacios.length > 0) {
+        setModal({
+          type: 'confirm',
+          title: 'Campos sin completar',
+          message: `Los siguientes campos están vacíos:\n\n• ${camposVacios.join('\n• ')}\n\nTe recomendamos llenarlos para tener un perfil más completo para tus alumnos.\n\n¿Deseas guardar de todas formas?`,
+          onConfirm: () => {
+            ejecutarGuardado();
+          }
+        });
+        return;
+      }
+
+      // 4. Proceder con el guardado normal
+      ejecutarGuardado();
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) { alert('Máximo 2MB'); return; }
+      if (file.size > 2 * 1024 * 1024) { 
+        setModal({
+          type: 'alert',
+          title: 'Archivo demasiado grande',
+          message: 'El tamaño máximo permitido para la imagen es de 2MB.',
+        });
+        return; 
+      }
       
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -369,6 +400,35 @@ export default function ProfilePage(
               isAdminMode={isAdminMode}
               targetUserId={impersonateId}
             />
+        )}
+
+        {/* CUSTOM NOTIFICATION MODAL */}
+        {modal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-fade-in p-4">
+            <div className="bg-[#0d1524] border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl shadow-black/50">
+              <h3 className="text-white font-space-grotesk font-black text-xl mb-3 uppercase tracking-tight">{modal.title}</h3>
+              <p className="text-gray-400 text-sm mb-8 leading-relaxed whitespace-pre-line font-medium">{modal.message}</p>
+              <div className="flex gap-3 justify-end">
+                {modal.type === 'confirm' && (
+                  <button
+                    onClick={() => setModal(null)}
+                    className="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                  >
+                    Cancelar
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    if (modal.onConfirm) modal.onConfirm();
+                    setModal(null);
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-cyan-500 text-black font-black text-[10px] uppercase tracking-widest hover:bg-cyan-400 hover:scale-105 transition-all shadow-lg shadow-cyan-500/20"
+                >
+                  {modal.type === 'confirm' ? 'Guardar de todas formas' : 'Entendido'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
