@@ -7,12 +7,17 @@ export const studentUpdateProfileSchema = z.object({
 
 export const instructorUpdateProfileSchema = z.object({
   academyName: z.string().min(1, 'Nombre de academia requerido').max(200).optional(),
-  slug: z.string().min(3).max(100).regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones').optional(),
+  slug: z.string().min(3).max(100).regex(/^[a-z0-9-]+$/).optional(),
   description: z.string().max(5000).optional().nullable(),
   institution: z.string().max(200).optional().nullable(),
-  logoUrl: z.string().url('URL de logo inválida').optional().nullable(),
-  bannerUrl: z.string().url('URL de banner inválida').optional().nullable(),
-  linkedinUrl: z.string().url('URL de LinkedIn inválida').optional().nullable(),
+  logoUrl: z.string().url().optional().nullable(),
+  bannerUrl: z.string().url().optional().nullable(),
+  linkedinUrl: z.string()
+    .refine(
+      val => !val || val === '' || /^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/.test(val),
+      { message: 'Debe ser un perfil válido de LinkedIn (https://linkedin.com/in/tu-perfil)' }
+    )
+    .optional().nullable(),
   specialty: z.string().max(200).optional().nullable(),
 }).strict();
 

@@ -104,6 +104,34 @@ export default function ProfilePage(
     };
 
     const handleSaveChanges = async () => {
+      // 1. Validar academyName requerido
+      if (!academyForm.academyName?.trim()) {
+        alert('El nombre de la academia es requerido.');
+        return;
+      }
+
+      // 2. Validar LinkedIn — solo vacío o URL de LinkedIn válida
+      const linkedinVal = academyForm.linkedinUrl?.trim();
+      if (linkedinVal && !/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/.test(linkedinVal)) {
+        alert('El campo LinkedIn debe ser una URL válida de LinkedIn (https://linkedin.com/in/tu-perfil) o dejarse vacío.');
+        return;
+      }
+
+      // 3. Alertas de campos opcionales vacíos
+      const camposVacios = [];
+      if (!personalForm.specialty?.trim()) camposVacios.push('Especialidad Profesional');
+      if (!linkedinVal) camposVacios.push('LinkedIn');
+      if (!academyForm.institution?.trim()) camposVacios.push('Institución/Universidad');
+      if (!academyForm.description?.trim()) camposVacios.push('Misión y Visión');
+
+      if (camposVacios.length > 0) {
+        const continuar = window.confirm(
+          `Los siguientes campos están vacíos:\n\n• ${camposVacios.join('\n• ')}\n\nTe recomendamos llenarlos para tener un perfil más completo para tus alumnos.\n\n¿Deseas guardar de todas formas?`
+        );
+        if (!continuar) return;
+      }
+
+      // 4. Proceder con el guardado normal
       setIsSaving(true);
       try {
           if (isAdminMode) {
