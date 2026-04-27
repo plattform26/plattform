@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { exportToCSV } from '@/lib/export-utils';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function AdminRevenueCommissionsPage() {
   const now = new Date();
@@ -173,7 +174,7 @@ export default function AdminRevenueCommissionsPage() {
                 <p className="text-xs font-bold text-gray-500 tracking-wide mb-1">Comisiones Netas</p>
                 <div className="flex flex-col items-center justify-center py-4">
                    <p className="text-5xl font-black text-white tracking-tighter italic animate-in fade-in zoom-in duration-700" suppressHydrationWarning>
-                     ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.totalCommissions)}
+                     {formatMXN(data.metrics.totalCommissions)}
                    </p>
                    
                    {!data.metrics.isHistorical && (
@@ -201,7 +202,7 @@ export default function AdminRevenueCommissionsPage() {
              <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Total Bruto Transaccionado</p>
              <div className="flex flex-col items-center">
                 <p className="text-4xl font-bold text-gray-300 tracking-tighter italic" suppressHydrationWarning>
-                   ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.totalGross)}
+                   {formatMXN(data.metrics.totalGross)}
                 </p>
                 <p className="text-[9px] text-gray-600 mt-2 uppercase tracking-[0.2em] font-bold font-mono">Volumen Operativo</p>
              </div>
@@ -214,7 +215,7 @@ export default function AdminRevenueCommissionsPage() {
              <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Promedio por Venta</p>
              <div className="flex flex-col items-center">
                 <p className="text-4xl font-bold text-emerald-400 tracking-tighter italic" suppressHydrationWarning>
-                   ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.averageSale)}
+                   {formatMXN(data.metrics.averageSale)}
                 </p>
                 <p className="text-[9px] text-emerald-500/40 mt-2 uppercase tracking-[0.1em] font-bold">{data.metrics.salesCount} ops exitosas</p>
              </div>
@@ -265,7 +266,7 @@ export default function AdminRevenueCommissionsPage() {
                             </span>
                          </td>
                          <td className="p-6 font-mono text-gray-300 font-bold" suppressHydrationWarning>
-                            ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(comm.grossAmount || 0)}
+                            {formatMXN(comm.grossAmount)}
                          </td>
                          <td className="p-6 text-center bg-cyan-500/5">
                             <span className="text-[10px] font-black text-cyan-400">
@@ -275,7 +276,7 @@ export default function AdminRevenueCommissionsPage() {
                          <td className="p-6">
                             <div className="flex flex-col">
                                <span className="font-black text-xl text-white tracking-tighter" suppressHydrationWarning>
-                                 ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(comm.platformCommission || 0)}
+                                 {formatMXN(comm.platformCommission)}
                                </span>
                                <span className="text-[8px] text-cyan-500/40 uppercase tracking-[0.2em] font-black leading-none mt-1">SaaS Fee Retenido</span>
                             </div>
@@ -283,7 +284,7 @@ export default function AdminRevenueCommissionsPage() {
                          <td className="p-6">
                             <div className="flex flex-col">
                                <span className="font-black text-xl text-emerald-400 tracking-tighter" suppressHydrationWarning>
-                                 ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(comm.netAmount || 0)}
+                                 {formatMXN(comm.netAmount)}
                                </span>
                                <span className="text-[8px] text-emerald-500/40 uppercase tracking-[0.1em] font-black mt-1">Dispersión Automática</span>
                             </div>
@@ -332,10 +333,10 @@ export default function AdminRevenueCommissionsPage() {
                                                 </td>
                                                 <td className="p-4 text-center text-gray-500 font-mono">{new Date(t.createdAt).toLocaleDateString()}</td>
                                                 <td className="p-4 text-center text-white font-mono" suppressHydrationWarning>
-                                                   ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(t.amount)}
+                                                   {formatMXN(t.amount)}
                                                 </td>
                                                 <td className="p-4 text-center text-cyan-500 font-mono" suppressHydrationWarning>
-                                                   -${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(t.commission)}
+                                                   -{formatMXN(t.commission)}
                                                 </td>
                                                 <td className="p-4 text-right">
                                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded border ${t.status === 'PUBLISHED' ? 'border-emerald-500/30 text-emerald-400 bg-emerald-500/5' : 'border-gray-500/30 text-gray-400 bg-gray-500/5'}`}>

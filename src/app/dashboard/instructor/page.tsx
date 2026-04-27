@@ -5,6 +5,7 @@ import Link from 'next/link';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
 import StarRating from '@/components/StarRating';
 import NewCourseButton from '@/components/dashboard/NewCourseButton';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default async function InstructorDashboardPage() {
   const session = await getSession();
@@ -202,7 +203,7 @@ export default async function InstructorDashboardPage() {
         <div className="bg-[#152035] border border-blue-500/20 rounded-2xl p-5 hover:border-blue-500/40 hover:-translate-y-1 transition-all">
           <div className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wide">💰 Ingresos (mes)</div>
           <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(monthlyEarnings)}
+            {formatMXN(monthlyEarnings)}
           </div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 rounded-2xl p-5 hover:border-blue-500/40 hover:-translate-y-1 transition-all">

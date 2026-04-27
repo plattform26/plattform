@@ -7,6 +7,7 @@ import { getEffectivePlan } from '@/lib/plan-utils';
 import CourseActionsClient from '@/components/dashboard/CourseActionsClient';
 import StarRating from '@/components/StarRating';
 import NewCourseButton from '@/components/dashboard/NewCourseButton';
+import { formatMXN } from '@/lib/utils/currency';
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   PUBLISHED: { label: 'PUBLICADO', cls: 'text-green-400 bg-green-400/10 border border-green-400/20' },
@@ -116,7 +117,7 @@ export default async function InstructorCoursesPage() {
                         );
                       })()}
                     </td>
-                    <td className="px-6 py-4 text-gray-300 font-semibold">${Number(c.price).toLocaleString('es-MX')}</td>
+                    <td className="px-6 py-4 text-gray-300 font-semibold">{formatMXN(c.price)}</td>
                     <td className="px-6 py-4">
                       <CourseActionsClient 
                         courseId={c.id} 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import StarRating from '@/components/StarRating';
 import AcademyNavbar from '@/components/AcademyNavbar';
 import { getSession } from '@/lib/auth';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default async function InstructorProfile(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
@@ -229,7 +230,7 @@ export default async function InstructorProfile(props: { params: Promise<{ slug:
                                       <div className="flex flex-col">
                                           <span className="text-[8px] font-black text-gray-600 uppercase tracking-tighter">INVERSIÓN</span>
                                           <span className="text-xl font-black text-white leading-none">
-                                              {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(course.price)}
+                                              {formatMXN(course.price)}
                                           </span>
                                       </div>
                                       <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center text-sm group-hover:bg-cyan-500 group-hover:text-white transition-all transform group-hover:translate-x-1">

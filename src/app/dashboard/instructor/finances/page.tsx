@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { formatMXN } from '@/lib/utils/currency';
 
 function FinancesContent() {
   const searchParams = useSearchParams();
@@ -129,15 +130,15 @@ function FinancesContent() {
             </div>
             <div className="bg-[#161b22] border border-white/5 p-10 rounded-[3rem] shadow-3xl">
                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-4 italic">Ventas Brutas</p>
-                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">${totalSales.toLocaleString()}</h2>
+                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">{formatMXN(totalSales)}</h2>
             </div>
             <div className="bg-[#161b22] border border-white/5 p-10 rounded-[3rem] shadow-3xl">
                 <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-4 italic">Renta Mensual</p>
-                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">${monthlyRent.toLocaleString()}</h2>
+                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">{formatMXN(monthlyRent)}</h2>
             </div>
             <div className="bg-[#0d1524] border border-cyan-500/20 p-10 rounded-[3rem] shadow-2xl">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Utilidad Neta</p>
-                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">${netEarnings.toLocaleString()}</h2>
+                <h2 className="text-5xl font-space-grotesk font-black text-white tracking-tighter italic">{formatMXN(netEarnings)}</h2>
             </div>
         </div>
 
@@ -159,7 +160,7 @@ function FinancesContent() {
                                 <td className="py-6 text-[10px] text-gray-400 font-bold">{new Date(t.createdAt).toLocaleDateString()}</td>
                                 <td className="py-6 text-[10px] text-white font-bold">{t.user.name} {t.user.lastName}</td>
                                 <td className="py-6 text-[10px] text-gray-400 italic">{t.course?.title || 'N/A'}</td>
-                                <td className="py-6 text-right text-[11px] font-black text-cyan-400">${(Number(t.grossAmount) - Number(t.platformCommissionAmount)).toLocaleString()}</td>
+                                <td className="py-6 text-right text-[11px] font-black text-cyan-400">{formatMXN(Number(t.grossAmount) - Number(t.platformCommissionAmount))}</td>
                             </tr>
                         ))}
                     </tbody>

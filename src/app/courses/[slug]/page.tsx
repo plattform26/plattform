@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { Clock } from 'lucide-react';
+import { formatMXN } from '@/lib/utils/currency';
 
 // Componente SSR que recupera el curso
 export default async function CourseDetail(props: { params: Promise<{ slug: string }> }) {
@@ -143,7 +144,7 @@ export default async function CourseDetail(props: { params: Promise<{ slug: stri
           <div className="lg:hidden bg-[#152035] border border-blue-500/20 rounded-2xl p-6 mb-8">
              <div className="flex items-center justify-between mb-4">
                 <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  ${course.price} <span className="text-xs text-slate-400 font-normal">MXN</span>
+                  {formatMXN(course.price)}
                 </div>
                 <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest bg-cyan-400/10 px-2 py-1 rounded border border-cyan-400/20">Acceso Inmediato</div>
              </div>
@@ -155,7 +156,7 @@ export default async function CourseDetail(props: { params: Promise<{ slug: stri
                   : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-blue-500/30'
                 }`}
               >
-                {isEnrolled ? 'Ir al aula →' : `Comprar por $${course.price} →`}
+                {isEnrolled ? 'Ir al aula →' : `Comprar por ${formatMXN(course.price)} →`}
               </Link>
           </div>
 
@@ -244,7 +245,7 @@ export default async function CourseDetail(props: { params: Promise<{ slug: stri
             </div>
             
               <div className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-1">
-                ${course.price}
+                {formatMXN(course.price)}
               </div>
               <div className="text-xs text-slate-400 mb-6">Precios en MXN, impuestos incluidos.</div>
 
@@ -260,7 +261,7 @@ export default async function CourseDetail(props: { params: Promise<{ slug: stri
                 href={checkoutUrl}
                 className="w-full py-4 text-center text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl shadow-[0_4px_15px_rgba(59,130,246,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_25px_rgba(59,130,246,0.5)] transition-all flex items-center justify-center gap-2 mb-4"
               >
-                Comprar este curso por ${course.price} MXN →
+                Comprar este curso por {formatMXN(course.price)} →
               </Link>
             )}
 

@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default async function AdminDashboardSummaryPage() {
   // Obtener KPIs en servidores para el renderizado inicial veloz
@@ -112,7 +113,7 @@ export default async function AdminDashboardSummaryPage() {
           <div className="bg-gradient-to-br from-[#1a2f55] to-[#0a1f44] border border-cyan-500/20 p-8 rounded-3xl shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
              <div className="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-4">Ingresos Plattform (Mes)</div>
              <div className="flex items-end justify-between">
-                 <div className="text-4xl font-extrabold text-white">${totalPlatformIncome.toLocaleString()}</div>
+                 <div className="text-4xl font-extrabold text-white">{formatMXN(totalPlatformIncome)}</div>
                 <div className="text-[10px] text-gray-400 uppercase">MXN</div>
              </div>
           </div>
@@ -155,7 +156,7 @@ export default async function AdminDashboardSummaryPage() {
                    <div key={i} className="space-y-2">
                       <div className="flex justify-between items-center text-sm">
                          <span className="font-bold text-white">{ins.name}</span>
-                         <span className="text-cyan-400 font-bold">${ins.total.toLocaleString()} MXN</span>
+                         <span className="text-cyan-400 font-bold">{formatMXN(ins.total)}</span>
                       </div>
                       <div className="h-2 w-full bg-blue-900/30 rounded-full overflow-hidden">
                          <div 

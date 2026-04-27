@@ -2,6 +2,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { formatMXN, formatAmount } from '@/lib/utils/currency';
 
 export default function AdminUserDetailPage(props: { params: Promise<{ id: string }> }) {
     const params = use(props.params);
@@ -344,9 +345,9 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
                             {user?.role === 'INSTRUCTOR' ? 'Rentabilidad Generada' : 'Inversión Total'}
                          </p>
                          <p className="text-2xl font-black text-white font-mono">
-                            ${user?.role === 'INSTRUCTOR' 
-                               ? (user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.netAmountToInstructor || 0), 0) || 0).toLocaleString()
-                               : (user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.grossAmount || 0), 0) || 0).toLocaleString()
+                            {user?.role === 'INSTRUCTOR' 
+                               ? formatAmount(user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.netAmountToInstructor || 0), 0) || 0)
+                               : formatAmount(user?.transactions?.reduce((acc: number, t: any) => acc + Number(t.grossAmount || 0), 0) || 0)
                             } <span className="text-xs text-gray-500">MXN</span>
                          </p>
                       </div>
@@ -371,7 +372,7 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
                                       </td>
                                       <td className="p-4 text-xs text-gray-500 font-mono">{new Date(tx.createdAt).toLocaleDateString()}</td>
                                       <td className="p-4">
-                                          <p className="text-xs font-black text-white">${Number(tx.grossAmount).toLocaleString()}</p>
+                                          <p className="text-xs font-black text-white">{formatMXN(tx.grossAmount)}</p>
                                       </td>
                                       <td className="p-4 text-right">
                                           <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border ${tx.paymentStatus === 'SUCCESS' ? 'text-green-400 border-green-500/20' : 'text-red-400 border-red-500/20'}`}>{tx.paymentStatus}</span>
@@ -425,7 +426,7 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
                                           </span>
                                       </td>
                                       <td className="p-4">
-                                          <p className="text-xs font-black text-white font-mono">${Number(record.amountPaid).toLocaleString()} <span className="text-[8px] text-gray-600">MXN</span></p>
+                                          <p className="text-xs font-black text-white font-mono">{formatAmount(record.amountPaid)} <span className="text-[8px] text-gray-600">MXN</span></p>
                                       </td>
                                       <td className="p-4">
                                           <p className="text-[8px] text-gray-500 font-mono italic truncate w-32" title={record.stripeSubscriptionId}>
@@ -472,7 +473,7 @@ export default function AdminUserDetailPage(props: { params: Promise<{ id: strin
                                   </div>
                                   <div className="text-center md:text-right">
                                       <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest italic mb-1">Costo Unitario</p>
-                                      <p className="text-sm font-black text-white font-mono">${Number(course.price).toLocaleString()}</p>
+                                      <p className="text-sm font-black text-white font-mono">{formatMXN(course.price)}</p>
                                   </div>
                                   <button 
                                       onClick={() => alert('Moderación activa')}

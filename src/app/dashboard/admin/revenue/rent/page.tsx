@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { exportToCSV } from '@/lib/export-utils';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function AdminRevenueRentPage() {
   const now = new Date();
@@ -120,7 +121,7 @@ export default function AdminRevenueRentPage() {
            <div className="bg-[#0b1120] border border-cyan-500/20 p-8 rounded-3xl shadow-xl shadow-cyan-500/5 relative overflow-hidden group">
               <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Recaudación Seleccionada</p>
               <p className="text-4xl font-black text-white tracking-tighter italic animate-in fade-in slide-in-from-left duration-700" suppressHydrationWarning>
-                ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.rentThisMonth)}
+                {formatMXN(data.metrics.rentThisMonth)}
               </p>
               <div className="mt-4 h-1 w-12 bg-cyan-500 rounded-full"></div>
            </div>
@@ -128,7 +129,7 @@ export default function AdminRevenueRentPage() {
            <div className="bg-[#0b1120] border border-emerald-500/20 p-8 rounded-3xl shadow-xl shadow-emerald-500/5">
               <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Utilidad Neta (Plataforma)</p>
               <p className="text-3xl font-black text-emerald-400 tracking-tighter italic" suppressHydrationWarning>
-                ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.metrics.netRevenueThisMonth || 0)}
+                {formatMXN(data.metrics.netRevenueThisMonth || 0)}
               </p>
               <p className="text-[9px] text-gray-600 mt-2 uppercase">Tras Stripe MX Fee e IVA</p>
            </div>
@@ -177,7 +178,7 @@ export default function AdminRevenueRentPage() {
                          </span>
                       </td>
                       <td className="p-6 font-mono text-gray-300 font-bold" suppressHydrationWarning>
-                         ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(sub.plan.monthlyPrice))}
+                         {formatMXN(sub.plan.monthlyPrice)}
                       </td>
                       <td className="p-6">
                          <div className="flex flex-col gap-1.5 w-32">

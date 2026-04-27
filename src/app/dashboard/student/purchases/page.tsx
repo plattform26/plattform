@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default async function StudentPurchasesPage() {
   const session = await getSession();
@@ -63,7 +64,7 @@ export default async function StudentPurchasesPage() {
                     </td>
                     <td className="p-6 text-center">
                       <span className="text-xs font-black text-white bg-white/5 px-4 py-2 border border-white/5 rounded-xl group-hover:border-cyan-500/20 transition-all">
-                        ${Number(en.course?.price || 0).toLocaleString('es-MX')} {en.course?.currency || 'MXN'}
+                        {formatMXN(en.course?.price)}
                       </span>
                     </td>
                     <td className="p-6">

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { formatAmount } from '@/lib/utils/currency';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -181,13 +182,13 @@ export default function CoursesPage() {
                         <h3 className="font-bold text-base leading-tight mb-4 flex-1 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{course.title}</h3>
                      </Link>
 
-                    <div className="flex items-center justify-between mt-auto mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm text-yellow-400">★</span>
-                        <span className="text-xs text-slate-300 font-bold">{course.averageRating.toFixed(1)}</span>
+                      <div className="flex items-center justify-between mt-auto mb-6">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm text-yellow-400">★</span>
+                          <span className="text-xs text-slate-300 font-bold">{course.averageRating.toFixed(1)}</span>
+                        </div>
+                        <div className="font-black text-xl text-white tracking-tighter">${formatAmount(course.price)} <span className="text-[10px] text-slate-400">MXN</span></div>
                       </div>
-                      <div className="font-black text-xl text-white tracking-tighter">${course.price} <span className="text-[10px] text-slate-400">MXN</span></div>
-                    </div>
 
                     {isEnrolled ? (
                        <Link 

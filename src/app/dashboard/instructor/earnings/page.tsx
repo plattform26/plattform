@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import ExportEarningsButton from './ExportEarningsButton';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default async function InstructorEarningsPage(
   props: { 
@@ -127,23 +128,23 @@ export default async function InstructorEarningsPage(
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-[#152035] border border-blue-500/20 p-6 rounded-2xl">
           <div className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Venta Bruta</div>
-          <div className="text-3xl font-black text-white">${totalGross.toLocaleString('es-MX')}</div>
+          <div className="text-3xl font-black text-white">{formatMXN(totalGross)}</div>
           <div className="text-[10px] text-gray-500 mt-2 font-medium italic">Total pagado por alumnos</div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 p-6 rounded-2xl">
           <div className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Fee Plattform ({platformCommRate}%)</div>
-          <div className="text-3xl font-black text-white/40">${totalPlatformFee.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+          <div className="text-3xl font-black text-white/40">{formatMXN(totalPlatformFee)}</div>
           <div className="text-[10px] text-gray-500 mt-2 font-medium italic">Costo de infraestructura y soporte</div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 p-6 rounded-2xl">
           <div className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Renta del Plan</div>
-          <div className="text-3xl font-black text-white/40">${monthlyRent.toLocaleString('es-MX')}</div>
+          <div className="text-3xl font-black text-white/40">{formatMXN(monthlyRent)}</div>
           <div className="text-[10px] text-gray-500 mt-2 font-medium italic">Costo fijo: {activePlan?.displayName}</div>
         </div>
         <div className="bg-gradient-to-br from-cyan-600/20 to-blue-600/10 border border-cyan-500/40 p-6 rounded-2xl shadow-xl shadow-cyan-500/5 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform duration-500">💰</div>
           <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] mb-3">Utilidad Neta</div>
-          <div className="text-3xl font-black text-cyan-400">${totalNet.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+          <div className="text-3xl font-black text-cyan-400">{formatMXN(totalNet)}</div>
           <div className="text-[10px] text-cyan-500/60 mt-2 font-bold italic">Neto real tras Stripe MX e IVA</div>
         </div>
       </div>
@@ -158,7 +159,7 @@ export default async function InstructorEarningsPage(
                <div key={i} className="flex-1 flex flex-col items-center group">
                  <div className="relative w-full flex justify-center">
                     <div className="absolute -top-12 bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all -translate-y-2 group-hover:translate-y-0 whitespace-nowrap shadow-xl">
-                      ${data.total.toLocaleString()} MXN
+                      {formatMXN(data.total)}
                     </div>
                     <div 
                       className="w-full max-w-[44px] bg-gradient-to-t from-blue-600 via-cyan-500 to-blue-400 rounded-t-xl transition-all duration-700 shadow-lg shadow-cyan-500/10 group-hover:brightness-125"
@@ -205,13 +206,13 @@ export default async function InstructorEarningsPage(
                       <div className="font-black text-white uppercase tracking-tight">{t.user.name} {t.user.lastName}</div>
                       <div className="text-[10px] text-gray-500 font-medium">{t.course?.title}</div>
                     </td>
-                    <td className="px-8 py-5 text-right font-black text-gray-400">${t.gross.toLocaleString('es-MX')}</td>
+                    <td className="px-8 py-5 text-right font-black text-gray-400">{formatMXN(t.gross)}</td>
                     <td className="px-8 py-5 text-center">
                        <span className="px-2 py-1 rounded-md bg-white/5 border border-white/5 text-gray-500 font-black">{platformCommRate}%</span>
                     </td>
-                    <td className="px-8 py-5 text-right font-bold text-red-500/40">-${t.platformFee.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
-                    <td className="px-8 py-5 text-right font-bold text-gray-600">-${t.stripeFee.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
-                    <td className="px-8 py-5 text-right font-black text-cyan-400 text-sm italic">${t.net.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
+                    <td className="px-8 py-5 text-right font-bold text-red-500/40">-{formatMXN(t.platformFee)}</td>
+                    <td className="px-8 py-5 text-right font-bold text-gray-600">-{formatMXN(t.stripeFee)}</td>
+                    <td className="px-8 py-5 text-right font-black text-cyan-400 text-sm italic">{formatMXN(t.net)}</td>
                   </tr>
                 ))
               )}

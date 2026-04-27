@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { exportToCSV } from '@/lib/export-utils';
 import StarRating from '@/components/StarRating';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -289,7 +290,7 @@ export default function AdminCoursesPage() {
                           </div>
                        </td>
                        <td className="p-6">
-                          <span className="text-sm font-bold text-cyan-400/80">${Number(course.price).toLocaleString()}</span>
+                          <span className="text-sm font-bold text-cyan-400/80">{formatMXN(course.price)}</span>
                        </td>
                        <td className="p-6 text-right">
                           <div className="flex justify-end gap-2 flex-wrap max-w-[400px]">

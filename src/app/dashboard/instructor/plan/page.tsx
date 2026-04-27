@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { serialize } from '@/lib/utils';
 import PlanClient from './PlanClient';
+import { formatMXN } from '@/lib/utils/currency';
 
 const PLAN_ICONS: Record<string, string> = {
   starter: '🚀',
@@ -51,7 +52,7 @@ export default async function PlanPage() {
                 <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5">Plan actual</div>
                 <div className="text-xl font-bold text-white">{activeSub.plan.displayName}</div>
                 <div className="text-sm text-gray-400">
-                  ${Number(activeSub.plan.monthlyPrice).toLocaleString('es-MX')} MXN/mes · {Number(activeSub.plan.commissionRate)}% comisión
+                  {formatMXN(activeSub.plan.monthlyPrice)} /mes · {Number(activeSub.plan.commissionRate)}% comisión
                 </div>
               </div>
             </div>

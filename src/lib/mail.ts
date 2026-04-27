@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import prisma from './prisma';
+import { formatMXN } from './utils/currency';
 
 /**
  * Misión: Centralización e Infraestructura de Negocio (Fase 2)
@@ -183,7 +184,7 @@ export async function sendWithdrawalRequestToAdmin(instructorId: string, instruc
     html: getBaseTemplate(`
       <h1>Solicitud de pago recibida</h1>
       <p>El instructor <span class="highlight">${instructorName}</span> (${instructorId}) ha solicitado un retiro de sus comisiones.</p>
-      <p><strong>Monto solicitado:</strong> $${amount} MXN</p>
+      <p><strong>Monto solicitado:</strong> ${formatMXN(amount)}</p>
       <p>Email de contacto: ${email}</p>
       <a href="${url}/dashboard/admin/revenue/commissions" class="button">Gestionar Comisiones</a>
     `)
@@ -221,7 +222,7 @@ export async function sendSaleNotificationToAdmin(studentName: string, courseTit
       <p>El alumno <span class="highlight">${studentName}</span> ha comprado un curso.</p>
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 12px; margin: 24px 0;">
         <p><strong>Curso:</strong> ${courseTitle}</p>
-        <p><strong>Monto:</strong> $${amount} MXN</p>
+        <p><strong>Monto:</strong> ${formatMXN(amount)}</p>
         ${discountInfo ? `<p><strong>Descuento aplicado:</strong> ${discountInfo.code} (-${discountInfo.percent}%)</p>` : ''}
       </div>
       <a href="${url}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
@@ -254,7 +255,7 @@ export async function sendSubscriptionNotificationToAdmin(
       <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 16px; border-radius: 12px; margin: 24px 0;">
         <p><strong>Instructor:</strong> ${instructorName} (${instructorEmail})</p>
         <p><strong>Plan:</strong> ${planName}</p>
-        <p><strong>Monto:</strong> $${amount} MXN</p>
+        <p><strong>Monto:</strong> ${formatMXN(amount)}</p>
         <p><strong>Nueva Vigencia:</strong> ${formattedDate}</p>
       </div>
       <a href="${url}/dashboard/admin/users" class="button">Gestionar Usuarios</a>
@@ -478,7 +479,7 @@ export async function sendPaymentConfirmationEmail(email: string, name: string, 
       <h1>¡Ya tienes acceso, ${name}!</h1>
       <p>Tu inscripción a <strong>${courseTitle}</strong> ha sido exitosa.</p>
       <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; margin: 24px 0;">
-        <p><strong>Inversión:</strong> $${amount} MXN</p>
+        <p><strong>Inversión:</strong> ${formatMXN(amount)}</p>
         ${discountInfo ? `<p style="color: #059669; font-weight: 600;">Descuento aplicado: ${discountInfo.code} (-${discountInfo.percent}%)</p>` : ''}
       </div>
       <a href="${url}/dashboard/student/courses" class="button">Empezar a aprender</a>

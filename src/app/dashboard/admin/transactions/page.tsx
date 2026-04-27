@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { exportToCSV } from '@/lib/export-utils';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function AdminTransactionsPage() {
   const [txs, setTxs] = useState<any[]>([]);
@@ -91,8 +92,7 @@ export default function AdminTransactionsPage() {
                 <div className="text-right">
                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Volumen de Operación</p>
                    <div className="text-4xl md:text-5xl font-space-grotesk font-black text-[#00f2ff] drop-shadow-[0_0_15px_rgba(0,242,255,0.4)] animate-pulse">
-                      ${totalNeto.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                      <span className="text-sm font-light text-cyan-700 ml-2">MXN</span>
+                      {formatMXN(totalNeto)}
                    </div>
                 </div>
              </div>
@@ -194,11 +194,11 @@ export default function AdminTransactionsPage() {
                       </td>
                       <td className="p-6">
                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-white">${Number(tx.grossAmount).toLocaleString()}</p>
+                            <p className="text-sm font-bold text-white">{formatMXN(tx.grossAmount)}</p>
                             <div className="flex gap-2 text-[9px] font-bold uppercase tracking-widest">
-                               <span className="text-blue-400">PLAT: ${Number(tx.platformCommissionAmount).toLocaleString()}</span>
+                               <span className="text-blue-400">PLAT: {formatMXN(tx.platformCommissionAmount)}</span>
                                <span className="text-gray-500">|</span>
-                               <span className="text-green-400">INST: ${Number(tx.netAmountToInstructor).toLocaleString()}</span>
+                               <span className="text-green-400">INST: {formatMXN(tx.netAmountToInstructor)}</span>
                             </div>
                          </div>
                       </td>

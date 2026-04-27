@@ -1,6 +1,7 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function PlanClient({ 
   plans, 
@@ -102,7 +103,7 @@ export default function PlanClient({
               <div className="text-2xl mb-3">{PLAN_ICONS[plan.name] ?? '💎'}</div>
               <div className="text-lg font-bold text-white mb-1">{plan.displayName}</div>
               <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-1">
-                ${Number(plan.monthlyPrice).toLocaleString('es-MX')}
+                {formatMXN(plan.monthlyPrice)}
                 <span className="text-sm text-gray-500 ml-1">MXN/mes</span>
               </div>
               {isCurrent && expirationDate && (

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useBuilder } from './layout';
 import Link from 'next/link';
 import { sanitizePayload } from '@/lib/utils/sanitize';
+import { formatMXN } from '@/lib/utils/currency';
 
 export default function BuilderIndexPage() {
   const { course, refetch } = useBuilder();
@@ -127,7 +128,7 @@ export default function BuilderIndexPage() {
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Precio Lista</span>
-                        <span className="text-xl font-space-grotesk font-black text-white italic">${Number(course.price).toLocaleString()} MXN</span>
+                        <span className="text-xl font-space-grotesk font-black text-white italic">{formatMXN(course.price)}</span>
                     </div>
                 </div>
            </div>

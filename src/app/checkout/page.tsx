@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { formatMXN } from '@/lib/utils/currency';
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -177,17 +178,17 @@ function CheckoutContent() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>Precio base</span>
-                  <span>${originalPrice.toFixed(2)} MXN</span>
+                  <span>{formatMXN(originalPrice)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm text-green-400 italic">
                     <span>Descuento cupón</span>
-                    <span>-${discount.toFixed(2)} MXN</span>
+                    <span>-{formatMXN(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold pt-4 border-t border-blue-500/10">
                   <span>Total</span>
-                  <span className="text-cyan-400">${finalPrice.toFixed(2)} MXN</span>
+                  <span className="text-cyan-400">{formatMXN(finalPrice)}</span>
                 </div>
               </div>
 
