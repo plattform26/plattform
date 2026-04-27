@@ -10,13 +10,15 @@ export default function LessonClient({
   lessonId,
   prevLesson,
   nextLesson,
-  userRole
+  userRole,
+  canAccessQuiz
 }: {
   courseId: string;
   lessonId: string;
   prevLesson: { id: string; title: string } | null;
   nextLesson: { id: string; title: string } | null;
   userRole: string;
+  canAccessQuiz: boolean;
 }) {
   const { isLessonCompleted, toggleLesson } = useCourseProgress();
   const completed = isLessonCompleted(lessonId);
@@ -55,8 +57,6 @@ export default function LessonClient({
       setLoading(false);
     }
   };
-
-  const canAccessQuiz = completed || userRole === 'ADMIN';
 
   return (
     <div className="bg-[#0a1f44]/40 backdrop-blur-md border border-blue-500/10 rounded-3xl p-8 transition-all">

@@ -69,7 +69,10 @@ export default async function LessonPage(
   // Buscar lecciones anterior y siguiente
   const allLessons = await prisma.courseLesson.findMany({
     where: { courseId: params.id },
-    orderBy: { orderIndex: 'asc' },
+    orderBy: [
+      { module: { orderIndex: 'asc' } },
+      { orderIndex: 'asc' }
+    ],
     select: { id: true, title: true }
   });
 
@@ -83,6 +86,17 @@ export default async function LessonPage(
 
   const isCompleted = progressRecord?.completed || false;
   const isPreview = session.role === 'INSTRUCTOR';
+
+  // SHIELD: Validación de progreso 100% para examen final
+  const totalLessons = allLessons.length;
+  const completedLessonsCount = await prisma.progress.count({
+    where: {
+      userId: session.userId,
+      courseId: params.id,
+      completed: true
+    }
+  });
+  const canAccessFinalQuiz = (completedLessonsCount >= totalLessons) || session.role === 'ADMIN';
 
   return (
     <div className="relative">
@@ -203,6 +217,7 @@ export default async function LessonPage(
           prevLesson={prevLesson} 
           nextLesson={nextLesson}
           userRole={session.role}
+          canAccessQuiz={canAccessFinalQuiz}
         />
       </div>
       </div>
