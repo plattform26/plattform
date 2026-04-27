@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import UpgradePlanModal from '@/components/dashboard/UpgradePlanModal';
+import { sanitizePayload } from '@/lib/utils/sanitize';
 
 const CATEGORIES = [
   'STRATEGY_BUSINESS',
@@ -92,8 +93,8 @@ export default function EditCoursePage() {
           durationHours: d.durationHours ?? 0,
           category: d.category,
           level: d.level,
-          thumbnailUrl: d.thumbnailUrl ?? '',
-          previewText: d.previewText ?? '',
+          thumbnailUrl: d.thumbnailUrl ?? null,
+          previewText: d.previewText ?? null,
           visibility: d.visibility,
         });
       });
@@ -107,7 +108,7 @@ export default function EditCoursePage() {
       const res = await fetch(`/api/instructor/courses/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(sanitizePayload(form)),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -202,7 +203,7 @@ export default function EditCoursePage() {
     if (!validateForm()) return;
     setSaving(true);
     try {
-      router.push(`/dashboard/student/learn/${id}`);
+      router.push(`/dashboard/instructor/courses`);
     } catch (err: any) {
       toast.error(err.message);
       setSaving(false);
@@ -509,7 +510,7 @@ export default function EditCoursePage() {
             disabled={saving}
             className={`px-8 py-2.5 rounded-xl text-sm font-black text-white shadow-lg transition-all uppercase tracking-wider ${isLocked ? 'bg-gray-700/50 opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]'}`}
           >
-            {saving ? 'Guardando...' : 'Finalizar y ver curso →'}
+            {saving ? 'Guardando...' : 'Finalizar y volver a mis cursos →'}
           </button>
         </div>
       </div>

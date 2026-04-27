@@ -25,5 +25,5 @@ export default async function BuilderPreviewPage(
 
   // Redirigir a la vista de aula del alumno pero con una marca de preview
   // NOTA: El componente del aula deberá detectar este rol para ocultar el marcado de progreso real
-  redirect(`/dashboard/student/learn/${params.id}/lesson/${firstLesson.id}?preview=true`);
+  redirect(`/dashboard/instructor/courses/${params.id}/preview/lesson/${firstLesson.id}`);
 }
