@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+
 export async function POST(req: Request) {
   try {
     const session = await getSession();
@@ -39,12 +43,19 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Solo se permiten archivos .pdf' }, { status: 400 });
       }
       const buffer = await file.arrayBuffer();
-      const { PDFParse } = await import('pdf-parse');
-      const parser = new PDFParse({ data: Buffer.from(buffer) });
-      const data = await parser.getText();
-      combinedText += `\n--- INICIO PDF: ${file.name} ---\n`;
-      combinedText += data.text;
-      combinedText += `\n--- FIN PDF ---\n`;
+      console.log('Iniciando PDF Parsing con pdf2json...');
+      const PDFParser = require('pdf2json');
+      const parser = new PDFParser();
+
+      await new Promise((resolve, reject) => {
+        parser.on('pdfParser_dataReady', () => {
+          const text = parser.getRawTextContent();
+          combinedText += `\n--- PDF: ${file.name} ---\n${text}\n`;
+          resolve(null);
+        });
+        parser.on('error', (err: any) => reject(err));
+        parser.parseBuffer(Buffer.from(buffer));
+      });
     }
 
     return NextResponse.json({ text: combinedText });

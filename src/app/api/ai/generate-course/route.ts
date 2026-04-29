@@ -6,6 +6,9 @@ import OpenAI from 'openai';
 import slugify from 'slugify';
 import mammoth from 'mammoth';
 
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -85,11 +88,19 @@ export async function POST(req: Request) {
           }
           
           if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-              console.log('Iniciando PDF Parsing...');
-              const { PDFParse } = await import('pdf-parse');
-              const parser = new PDFParse({ data: buffer });
-              const data = await parser.getText();
-              contextText += `\n--- CONTENIDO DE PDF: ${file.name} ---\n${data.text}\n`;
+              console.log('Iniciando PDF Parsing con pdf2json...');
+              const PDFParser = require('pdf2json');
+              const parser = new PDFParser();
+              
+              await new Promise((resolve, reject) => {
+                parser.on('pdfParser_dataReady', () => {
+                  const text = parser.getRawTextContent();
+                  contextText += `\n--- PDF: ${file.name} ---\n${text}\n`;
+                  resolve(null);
+                });
+                parser.on('error', (err: any) => reject(err));
+                parser.parseBuffer(buffer);
+              });
               console.log('PDF procesado con éxito.');
           } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) {
               console.log('Iniciando Word Parsing (Mammoth)...');
