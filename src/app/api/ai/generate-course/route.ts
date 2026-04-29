@@ -3,8 +3,7 @@ import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkAiQuota } from '@/lib/ai-quota';
 import OpenAI from 'openai';
-// @ts-ignore
-import pdfParse from 'pdf-parse';
+import * as pdfParse from 'pdf-parse';
 import slugify from 'slugify';
 import mammoth from 'mammoth';
 
@@ -343,8 +342,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ 
       error: 'Error en la persistencia del curso generado.', 
-      details: error.message,
-      jsonSnippet: jsonSnippet
+      details: error.message
     }, { status: 500 });
   }
 }
