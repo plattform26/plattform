@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import * as pdfParse from 'pdf-parse';
 
 export async function POST(req: Request) {
   try {
@@ -40,7 +39,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Solo se permiten archivos .pdf' }, { status: 400 });
       }
       const buffer = await file.arrayBuffer();
-      const data = await pdfParse(Buffer.from(buffer));
+      const { PDFParse } = await import('pdf-parse');
+      const parser = new PDFParse({ data: Buffer.from(buffer) });
+      const data = await parser.getText();
       combinedText += `\n--- INICIO PDF: ${file.name} ---\n`;
       combinedText += data.text;
       combinedText += `\n--- FIN PDF ---\n`;

@@ -3,7 +3,6 @@ import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkAiQuota } from '@/lib/ai-quota';
 import OpenAI from 'openai';
-import * as pdfParse from 'pdf-parse';
 import slugify from 'slugify';
 import mammoth from 'mammoth';
 
@@ -87,7 +86,9 @@ export async function POST(req: Request) {
           
           if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
               console.log('Iniciando PDF Parsing...');
-              const data = await pdfParse(buffer);
+              const { PDFParse } = await import('pdf-parse');
+              const parser = new PDFParse({ data: buffer });
+              const data = await parser.getText();
               contextText += `\n--- CONTENIDO DE PDF: ${file.name} ---\n${data.text}\n`;
               console.log('PDF procesado con éxito.');
           } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) {
