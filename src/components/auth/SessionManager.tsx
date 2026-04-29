@@ -152,11 +152,6 @@ export default function SessionManager() {
               Cerrar sesión ahora
             </button>
           </div>
-
-          <div className="flex items-center gap-2 text-[10px] font-bold text-red-500/60 uppercase tracking-widest">
-            <AlertTriangle size={12} />
-            Misión de Estabilidad v7.3
-          </div>
         </div>
       </div>
     </div>
