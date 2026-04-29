@@ -108,7 +108,7 @@ export default function CourseActionsClient({
       <Link 
         href={`/dashboard/instructor/courses/${courseId}/preview`}
         target="_blank"
-        className="flex-1 px-4 py-3 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-xl font-bold text-center hover:bg-cyan-500/20 transition-all text-xs uppercase tracking-widest"
+        className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg font-black text-center hover:bg-cyan-500/20 transition-all text-xs uppercase tracking-widest min-w-[120px]"
       >
         👁️ Vista Previa
       </Link>
@@ -119,7 +119,7 @@ export default function CourseActionsClient({
           <div className="relative group/soft-lock">
             <button
                disabled
-               className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-[10px] font-black text-gray-500 opacity-60 cursor-not-allowed uppercase tracking-widest"
+               className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs font-black text-gray-500 opacity-60 cursor-not-allowed uppercase tracking-widest min-w-[120px] transition-all"
             >
                🔒 CONSTRUCTOR
             </button>
@@ -131,7 +131,7 @@ export default function CourseActionsClient({
           <>
             <button
               onClick={() => setShowLockModal(true)}
-              className="px-3 py-1.5 bg-blue-500/5 border border-blue-500/10 rounded-lg text-[10px] font-black transition-all text-gray-500 uppercase tracking-widest flex items-center gap-1.5 opacity-60 hover:opacity-100 group-hover:bg-blue-500/10 group-hover:border-blue-500/20"
+              className="px-4 py-2 bg-blue-500/5 border border-blue-500/10 rounded-lg text-xs font-black transition-all text-gray-500 uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 group-hover:bg-blue-500/10 group-hover:border-blue-500/20 min-w-[120px]"
             >
               🔒 CONSTRUCTOR
             </button>
@@ -144,7 +144,7 @@ export default function CourseActionsClient({
         ) : (
           <Link
             href={`/dashboard/instructor/courses/${courseId}/modules`}
-            className="px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-500/50 rounded-lg text-[10px] font-black transition-all text-cyan-400 uppercase tracking-widest"
+            className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 hover:border-cyan-500/50 rounded-lg text-xs font-black transition-all text-cyan-400 uppercase tracking-widest min-w-[120px] text-center"
           >
             CONSTRUCTOR 🛠️
           </Link>
@@ -158,7 +158,7 @@ export default function CourseActionsClient({
         <button
           onClick={() => handleAction('hibernate')}
           disabled={loading}
-          className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-yellow-500/20 hover:bg-yellow-500/10 text-yellow-400/80 transition-all uppercase"
+          className="px-4 py-2 rounded-lg text-xs font-black border border-yellow-500/20 hover:bg-yellow-500/10 text-yellow-400/80 transition-all uppercase tracking-widest min-w-[120px]"
           title="Hibernar: Ocultar del catálogo pero mantener acceso a alumnos"
         >
           ❄️ Hibernar
@@ -168,7 +168,7 @@ export default function CourseActionsClient({
           <button
             onClick={() => handleAction('publish')}
             disabled={loading || instructorStatus === 'PENDING_APPROVAL'}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-lg text-xs font-black border transition-all uppercase flex items-center justify-center gap-1.5 tracking-widest min-w-[120px] ${
                 instructorStatus === 'PENDING_APPROVAL'
                 ? 'border-gray-500/20 bg-gray-500/5 text-gray-500 cursor-not-allowed opacity-50'
                 : 'border-green-500/20 hover:bg-green-500/10 text-green-400/80'
@@ -191,7 +191,7 @@ export default function CourseActionsClient({
         <button
           onClick={() => handleAction('duplicate')}
           disabled={loading}
-          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-lg text-xs font-black border transition-all uppercase flex items-center justify-center gap-1.5 tracking-widest min-w-[120px] ${
             isDuplicationRestricted 
               ? 'border-gray-500/20 bg-gray-500/5 text-gray-500 hover:bg-gray-500/10' 
               : 'border-blue-500/20 hover:bg-blue-500/10 text-blue-400/80'
@@ -212,10 +212,10 @@ export default function CourseActionsClient({
         <button
           onClick={() => handleAction('delete')}
           disabled={loading || isSoftLocked}
-          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all uppercase ${
+          className={`px-4 py-2 rounded-lg text-xs font-black border transition-all uppercase tracking-widest min-w-[120px] ${
              isSoftLocked
              ? 'border-gray-500/20 bg-gray-500/5 text-gray-700 cursor-not-allowed grayscale'
-             : 'border-red-500/20 hover:bg-red-500/10 text-red-500 font-black shadow-lg shadow-red-500/10'
+             : 'border-red-500/20 hover:bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10'
           }`}
         >
           🗑️ Eliminar
