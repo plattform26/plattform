@@ -2,7 +2,8 @@ import { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://plattform.mx';
+  // Forzamos el dominio principal para SEO en producción
+  const baseUrl = 'https://plattform.mx';
 
   // Rutas estáticas principales con prioridades específicas
   const staticRoutes: MetadataRoute.Sitemap = [
