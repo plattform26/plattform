@@ -26,7 +26,7 @@ export async function getEffectivePlan(userId: string): Promise<PlanCapability |
       instructorProfile: {
         include: {
           subscriptions: {
-            where: { status: 'ACTIVE' },
+            // No filtramos por status aquí para tener el historial del plan si no hay cortesía
             include: { plan: true },
             orderBy: { createdAt: 'desc' },
             take: 1
@@ -38,7 +38,9 @@ export async function getEffectivePlan(userId: string): Promise<PlanCapability |
 
   if (!user) return null;
 
-  // PRIORITY 1: Courtesy (Always active if flag is true)
+  // REGLA DE ORO: La comisión depende del PLAN, no de si se pagó la mensualidad o es cortesía.
+  
+  // 1. Caso Cortesía (Prioridad Alta)
   if (user.isCourtesy && user.courtesyPlan) {
     return {
       id: user.courtesyPlan.id,
@@ -53,20 +55,19 @@ export async function getEffectivePlan(userId: string): Promise<PlanCapability |
     };
   }
 
-  // PRIORITY 2: Active Stripe Subscription
-  const activeSub = user.instructorProfile?.subscriptions[0];
-  if (activeSub && activeSub.plan && activeSub.status === 'ACTIVE') {
-    // Safety: check expiration logic if we want, but DB status 'ACTIVE' is usually set by webhook
+  // 2. Caso Suscripción de Stripe (Aunque esté CANCELLED, si es el último plan que tuvo)
+  const lastSub = user.instructorProfile?.subscriptions[0];
+  if (lastSub && lastSub.plan) {
     return {
-      id: activeSub.plan.id,
-      name: activeSub.plan.name,
-      displayName: activeSub.plan.displayName,
-      aiEnabled: activeSub.plan.aiEnabled,
-      studentLimit: activeSub.plan.studentLimit,
-      courseLimit: activeSub.plan.courseLimit,
-      commissionRate: Number(activeSub.plan.commissionRate),
-      expiresAt: activeSub.expiresAt,
-      status: 'ACTIVE'
+      id: lastSub.plan.id,
+      name: lastSub.plan.name,
+      displayName: lastSub.plan.displayName,
+      aiEnabled: lastSub.plan.aiEnabled,
+      studentLimit: lastSub.plan.studentLimit,
+      courseLimit: lastSub.plan.courseLimit,
+      commissionRate: Number(lastSub.plan.commissionRate),
+      expiresAt: lastSub.expiresAt,
+      status: lastSub.status // Puede ser ACTIVE, CANCELLED, etc.
     };
   }
 

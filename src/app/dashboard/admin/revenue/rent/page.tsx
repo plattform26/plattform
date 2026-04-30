@@ -201,18 +201,19 @@ export default function AdminRevenueRentPage() {
                       </td>
                       <td className="p-6 text-center">
                          <span className={`px-3 py-1 rounded-lg text-[9px] font-black border uppercase tracking-[0.1em] ${
+                             sub.instructor.user.isCourtesy ? 'text-cyan-400 border-cyan-400/20 bg-cyan-400/5' :
                              sub.status === 'ACTIVE' ? 'text-green-400 border-green-400/20 bg-green-400/5' : 
                              sub.status === 'PAST_DUE' ? 'text-amber-400 border-amber-400/20 bg-amber-400/5' :
                              'text-red-500 border-red-500/20 bg-red-500/5'
                          }`}>
-                           {sub.status === 'ACTIVE' ? 'ACTIVA' : sub.status === 'PAST_DUE' ? 'MOROSO' : 'VENCIDA'}
+                           {sub.instructor.user.isCourtesy ? 'CORTESÍA' : sub.status === 'ACTIVE' ? 'ACTIVA' : sub.status === 'PAST_DUE' ? 'MOROSO' : 'VENCIDA'}
                          </span>
                       </td>
                       <td className="p-6 text-[11px] font-bold text-gray-500 uppercase tracking-tighter italic">
                          {sub.registrationDate.toLocaleDateString()}
                       </td>
                       <td className="p-6 text-[11px] font-bold text-gray-400 uppercase tracking-tighter italic">
-                         {sub.expiresAt ? new Date(sub.expiresAt).toLocaleDateString() : 'INDETERMINADO'}
+                         {sub.instructor.user.isCourtesy ? 'VITALICIO / MANUAL' : (sub.expiresAt ? new Date(sub.expiresAt).toLocaleDateString() : 'N/A')}
                       </td>
                       <td className="p-6 text-right">
                          <span className="px-4 py-2 bg-cyan-500/10 text-cyan-400 rounded-xl text-xl font-black font-mono border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] inline-block min-w-[60px] text-center">

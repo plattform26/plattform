@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { AlertTriangle, Clock, ShieldCheck, LogOut } from 'lucide-react';
 
 const SESSION_TIMEOUT = 15 * 60; // 15 minutos en segundos
@@ -28,10 +29,11 @@ export default function SessionManager() {
     lastRefreshRef.current = Date.now();
 
     try {
-      const res = await fetch('/api/auth/refresh', { method: 'POST' });
+      // Usamos el endpoint de sesión de NextAuth para disparar un refresh del token
+      const res = await fetch('/api/auth/session?update', { method: 'GET' });
       if (res.ok) {
         failedAttemptsRef.current = 0;
-        console.log('Session Heartbeat: Token renovado con éxito.');
+        console.log('Session Heartbeat: Sincronización exitosa.');
         return true;
       } else {
         // Si hay un 401 o similar, incrementamos fallos para dejar de intentar pronto
@@ -51,15 +53,12 @@ export default function SessionManager() {
   // Función para cerrar sesión
   const handleLogout = useCallback(async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      setIsExpired(true);
-      router.push('/login');
-      router.refresh();
+      await signOut({ callbackUrl: '/login', redirect: true });
     } catch (error) {
       console.error('Error logging out:', error);
       window.location.href = '/login';
     }
-  }, [router]);
+  }, []);
 
   // Reset del timer por actividad
   const resetTimer = useCallback(() => {

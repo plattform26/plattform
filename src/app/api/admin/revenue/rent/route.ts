@@ -42,8 +42,14 @@ export async function GET(req: NextRequest) {
       return acc + calcNetUtility(Number(sub.plan.monthlyPrice));
     }, 0);
 
+    // REGLA: Excluir de "Críticas" a quienes tengan cortesía activa
     const expiredCount = await prisma.instructorSubscription.count({
-      where: { status: { in: ['PAST_DUE', 'EXPIRED', 'CANCELLED'] } }
+      where: { 
+        status: { in: ['PAST_DUE', 'EXPIRED', 'CANCELLED'] },
+        instructor: {
+          user: { isCourtesy: false }
+        }
+      }
     });
 
     // 2. Detalle de Suscripciones (Aplicar Filtros Temporales solo si no son 'all')
