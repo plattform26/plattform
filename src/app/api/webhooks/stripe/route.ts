@@ -70,17 +70,13 @@ export async function POST(req: Request) {
           if (!course) throw new Error('Course not found');
           const grossAmount = session.amount_total / 100;
           
-          const activeSub = await prisma.instructorSubscription.findFirst({
-            where: { instructor: { userId: course.instructorId }, status: 'ACTIVE' },
-            include: { plan: true }
-          });
-          
+          const effectivePlan = await getEffectivePlan(course.instructorId);
+          const commissionRate = effectivePlan ? Number(effectivePlan.commissionRate) : 15;
+
           const expandedSession = await stripe.checkout.sessions.retrieve(session.id, {
             expand: ['payment_intent.latest_charge']
           });
           const pi = expandedSession.payment_intent as any;
-          
-          const commissionRate = activeSub ? Number(activeSub.plan.commissionRate) : 15;
           const platformCommission = pi.application_fee_amount 
             ? (pi.application_fee_amount / 100) 
             : (grossAmount * commissionRate) / 100;
