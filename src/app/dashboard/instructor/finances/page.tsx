@@ -14,6 +14,18 @@ function FinancesContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const status = searchParams.get('connect_status');
+    if (status === 'success') {
+      alert('¡Cuenta de Stripe conectada con éxito! Ahora puedes recibir pagos.');
+      // Limpiar el parámetro de la URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (status === 'refresh') {
+      alert('El proceso de conexión se reinició. Por favor, intenta de nuevo.');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [searchParams]);
+
   const fetchFinances = async () => {
     setLoading(true);
     try {

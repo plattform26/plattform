@@ -11,17 +11,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('Falta la llave secreta de Stripe en el entorno (STRIPE_SECRET_KEY)');
-    }
-
     // 1. Obtener el perfil del instructor
     const profile = await prisma.instructorProfile.findUnique({
       where: { userId: session.userId },
     });
 
     if (!profile) {
-      return NextResponse.json({ error: 'Instructor profile not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Perfil de instructor no encontrado' }, { status: 404 });
     }
 
     let stripeConnectId = profile.stripeConnectId;
@@ -50,28 +46,26 @@ export async function GET(req: Request) {
     }
 
     // 3. Generar el Account Link para el onboarding
-    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
     
-    // Validar URLs para Stripe
-    const refresh_url = `${baseUrl}/dashboard/instructor/finances?connect=refresh`;
-    const return_url = `${baseUrl}/dashboard/instructor/finances?connect=success`;
+    if (!baseUrl) {
+      throw new Error('NEXT_PUBLIC_APP_URL no configurado');
+    }
 
     const accountLink = await stripe.accountLinks.create({
       account: stripeConnectId,
-      refresh_url,
-      return_url,
+      refresh_url: `${baseUrl}/dashboard/instructor/finances?connect_status=refresh`,
+      return_url: `${baseUrl}/dashboard/instructor/finances?connect_status=success`,
       type: 'account_onboarding',
     });
 
     return NextResponse.json({ url: accountLink.url });
   } catch (error: any) {
-    console.error('âŒ [STRIPE_ONBOARDING_ERROR]:', error);
+    console.error('❌ [STRIPE_ONBOARDING_ERROR]:', error);
     
     return NextResponse.json({ 
-      error: 'Error en la conexiÃ³n con la pasarela bancaria', 
-      details: error.message,
-      code: error.code || 'internal_error'
+      error: 'Error en la conexión con la pasarela bancaria', 
+      details: error.message
     }, { status: 500 });
   }
 }
-
