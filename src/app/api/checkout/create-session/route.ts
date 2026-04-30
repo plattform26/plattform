@@ -227,11 +227,12 @@ export async function POST(req: Request) {
       : undefined;
 
     // 6.1 Cálculo Dinámico de Fee de Aplicación (SaaS Plattform)
-    const commissionRate = effectivePlan?.commissionRate || 15;
+    // REGLA DE ORO: Comisión basada en el Plan (7, 10 o 15)
+    const commissionRate = effectivePlan ? Number(effectivePlan.commissionRate) : 15;
     const applicationFeeCents = Math.round(finalPrice * (commissionRate / 100) * 100);
 
     // 7. Crear Stripe Session
-    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+    const baseUrl = (process.env.NODE_ENV === 'production' ? 'https://www.plattform.mx' : (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001')).replace(/\/$/, '');
     
     // IMPORTANTE: Stripe requiere URLs absolutas
     const success_url = `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;

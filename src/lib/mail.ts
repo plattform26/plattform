@@ -10,7 +10,7 @@ import { formatMXN } from './utils/currency';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const from = process.env.EMAIL_FROM || 'Plattform <soporte@plattform.mx>';
-const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3001').replace(/\/$/, '');
+const appUrl = (process.env.NODE_ENV === 'production' ? 'https://www.plattform.mx' : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3001')).replace(/\/$/, '');
 const adminEmail = process.env.ADMIN_EMAIL || 'soporte@plattform.mx';
 
 // Helper to resolve URL with priority: provided baseUrl > Env Var
