@@ -15,8 +15,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Plattform | The Elite Learning Experience",
-  description: "La infraestructura definitiva para el aprendizaje de alto rendimiento. Cursos de élite creados por expertos para profesionales del futuro.",
+  title: 'Plattform - Academia Digital Premium',
+  description: 'Plataforma SaaS para crear y vender cursos online con IA. Crea, vende y gestiona tus cursos con herramientas profesionales.',
+  
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -28,16 +29,32 @@ export const metadata: Metadata = {
     ],
   },
   keywords: ["IA para educación", "Cursos de élite", "Educación profesional", "Plattform", "LMS SaaS", "Aprendizaje acelerado"],
+
   openGraph: {
-    title: "Plattform | Tu próximo nivel profesional comienza aquí",
-    description: "Explora cursos de alta gama y adquiere habilidades de élite con expertos reales.",
-    images: ['/og-image.jpg'],
+    title: 'Plattform - Academia Digital Premium',
+    description: 'Plataforma SaaS para crear y vender cursos online con IA',
+    url: 'https://plattform.mx',
+    siteName: 'Plattform',
     type: 'website',
+    images: [
+      {
+        url: 'https://plattform.mx/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Plattform - Academia Digital'
+      }
+    ]
   },
+  
   twitter: {
     card: 'summary_large_image',
-    title: "Plattform | Elite SaaS",
-    description: "Transformación profesional impulsada por IA y expertos de clase mundial.",
+    title: 'Plattform - Academia Digital Premium',
+    description: 'Crea y vende cursos online con IA',
+    images: ['https://plattform.mx/og-image.png']
+  },
+  
+  verification: {
+    google: 'zVRsIT8ttMkk844V1M6ObfXc7PLJd-tPTvVlZj'
   }
 };
 
