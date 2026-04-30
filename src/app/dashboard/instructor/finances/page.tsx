@@ -52,7 +52,7 @@ function FinancesContent() {
   if (error) return <div className="p-20 text-center text-red-400 font-black uppercase tracking-widest italic">{error}</div>;
   if (!data) return <div className="p-20 text-center text-gray-600 font-bold uppercase tracking-widest">Iniciando Sincronización Financiera...</div>;
 
-  const { profile, activeSub, monthlyRent, expirationDate, totalSales, totalCommission, netEarnings, monthlyGross, monthlyNet, coursesWithStudents, transactions } = data;
+  const { profile, activeSub, effectivePlan, monthlyRent, expirationDate, totalSales, totalCommission, netEarnings, monthlyGross, monthlyNet, coursesWithStudents, transactions } = data;
 
   const handleExportCSV = () => {
     if (!transactions || transactions.length === 0) return;

@@ -120,9 +120,13 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' }
     });
 
+    const { getEffectivePlan } = await import('@/lib/plan-utils');
+    const effectivePlan = await getEffectivePlan(userId);
+
     return NextResponse.json({
         profile,
         activeSub,
+        effectivePlan,
         monthlyRent,
         expirationDate,
         totalSales,
