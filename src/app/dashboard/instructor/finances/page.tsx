@@ -67,10 +67,10 @@ function FinancesContent() {
 
   const handleConnect = async () => {
     try {
-      const res = await fetch('/api/instructor/connect-stripe/onboarding');
+      const res = await fetch('/api/instructor/connect-stripe', { method: 'POST' });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.location.href = data.url; // Redirige a Stripe
       } else {
         alert(data.error || 'Error generando enlace');
       }
