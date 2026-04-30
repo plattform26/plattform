@@ -164,6 +164,57 @@ export async function POST(req: Request) {
       }
     });
 
+    // --- LÓGICA DE DIPLOMA AUTOMÁTICO (Fase de Graduación) ---
+    if (completed) {
+      const finalCompletedCount = await prisma.progress.count({
+        where: { userId: session.userId, courseId, completed: true }
+      });
+
+      if (finalCompletedCount >= totalLessons) {
+        // 1. Marcar Inscripción como COMPLETED
+        await prisma.enrollment.update({
+          where: { userId_courseId: { userId: session.userId, courseId } },
+          data: { status: 'COMPLETED' }
+        });
+
+        // 2. Generar Certificado si no existe
+        const existingCert = await prisma.certification.findUnique({
+          where: { userId_courseId: { userId: session.userId, courseId } }
+        });
+
+        if (!existingCert) {
+          const { sendCertificateEmail } = await import('@/lib/mail');
+          const certificateCode = `CERT-${courseId.substring(0,4).toUpperCase()}-${session.userId.substring(0,4).toUpperCase()}-${Date.now().toString().slice(-4)}`;
+          
+          await prisma.certification.create({
+            data: {
+              userId: session.userId,
+              courseId,
+              certificateCode,
+              issuedAt: new Date()
+            }
+          });
+
+          // 3. Enviar Correo
+          const user = await prisma.user.findUnique({ where: { id: session.userId } });
+          const url = (process.env.NODE_ENV === 'production' ? 'https://www.plattform.mx' : (process.env.NEXTAUTH_URL || 'http://localhost:3001')).replace(/\/$/, '');
+          
+          if (user) {
+            try {
+              await sendCertificateEmail(
+                user.email, 
+                user.name, 
+                course.title, 
+                `${url}/dashboard/student/certificates`
+              );
+            } catch (mailError) {
+              console.error('Error sending certificate email:', mailError);
+            }
+          }
+        }
+      }
+    }
+
     return NextResponse.json(record);
 
   } catch (error: any) {

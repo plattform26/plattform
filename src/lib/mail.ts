@@ -160,7 +160,13 @@ export async function sendInstructorApprovalEmail(email: string, name: string, b
    VENTAS Y NOTIFICACIONES DE NEGOCIO
    ========================================== */
 
-export async function sendSaleNotificationToInstructor(email: string, studentName: string, courseTitle: string, baseUrl?: string) {
+export async function sendSaleNotificationToInstructor(
+  email: string, 
+  studentName: string, 
+  courseTitle: string, 
+  financials: { gross: number; platformFee: number; stripeFee: number; net: number },
+  baseUrl?: string
+) {
   const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
@@ -169,8 +175,32 @@ export async function sendSaleNotificationToInstructor(email: string, studentNam
     html: getBaseTemplate(`
       <h1>¡Tienes un nuevo alumno!</h1>
       <p>Tu curso <span class="highlight">${courseTitle}</span> sigue creciendo.</p>
-      <p>El alumno <span class="highlight">${studentName}</span> acaba de inscribirse. ¡Sigue así!</p>
-      <a href="${url}/dashboard/instructor/revenue" class="button">Ver mis ingresos</a>
+      <p>El alumno <span class="highlight">${studentName}</span> acaba de inscribirse.</p>
+      
+      <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 12px; margin: 24px 0;">
+        <h3 style="margin-top: 0; color: #111827;">Desglose Financiero</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;">Venta Bruta:</td>
+            <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatMXN(financials.gross)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;">Comisión Plattform:</td>
+            <td style="padding: 8px 0; text-align: right; color: #ef4444;">- ${formatMXN(financials.platformFee)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #6b7280;">Comisión Stripe (aprox):</td>
+            <td style="padding: 8px 0; text-align: right; color: #ef4444;">- ${formatMXN(financials.stripeFee)}</td>
+          </tr>
+          <tr style="border-top: 1px solid #e5e7eb;">
+            <td style="padding: 12px 0 0 0; font-weight: 700; color: #111827;">Monto Neto Recibido:</td>
+            <td style="padding: 12px 0 0 0; text-align: right; font-weight: 800; color: #06b6d4; font-size: 18px;">${formatMXN(financials.net)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <p>El monto neto ha sido depositado directamente en tu cuenta de Stripe Connect.</p>
+      <a href="${url}/dashboard/instructor/finances" class="button">Ver mis ingresos</a>
     `)
   });
 }
@@ -211,7 +241,13 @@ export async function sendFinalExamPassNoticeToAdmin(studentName: string, course
   });
 }
 
-export async function sendSaleNotificationToAdmin(studentName: string, courseTitle: string, amount: number, discountInfo?: { code: string, percent: number }, baseUrl?: string) {
+export async function sendSaleNotificationToAdmin(
+  studentName: string, 
+  courseTitle: string, 
+  financials: { gross: number; platformFee: number; stripeFee: number; net: number },
+  discountInfo?: { code: string, percent: number }, 
+  baseUrl?: string
+) {
   const url = resolveUrl(baseUrl);
   await resend.emails.send({
     from,
@@ -220,11 +256,34 @@ export async function sendSaleNotificationToAdmin(studentName: string, courseTit
     html: getBaseTemplate(`
       <h1>¡Felicidades Diego, nueva venta realizada!</h1>
       <p>El alumno <span class="highlight">${studentName}</span> ha comprado un curso.</p>
-      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 12px; margin: 24px 0;">
-        <p><strong>Curso:</strong> ${courseTitle}</p>
-        <p><strong>Monto:</strong> ${formatMXN(amount)}</p>
-        ${discountInfo ? `<p><strong>Descuento aplicado:</strong> ${discountInfo.code} (-${discountInfo.percent}%)</p>` : ''}
+      
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 12px; margin: 24px 0;">
+        <h3 style="margin-top: 0; color: #166534;">Detalles de la Transacción</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr>
+            <td style="padding: 8px 0; color: #374151;">Curso:</td>
+            <td style="padding: 8px 0; text-align: right; font-weight: 600;">${courseTitle}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #374151;">Monto Bruto:</td>
+            <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatMXN(financials.gross)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #374151;">Ingreso Plattform:</td>
+            <td style="padding: 8px 0; text-align: right; font-weight: 800; color: #16a34a;">+ ${formatMXN(financials.platformFee)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #374151;">Pago a Instructor:</td>
+            <td style="padding: 8px 0; text-align: right; color: #4b5563;">${formatMXN(financials.net)}</td>
+          </tr>
+          ${discountInfo ? `
+          <tr style="border-top: 1px dashed #bbf7d0;">
+            <td style="padding: 8px 0; color: #166534;">Cupón Usado:</td>
+            <td style="padding: 8px 0; text-align: right; font-weight: 700;">${discountInfo.code} (-${discountInfo.percent}%)</td>
+          </tr>` : ''}
+        </table>
       </div>
+      
       <a href="${url}/dashboard/admin/revenue" class="button">Ver Reportes de Ingresos</a>
     `)
   });

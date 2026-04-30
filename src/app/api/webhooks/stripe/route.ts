@@ -97,8 +97,20 @@ export async function POST(req: Request) {
           }
 
           const platformCommission = actualCommission || (grossAmount * commissionRate) / 100;
-            
-          const netAmount = grossAmount - platformCommission;
+          
+          // --- CÁLCULO DE DESGLOSE FINANCIERO PARA CORREOS ---
+          const stripeFeeApprox = (grossAmount * 0.036) + 3; // 3.6% + $3 MXN (Aprox estándar Stripe México)
+          const netAmount = grossAmount - platformCommission; // Neto antes de fee de Stripe (para DB)
+          const netToInstructorEmail = grossAmount - platformCommission - stripeFeeApprox; // Neto real para el correo
+
+          const financials = {
+            gross: grossAmount,
+            platformFee: platformCommission,
+            stripeFee: stripeFeeApprox,
+            net: netToInstructorEmail
+          };
+
+          const pi = expandedSession.payment_intent as any;
           const charge = pi?.latest_charge as any;
           const stripeTransferId = charge?.transfer as string;
 
@@ -109,7 +121,7 @@ export async function POST(req: Request) {
               create: { userId, courseId, accessType: 'PURCHASE', status: 'ACTIVE' }
             });
 
-            // Blindaje P2002: Evitar duplicidad de transacciones (Defensa en profundidad)
+            // Blindaje P2002: Evitar duplicidad de transacciones
             try {
               await tx.transaction.create({
                 data: {
@@ -122,8 +134,7 @@ export async function POST(req: Request) {
                 }
               });
             } catch (err: any) {
-              if (err.code === 'P2002') console.log(`ℹ️ Transacción ${session.id} ya existía, saltando.`);
-              else throw err;
+              if (err.code !== 'P2002') throw err;
             }
 
             await tx.notification.create({
@@ -135,25 +146,13 @@ export async function POST(req: Request) {
               }
             });
 
-            const instructorSubscription = await tx.instructorSubscription.findFirst({
-               where: { instructor: { userId: course.instructorId }, status: 'ACTIVE' }
-            });
-            if (instructorSubscription) {
-              await tx.instructorSubscription.update({
-                where: { id: instructorSubscription.id },
-                data: { activeStudentCount: { increment: 1 } }
-              });
-            }
-
             if (couponCode) {
               const coupon = await tx.coupon.findUnique({ where: { code: couponCode.toUpperCase().trim() } });
               if (coupon) {
-                // Blindaje P2002: Un alumno, un cupón
                 try {
                   await tx.couponUsage.create({ data: { userId, couponId: coupon.id } });
                 } catch (err: any) {
-                  if (err.code === 'P2002') console.log(`ℹ️ Cupón ya aplicado por el usuario.`);
-                  else throw err;
+                  if (err.code !== 'P2002') throw err;
                 }
                 (session as any)._discountInfo = { code: coupon.code, percent: coupon.discountPercent };
               }
@@ -175,14 +174,14 @@ export async function POST(req: Request) {
 
           if (instructorUser) {
             try {
-              await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title, url);
+              await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title, financials, url);
             } catch (err: any) {
               await prisma.systemAlert.create({ data: { type: 'EMAIL_INSTRUCTOR_FAIL', message: `Error enviando correo a instructor (${instructorUser.email}): ${err.message}` } });
             }
           }
 
           try {
-            await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo, url);
+            await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, financials, discountInfo, url);
           } catch (err: any) {
             await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_FAIL', message: `Error enviando correo a admin: ${err.message}` } });
           }
