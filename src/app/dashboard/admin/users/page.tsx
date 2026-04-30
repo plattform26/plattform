@@ -319,14 +319,14 @@ export default function AdminUsersPage() {
                                  <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
                                     <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-gray-500">
                                        <span>📚 Cursos</span>
-                                       <span className={user.capacity.courses.used >= (user.capacity.courses.limit || 999) ? 'text-red-400' : 'text-cyan-400'}>
-                                          {user.capacity.courses.used} / {user.capacity.courses.limit ?? '∞'}
+                                       <span className={user.capacity.courses.limit !== -1 && user.capacity.courses.used >= (user.capacity.courses.limit || 999) ? 'text-red-400' : 'text-cyan-400'}>
+                                          {user.capacity.courses.used} / {user.capacity.courses.limit === -1 ? '∞' : (user.capacity.courses.limit ?? '∞')}
                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-gray-500">
                                        <span>👥 Alumnos</span>
-                                       <span className={user.capacity.students.used >= (user.capacity.students.limit || 999) ? 'text-red-400' : 'text-cyan-400'}>
-                                          {user.capacity.students.used} / {user.capacity.students.limit ?? '∞'}
+                                       <span className={user.capacity.students.limit !== -1 && user.capacity.students.used >= (user.capacity.students.limit || 999) ? 'text-red-400' : 'text-cyan-400'}>
+                                          {user.capacity.students.used} / {user.capacity.students.limit === -1 ? '∞' : (user.capacity.students.limit ?? '∞')}
                                        </span>
                                     </div>
                                  </div>

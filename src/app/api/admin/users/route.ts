@@ -45,6 +45,10 @@ export async function GET(req: NextRequest) {
     });
 
     const cleanUsers = await Promise.all(users.map(async u => {
+      let activePlanName = 'SIN PLAN';
+      let planOrigin = 'NINGUNO';
+      let planKeyDate: string | null = null;
+      let planKeyLabel = '—';
       let capacity: any = null;
 
       const { getEffectivePlan } = await import('@/lib/plan-utils');
@@ -81,7 +85,7 @@ export async function GET(req: NextRequest) {
         planOrigin,
         planKeyLabel,
         planKeyDate,
-        capacity, // <--- Nueva data para Diego
+        capacity,
         specialty: u.instructorProfile?.specialty || 'N/A',
         createdAt: u.createdAt.toISOString(),
         lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,

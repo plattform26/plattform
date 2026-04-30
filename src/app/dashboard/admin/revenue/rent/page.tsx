@@ -206,7 +206,9 @@ export default function AdminRevenueRentPage() {
                              sub.status === 'PAST_DUE' ? 'text-amber-400 border-amber-400/20 bg-amber-400/5' :
                              'text-red-500 border-red-500/20 bg-red-500/5'
                          }`}>
-                           {sub.instructor.user.isCourtesy ? 'CORTESÍA' : sub.status === 'ACTIVE' ? 'ACTIVA' : sub.status === 'PAST_DUE' ? 'MOROSO' : 'VENCIDA'}
+                           {sub.instructor.user.isCourtesy ? 'CORTESÍA' : 
+                            sub.status === 'ACTIVE' ? 'ACTIVA' : 
+                            sub.status === 'PAST_DUE' ? 'MOROSO' : 'VENCIDA'}
                          </span>
                       </td>
                       <td className="p-6 text-[11px] font-bold text-gray-500 uppercase tracking-tighter italic">
