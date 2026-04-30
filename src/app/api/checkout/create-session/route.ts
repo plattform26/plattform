@@ -227,7 +227,6 @@ export async function POST(req: Request) {
       : undefined;
 
     // 6.1 Cálculo Dinámico de Fee de Aplicación (SaaS Plattform)
-    const effectivePlan = await getEffectivePlan(course.instructorId);
     const commissionRate = effectivePlan?.commissionRate || 15;
     const applicationFeeCents = Math.round(finalPrice * (commissionRate / 100) * 100);
 
