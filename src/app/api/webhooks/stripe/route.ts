@@ -62,7 +62,6 @@ export async function POST(req: Request) {
           userId = sub.instructor.userId;
         }
 
-        const url = session.success_url ? new URL(session.success_url).origin : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL);
 
         // --- CASO 1: COMPRA DE CURSO ---
         if (metadata.transactionType === 'COURSE_PURCHASE') {
