@@ -18,9 +18,14 @@ export interface PlanCapability {
  * 2. Active Stripe Subscription (ACTIVE status + not expired)
  * 3. NULL (Redirects to Paywall)
  */
-export async function getEffectivePlan(userId: string): Promise<PlanCapability | null> {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
+export async function getEffectivePlan(userIdOrProfileId: string): Promise<PlanCapability | null> {
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { id: userIdOrProfileId },
+        { instructorProfile: { id: userIdOrProfileId } }
+      ]
+    },
     include: {
       courtesyPlan: true,
       instructorProfile: {

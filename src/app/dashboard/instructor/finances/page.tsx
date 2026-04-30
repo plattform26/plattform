@@ -170,7 +170,9 @@ function FinancesContent() {
                     </thead>
                     <tbody className="divide-y divide-white/2">
                         {transactions.map((t:any) => {
-                          const commissionPerc = t.platformCommissionRate || 15;
+                          const rate = Number(t.platformCommissionRate) > 0 
+                            ? Number(t.platformCommissionRate) 
+                            : (effectivePlan ? Number(effectivePlan.commissionRate) : 15);
                           const net = Number(t.grossAmount) - Number(t.platformCommissionAmount);
                           
                           return (
@@ -181,7 +183,7 @@ function FinancesContent() {
                                 <td className="py-6 text-center text-[10px] text-gray-300 font-mono" suppressHydrationWarning>{formatMXN(t.grossAmount)}</td>
                                 <td className="py-6 text-center">
                                   <div className="flex flex-col items-center">
-                                    <span className="text-[9px] font-black text-red-400/60 uppercase">-{commissionPerc}%</span>
+                                    <span className="text-[9px] font-black text-red-400/60 uppercase">-{rate}%</span>
                                     <span className="text-[10px] font-bold text-gray-500" suppressHydrationWarning>{formatMXN(t.platformCommissionAmount)}</span>
                                   </div>
                                 </td>
