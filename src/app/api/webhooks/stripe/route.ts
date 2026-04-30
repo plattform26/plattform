@@ -110,7 +110,6 @@ export async function POST(req: Request) {
             net: netToInstructorEmail
           };
 
-          const pi = expandedSession.payment_intent as any;
           const charge = pi?.latest_charge as any;
           const stripeTransferId = charge?.transfer as string;
 
