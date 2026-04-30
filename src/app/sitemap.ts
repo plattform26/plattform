@@ -2,13 +2,11 @@ import { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Forzamos el dominio principal para SEO en producción
-  const baseUrl = 'https://plattform.mx';
-
-  // Rutas estáticas principales con prioridades específicas
+  const baseUrl = 'https://plattform.mx'; // Fuerza dominio correcto
+  
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: `${baseUrl}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
