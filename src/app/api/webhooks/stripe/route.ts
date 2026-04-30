@@ -44,7 +44,12 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as any;
-        const metadata = session.metadata;
+        const metadata = session.metadata as any;
+        if (!metadata) throw new Error('No metadata found in session');
+        
+        // ANCLAJE DE DOMINIO: Forzar siempre plattform.mx en producción
+        const url = (process.env.NODE_ENV === 'production' ? 'https://www.plattform.mx' : (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001')).replace(/\/$/, '');
+        
         let userId = metadata.userId;
 
         if (!userId) {
@@ -147,9 +152,28 @@ export async function POST(req: Request) {
           const instructorUser = await prisma.user.findUnique({ where: { id: course.instructorId } });
           const discountInfo = (session as any)._discountInfo;
 
-          if (userRecord) await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount, discountInfo, url);
-          if (instructorUser) await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title, url);
-          await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo, url);
+          // 5. Enviar Correos (Blindados e Independientes)
+          if (userRecord) {
+            try {
+              await sendPaymentConfirmationEmail(userRecord.email, userRecord.name, course.title, grossAmount, discountInfo, url);
+            } catch (err: any) {
+              await prisma.systemAlert.create({ data: { type: 'EMAIL_STUDENT_FAIL', message: `Error enviando correo a alumno (${userRecord.email}): ${err.message}` } });
+            }
+          }
+
+          if (instructorUser) {
+            try {
+              await sendSaleNotificationToInstructor(instructorUser.email, userRecord?.name || 'Un alumno', course.title, url);
+            } catch (err: any) {
+              await prisma.systemAlert.create({ data: { type: 'EMAIL_INSTRUCTOR_FAIL', message: `Error enviando correo a instructor (${instructorUser.email}): ${err.message}` } });
+            }
+          }
+
+          try {
+            await sendSaleNotificationToAdmin(userRecord?.name || 'Un alumno', course.title, grossAmount, discountInfo, url);
+          } catch (err: any) {
+            await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_FAIL', message: `Error enviando correo a admin: ${err.message}` } });
+          }
         }
 
         // --- CASO 2: SUSCRIPCIÓN DE INSTRUCTOR ---
