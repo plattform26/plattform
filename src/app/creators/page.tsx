@@ -149,6 +149,86 @@ export default function CreatorsLandingPage() {
          </div>
       </section>
 
+      {/* CAPABILITIES SUMMARY (NEW) */}
+      <section className="py-24 px-4 sm:px-10 bg-[#070d1a] border-t border-white/5">
+        <div className="max-w-screen-xl mx-auto">
+          <div className="bg-[#0d1524] border border-blue-500/10 rounded-[3rem] p-12 shadow-3xl">
+             <div className="text-center mb-12">
+                <h3 className="text-2xl font-black font-space-grotesk uppercase tracking-tighter italic">Tus Capacidades por <span className="text-cyan-400">Plan</span></h3>
+                <p className="text-gray-500 text-sm mt-2">Transparencia total en el crecimiento de tu academia.</p>
+             </div>
+             
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {/* STARTER CAP */}
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-white/5 border border-white/5">
+                   <div className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center text-lg">🌱</span>
+                      <span className="font-black uppercase tracking-widest text-xs text-gray-400">Starter</span>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-500">📚 Cursos</span>
+                         <span className="text-white">Hasta 2</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-500">👥 Alumnos</span>
+                         <span className="text-white">Hasta 20</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-500">🎯 Grupos</span>
+                         <span className="text-white">1 Grupo</span>
+                      </div>
+                   </div>
+                </div>
+
+                {/* GROWTH CAP */}
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/20 shadow-xl shadow-cyan-500/5">
+                   <div className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-lg">🚀</span>
+                      <span className="font-black uppercase tracking-widest text-xs text-cyan-400">Growth</span>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">📚 Cursos</span>
+                         <span className="text-white">Hasta 10</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">👥 Alumnos</span>
+                         <span className="text-white">Hasta 100</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">🎯 Grupos</span>
+                         <span className="text-white">Hasta 3</span>
+                      </div>
+                   </div>
+                </div>
+
+                {/* SCALE CAP */}
+                <div className="flex flex-col gap-6 p-6 rounded-2xl bg-blue-600/10 border border-blue-500/20">
+                   <div className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-lg">⚡</span>
+                      <span className="font-black uppercase tracking-widest text-xs text-blue-400">Scale</span>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">📚 Cursos</span>
+                         <span className="text-white">Ilimitados</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">👥 Alumnos</span>
+                         <span className="text-white">Ilimitados</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                         <span className="text-gray-400">🎯 Grupos</span>
+                         <span className="text-white">Ilimitados</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
       {/* DATA PROMISE */}
       <section className="py-24 px-4 sm:px-10 border-y border-white/5 bg-blue-600/5">
         <div className="max-w-screen-xl mx-auto text-center">

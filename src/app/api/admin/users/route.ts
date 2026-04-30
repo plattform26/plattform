@@ -45,10 +45,7 @@ export async function GET(req: NextRequest) {
     });
 
     const cleanUsers = await Promise.all(users.map(async u => {
-      let activePlanName = 'SIN PLAN';
-      let planOrigin = 'NINGUNO';
-      let planKeyDate = null;
-      let planKeyLabel = '—';
+      let capacity: any = null;
 
       const { getEffectivePlan } = await import('@/lib/plan-utils');
       const plan = await getEffectivePlan(u.id);
@@ -58,11 +55,16 @@ export async function GET(req: NextRequest) {
         if (plan.status === 'COURTESY') {
           planOrigin = 'CORTESÍA';
           planKeyLabel = 'Desde';
-          planKeyDate = u.createdAt.toISOString(); // Or use a specific grant date if available
+          planKeyDate = u.createdAt.toISOString();
         } else {
           planOrigin = 'PAGO_STRIPE';
           planKeyLabel = 'Vence';
           planKeyDate = plan.expiresAt ? plan.expiresAt.toISOString() : null;
+        }
+
+        if (u.role === 'INSTRUCTOR') {
+          const { getUserCapacity } = await import('@/lib/utils/user-capacity');
+          capacity = await getUserCapacity(u.id);
         }
       }
 
@@ -79,6 +81,7 @@ export async function GET(req: NextRequest) {
         planOrigin,
         planKeyLabel,
         planKeyDate,
+        capacity, // <--- Nueva data para Diego
         specialty: u.instructorProfile?.specialty || 'N/A',
         createdAt: u.createdAt.toISOString(),
         lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,

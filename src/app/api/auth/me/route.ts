@@ -70,10 +70,15 @@ export async function GET(req: Request) {
     let isPlanPaused = false;
     let pausedRemainingDays: number | null = null;
     
+    let capacity: any = null;
+    
     if (user.role === 'INSTRUCTOR') {
       try {
         const { getEffectivePlan } = await import('@/lib/plan-utils');
+        const { getUserCapacity } = await import('@/lib/utils/user-capacity');
+        
         const plan = await getEffectivePlan(user.id);
+        capacity = await getUserCapacity(user.id);
         
         activePlanName = plan?.displayName || 'SIN PLAN';
         activePlanExpiresAt = plan?.expiresAt || null;
@@ -106,6 +111,7 @@ export async function GET(req: Request) {
       courtesyPlanId: user.courtesyPlanId,
       activePlanName,
       activePlanExpiresAt,
+      capacity, // <--- Nueva data de límites
       isPlanPaused,
       academySlug
     });

@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import CapacityIndicator from '@/components/ui/CapacityIndicator';
 
 function StudentsPageContent() {
   const router = useRouter();
@@ -64,6 +65,15 @@ function StudentsPageContent() {
     setIsDropdownOpen(false);
   };
 
+  const [capacity, setCapacity] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => setCapacity(data.capacity))
+      .catch(console.error);
+  }, []);
+
   const selectedCourse = courses.find(c => c.id === selectedCourseId);
   const filterLabel = selectedCourse ? selectedCourse.title : 'TODOS MIS CURSOS';
 
@@ -93,6 +103,38 @@ function StudentsPageContent() {
 
   return (
     <div className="animate-fade-in font-poppins text-gray-200">
+      {/* CAPACITY SUMMARY */}
+      {capacity && (
+        <div className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 bg-gradient-to-r from-blue-600/10 to-cyan-500/5 border border-blue-500/20 p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+            <div className="flex items-center gap-6">
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-3xl">👥</div>
+              <div>
+                <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">Capacidad de Alumnos</h2>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                  Plan actual: <span className="text-cyan-400">{capacity.planName}</span>
+                </p>
+              </div>
+            </div>
+            <div className="w-full md:w-64">
+              <CapacityIndicator 
+                label="Alumnos inscritos" 
+                used={capacity.students.used} 
+                limit={capacity.students.limit} 
+                icon="👥" 
+                variant="full" 
+              />
+            </div>
+          </div>
+          
+          <div className="bg-[#0d1524] border border-blue-500/10 p-8 rounded-[2.5rem] flex flex-col justify-center items-center text-center gap-3">
+             <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest italic">¿Necesitas más espacio?</span>
+             <Link href="/dashboard/instructor/plan" className="px-6 py-3 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
+               Upgrade a Growth →
+             </Link>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
           <h1 className="text-3xl font-space-grotesk font-black text-white">Top 10 <span className="text-cyan-400">Analítico</span></h1>

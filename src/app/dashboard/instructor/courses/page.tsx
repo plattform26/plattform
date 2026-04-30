@@ -99,9 +99,14 @@ export default async function InstructorCoursesPage() {
                     </td>
                     <td className="px-6 py-4 text-gray-300">{c._count.modules}</td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`text-sm font-black ${c._count.enrollments > 0 ? 'text-cyan-400' : 'text-gray-500'}`}>
-                        {c._count.enrollments}
-                      </span>
+                      <div className="flex flex-col items-center">
+                        <span className={`text-sm font-black ${c._count.enrollments > 0 ? 'text-cyan-400' : 'text-gray-500'}`}>
+                          {c._count.enrollments}
+                        </span>
+                        <span className="text-[9px] text-gray-600 font-bold uppercase tracking-tighter mt-0.5">
+                          / {plan?.studentLimit === -1 || !plan?.studentLimit ? '∞' : plan.studentLimit}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       {(() => {

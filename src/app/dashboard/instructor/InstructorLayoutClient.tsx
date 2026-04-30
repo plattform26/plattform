@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Toaster } from 'sonner';
 import ProfileMenu from '@/components/ProfileMenu';
+import CapacityIndicator from '@/components/ui/CapacityIndicator';
 
 export default function InstructorLayoutClient({ 
   children,
@@ -99,30 +100,31 @@ export default function InstructorLayoutClient({
         {/* PLAN BADGE (SOURCE OF TRUTH) */}
         {!isCollapsed && user?.role === 'INSTRUCTOR' && (
           <div className="px-6 pt-6 pb-2">
-            <div className="bg-gradient-to-r from-blue-600/20 to-cyan-500/10 border border-blue-500/20 rounded-2xl p-4 flex flex-col gap-1 shadow-inner group/plan">
-                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] group-hover/plan:text-cyan-400 transition-colors">Estado de Plan</span>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                  <span className="text-sm font-black text-white uppercase tracking-tighter">
-                    {user?.isCourtesy ? 'CORTESÍA' : (
-                      <>
-                        {user?.activePlanName && user.activePlanName !== 'SIN PLAN' ? (
-                          <>
-                            {user.activePlanName}
-                            {user.activePlanExpiresAt && (
-                              <div className="text-[9px] text-cyan-400/60 font-bold mt-0.5 lowercase tracking-wider">
-                                Vence: {new Date(user.activePlanExpiresAt).toLocaleDateString('es-MX')}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div className="text-[9px] text-red-500/70 font-black mt-0.5 uppercase tracking-tighter bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
-                            SIN PLAN ACTIVO
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </span>
+            <div className="bg-gradient-to-r from-blue-600/20 to-cyan-500/10 border border-blue-500/20 rounded-2xl p-4 flex flex-col gap-4 shadow-inner group/plan">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] group-hover/plan:text-cyan-400 transition-colors">Estado de Plan</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${user?.activePlanName && user.activePlanName !== 'SIN PLAN' ? 'bg-cyan-400 animate-pulse' : 'bg-red-500'}`}></span>
+                    <span className="text-sm font-black text-white uppercase tracking-tighter">
+                      {user?.isCourtesy ? 'CORTESÍA' : (user?.activePlanName || 'SIN PLAN')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* CAPACITY INDICATORS */}
+                <div className="flex flex-col gap-3 pt-2 border-t border-blue-500/10">
+                   <CapacityIndicator 
+                     label="Cursos" 
+                     used={user?.capacity?.courses?.used || 0} 
+                     limit={user?.capacity?.courses?.limit} 
+                     icon="📚" 
+                   />
+                   <CapacityIndicator 
+                     label="Alumnos" 
+                     used={user?.capacity?.students?.used || 0} 
+                     limit={user?.capacity?.students?.limit} 
+                     icon="👥" 
+                   />
                 </div>
             </div>
           </div>
