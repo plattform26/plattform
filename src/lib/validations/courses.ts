@@ -92,10 +92,10 @@ export const updateCourseSchema = z.object({
   description: z.string().max(10000).optional().nullable(),
   category: z.string().max(100).optional().nullable(),
   level: z.string().max(50).optional().nullable(),
-  price: z.coerce.number().min(0, 'El precio no puede ser negativo').optional(),
-  durationHours: z.coerce.number().min(0).optional(),
+  price: z.coerce.number().min(0, 'El precio no puede ser negativo').optional().nullable(),
+  durationHours: z.coerce.number().min(0).optional().nullable(),
   thumbnailUrl: z.string().url('URL de miniatura inválida').optional().nullable(),
   previewText: z.string().max(500).optional().nullable(),
-  visibility: z.enum(['PUBLIC', 'PRIVATE']).optional(),
+  visibility: z.enum(['PUBLIC', 'UNLISTED', 'PRIVATE']).optional(),
   status: z.enum(['DRAFT', 'PUBLISHED', 'HIBERNATED', 'ARCHIVED']).optional(),
-}).strict();
+}); // Quitamos .strict() para mayor resiliencia

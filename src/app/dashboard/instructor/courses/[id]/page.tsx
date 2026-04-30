@@ -110,12 +110,27 @@ export default function EditCoursePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sanitizePayload(form)),
       });
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      
+      if (!res.ok) {
+        // Misión: Error inteligente en Toast
+        if (res.status === 400 && data.details) {
+          const errors = data.details;
+          const firstErrorKey = Object.keys(errors)[0];
+          const errorMsg = errors[firstErrorKey]?._errors?.[0] || 'Dato inválido';
+          throw new Error(`Error en ${firstErrorKey}: ${errorMsg}`);
+        }
+        throw new Error(data.error || 'Error al guardar');
+      }
+
       setCourse(data);
       toast.success('Cambios guardados ✓', { id: toastId });
     } catch (err: any) {
-      toast.error(err.message, { id: toastId });
+      toast.error(err.message, { 
+        id: toastId,
+        description: 'Revisa que todos los campos cumplan con el formato requerido.'
+      });
     } finally {
       setSaving(false);
     }
