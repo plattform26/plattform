@@ -30,11 +30,30 @@ export const metadata: Metadata = {
   },
   keywords: ["IA para educación", "Cursos de élite", "Educación profesional", "Plattform", "LMS SaaS", "Aprendizaje acelerado"],
 
+  // Geo targeting
+  alternates: {
+    canonical: 'https://plattform.mx',
+    languages: {
+      'es-MX': 'https://plattform.mx',
+      'es': 'https://plattform.mx',
+      'en': 'https://plattform.mx/en'
+    }
+  },
+  
+  // Indicar país/región
+  other: {
+    'geo.position': '19.4326;-99.1332',
+    'ICBM': '19.4326, -99.1332',
+    'geo.region': 'MX',
+    'geo.placename': 'Mexico City'
+  },
+
   openGraph: {
     title: 'Plattform - Academia Digital Premium',
     description: 'Plataforma SaaS para crear y vender cursos online con IA',
     url: 'https://plattform.mx',
     siteName: 'Plattform',
+    locale: 'es_MX',
     type: 'website',
     images: [
       {
