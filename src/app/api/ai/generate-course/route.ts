@@ -32,6 +32,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Actualiza a un plan con IA para usar esta función.' }, { status: 403 });
     }
 
+    // --- VALIDACIÓN DE CAPACIDAD (CURSOS) ---
+    const { validateCourseLimit } = await import('@/lib/utils/plan-validation');
+    const limitCheck = await validateCourseLimit(session.userId);
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ 
+        error: 'No puedes generar más cursos. ' + limitCheck.message,
+        code: 'LIMIT_REACHED'
+      }, { status: 403 });
+    }
+
     const isScale = (activePlan && activePlan.name.toLowerCase() === 'scale') || session.role === 'ADMIN';
 
     if (files.length > 0 && !isScale) {

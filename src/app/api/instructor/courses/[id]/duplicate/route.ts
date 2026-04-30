@@ -25,6 +25,16 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
           code: 'UPGRADE_REQUIRED'
         }, { status: 403 });
       }
+
+      // 0.1 Check Capacity (Scale is unlimited currently, but we keep it for consistency)
+      const { validateCourseLimit } = await import('@/lib/utils/plan-validation');
+      const limitCheck = await validateCourseLimit(session.userId);
+      if (!limitCheck.allowed) {
+        return NextResponse.json({ 
+          error: 'Límite de cursos alcanzado. ' + limitCheck.message,
+          code: 'LIMIT_REACHED'
+        }, { status: 403 });
+      }
     }
 
     console.log('--- INICIANDO DUPLICACIÓN (TWO-STEP ATOMIC MODE) ---');

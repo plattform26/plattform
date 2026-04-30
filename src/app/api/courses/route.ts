@@ -101,6 +101,20 @@ export async function POST(req: Request) {
     // Solo admin puede elegir instructor. Instructores normales usan su propio ID.
     const targetInstructorId = (session.role === 'ADMIN' && instructorId) ? instructorId : session.userId;
 
+    // --- VALIDACIÓN DE LÍMITES DE PLAN (GATEKEEPING) ---
+    if (session.role === 'INSTRUCTOR') {
+      const { validateCourseLimit } = await import('@/lib/utils/plan-validation');
+      const limitCheck = await validateCourseLimit(targetInstructorId);
+      if (!limitCheck.allowed) {
+        return NextResponse.json({ 
+          error: limitCheck.message,
+          code: 'LIMIT_REACHED',
+          current: limitCheck.current,
+          limit: limitCheck.limit
+        }, { status: 403 });
+      }
+    }
+
     if (!title || price === undefined) {
       return NextResponse.json({ error: 'Title and price are required' }, { status: 400 });
     }

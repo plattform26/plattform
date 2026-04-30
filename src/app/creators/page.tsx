@@ -174,10 +174,6 @@ export default function CreatorsLandingPage() {
                          <span className="text-gray-500">👥 Alumnos</span>
                          <span className="text-white">Hasta 20</span>
                       </div>
-                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                         <span className="text-gray-500">🎯 Grupos</span>
-                         <span className="text-white">1 Grupo</span>
-                      </div>
                    </div>
                 </div>
 
@@ -196,10 +192,6 @@ export default function CreatorsLandingPage() {
                          <span className="text-gray-400">👥 Alumnos</span>
                          <span className="text-white">Hasta 100</span>
                       </div>
-                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                         <span className="text-gray-400">🎯 Grupos</span>
-                         <span className="text-white">Hasta 3</span>
-                      </div>
                    </div>
                 </div>
 
@@ -216,10 +208,6 @@ export default function CreatorsLandingPage() {
                       </div>
                       <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
                          <span className="text-gray-400">👥 Alumnos</span>
-                         <span className="text-white">Ilimitados</span>
-                      </div>
-                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                         <span className="text-gray-400">🎯 Grupos</span>
                          <span className="text-white">Ilimitados</span>
                       </div>
                    </div>
