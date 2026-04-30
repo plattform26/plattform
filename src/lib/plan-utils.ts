@@ -1,4 +1,5 @@
 import prisma from './prisma';
+import { getCommissionPercentage } from './utils/commission';
 
 export interface PlanCapability {
   id: string;
@@ -54,7 +55,7 @@ export async function getEffectivePlan(userIdOrProfileId: string): Promise<PlanC
       aiEnabled: user.courtesyPlan.aiEnabled,
       studentLimit: user.courtesyPlan.studentLimit,
       courseLimit: user.courtesyPlan.courseLimit,
-      commissionRate: Number(user.courtesyPlan.commissionRate),
+      commissionRate: getCommissionPercentage(user.courtesyPlan.name), // 15% Starter, 10% Growth, 7% Scale
       expiresAt: null,
       status: 'COURTESY'
     };
@@ -70,7 +71,7 @@ export async function getEffectivePlan(userIdOrProfileId: string): Promise<PlanC
       aiEnabled: lastSub.plan.aiEnabled,
       studentLimit: lastSub.plan.studentLimit,
       courseLimit: lastSub.plan.courseLimit,
-      commissionRate: Number(lastSub.plan.commissionRate),
+      commissionRate: getCommissionPercentage(lastSub.plan.name), // 15% Starter, 10% Growth, 7% Scale
       expiresAt: lastSub.expiresAt,
       status: lastSub.status // Puede ser ACTIVE, CANCELLED, etc.
     };

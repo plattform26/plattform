@@ -81,9 +81,22 @@ export async function POST(req: Request) {
             expand: ['payment_intent.latest_charge']
           });
           const pi = expandedSession.payment_intent as any;
-          const platformCommission = pi.application_fee_amount 
-            ? (pi.application_fee_amount / 100) 
-            : (grossAmount * commissionRate) / 100;
+          const actualCommission = pi.application_fee_amount ? (pi.application_fee_amount / 100) : 0;
+          
+          // --- AUDITORÍA DE COMISIÓN: Verificar cobro vs plan del instructor ---
+          // 15% Starter, 10% Growth, 7% Scale
+          const expectedCommission = (grossAmount * commissionRate) / 100;
+          
+          if (Math.abs(actualCommission - expectedCommission) > 0.01) {
+            await prisma.systemAlert.create({
+              data: {
+                type: 'COMMISSION_MISMATCH',
+                message: `Discrepancia en comisión: Sesión ${session.id}. Esperada: ${expectedCommission} (${commissionRate}%), Cobrada: ${actualCommission}. Instructor ID: ${course.instructorId}`
+              }
+            });
+          }
+
+          const platformCommission = actualCommission || (grossAmount * commissionRate) / 100;
             
           const netAmount = grossAmount - platformCommission;
           const charge = pi?.latest_charge as any;

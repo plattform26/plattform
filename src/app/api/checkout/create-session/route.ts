@@ -227,7 +227,7 @@ export async function POST(req: Request) {
       : undefined;
 
     // 6.1 Cálculo Dinámico de Fee de Aplicación (SaaS Plattform)
-    // REGLA DE ORO: Comisión basada en el Plan (7, 10 o 15)
+    // REGLA DE ORO: Comisión basada en el Plan (Mapeo: 15% Starter, 10% Growth, 7% Scale)
     const commissionRate = effectivePlan ? Number(effectivePlan.commissionRate) : 15;
     const applicationFeeCents = Math.round(finalPrice * (commissionRate / 100) * 100);
 
