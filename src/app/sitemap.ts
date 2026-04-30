@@ -2,26 +2,43 @@ import { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://plattform.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://plattform.mx';
 
-  // Rutas estáticas de alto nivel
-  const staticRoutes = [
-    '',
-    '/creators',
-    '/login',
-    '/register',
-    '/courses',
-    '/terms',
-    '/privacy',
-    '/refunds',
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: route === '' ? 1 : 0.8,
-  }));
+  // Rutas estáticas principales con prioridades específicas
+  const staticRoutes: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/creators`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/dashboard/instructor`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/dashboard/admin`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/courses`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+  ];
 
-  // Rutas dinámicas: Cursos
+  // Rutas dinámicas: Cursos publicados
   const courses = await prisma.course.findMany({
     where: { status: 'PUBLISHED', visibility: 'PUBLIC' },
     select: { slug: true, updatedAt: true },
