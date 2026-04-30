@@ -1,3 +1,11 @@
+const { execSync } = require('child_process');
+try {
+  console.log('🔄 Ejecutando generación de favicons...');
+  execSync('npx tsx scripts/generate-favicons.ts', { stdio: 'inherit' });
+} catch (e) {
+  console.error('⚠️ Fallo en la generación de favicons:', e.message);
+}
+
 /** @type {import('next').NextConfig} */
 
 const isDev = process.env.NODE_ENV === 'development';

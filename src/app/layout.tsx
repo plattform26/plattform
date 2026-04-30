@@ -17,6 +17,16 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Plattform | The Elite Learning Experience",
   description: "La infraestructura definitiva para el aprendizaje de alto rendimiento. Cursos de élite creados por expertos para profesionales del futuro.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   keywords: ["IA para educación", "Cursos de élite", "Educación profesional", "Plattform", "LMS SaaS", "Aprendizaje acelerado"],
   openGraph: {
     title: "Plattform | Tu próximo nivel profesional comienza aquí",
