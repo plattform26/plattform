@@ -38,16 +38,10 @@ export async function POST(req: Request) {
     }
 
     // 1.1 VALIDAR LÍMITE DE ALUMNOS (GATEKEEPING SAAS)
-    const activeSub = await prisma.instructorSubscription.findFirst({
-      where: { 
-        instructor: { userId: course.instructorId },
-        status: 'ACTIVE' 
-      },
-      include: { plan: true }
-    });
+    const effectivePlan = await getEffectivePlan(course.instructorId);
 
-    // Bloqueo si no hay suscripción activa o si el límite fue alcanzado
-    if (!activeSub) {
+    // Bloqueo si no hay plan efectivo (ni suscripción ni cortesía)
+    if (!effectivePlan) {
       return NextResponse.json({ error: 'Esta academia no puede recibir nuevas inscripciones en este momento.' }, { status: 403 });
     }
 
@@ -56,10 +50,10 @@ export async function POST(req: Request) {
     });
     
     // Hard Stop: Bloqueo si Alumnos-Materia >= Límite
-    if (activeSub.plan.studentLimit !== -1 && currentEnrollments >= activeSub.plan.studentLimit) {
+    if (effectivePlan.studentLimit !== -1 && currentEnrollments >= effectivePlan.studentLimit) {
       return NextResponse.json({ 
         error: 'Límite de alumnos alcanzado',
-        details: `Tu academia ha llegado al tope de ${activeSub.plan.studentLimit} inscripciones permitidas por tu plan actual (${activeSub.plan.displayName}). Por favor, contacta al instructor o espera a un upgrade de plan.` 
+        details: `Tu academia ha llegado al tope de ${effectivePlan.studentLimit} inscripciones permitidas por tu plan actual (${effectivePlan.displayName}). Por favor, contacta al instructor o espera a un upgrade de plan.` 
       }, { status: 403 });
     }
 
