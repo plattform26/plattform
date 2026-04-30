@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 import { AlertTriangle, Clock, ShieldCheck, LogOut } from 'lucide-react';
 
 const SESSION_TIMEOUT = 15 * 60; // 15 minutos en segundos
@@ -20,45 +19,43 @@ export default function SessionManager() {
   const failedAttemptsRef = useRef<number>(0);
   const router = useRouter();
 
-  // Función para renovar el token en el servidor
+  // Función para renovar el token en el servidor (Auth Personalizada)
   const refreshSession = useCallback(async () => {
     if (isRefreshingRef.current || failedAttemptsRef.current >= 3) return false;
     
     isRefreshingRef.current = true;
-    // Actualizamos el ref inmediatamente para evitar reintentos por actividad mientras la petición está en vuelo
     lastRefreshRef.current = Date.now();
 
     try {
-      // Usamos el endpoint de sesión de NextAuth para disparar un refresh del token
-      const res = await fetch('/api/auth/session?update', { method: 'GET' });
+      const res = await fetch('/api/auth/refresh', { method: 'POST' });
       if (res.ok) {
         failedAttemptsRef.current = 0;
         console.log('Session Heartbeat: Sincronización exitosa.');
         return true;
       } else {
-        // Si hay un 401 o similar, incrementamos fallos para dejar de intentar pronto
         failedAttemptsRef.current += 1;
-        console.warn(`Session Heartbeat: Fallo en renovación (${res.status}).`);
         return false;
       }
     } catch (error) {
       failedAttemptsRef.current += 1;
-      console.error('Error refreshing session:', error);
       return false;
     } finally {
       isRefreshingRef.current = false;
     }
   }, []);
 
-  // Función para cerrar sesión
+  // Función para cerrar sesión (Auth Personalizada)
   const handleLogout = useCallback(async () => {
     try {
-      await signOut({ callbackUrl: '/login', redirect: true });
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setIsExpired(true);
+      router.push('/login');
+      router.refresh();
     } catch (error) {
       console.error('Error logging out:', error);
       window.location.href = '/login';
     }
-  }, []);
+  }, [router]);
 
   // Reset del timer por actividad
   const resetTimer = useCallback(() => {
