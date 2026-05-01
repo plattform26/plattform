@@ -80,7 +80,13 @@ export default async function InstructorCoursesPage() {
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="text-4xl mb-3">📚</div>
                     <div className="text-gray-400 text-sm">No tienes cursos aún.</div>
-                    <Link href="/dashboard/instructor/courses/new" className="text-cyan-400 text-sm hover:underline mt-1 inline-block">Crea tu primer curso →</Link>
+                    {planName !== 'SIN PLAN' ? (
+                      <Link href="/dashboard/instructor/courses/new" className="text-cyan-400 text-sm hover:underline mt-1 inline-block">Crea tu primer curso →</Link>
+                    ) : (
+                      <span className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-2 block">
+                        🔒 Requiere un plan activo para comenzar
+                      </span>
+                    )}
                   </td>
                 </tr>
               ) : courses.map(c => {

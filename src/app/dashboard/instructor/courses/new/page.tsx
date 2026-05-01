@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { getEffectivePlan } from '@/lib/plan-utils';
 import NewCourseClient from './NewCourseClient';
 
 export default async function NewCoursePage() {
@@ -21,6 +22,12 @@ export default async function NewCoursePage() {
       });
       if (user?.status !== 'ACTIVE' && !user?.isCourtesy) {
           redirect('/dashboard/instructor?error=PENDING_APPROVAL');
+      }
+
+      // Misión: Validación Mandatoria de Plan (Bloqueo de acceso si no hay plan activo)
+      const plan = await getEffectivePlan(session.userId);
+      if (!plan && !user?.isCourtesy) {
+          redirect('/dashboard/instructor/plan?error=NO_ACTIVE_PLAN');
       }
 
       // If courtesy, fetch the plan to check for AI features
