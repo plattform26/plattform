@@ -177,7 +177,7 @@ export default function InstructorLayoutClient({
                 </p>
              </div>
              <Link 
-               href="/dashboard/instructor/finances" 
+               href="/dashboard/instructor/plan" 
                className="px-4 py-1.5 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-600/20 hover:scale-105 transition-all"
              >
                Activar Plan Ahora →
