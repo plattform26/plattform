@@ -248,9 +248,29 @@ export async function POST(req: Request) {
           if (instructorUser) {
             const newStatus = instructorUser.status === 'ACTIVE' ? 'ACTIVE' : 'PENDING_APPROVAL';
             await prisma.user.update({ where: { id: userId }, data: { status: newStatus } });
-            await sendPlanActivityEmail(instructorUser.email, 'WELCOME', plan.name, expiresAt, url);
-            if (newStatus === 'PENDING_APPROVAL') await sendInstructorRegistrationNoticeToAdmin(instructorUser.name, userId, url);
-            await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.name, Number(plan.monthlyPrice), expiresAt, url);
+            
+            // --- ENVÍO DE CORREOS BLINDADO ---
+            const emailType = metadata.isUpgrade === 'true' ? 'UPGRADE' : 'WELCOME';
+            
+            try {
+              await sendPlanActivityEmail(instructorUser.email, emailType, plan, expiresAt, url);
+            } catch (err: any) {
+              await prisma.systemAlert.create({ data: { type: 'EMAIL_PLAN_FAIL', message: `Error enviando correo ${emailType} a instructor (${instructorUser.email}): ${err.message}` } });
+            }
+
+            if (newStatus === 'PENDING_APPROVAL') {
+              try {
+                await sendInstructorRegistrationNoticeToAdmin(instructorUser.name, userId, url);
+              } catch (err: any) {
+                await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_NOTICE_FAIL', message: `Error notificando registro a admin: ${err.message}` } });
+              }
+            }
+
+            try {
+              await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.displayName, Number(plan.monthlyPrice), expiresAt, url);
+            } catch (err: any) {
+              await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_SUBSCRIPTION_FAIL', message: `Error notificando suscripción a admin: ${err.message}` } });
+            }
           }
         }
         break;
@@ -277,8 +297,17 @@ export async function POST(req: Request) {
               const instructorUser = await prisma.user.findUnique({ where: { id: sub.instructorId } });
               const plan = await prisma.platformPlan.findUnique({ where: { id: sub.planId } });
               if (instructorUser && plan) {
-                await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan.name, sub.expiresAt ?? undefined); 
-                await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.name, Number(plan.monthlyPrice), sub.expiresAt || new Date());
+                try {
+                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan, sub.expiresAt ?? undefined); 
+                } catch (err: any) {
+                  await prisma.systemAlert.create({ data: { type: 'EMAIL_RENEWAL_FAIL', message: `Error enviando correo RENEWAL a instructor (${instructorUser.email}): ${err.message}` } });
+                }
+
+                try {
+                  await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.displayName, Number(plan.monthlyPrice), sub.expiresAt || new Date());
+                } catch (err: any) {
+                  await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_RENEWAL_FAIL', message: `Error notificando renovación a admin: ${err.message}` } });
+                }
               }
             }
           }

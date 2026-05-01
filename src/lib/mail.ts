@@ -438,18 +438,21 @@ export async function generateCertificatePDF(
   doc.setFontSize(16);
   doc.text('PLATTFORM 2026', width - 30, height - 25, { align: 'right' });
 
-  const arrayBuffer = doc.output('arraybuffer');
-  return Buffer.from(arrayBuffer);
-}
-
 export async function sendPlanActivityEmail(
   email: string, 
   type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', 
-  planName: string, 
+  plan: { 
+    displayName: string; 
+    studentLimit: number; 
+    courseLimit: number; 
+    commissionRate: number | any; 
+    aiEnabled: boolean; 
+  }, 
   expiresAt?: Date, 
   baseUrl?: string
 ) {
   const url = resolveUrl(baseUrl);
+  const planName = plan.displayName;
   const subjects = {
     WELCOME: '¡Bienvenido a tu suscripción en Plattform!',
     UPGRADE: 'Actualización de Plan exitosa',
@@ -468,6 +471,8 @@ export async function sendPlanActivityEmail(
     year: 'numeric'
   }) : null;
 
+  const commission = typeof plan.commissionRate === 'object' ? Number(plan.commissionRate) : plan.commissionRate;
+
   await resend.emails.send({
     from,
     to: email,
@@ -475,10 +480,40 @@ export async function sendPlanActivityEmail(
     html: getBaseTemplate(`
       <h1>${titles[type]}</h1>
       <p>Estimado Instructor, le informamos que el estatus de su suscripción en nuestra plataforma ha sido actualizado satisfactoriamente.</p>
-      <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; margin: 24px 0;">
-        <p><strong>Plan Actual:</strong> <span class="highlight">${planName}</span></p>
-        ${formattedDate ? `<p><strong>Vencimiento Oficial:</strong> ${formattedDate}</p>` : ''}
+      
+      <div style="background: #f8fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 12px; margin: 24px 0;">
+        <h3 style="margin-top: 0; color: #111827; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">Detalles del Plan ${planName}</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr>
+            <td style="padding: 10px 0; color: #6b7280;">Cupo de Alumnos:</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #06b6d4;">
+              ${plan.studentLimit === -1 ? 'Ilimitado' : `${plan.studentLimit} alumnos`}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #6b7280;">Límite de Cursos:</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #06b6d4;">
+              ${plan.courseLimit === -1 ? 'Ilimitados' : `${plan.courseLimit} cursos`}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #6b7280;">Comisión Plattform:</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #06b6d4;">${commission}%</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #6b7280;">Funciones de IA:</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${plan.aiEnabled ? '#10b981' : '#ef4444'};">
+              ${plan.aiEnabled ? 'Habilitadas' : 'No incluidas'}
+            </td>
+          </tr>
+          ${formattedDate ? `
+          <tr style="border-top: 1px dashed #e5e7eb;">
+            <td style="padding: 12px 0 0 0; color: #6b7280;">Vencimiento Oficial:</td>
+            <td style="padding: 12px 0 0 0; text-align: right; font-weight: 800; color: #111827;">${formattedDate}</td>
+          </tr>` : ''}
+        </table>
       </div>
+
       <p>Su academia cuenta ahora con todos los beneficios y capacidades correspondientes a su nivel de suscripción. Puede gestionar sus cursos y alumnos desde su panel de control.</p>
       <a href="${url}/dashboard/instructor/finances" class="button">Ir a mi Panel de Control</a>
     `)

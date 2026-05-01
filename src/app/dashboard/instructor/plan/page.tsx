@@ -12,7 +12,12 @@ const PLAN_ICONS: Record<string, string> = {
   scale: '⚡',
 };
 
-export default async function PlanPage() {
+ export default async function PlanPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ success?: string }> 
+}) {
+  const { success } = await searchParams;
   const session = await getSession();
   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
@@ -33,6 +38,10 @@ export default async function PlanPage() {
   // Misión: Sanitización radical de Decimal (Prisma) para Componentes de Cliente
   const serializedPlans = serialize(allPlans || []);
   const serializedActivePlanId = serialize(activeSub?.plan.id || undefined);
+
+  // LOGICA ANTI-RACE CONDITION: Si venimos de un pago exitoso, NO mostramos el banner rojo
+  // aunque el webhook aún no haya actualizado la DB.
+  const showNoSubBanner = !activeSub && success !== 'true';
 
   return (
     <>
@@ -83,7 +92,7 @@ export default async function PlanPage() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : showNoSubBanner && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 mb-8 text-center" id="no-sub-banner">
           <div className="text-3xl mb-3">⚠️</div>
           <div className="text-red-400 font-semibold mb-1">Sin suscripción activa</div>
