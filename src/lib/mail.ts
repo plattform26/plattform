@@ -438,6 +438,10 @@ export async function generateCertificatePDF(
   doc.setFontSize(16);
   doc.text('PLATTFORM 2026', width - 30, height - 25, { align: 'right' });
 
+  const arrayBuffer = doc.output('arraybuffer');
+  return Buffer.from(arrayBuffer);
+}
+
 export async function sendPlanActivityEmail(
   email: string, 
   type: 'WELCOME' | 'UPGRADE' | 'RENEWAL', 
