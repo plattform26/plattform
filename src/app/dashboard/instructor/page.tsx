@@ -16,7 +16,7 @@ export default async function InstructorDashboardPage() {
     include: {
       user: true,
       subscriptions: {
-        where: { status: { in: ['ACTIVE', 'PAUSED'] } },
+        where: { status: { in: ['ACTIVE', 'PAUSED', 'PAST_DUE'] } },
         include: { plan: true },
         orderBy: { createdAt: 'desc' },
         take: 1,
@@ -176,9 +176,14 @@ export default async function InstructorDashboardPage() {
              {!isCourtesy && activeSub && ` — ${activeSub.status}`}
            </div>
            <p className="text-xs text-gray-400 mt-1">Límite de alumnos-materia: <strong className="text-white">{studentLimit === -1 ? 'Ilimitado' : `${totalEnrollmentsCount}/${studentLimit}`}</strong></p>
-           {activeSub?.expiresAt && (
+           {activeSub && (
              <p className="text-[10px] text-gray-500 mt-2 pt-2 border-t border-white/5 uppercase tracking-widest font-bold">
-               🗓️ Próxima renovación: <span className="text-gray-300">{new Date(activeSub.expiresAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+               🗓️ Próxima renovación: <span className="text-gray-300">
+                 {activeSub.expiresAt 
+                   ? new Date(activeSub.expiresAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
+                   : (activeSub.status === 'PAST_DUE' ? 'Pendiente de pago' : 'Indefinido')
+                 }
+               </span>
              </p>
            )}
          </div>
