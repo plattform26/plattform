@@ -40,6 +40,13 @@ export async function POST(req: Request) {
   }
 
   // 3. Procesamiento de Negocio
+  let diagnostics: any = {
+    user_found: false,
+    profile_found: false,
+    subscription_found: false,
+    status_updated: 'SKIPPED'
+  };
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -280,34 +287,25 @@ export async function POST(req: Request) {
       case 'invoice.paid': {
         const invoice = event.data.object as any;
         if (invoice.subscription) {
-          // --- LOG DE DEPURACIÓN INICIAL ---
-          await prisma.systemAlert.create({
-            data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Iniciando procesamiento de factura. Email: ${invoice.customer_email || 'NO_EMAIL'} | Sub: ${invoice.subscription}` }
-          });
-
           // 1. Intentar encontrar la suscripción por ID de Stripe
           let sub = await prisma.instructorSubscription.findFirst({
             where: { stripeSubscriptionId: invoice.subscription },
             include: { instructor: true }
           });
 
+          if (sub) diagnostics.subscription_found = true;
+
           // 2. FALLBACK: Si no se encuentra por ID, buscar por el email del cliente de la factura
           if (!sub && invoice.customer_email) {
-            await prisma.systemAlert.create({
-              data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Fallback por email iniciado para: ${invoice.customer_email}` }
-            });
-
             const user = await prisma.user.findUnique({
               where: { email: invoice.customer_email },
               include: { instructorProfile: true }
             });
 
             if (user) {
-              await prisma.systemAlert.create({
-                data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Usuario encontrado: ${user.id}. Perfil: ${user.instructorProfile ? 'SÍ' : 'NO'}` }
-              });
-
+              diagnostics.user_found = true;
               if (user.instructorProfile) {
+                diagnostics.profile_found = true;
                 sub = await prisma.instructorSubscription.findFirst({
                   where: { 
                     instructorId: user.instructorProfile.id,
@@ -316,31 +314,22 @@ export async function POST(req: Request) {
                   include: { instructor: true },
                   orderBy: { createdAt: 'desc' }
                 });
-
-                await prisma.systemAlert.create({
-                  data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Suscripción encontrada por fallback: ${sub?.id || 'NOT_FOUND'}` }
-                });
+                if (sub) diagnostics.subscription_found = true;
               }
-            } else {
-              await prisma.systemAlert.create({
-                data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Usuario NO encontrado para email: ${invoice.customer_email}` }
-              });
             }
           }
 
           // 3. Si se encontró la suscripción (por ID o por Email), proceder con la activación
           if (sub) {
-            await prisma.systemAlert.create({
-              data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Ejecutando actualización final para Sub: ${sub.id}` }
-            });
-
             const updatedSub = await prisma.instructorSubscription.update({
               where: { id: sub.id },
               data: { 
                 status: 'ACTIVE',
+                // Sincronizar ID si no estaba presente
                 stripeSubscriptionId: sub.stripeSubscriptionId || (invoice.subscription as string)
               }
             });
+            diagnostics.status_updated = 'ACTIVE';
 
             // Reactivar cursos si estaban hibernados
             const profile = await prisma.instructorProfile.findUnique({ where: { id: sub.instructorId } });
@@ -442,8 +431,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ 
       received: true, 
-      version: "v4_debug_active",
-      timestamp: new Date().toISOString()
+      version: "v5_diag_direct",
+      timestamp: new Date().toISOString(),
+      diagnostics
     });
 
   } catch (error: any) {
