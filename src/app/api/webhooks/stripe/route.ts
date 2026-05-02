@@ -345,24 +345,59 @@ export async function POST(req: Request) {
             });
             diagnostics.status_updated = 'ACTIVE';
 
-            // --- CREAR TRANSACCIÓN CONTABLE ---
+            // --- SINCRONIZACIÓN DUAL: TRANSACTION + SUBSCRIPTION_RECORD ---
             try {
+              // 1. Crear Transacción Contable (Para el Dashboard de Admin)
               await prisma.transaction.create({
                 data: {
                   userId: sub.instructor.userId,
                   instructorId: sub.instructorId,
                   paymentType: 'INSTRUCTOR_SUBSCRIPTION',
                   grossAmount: amountPaid,
+                  platformCommissionAmount: 0, // Rentas son 100% para plataforma o según plan
+                  netAmountToInstructor: 0,    // En rentas, el instructor es el que paga
                   currency: invoice.currency?.toUpperCase() || 'MXN',
                   paymentStatus: 'SUCCESS',
                   paymentProvider: 'STRIPE',
                   stripePaymentIntentId: invoice.payment_intent as string,
                 }
               });
+
+              // 2. Asegurar Registro en SubscriptionRecord (Para el Dashboard de Rentas)
+              // Buscamos si ya existe uno para actualizarlo, o creamos uno nuevo
+              const existingRecord = await prisma.subscriptionRecord.findFirst({
+                where: { userId: sub.instructor.userId, planId: sub.planId }
+              });
+
+              if (existingRecord) {
+                await prisma.subscriptionRecord.update({
+                  where: { id: existingRecord.id },
+                  data: {
+                    status: 'ACTIVE',
+                    amountPaid: amountPaid,
+                    startDate: new Date(),
+                    stripeSubscriptionId: invoice.subscription as string
+                  }
+                });
+              } else {
+                await prisma.subscriptionRecord.create({
+                  data: {
+                    userId: sub.instructor.userId,
+                    planId: sub.planId,
+                    status: 'ACTIVE',
+                    amountPaid: amountPaid,
+                    startDate: new Date(),
+                    stripeSubscriptionId: invoice.subscription as string
+                  }
+                });
+              }
             } catch (transError: any) {
-              console.error('[WEBHOOK_TRANS_ERROR]', transError.message);
+              console.error('[WEBHOOK_SYNC_ERROR]', transError.message);
               await prisma.systemAlert.create({
-                data: { type: 'TRANSACTION_CREATE_FAIL', message: `Error creando transacción para sub ${sub.id}: ${transError.message}` }
+                data: { 
+                  type: 'TRANSACTION_SYNC_FAIL', 
+                  message: `Error en sincronización dual para sub ${sub.id}: ${transError.message}` 
+                }
               });
             }
 
