@@ -328,6 +328,8 @@ export async function POST(req: Request) {
 
           // 3. Si se encontró la suscripción (por ID o por Email), proceder con la activación
           if (sub) {
+            const amountPaid = (invoice.amount_paid || 0) / 100;
+            
             const updatedSub = await prisma.instructorSubscription.update({
               where: { id: sub.id },
               data: { 
@@ -337,6 +339,27 @@ export async function POST(req: Request) {
               }
             });
             diagnostics.status_updated = 'ACTIVE';
+
+            // --- CREAR TRANSACCIÓN CONTABLE ---
+            try {
+              await prisma.transaction.create({
+                data: {
+                  userId: sub.instructor.userId,
+                  instructorId: sub.instructorId,
+                  paymentType: 'INSTRUCTOR_SUBSCRIPTION',
+                  grossAmount: amountPaid,
+                  currency: invoice.currency?.toUpperCase() || 'MXN',
+                  paymentStatus: 'SUCCESS',
+                  paymentProvider: 'STRIPE',
+                  stripePaymentIntentId: invoice.payment_intent as string,
+                }
+              });
+            } catch (transError: any) {
+              console.error('[WEBHOOK_TRANS_ERROR]', transError.message);
+              await prisma.systemAlert.create({
+                data: { type: 'TRANSACTION_CREATE_FAIL', message: `Error creando transacción para sub ${sub.id}: ${transError.message}` }
+              });
+            }
 
             // Reactivar cursos si estaban hibernados
             const profile = await prisma.instructorProfile.findUnique({ where: { id: sub.instructorId } });
