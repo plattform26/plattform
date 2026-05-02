@@ -297,8 +297,13 @@ export async function POST(req: Request) {
 
           // 2. FALLBACK: Si no se encuentra por ID, buscar por el email del cliente de la factura
           if (!sub && invoice.customer_email) {
-            const user = await prisma.user.findUnique({
-              where: { email: invoice.customer_email },
+            const user = await prisma.user.findFirst({
+              where: { 
+                email: {
+                  equals: invoice.customer_email?.trim(),
+                  mode: 'insensitive'
+                }
+              },
               include: { instructorProfile: true }
             });
 
