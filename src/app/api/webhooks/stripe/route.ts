@@ -279,35 +279,66 @@ export async function POST(req: Request) {
       case 'invoice.paid': {
         const invoice = event.data.object as any;
         if (invoice.subscription) {
-          const updatedSubs = await prisma.instructorSubscription.updateMany({
+          // 1. Intentar encontrar la suscripción por ID de Stripe
+          let sub = await prisma.instructorSubscription.findFirst({
             where: { stripeSubscriptionId: invoice.subscription },
-            data: { status: 'ACTIVE' }
+            include: { instructor: true }
           });
 
-          if (updatedSubs.count > 0) {
-            const sub = await prisma.instructorSubscription.findFirst({ where: { stripeSubscriptionId: invoice.subscription } });
-            if (sub) {
-              const profile = await prisma.instructorProfile.findUnique({ where: { id: sub.instructorId } });
-              if (profile) {
-                await prisma.course.updateMany({
-                  where: { instructorId: profile.userId, status: 'HIBERNATED' },
-                  data: { status: 'PUBLISHED' }
-                });
-              }
-              const instructorUser = await prisma.user.findUnique({ where: { id: sub.instructorId } });
-              const plan = await prisma.platformPlan.findUnique({ where: { id: sub.planId } });
-              if (instructorUser && plan) {
-                try {
-                  await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan, sub.expiresAt ?? undefined); 
-                } catch (err: any) {
-                  await prisma.systemAlert.create({ data: { type: 'EMAIL_RENEWAL_FAIL', message: `Error enviando correo RENEWAL a instructor (${instructorUser.email}): ${err.message}` } });
-                }
+          // 2. FALLBACK: Si no se encuentra por ID, buscar por el email del cliente de la factura
+          if (!sub && invoice.customer_email) {
+            const user = await prisma.user.findUnique({
+              where: { email: invoice.customer_email },
+              include: { instructorProfile: true }
+            });
 
-                try {
-                  await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.displayName, Number(plan.monthlyPrice), sub.expiresAt || new Date());
-                } catch (err: any) {
-                  await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_RENEWAL_FAIL', message: `Error notificando renovación a admin: ${err.message}` } });
-                }
+            if (user?.instructorProfile) {
+              sub = await prisma.instructorSubscription.findFirst({
+                where: { 
+                  instructorId: user.instructorProfile.id,
+                  status: { in: ['ACTIVE', 'PAUSED', 'PAST_DUE'] }
+                },
+                include: { instructor: true },
+                orderBy: { createdAt: 'desc' }
+              });
+            }
+          }
+
+          // 3. Si se encontró la suscripción (por ID o por Email), proceder con la activación
+          if (sub) {
+            const updatedSub = await prisma.instructorSubscription.update({
+              where: { id: sub.id },
+              data: { 
+                status: 'ACTIVE',
+                // Sincronizar ID si no estaba presente
+                stripeSubscriptionId: sub.stripeSubscriptionId || (invoice.subscription as string)
+              }
+            });
+
+            // Reactivar cursos si estaban hibernados
+            const profile = await prisma.instructorProfile.findUnique({ where: { id: sub.instructorId } });
+            if (profile) {
+              await prisma.course.updateMany({
+                where: { instructorId: profile.userId, status: 'HIBERNATED' },
+                data: { status: 'PUBLISHED' }
+              });
+            }
+
+            const instructorUser = await prisma.user.findUnique({ where: { id: profile?.userId || sub.instructorId } });
+            const plan = await prisma.platformPlan.findUnique({ where: { id: sub.planId } });
+
+            if (instructorUser && plan) {
+              try {
+                // Notificar éxito de pago / renovación
+                await sendPlanActivityEmail(instructorUser.email, 'RENEWAL', plan, updatedSub.expiresAt ?? undefined); 
+              } catch (err: any) {
+                await prisma.systemAlert.create({ data: { type: 'EMAIL_RENEWAL_FAIL', message: `Error enviando correo RENEWAL a instructor (${instructorUser.email}): ${err.message}` } });
+              }
+
+              try {
+                await sendSubscriptionNotificationToAdmin(instructorUser.name, instructorUser.email, plan.displayName, Number(plan.monthlyPrice), updatedSub.expiresAt || new Date());
+              } catch (err: any) {
+                await prisma.systemAlert.create({ data: { type: 'EMAIL_ADMIN_RENEWAL_FAIL', message: `Error notificando renovación a admin: ${err.message}` } });
               }
             }
           }
