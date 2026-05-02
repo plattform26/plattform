@@ -280,6 +280,11 @@ export async function POST(req: Request) {
       case 'invoice.paid': {
         const invoice = event.data.object as any;
         if (invoice.subscription) {
+          // --- LOG DE DEPURACIÓN INICIAL ---
+          await prisma.systemAlert.create({
+            data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Iniciando procesamiento de factura. Email: ${invoice.customer_email || 'NO_EMAIL'} | Sub: ${invoice.subscription}` }
+          });
+
           // 1. Intentar encontrar la suscripción por ID de Stripe
           let sub = await prisma.instructorSubscription.findFirst({
             where: { stripeSubscriptionId: invoice.subscription },
@@ -288,30 +293,51 @@ export async function POST(req: Request) {
 
           // 2. FALLBACK: Si no se encuentra por ID, buscar por el email del cliente de la factura
           if (!sub && invoice.customer_email) {
+            await prisma.systemAlert.create({
+              data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Fallback por email iniciado para: ${invoice.customer_email}` }
+            });
+
             const user = await prisma.user.findUnique({
               where: { email: invoice.customer_email },
               include: { instructorProfile: true }
             });
 
-            if (user?.instructorProfile) {
-              sub = await prisma.instructorSubscription.findFirst({
-                where: { 
-                  instructorId: user.instructorProfile.id,
-                  status: { in: ['ACTIVE', 'PAUSED', 'PAST_DUE'] }
-                },
-                include: { instructor: true },
-                orderBy: { createdAt: 'desc' }
+            if (user) {
+              await prisma.systemAlert.create({
+                data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Usuario encontrado: ${user.id}. Perfil: ${user.instructorProfile ? 'SÍ' : 'NO'}` }
+              });
+
+              if (user.instructorProfile) {
+                sub = await prisma.instructorSubscription.findFirst({
+                  where: { 
+                    instructorId: user.instructorProfile.id,
+                    status: { in: ['ACTIVE', 'PAUSED', 'PAST_DUE'] }
+                  },
+                  include: { instructor: true },
+                  orderBy: { createdAt: 'desc' }
+                });
+
+                await prisma.systemAlert.create({
+                  data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Suscripción encontrada por fallback: ${sub?.id || 'NOT_FOUND'}` }
+                });
+              }
+            } else {
+              await prisma.systemAlert.create({
+                data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Usuario NO encontrado para email: ${invoice.customer_email}` }
               });
             }
           }
 
           // 3. Si se encontró la suscripción (por ID o por Email), proceder con la activación
           if (sub) {
+            await prisma.systemAlert.create({
+              data: { type: 'WEBHOOK_DEBUG', message: `[WEBHOOK] Ejecutando actualización final para Sub: ${sub.id}` }
+            });
+
             const updatedSub = await prisma.instructorSubscription.update({
               where: { id: sub.id },
               data: { 
                 status: 'ACTIVE',
-                // Sincronizar ID si no estaba presente
                 stripeSubscriptionId: sub.stripeSubscriptionId || (invoice.subscription as string)
               }
             });
