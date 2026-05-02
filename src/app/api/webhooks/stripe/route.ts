@@ -302,6 +302,13 @@ export async function POST(req: Request) {
               include: { instructorProfile: true }
             });
 
+            console.log('[WEBHOOK_V5]', {
+              email_buscado: invoice.customer_email,
+              usuario_encontrado: !!user,
+              user_id: user?.id || null,
+              query_error: null
+            });
+
             if (user) {
               diagnostics.user_found = true;
               if (user.instructorProfile) {
