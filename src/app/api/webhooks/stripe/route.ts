@@ -440,7 +440,11 @@ export async function POST(req: Request) {
       }
     });
 
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ 
+      received: true, 
+      version: "v4_debug_active",
+      timestamp: new Date().toISOString()
+    });
 
   } catch (error: any) {
     console.error('Webhook processing failed, Stripe will retry:', error);
