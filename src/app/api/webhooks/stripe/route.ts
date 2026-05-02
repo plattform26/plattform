@@ -276,6 +276,7 @@ export async function POST(req: Request) {
         break;
       }
 
+      case 'invoice.payment_succeeded':
       case 'invoice.paid': {
         const invoice = event.data.object as any;
         if (invoice.subscription) {
