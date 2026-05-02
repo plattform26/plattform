@@ -300,7 +300,7 @@ export async function POST(req: Request) {
             const user = await prisma.user.findFirst({
               where: { 
                 email: {
-                  equals: invoice.customer_email?.trim(),
+                  contains: invoice.customer_email?.trim(),
                   mode: 'insensitive'
                 }
               },
