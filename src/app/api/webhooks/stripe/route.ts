@@ -218,7 +218,7 @@ export async function POST(req: Request) {
             // 1. Validación y Fallback de ID de Suscripción (Soporte para sesiones legacy)
             if (!metadata.instructorSubscriptionId) {
               const activeSub = await tx.instructorSubscription.findFirst({
-                where: { instructorId: profile!.id, status: 'ACTIVE' }
+                where: { instructorId: profile!.id, status: { in: ['ACTIVE', 'PAST_DUE'] } }
               });
               if (!activeSub) {
                 throw new Error('Missing instructorSubscriptionId in metadata and no active subscription found');
