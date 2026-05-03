@@ -28,7 +28,7 @@ export default async function ClassroomLayout(
     where: { userId_courseId: { userId: session.userId, courseId: params.id } },
   });
 
-  if (!isInstructorOrAdmin && (!enrollment || enrollment.status !== 'ACTIVE')) {
+  if (!isInstructorOrAdmin && (!enrollment || (enrollment.status !== 'ACTIVE' && enrollment.status !== 'COMPLETED'))) {
     redirect('/dashboard/student/courses');
   }
 

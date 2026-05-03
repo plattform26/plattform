@@ -85,20 +85,19 @@ export default async function InstructorDashboardPage() {
     _count: { id: true }
   });
 
-  // Monthly Earnings
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
-  const monthlyEnrollments = await prisma.enrollment.findMany({
-    where: {
-      course: { instructorId: session.userId },
-      createdAt: { gte: startOfMonth }
+  // Total Earnings (usando Transaction como fuente de verdad)
+  const aggregations = await prisma.transaction.aggregate({
+    where: { 
+      instructorId: session.userId,
+      paymentStatus: 'SUCCESS',
+      paymentType: 'COURSE_PURCHASE'
     },
-    include: { course: true }
+    _sum: {
+      netAmountToInstructor: true
+    }
   });
 
-  const monthlyEarnings = monthlyEnrollments.reduce((acc, curr) => acc + Number(curr.course.price || 0), 0);
+  const totalEarnings = Number(aggregations._sum.netAmountToInstructor || 0);
 
   // Recent courses
   const recentCourses = await prisma.course.findMany({
@@ -211,9 +210,9 @@ export default async function InstructorDashboardPage() {
           <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{studentsCount}</div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 rounded-2xl p-5 hover:border-blue-500/40 hover:-translate-y-1 transition-all">
-          <div className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wide">💰 Ingresos (mes)</div>
+          <div className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wide">💰 Ingresos Totales</div>
           <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            {formatMXN(monthlyEarnings)}
+            {formatMXN(totalEarnings)}
           </div>
         </div>
         <div className="bg-[#152035] border border-blue-500/20 rounded-2xl p-5 hover:border-blue-500/40 hover:-translate-y-1 transition-all">

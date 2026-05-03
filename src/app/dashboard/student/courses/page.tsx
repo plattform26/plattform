@@ -13,7 +13,10 @@ export default async function StudentCoursesPage() {
   
 
   const enrollments = await prisma.enrollment.findMany({
-    where: { userId: session.userId, status: 'ACTIVE' },
+    where: { 
+      userId: session.userId, 
+      status: { in: ['ACTIVE', 'COMPLETED'] }
+    },
     include: {
       course: {
         include: {
@@ -54,7 +57,9 @@ export default async function StudentCoursesPage() {
       hasPassedQuiz,
       userRating: userRatingRecord?.rating || null,
       hasRated: !!userRatingRecord?.rating,
-      instructorName: en.course.instructor?.name || 'Instructor' 
+      instructorName: en.course.instructor?.name || 'Instructor',
+      enrollmentStatus: en.status,
+      courseStatus: en.course.status
     };
   }));
 
@@ -113,11 +118,23 @@ export default async function StudentCoursesPage() {
                         <Link href={`/dashboard/student/learn/${course.id}`} className="flex-1">
                             <h3 className="font-bold text-sm group-hover:text-cyan-400 transition-colors line-clamp-2 italic">{course.title}</h3>
                         </Link>
-                        {course.hasCertificate && (
-                            <span className="text-[8px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 font-black animate-pulse whitespace-nowrap shadow-[0_0_100px_rgba(34,197,94,0.2)]">
-                                ✅ CERTIFICADO
-                            </span>
-                        )}
+                        <div className="flex flex-col items-end gap-1">
+                          {course.enrollmentStatus === 'COMPLETED' && (
+                              <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-black whitespace-nowrap">
+                                  ✓ COMPLETADO
+                              </span>
+                          )}
+                          {course.courseStatus === 'HIBERNATED' && (
+                              <span className="text-[8px] bg-yellow-500/10 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/20 font-black whitespace-nowrap">
+                                  ⚠️ HIBERNADO
+                              </span>
+                          )}
+                          {course.hasCertificate && (
+                              <span className="text-[8px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 font-black animate-pulse whitespace-nowrap shadow-[0_0_100px_rgba(34,197,94,0.2)]">
+                                  🏆 CERTIFICADO
+                              </span>
+                          )}
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 mb-4">
