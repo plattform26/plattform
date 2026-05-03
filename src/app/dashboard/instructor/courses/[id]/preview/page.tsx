@@ -1,116 +1,262 @@
-import prisma from '@/lib/prisma';
-import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
-import { getSession } from '@/lib/auth';
+'use client';
 
-export default async function InstructorCoursePreviewPage(props: { params: Promise<{ id: string }> }) {
-   const params = await props.params;
-   const { id } = params;
-   const session = await getSession();
+import { useEffect, useState, use } from 'react';
+import { notFound } from 'next/navigation';
+import InstructorPreviewSidebar from '@/app/dashboard/instructor/components/InstructorPreviewSidebar';
+import InstructorPreviewLessonHeader from '@/app/dashboard/instructor/components/InstructorPreviewLessonHeader';
+import InstructorPreviewQuizViewer from '@/app/dashboard/instructor/components/InstructorPreviewQuizViewer';
+import InstructorPreviewLessonNavigation from '@/app/dashboard/instructor/components/InstructorPreviewLessonNavigation';
+import InlineLessonEditor from '@/components/InlineLessonEditor';
 
-   if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
+// Flag para activar nueva UI
+const useNewPreviewUI = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_INSTRUCTOR_PREVIEW_UI === 'true';
 
-   const course = await prisma.course.findUnique({
-     where: { id },
-     include: {
-       instructor: { select: { id: true, name: true, lastName: true } },
-       modules: {
-         orderBy: { orderIndex: 'asc' },
-         include: {
-           lessons: {
-             orderBy: { orderIndex: 'asc' }
-           }
-         }
-       }
-     }
-   });
+interface Module {
+  id: string;
+  title: string;
+  lessons: Lesson[];
+}
 
-   if (!course) notFound();
+interface Lesson {
+  id: string;
+  title: string;
+  subtitle?: string;
+  moduleId: string;
+  orderIndex: number;
+  contentText?: string;
+  videoUrl?: string;
+  contentType: 'TEXT' | 'VIDEO' | 'QUIZ';
+  quiz?: Quiz;
+}
 
-   // Seguridad: Solo el dueño del curso puede previsualizarlo aquí
-   if (course.instructor.id !== session.userId) redirect('/dashboard/instructor/courses');
+interface Quiz {
+  id: string;
+  title: string;
+  questions: Question[];
+  passingScore?: number;
+}
 
-   return (
-     <div className="space-y-10 animate-fade-in font-poppins">
-       <div className="flex items-center justify-between">
-         <Link href="/dashboard/instructor/courses" className="text-xs font-bold text-cyan-400 hover:text-white transition-colors uppercase tracking-widest flex items-center gap-2">
-           ← Volver a Mis Cursos
-         </Link>
-         <div className="px-5 py-2 bg-green-500/20 border border-green-500/50 text-green-400 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-lg shadow-green-600/10">
-            MODO PREVIEW — Vista del Instructor
-         </div>
-       </div>
+interface Question {
+  id: string;
+  questionText: string;
+  options: Option[];
+}
 
-       <div className="bg-[#0d1524] border border-blue-500/10 p-10 rounded-3xl shadow-2xl">
-         <div className="flex flex-col md:flex-row justify-between items-start gap-8 border-b border-blue-500/10 pb-10">
-           <div>
-             <h1 className="text-4xl font-space-grotesk font-extrabold text-white leading-none">{course.title}</h1>
-             <p className="text-gray-400 mt-4 max-w-2xl text-sm leading-relaxed italic">"{course.description}"</p>
-             <div className="flex gap-4 mt-6">
-                <span className="text-[10px] font-bold text-cyan-400 border border-cyan-400/20 px-3 py-1 rounded-lg bg-cyan-400/5">{course.category}</span>
-                <span className="text-[10px] font-bold text-gray-500 border border-gray-500/20 px-3 py-1 rounded-lg bg-gray-500/5">{course.level}</span>
+interface Option {
+  id: string;
+  optionText: string;
+}
+
+interface PreviewPageProps {
+  params: Promise<{
+    id: string; // courseId
+  }>;
+}
+
+export default function PreviewPage({ params }: PreviewPageProps) {
+  const { id: courseId } = use(params);
+  const [courseData, setCourseData] = useState<{
+    id: string;
+    title: string;
+    instructor?: { name: string };
+    modules: Module[];
+  } | null>(null);
+  
+  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Cargar datos del curso
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        const response = await fetch(`/api/instructor/courses/${courseId}/preview`);
+        if (!response.ok) throw new Error('No se pudo cargar el curso');
+        
+        const data = await response.json();
+        setCourseData(data);
+        
+        // Establecer primera lección si no hay una seleccionada
+        if (data.modules && data.modules.length > 0) {
+          const firstLesson = data.modules[0].lessons[0];
+          if (firstLesson) {
+            setCurrentLessonId(firstLesson.id);
+          }
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [courseId]);
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center h-screen bg-[#080e1c] text-white">
+      <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p className="font-space-grotesk font-bold uppercase tracking-widest text-xs animate-pulse">Cargando Engine de Preview...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex items-center justify-center h-screen bg-[#080e1c] text-red-400">
+      <div className="text-center p-8 bg-red-500/10 border border-red-500/20 rounded-3xl">
+         <p className="text-4xl mb-4">⚠️</p>
+         <p className="font-bold uppercase tracking-widest text-sm">{error}</p>
+      </div>
+    </div>
+  );
+
+  if (!courseData) return notFound();
+
+  // Obtener lección actual
+  const currentLesson = courseData.modules
+    .flatMap(m => m.lessons)
+    .find(l => l.id === currentLessonId);
+
+  if (!currentLesson) return (
+    <div className="flex items-center justify-center h-screen bg-[#080e1c] text-gray-500">
+       <p className="font-bold uppercase tracking-widest text-xs italic">Selecciona una lección para comenzar</p>
+    </div>
+  );
+
+  // Calcular índices para navegación
+  const allLessons = courseData.modules.flatMap(m => m.lessons);
+  const currentIndex = allLessons.findIndex(l => l.id === currentLessonId);
+  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+  const moduleOfCurrentLesson = courseData.modules.find(m => 
+    m.lessons.some(l => l.id === currentLessonId)
+  );
+
+  // Handlers para navegación
+  const handleLessonChange = (lessonId: string) => {
+    setCurrentLessonId(lessonId);
+    // Scroll to top of main area
+    const mainArea = document.querySelector('main > div');
+    if (mainArea) mainArea.scrollTo(0, 0);
+  };
+
+  const handlePreviousClick = () => {
+    if (previousLesson) {
+      handleLessonChange(previousLesson.id);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (nextLesson) {
+      handleLessonChange(nextLesson.id);
+    }
+  };
+
+  // SI está habilitada la nueva UI
+  if (useNewPreviewUI) {
+    return (
+      <InstructorPreviewSidebar
+        modules={courseData.modules.map(mod => ({
+          id: mod.id,
+          title: mod.title,
+          lessons: mod.lessons.map(l => ({
+            id: l.id,
+            title: l.title,
+            moduleId: mod.id,
+            order: l.orderIndex
+          }))
+        }))}
+        currentLessonId={currentLessonId!}
+        onLessonChange={handleLessonChange}
+      >
+        <div className="max-w-4xl mx-auto px-6 py-12">
+          <InstructorPreviewLessonHeader
+            lessonTitle={currentLesson.title}
+            moduleTitle={moduleOfCurrentLesson?.title || 'Módulo'}
+            lessonNumber={currentIndex + 1}
+            subtitle={currentLesson.subtitle}
+          />
+
+          {/* Contenido de la lección */}
+          <div className="space-y-12">
+            {/* Video */}
+            {currentLesson.videoUrl && (
+              <div className="card !p-0 overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.1)] border-cyan-500/20">
+                 <div className="video-container">
+                    <iframe 
+                       src={currentLesson.videoUrl.replace('watch?v=', 'embed/')} 
+                       allow="autoplay; fullscreen; picture-in-picture" 
+                       allowFullScreen
+                    ></iframe>
+                 </div>
+              </div>
+            )}
+
+            {/* Contenido de texto */}
+            {currentLesson.contentText && (
+              <section className="card prose prose-invert prose-cyan max-w-none shadow-2xl">
+                <div dangerouslySetInnerHTML={{ __html: currentLesson.contentText }} />
+              </section>
+            )}
+
+            {/* Quiz */}
+            {currentLesson.contentType === 'QUIZ' && currentLesson.quiz && (
+              <InstructorPreviewQuizViewer
+                quiz={{
+                  id: currentLesson.quiz.id,
+                  title: currentLesson.quiz.title,
+                  questions: currentLesson.quiz.questions.map(q => ({
+                    id: q.id,
+                    questionText: q.questionText,
+                    options: q.options.map(o => ({
+                      id: o.id,
+                      optionText: o.optionText
+                    }))
+                  }))
+                }}
+                courseTitle={courseData.title}
+              />
+            )}
+          </div>
+
+          {/* Navegación */}
+          <InstructorPreviewLessonNavigation
+            prevLesson={previousLesson}
+            nextLesson={nextLesson}
+            onPreviousClick={handlePreviousClick}
+            onNextClick={handleNextClick}
+          />
+
+          {/* Editor Inline */}
+          <div className="mt-20 border-t border-white/5 pt-10">
+             <div className="flex items-center gap-2 mb-6">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
+                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Editor de Instructor</span>
+                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
              </div>
-           </div>
-           <div className="text-right">
-             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Tu Perfil de Instructor</p>
-             <p className="text-xl font-bold text-white">{course.instructor.name} {course.instructor.lastName}</p>
-             <p className="text-[10px] text-green-400 font-mono mt-1 opacity-60">ID: {course.id}</p>
-           </div>
-         </div>
+             <InlineLessonEditor 
+               lesson={{ 
+                 id: currentLesson.id, 
+                 title: currentLesson.title, 
+                 subtitle: currentLesson.subtitle, 
+                 content: currentLesson.contentText, 
+                 videoUrl: currentLesson.videoUrl, 
+                 contentType: currentLesson.contentType 
+               }} 
+             />
+          </div>
+        </div>
+      </InstructorPreviewSidebar>
+    );
+  }
 
-         <div className="mt-12 space-y-10">
-            <h3 className="text-xl font-space-grotesk font-bold text-white flex items-center gap-4">
-               Estructura de Contenidos (Modo Alumno)
-               <span className="h-[2px] flex-1 bg-gradient-to-r from-blue-600/50 to-transparent"></span>
-            </h3>
-
-            <div className="space-y-6">
-               {course.modules.length === 0 ? (
-                  <div className="p-20 text-center border-2 border-dashed border-blue-500/10 rounded-3xl">
-                     <p className="text-gray-600 italic">Este curso aún no tiene módulos configurados.</p>
-                  </div>
-               ) : course.modules.map((module: any) => (
-                  <div key={module.id} className="space-y-4">
-                     <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-xs font-bold text-blue-400">
-                           {module.orderIndex}
-                        </div>
-                        <h4 className="text-lg font-bold text-gray-200">{module.title}</h4>
-                     </div>
-
-                     <div className="ml-12 grid grid-cols-1 gap-3">
-                        {module.lessons.map((lesson: any) => (
-                           <Link 
-                             key={lesson.id} 
-                             href={`/dashboard/instructor/courses/${course.id}/preview/lesson/${lesson.id}`}
-                             className="bg-[#152035] border border-blue-500/10 p-5 rounded-2xl flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all group cursor-pointer"
-                           >
-                              <div className="flex items-center gap-4">
-                                 <span className={`text-lg opacity-40 group-hover:opacity-100 transition-opacity`}>
-                                    {lesson.contentType === 'VIDEO' ? '🎥' : lesson.contentType === 'QUIZ' ? '📝' : '📄'}
-                                 </span>
-                                 <div>
-                                    <p className="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">{lesson.title}</p>
-                                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-black italic">{lesson.contentType}</span>
-                                 </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                {lesson.isPreview && (
-                                   <span className="text-[9px] font-bold text-green-400 bg-green-400/5 border border-green-400/20 px-2 py-0.5 rounded uppercase">Preview Gratis</span>
-                                )}
-                                <span className="text-xs text-green-400 opacity-0 group-hover:opacity-100 transition-opacity">Ver Contenido →</span>
-                              </div>
-                           </Link>
-                        ))}
-                        {module.lessons.length === 0 && (
-                           <p className="text-xs text-gray-600 italic ml-2">Sin lecciones en este módulo.</p>
-                        )}
-                     </div>
-                  </div>
-               ))}
-            </div>
-         </div>
+  // Fallback UI antigua
+  return (
+    <div className="flex items-center justify-center h-screen bg-[#080e1c] text-white">
+       <div className="text-center">
+          <p className="text-4xl mb-6">🛸</p>
+          <h2 className="font-space-grotesk font-black text-2xl uppercase italic tracking-tighter mb-2">Engine de Preview</h2>
+          <p className="text-gray-500 text-xs uppercase tracking-widest">Activa NEXT_PUBLIC_INSTRUCTOR_PREVIEW_UI para ver la nueva interfaz</p>
        </div>
-     </div>
-   );
+    </div>
+  );
 }

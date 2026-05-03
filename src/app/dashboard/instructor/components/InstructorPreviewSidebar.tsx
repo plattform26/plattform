@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 interface Lesson {
@@ -18,16 +17,16 @@ interface Module {
 }
 
 interface InstructorPreviewSidebarProps {
-  courseId: string;
   modules: Module[];
   currentLessonId: string;
+  onLessonChange: (lessonId: string) => void;
   children: ReactNode;
 }
 
 export default function InstructorPreviewSidebar({
-  courseId,
   modules,
   currentLessonId,
+  onLessonChange,
   children
 }: InstructorPreviewSidebarProps) {
   return (
@@ -35,11 +34,14 @@ export default function InstructorPreviewSidebar({
       {/* SIDEBAR */}
       <aside className="w-[258px] h-full bg-[#050b16] border-r border-blue-500/10 flex flex-col transition-all duration-300 overflow-hidden relative z-50">
         <div className="p-6 border-b border-blue-500/10 flex flex-col gap-4">
-           <Link href="/dashboard/instructor/courses" className="text-[10px] uppercase font-bold text-gray-500 hover:text-cyan-400 transition-colors">
+           <button 
+              onClick={() => window.location.href = '/dashboard/instructor/courses'}
+              className="text-left text-[10px] uppercase font-bold text-gray-500 hover:text-cyan-400 transition-colors"
+           >
               ← Volver al panel
-           </Link>
+           </button>
            <div className="px-5 py-2 bg-green-500/20 border border-green-500/50 text-green-400 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl text-center">
-              MODO PREVIEW
+              MODO PREVIEW DINÁMICO
            </div>
         </div>
 
@@ -56,11 +58,11 @@ export default function InstructorPreviewSidebar({
                 {module.lessons.map(lesson => {
                   const isActive = currentLessonId === lesson.id;
                   return (
-                    <Link
+                    <button
                       key={lesson.id}
-                      href={`/dashboard/instructor/courses/${courseId}/preview/lesson/${lesson.id}`}
+                      onClick={() => onLessonChange(lesson.id)}
                       className={`
-                        flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-medium transition-all
+                        w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-medium transition-all
                         ${isActive
                           ? 'bg-blue-600/10 text-cyan-400 border border-blue-500/10'
                           : 'text-gray-400 hover:bg-blue-500/5 hover:text-white'
@@ -73,7 +75,7 @@ export default function InstructorPreviewSidebar({
                         {isActive ? '▶' : '○'}
                       </span>
                       <span className="flex-1 truncate">{lesson.title}</span>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
@@ -86,7 +88,7 @@ export default function InstructorPreviewSidebar({
       <main className="flex-1 flex flex-col min-w-0 bg-[#080e1c] relative">
          <header className="h-16 flex items-center justify-between px-6 border-b border-blue-500/10 bg-[#080e1c]/80 backdrop-blur-md sticky top-0 z-40">
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-               Preview: Plattform Learning Engine
+               Preview: Plattform Learning Engine (SPA Mode)
             </div>
             <div className="flex items-center gap-4">
                <span className="text-[10px] font-bold text-amber-500 uppercase animate-pulse">Vista de Instructor</span>
