@@ -1,0 +1,31 @@
+﻿Auditing Quiz Relationships for course: c50526a8-4494-4850-896d-368ff1a6170d
+
+--- QUIZZES ---
+Quiz ID: 4ba5da66-06a1-4d62-9602-4415306f4b5c | Title: Evaluaci├│n Final | Passing Score: 80
+lessonId: NULL
+Questions Count: 20
+
+--- LAST LESSON OF COURSE ---
+ID: af3f1d10-2327-4c15-9c57-36b18afd8ceb | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 4 | Module: Escritura y Comunicaci├│n Profesional | Order: 5
+
+--- FULL COURSE STRUCTURE ---
+Mod 1 | Les 1 | Quiz: NO | Title: ┬┐Qu├® es realmente la IA? | ID: 374e87e0-b4ba-4be5-9b72-b11a5e608def
+Mod 1 | Les 2 | Quiz: NO | Title: C├│mo funciona la IA (Modelos de Lenguaje) | ID: 14367d3e-995a-42eb-b68f-a86229452558
+Mod 1 | Les 3 | Quiz: NO | Title: Introducci├│n a Prompts | ID: 8bb2f82f-a5c2-46a6-9cc8-0f4a5ca842b5
+Mod 1 | Les 4 | Quiz: NO | Title: Validaci├│n y Detecci├│n de Alucinaciones | ID: 25546f1e-3ea6-48dc-a562-0cbcaa78dcc6
+Mod 1 | Les 5 | Quiz: NO | Title: RETO DE ACCI├ôN: M├│dulo 1 | ID: c13aa239-09ad-4048-8bef-5dbf1df2b779
+Mod 2 | Les 1 | Quiz: NO | Title: Brainstorming con IA | ID: 50a00357-a661-49f3-962e-a5c36a2801d7
+Mod 2 | Les 2 | Quiz: NO | Title: Estructuraci├│n de proyectos | ID: 64b90797-cd43-4d10-b278-1c5795888876
+Mod 2 | Les 3 | Quiz: NO | Title: Planeaci├│n estrat├®gica | ID: 988a063f-96df-4cff-81ea-f37399777b4a
+Mod 2 | Les 4 | Quiz: NO | Title: Ejecuci├│n y seguimiento | ID: 047dd0af-a5a0-429b-b6e9-1480d7169197
+Mod 2 | Les 5 | Quiz: NO | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 2 | ID: dc7d7475-8735-4554-9c63-78fc220c26d2
+Mod 3 | Les 1 | Quiz: NO | Title: B├║squeda y curadur├¡a de informaci├│n | ID: 47989e99-3ef7-4745-9eeb-660841b61691
+Mod 3 | Les 2 | Quiz: NO | Title: Resumen y s├¡ntesis de datos | ID: 25761dd5-7648-4d8b-878f-2bec4b98ff0f
+Mod 3 | Les 3 | Quiz: NO | Title: An├ílisis de ventajas y desventajas | ID: d854800a-9d41-4499-b471-b26469579253
+Mod 3 | Les 4 | Quiz: NO | Title: Pensamiento cr├¡tico y validaci├│n final | ID: edf800d4-5b64-43c5-b414-047c89f00a9f
+Mod 3 | Les 5 | Quiz: NO | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 3 | ID: 83cb7e14-1d13-465f-aa34-40af1bf47acb
+Mod 4 | Les 1 | Quiz: NO | Title: Optimizaci├│n de redacci├│n y estilo | ID: daeea27d-fc50-48e0-8ff5-d4f28e4b716b
+Mod 4 | Les 2 | Quiz: NO | Title: Adaptaci├│n de tonos y estilos | ID: b807c500-481d-4771-a677-fc9dba00676c
+Mod 4 | Les 3 | Quiz: NO | Title: Estructuraci├│n de correos y documentos | ID: b14174fe-2b05-4166-887b-174571756504
+Mod 4 | Les 4 | Quiz: NO | Title: Mejora y optimizaci├│n de textos (Refinamiento) | ID: 6e51d76c-77b2-48c0-b9d6-8c392f2b324e
+Mod 4 | Les 5 | Quiz: NO | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 4 | ID: af3f1d10-2327-4c15-9c57-36b18afd8ceb

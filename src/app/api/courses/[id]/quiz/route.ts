@@ -60,9 +60,24 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
           // Find or create quiz
           let quiz = course.quizzes[0];
           if (!quiz) {
+              // 1. Buscar la última lección del curso para vincular el quiz
+              const lastLesson = await tx.courseLesson.findFirst({
+                where: { courseId },
+                orderBy: [
+                  { module: { orderIndex: 'desc' } },
+                  { orderIndex: 'desc' }
+                ]
+              });
+
+              if (!lastLesson) {
+                throw new Error('No se encontró ninguna lección en el curso para asignar la evaluación final.');
+              }
+
+              // 2. Crear el quiz vinculado
               quiz = await tx.quiz.create({
                   data: {
                       courseId,
+                      lessonId: lastLesson.id, // ← VINCULACIÓN CRÍTICA
                       title: title || 'Examen Final',
                       passingScore: passingScore || 80,
                       totalScore: 100,

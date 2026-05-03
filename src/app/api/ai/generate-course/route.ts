@@ -297,10 +297,25 @@ export async function POST(req: Request) {
           throw new Error('El motor de IA generó preguntas incompletas (sin opciones). Abortando generación para evitar basura en la DB.');
         }
 
-        // Creación Atómica: Quiz + Questions + Options (Relational & JSON Hybrid)
+        // 1. Buscar la última lección del curso para vincular el quiz
+        const lastLesson = await tx.courseLesson.findFirst({
+          where: { courseId: newCourse.id },
+          orderBy: [
+            { module: { orderIndex: 'desc' } },
+            { orderIndex: 'desc' }
+          ]
+        });
+
+        if (!lastLesson) {
+          console.error('--- FALLO DE ESTRUCTURA: No se encontró lección para el quiz ---');
+          throw new Error('El motor de IA generó el curso pero no hay lecciones válidas para colgar el examen final.');
+        }
+
+        // 2. Creación Atómica: Quiz + Questions + Options (Relational & JSON Hybrid)
         await tx.quiz.create({
           data: {
             courseId: newCourse.id,
+            lessonId: lastLesson.id, // ← VINCULACIÓN CRÍTICA PARA VISIBILIDAD
             title: generatedData.finalExam.title || 'Evaluación Final',
             passingScore: generatedData.finalExam.passingScore || 80,
             totalScore: 100,

@@ -1,0 +1,40 @@
+﻿Auditing course: c50526a8-4494-4850-896d-368ff1a6170d
+
+--- MODULES ---
+ID: 5ca80f3b-801c-4c6f-9646-dd5a2d10bd61 | Title: Fundamentos de Inteligencia Artificial | Order: 1 | Lessons: 5
+ID: 23b44552-9179-4829-9966-400eeb68bf0d | Title: Generaci├│n de Ideas y Planeaci├│n | Order: 2 | Lessons: 5
+ID: 94d4d087-d8ee-445c-a51c-c89b380956da | Title: Investigaci├│n e Inteligencia | Order: 3 | Lessons: 5
+ID: 80d109c5-c8e9-4a03-801c-149e0b495134 | Title: Escritura y Comunicaci├│n Profesional | Order: 4 | Lessons: 5
+
+--- LESSONS ---
+ID: 374e87e0-b4ba-4be5-9b72-b11a5e608def | Title: ┬┐Qu├® es realmente la IA? | Module: Fundamentos de Inteligencia Artificial | Order: 1 | Content: YES | Video: NO
+ID: 14367d3e-995a-42eb-b68f-a86229452558 | Title: C├│mo funciona la IA (Modelos de Lenguaje) | Module: Fundamentos de Inteligencia Artificial | Order: 2 | Content: YES | Video: NO
+ID: 8bb2f82f-a5c2-46a6-9cc8-0f4a5ca842b5 | Title: Introducci├│n a Prompts | Module: Fundamentos de Inteligencia Artificial | Order: 3 | Content: YES | Video: NO
+ID: 25546f1e-3ea6-48dc-a562-0cbcaa78dcc6 | Title: Validaci├│n y Detecci├│n de Alucinaciones | Module: Fundamentos de Inteligencia Artificial | Order: 4 | Content: YES | Video: NO
+ID: c13aa239-09ad-4048-8bef-5dbf1df2b779 | Title: RETO DE ACCI├ôN: M├│dulo 1 | Module: Fundamentos de Inteligencia Artificial | Order: 5 | Content: YES | Video: NO
+ID: 50a00357-a661-49f3-962e-a5c36a2801d7 | Title: Brainstorming con IA | Module: Generaci├│n de Ideas y Planeaci├│n | Order: 1 | Content: YES | Video: NO
+ID: 64b90797-cd43-4d10-b278-1c5795888876 | Title: Estructuraci├│n de proyectos | Module: Generaci├│n de Ideas y Planeaci├│n | Order: 2 | Content: YES | Video: NO
+ID: 988a063f-96df-4cff-81ea-f37399777b4a | Title: Planeaci├│n estrat├®gica | Module: Generaci├│n de Ideas y Planeaci├│n | Order: 3 | Content: YES | Video: NO
+ID: 047dd0af-a5a0-429b-b6e9-1480d7169197 | Title: Ejecuci├│n y seguimiento | Module: Generaci├│n de Ideas y Planeaci├│n | Order: 4 | Content: YES | Video: NO
+ID: dc7d7475-8735-4554-9c63-78fc220c26d2 | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 2 | Module: Generaci├│n de Ideas y Planeaci├│n | Order: 5 | Content: YES | Video: NO
+ID: 47989e99-3ef7-4745-9eeb-660841b61691 | Title: B├║squeda y curadur├¡a de informaci├│n | Module: Investigaci├│n e Inteligencia | Order: 1 | Content: YES | Video: NO
+ID: 25761dd5-7648-4d8b-878f-2bec4b98ff0f | Title: Resumen y s├¡ntesis de datos | Module: Investigaci├│n e Inteligencia | Order: 2 | Content: YES | Video: NO
+ID: d854800a-9d41-4499-b471-b26469579253 | Title: An├ílisis de ventajas y desventajas | Module: Investigaci├│n e Inteligencia | Order: 3 | Content: YES | Video: NO
+ID: edf800d4-5b64-43c5-b414-047c89f00a9f | Title: Pensamiento cr├¡tico y validaci├│n final | Module: Investigaci├│n e Inteligencia | Order: 4 | Content: YES | Video: NO
+ID: 83cb7e14-1d13-465f-aa34-40af1bf47acb | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 3 | Module: Investigaci├│n e Inteligencia | Order: 5 | Content: YES | Video: NO
+ID: daeea27d-fc50-48e0-8ff5-d4f28e4b716b | Title: Optimizaci├│n de redacci├│n y estilo | Module: Escritura y Comunicaci├│n Profesional | Order: 1 | Content: YES | Video: NO
+ID: b807c500-481d-4771-a677-fc9dba00676c | Title: Adaptaci├│n de tonos y estilos | Module: Escritura y Comunicaci├│n Profesional | Order: 2 | Content: YES | Video: NO
+ID: b14174fe-2b05-4166-887b-174571756504 | Title: Estructuraci├│n de correos y documentos | Module: Escritura y Comunicaci├│n Profesional | Order: 3 | Content: YES | Video: NO
+ID: 6e51d76c-77b2-48c0-b9d6-8c392f2b324e | Title: Mejora y optimizaci├│n de textos (Refinamiento) | Module: Escritura y Comunicaci├│n Profesional | Order: 4 | Content: YES | Video: NO
+ID: af3f1d10-2327-4c15-9c57-36b18afd8ceb | Title: ­ƒÅü RETO DE ACCI├ôN: M├│dulo 4 | Module: Escritura y Comunicaci├│n Profesional | Order: 5 | Content: YES | Video: NO
+ID: c2c7e56c-2e30-4db8-bcba-0d7dd7162e9b | Title: lexion extra 1 | Module: N/A | Order: 1 | Content: YES | Video: NO
+ID: b8573a34-7281-421f-af11-bff33a2211d8 | Title: Protocolos de triangulaci├│n y verificaci├│n de veracidad en la era de la IA. | Module: N/A | Order: 1 | Content: NO | Video: NO
+
+--- LESSON COUNT BY MODULE ---
+Fundamentos de Inteligencia Artificial: 5 lessons
+Generaci├│n de Ideas y Planeaci├│n: 5 lessons
+Investigaci├│n e Inteligencia: 5 lessons
+Escritura y Comunicaci├│n Profesional: 5 lessons
+
+--- POTENTIAL PHANTOM LESSONS ---
+PHANTOM DETECTED: ID: b8573a34-7281-421f-af11-bff33a2211d8 | Title: Protocolos de triangulaci├│n y verificaci├│n de veracidad en la era de la IA. | Reason: No content and no video

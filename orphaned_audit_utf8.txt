@@ -1,0 +1,13 @@
+﻿Auditing Orphaned Quizzes Platform-wide
+
+--- GENERAL STATS ---
+Total Quizzes: 2
+Orphaned Quizzes: 1
+OK Quizzes: 1
+Percentage Orphaned: 50.00%
+
+--- ORPHANED QUIZZES LIST ---
+Quiz ID: 7a403598-fadd-4a61-bb48-72028817b2c0 | Title: Evaluaci├│n Final | Course: Curso Prueba: Explorando Conceptos Clave de la Unidad 2 (ID: bf978c06-707d-4e50-936d-a9486a295af9) | AI Generated: false
+
+--- AFFECTED COURSES SUMMARY ---
+Course: Curso Prueba: Explorando Conceptos Clave de la Unidad 2 (ID: bf978c06-707d-4e50-936d-a9486a295af9) | Total Quizzes: 1 | Orphaned: 1
