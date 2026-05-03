@@ -1,8 +1,17 @@
 import prisma from '@/lib/prisma';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import InlineLessonEditor from '@/components/InlineLessonEditor';
+import Link from 'next/link';
+
+// Nuevos componentes para la UI de Student-like Preview
+import InstructorPreviewSidebar from '@/app/dashboard/instructor/components/InstructorPreviewSidebar';
+import InstructorPreviewLessonHeader from '@/app/dashboard/instructor/components/InstructorPreviewLessonHeader';
+import InstructorPreviewQuizViewer from '@/app/dashboard/instructor/components/InstructorPreviewQuizViewer';
+import InstructorPreviewLessonNavigation from '@/app/dashboard/instructor/components/InstructorPreviewLessonNavigation';
+
+// Flag para activar nueva UI (localhost only)
+const useNewPreviewUI = process.env.NEXT_PUBLIC_INSTRUCTOR_PREVIEW_UI === 'true';
 
 export default async function InstructorLessonPreviewPage(props: { params: Promise<{ id: string, lessonId: string }> }) {
    const params = await props.params;
@@ -11,14 +20,31 @@ export default async function InstructorLessonPreviewPage(props: { params: Promi
 
    if (!session || session.role !== 'INSTRUCTOR') redirect('/login');
 
+   const course = await prisma.course.findUnique({
+     where: { id: courseId },
+     include: {
+       instructor: true,
+       modules: {
+         orderBy: { orderIndex: 'asc' },
+         include: {
+           lessons: {
+             orderBy: { orderIndex: 'asc' }
+           }
+         }
+       }
+     }
+   });
+
+   if (!course || course.instructorId !== session.userId) redirect('/dashboard/instructor/courses');
+
    const lesson = await prisma.courseLesson.findUnique({
      where: { id: lessonId },
      include: {
-       module: {
+       quiz: {
          include: {
-           lessons: {
+           questions: {
              orderBy: { orderIndex: 'asc' },
-             select: { id: true, title: true, subtitle: true, contentText: true, videoUrl: true, contentType: true }
+             include: { options: { orderBy: { orderIndex: 'asc' } } }
            }
          }
        }
@@ -27,16 +53,105 @@ export default async function InstructorLessonPreviewPage(props: { params: Promi
 
    if (!lesson || lesson.courseId !== courseId) notFound();
 
-   // Seguridad: Solo el dueño del curso puede previsualizarlo
-   const course = await prisma.course.findUnique({ where: { id: courseId }, select: { instructorId: true } });
-   if (!course || course.instructorId !== session.userId) redirect('/dashboard/instructor/courses');
+   // Buscar lección previa y siguiente para navegación
+   const allLessons = course.modules.flatMap(m => m.lessons);
+   const currIdx = allLessons.findIndex((l: any) => l.id === lessonId);
+   const prevLesson = currIdx > 0 ? allLessons[currIdx - 1] : null;
+   const nextLesson = currIdx < allLessons.length - 1 ? allLessons[currIdx + 1] : null;
 
-   // Buscar lección previa y siguiente
-   const lessons = lesson.module?.lessons || [];
-   const currIdx = lessons.findIndex((l: any) => l.id === lessonId);
-   const prevLesson = currIdx > 0 ? lessons[currIdx - 1] : null;
-   const nextLesson = currIdx < lessons.length - 1 ? lessons[currIdx + 1] : null;
+   // SI está habilitada la nueva UI (localhost), mostrar nuevos componentes
+   if (useNewPreviewUI) {
+      return (
+        <InstructorPreviewSidebar
+          courseId={courseId}
+          modules={course.modules.map(mod => ({
+            id: mod.id,
+            title: mod.title,
+            lessons: mod.lessons.map(l => ({
+              id: l.id,
+              title: l.title,
+              moduleId: mod.id,
+              order: l.orderIndex
+            }))
+          }))}
+          currentLessonId={lessonId}
+        >
+          <div className="max-w-4xl mx-auto px-6 py-12">
+            <InstructorPreviewLessonHeader
+              lessonTitle={lesson.title}
+              moduleTitle={course.modules.find(m => m.id === lesson.moduleId)?.title || 'Módulo'}
+              lessonNumber={currIdx + 1}
+              subtitle={lesson.subtitle}
+            />
 
+            {/* Contenido de la lección */}
+            <div className="space-y-12">
+              {/* Video */}
+              {lesson.videoUrl && (
+                <div className="card !p-0 overflow-hidden">
+                   <div className="video-container">
+                      <iframe 
+                         src={lesson.videoUrl.replace('watch?v=', 'embed/')} 
+                         allow="autoplay; fullscreen; picture-in-picture" 
+                         allowFullScreen
+                      ></iframe>
+                   </div>
+                </div>
+              )}
+
+              {/* Contenido de texto */}
+              {lesson.contentText && (
+                <section className="card prose prose-invert prose-cyan max-w-none">
+                  <div dangerouslySetInnerHTML={{ __html: lesson.contentText }} />
+                </section>
+              )}
+
+              {/* Quiz (si existe) */}
+              {lesson.contentType === 'QUIZ' && lesson.quiz && (
+                <InstructorPreviewQuizViewer
+                  quiz={{
+                    id: lesson.quiz.id,
+                    title: lesson.quiz.title,
+                    questions: lesson.quiz.questions.map(q => ({
+                      id: q.id,
+                      questionText: q.questionText,
+                      options: q.options.map(o => ({
+                        id: o.id,
+                        optionText: o.optionText
+                      }))
+                    }))
+                  }}
+                  courseTitle={course.title}
+                />
+              )}
+            </div>
+
+            {/* Navegación */}
+            <InstructorPreviewLessonNavigation
+              courseId={courseId}
+              prevLesson={prevLesson}
+              nextLesson={nextLesson}
+            />
+
+            {/* Editor Inline (siempre disponible para el instructor) */}
+            <div className="mt-20">
+               <InlineLessonEditor 
+                 lesson={{ 
+                   id: lesson.id, 
+                   title: lesson.title, 
+                   subtitle: lesson.subtitle, 
+                   content: lesson.contentText, 
+                   videoUrl: lesson.videoUrl, 
+                   contentType: lesson.contentType 
+                 }} 
+               />
+            </div>
+          </div>
+        </InstructorPreviewSidebar>
+      );
+   }
+
+   // UI ANTIGUA (Fallback)
    return (
      <div className="min-h-screen bg-[#070d1a] text-white font-poppins">
        <header className="h-16 flex items-center justify-between px-8 border-b border-green-500/20 bg-green-500/5 sticky top-0 z-50 backdrop-blur-md">
@@ -105,17 +220,18 @@ export default async function InstructorLessonPreviewPage(props: { params: Promi
             )}
          </div>
 
-         {/* EDITOR INLINE */}
-         <InlineLessonEditor 
-            lesson={{ 
-               id: lesson.id, 
-               title: lesson.title, 
-               subtitle: lesson.subtitle, 
-               content: lesson.contentText, 
-               videoUrl: lesson.videoUrl, 
-               contentType: lesson.contentType 
-            }} 
-         />
+         <div className="mt-10">
+            <InlineLessonEditor 
+               lesson={{ 
+                  id: lesson.id, 
+                  title: lesson.title, 
+                  subtitle: lesson.subtitle, 
+                  content: lesson.contentText, 
+                  videoUrl: lesson.videoUrl, 
+                  contentType: lesson.contentType 
+               }} 
+            />
+         </div>
        </main>
      </div>
    );
