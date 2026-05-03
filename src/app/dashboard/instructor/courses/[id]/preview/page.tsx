@@ -6,7 +6,6 @@ import InstructorPreviewSidebar from '@/app/dashboard/instructor/components/Inst
 import InstructorPreviewLessonHeader from '@/app/dashboard/instructor/components/InstructorPreviewLessonHeader';
 import InstructorPreviewQuizViewer from '@/app/dashboard/instructor/components/InstructorPreviewQuizViewer';
 import InstructorPreviewLessonNavigation from '@/app/dashboard/instructor/components/InstructorPreviewLessonNavigation';
-import InlineLessonEditor from '@/components/InlineLessonEditor';
 
 // Flag para activar nueva UI
 const useNewPreviewUI = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_INSTRUCTOR_PREVIEW_UI === 'true';
@@ -39,12 +38,14 @@ interface Quiz {
 interface Question {
   id: string;
   questionText: string;
+  questionType: string;
   options: Option[];
 }
 
 interface Option {
   id: string;
   optionText: string;
+  isCorrect?: boolean;
 }
 
 interface PreviewPageProps {
@@ -131,6 +132,8 @@ export default function PreviewPage({ params }: PreviewPageProps) {
     m.lessons.some(l => l.id === currentLessonId)
   );
 
+  const isLastLesson = currentIndex === allLessons.length - 1;
+
   // Handlers para navegación
   const handleLessonChange = (lessonId: string) => {
     setCurrentLessonId(lessonId);
@@ -198,18 +201,22 @@ export default function PreviewPage({ params }: PreviewPageProps) {
               </section>
             )}
 
-            {/* Quiz */}
-            {currentLesson.contentType === 'QUIZ' && currentLesson.quiz && (
+            {/* Quiz - MOSTRAR SIEMPRE EN LA ÚLTIMA LECCIÓN */}
+            {isLastLesson && currentLesson.quiz && (
               <InstructorPreviewQuizViewer
                 quiz={{
                   id: currentLesson.quiz.id,
                   title: currentLesson.quiz.title,
+                  description: (currentLesson.quiz as any).description,
+                  passingScore: currentLesson.quiz.passingScore,
                   questions: currentLesson.quiz.questions.map(q => ({
                     id: q.id,
-                    questionText: q.questionText,
+                    question: q.questionText,
+                    type: q.questionType,
                     options: q.options.map(o => ({
                       id: o.id,
-                      optionText: o.optionText
+                      text: o.optionText,
+                      isCorrect: o.isCorrect
                     }))
                   }))
                 }}
@@ -225,25 +232,6 @@ export default function PreviewPage({ params }: PreviewPageProps) {
             onPreviousClick={handlePreviousClick}
             onNextClick={handleNextClick}
           />
-
-          {/* Editor Inline */}
-          <div className="mt-20 border-t border-white/5 pt-10">
-             <div className="flex items-center gap-2 mb-6">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
-                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Editor de Instructor</span>
-                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
-             </div>
-             <InlineLessonEditor 
-               lesson={{ 
-                 id: currentLesson.id, 
-                 title: currentLesson.title, 
-                 subtitle: currentLesson.subtitle, 
-                 content: currentLesson.contentText, 
-                 videoUrl: currentLesson.videoUrl, 
-                 contentType: currentLesson.contentType 
-               }} 
-             />
-          </div>
         </div>
       </InstructorPreviewSidebar>
     );

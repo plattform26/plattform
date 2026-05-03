@@ -72,7 +72,7 @@ export default function InstructorPreviewSidebar({
                       <span className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] border ${
                         isActive ? 'border-cyan-500 text-cyan-400' : 'border-gray-700 text-gray-600'
                       }`}>
-                        {isActive ? '▶' : '○'}
+                        <span className="text-cyan-400">✓</span>
                       </span>
                       <span className="flex-1 truncate">{lesson.title}</span>
                     </button>
