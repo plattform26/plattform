@@ -12,6 +12,7 @@ import {
   sendInstructorRegistrationNoticeToAdmin
 } from '@/lib/mail';
 import { Prisma } from '@prisma/client';
+import { getEffectivePlan } from '@/lib/plan-utils';
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
