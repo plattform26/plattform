@@ -145,13 +145,18 @@ export async function POST(req: Request) {
               create: { userId, courseId, accessType: 'PURCHASE', status: 'ACTIVE' }
             });
 
-            // Blindaje P2002: Evitar duplicidad de transacciones
-            try {
+            // 1. Verificar si ya existe la transacción por Session ID
+            const existingTransaction = await tx.transaction.findFirst({
+              where: { stripeSessionId: session.id }
+            });
+
+            if (!existingTransaction) {
               console.log('[WEBHOOK_DEBUG] Creando transaction con:', {
                 grossAmount: grossAmount,
                 platformCommissionAmount: platformCommission,
                 netAmountToInstructor: netAmount,
               });
+              
               await tx.transaction.create({
                 data: {
                   userId, courseId, instructorId: course.instructorId,
@@ -162,19 +167,19 @@ export async function POST(req: Request) {
                   stripeTransferId: stripeTransferId || null,
                 }
               });
-            } catch (err: any) {
-              console.log('[WEBHOOK_ERROR] Error en transaction.create:', err);
-              if (err.code !== 'P2002') throw err;
-            }
 
-            await tx.notification.create({
-              data: {
-                userId: course.instructorId, type: 'COURSE_PURCHASED',
-                title: '🎉 Nuevo alumno inscrito',
-                message: `Un nuevo alumno ha comprado tu curso: ${course.title}.`,
-                relatedEntityType: 'COURSE', relatedEntityId: course.id
-              }
-            });
+              // Solo creamos la notificación si es la primera vez que procesamos esto
+              await tx.notification.create({
+                data: {
+                  userId: course.instructorId, type: 'COURSE_PURCHASED',
+                  title: '🎉 Nuevo alumno inscrito',
+                  message: `Un nuevo alumno ha comprado tu curso: ${course.title}.`,
+                  relatedEntityType: 'COURSE', relatedEntityId: course.id
+                }
+              });
+            } else {
+              console.log(`[WEBHOOK_DEBUG] Transacción ${session.id} ya existe. Saltando duplicados.`);
+            }
 
             if (couponCode) {
               const coupon = await tx.coupon.findUnique({ where: { code: couponCode.toUpperCase().trim() } });
