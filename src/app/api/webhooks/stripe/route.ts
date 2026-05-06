@@ -121,6 +121,23 @@ export async function POST(req: Request) {
           const charge = pi?.latest_charge as any;
           const stripeTransferId = charge?.transfer as string;
 
+          console.log('[WEBHOOK_DEBUG] Antes de transacción:', {
+            userId,
+            courseId,
+            instructorId: course.instructorId,
+            grossAmount: grossAmount,
+            platformCommission: platformCommission,
+            commissionRate: commissionRate,
+            netAmount: netAmount,
+            stripeSessionId: session.id,
+            stripePaymentIntentId: session.payment_intent,
+          });
+
+          // Verificar si hay NaN
+          if (isNaN(platformCommission) || isNaN(netAmount) || isNaN(grossAmount)) {
+            throw new Error(`NaN detected: platformCommission=${platformCommission}, netAmount=${netAmount}, grossAmount=${grossAmount}`);
+          }
+
           await prisma.$transaction(async (tx) => {
             await tx.enrollment.upsert({
               where: { userId_courseId: { userId, courseId } },
@@ -130,6 +147,11 @@ export async function POST(req: Request) {
 
             // Blindaje P2002: Evitar duplicidad de transacciones
             try {
+              console.log('[WEBHOOK_DEBUG] Creando transaction con:', {
+                grossAmount: grossAmount,
+                platformCommissionAmount: platformCommission,
+                netAmountToInstructor: netAmount,
+              });
               await tx.transaction.create({
                 data: {
                   userId, courseId, instructorId: course.instructorId,
@@ -141,6 +163,7 @@ export async function POST(req: Request) {
                 }
               });
             } catch (err: any) {
+              console.log('[WEBHOOK_ERROR] Error en transaction.create:', err);
               if (err.code !== 'P2002') throw err;
             }
 
