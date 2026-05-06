@@ -59,43 +59,52 @@ export async function GET(req: Request) {
     }
 
     // Lifetime Aggregations
-    const aggregations = await prisma.transaction.aggregate({
+    const allTransactions = await prisma.transaction.findMany({
       where: { 
           instructorId: userId,
           paymentStatus: 'SUCCESS',
           paymentType: 'COURSE_PURCHASE'
       },
-      _sum: {
+      select: {
         grossAmount: true,
         platformCommissionAmount: true,
         netAmountToInstructor: true,
+        stripeFeeAmount: true,
+        createdAt: true
       }
     });
 
-    const totalSales = Number(aggregations._sum.grossAmount || 0);
-    const totalCommission = Number(aggregations._sum.platformCommissionAmount || 0);
-    const netEarnings = Number(aggregations._sum.netAmountToInstructor || 0);
-
-    // Monthly Aggregations
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const monthlyAggregations = await prisma.transaction.aggregate({
-      where: { 
-          instructorId: userId,
-          paymentStatus: 'SUCCESS',
-          paymentType: 'COURSE_PURCHASE',
-          createdAt: { gte: startOfMonth }
-      },
-      _sum: {
-        grossAmount: true,
-        netAmountToInstructor: true,
+    let totalSales = 0;
+    let totalCommission = 0;
+    let netEarnings = 0;
+    let monthlyGross = 0;
+    let monthlyNet = 0;
+
+    allTransactions.forEach(tx => {
+      const gross = Number(tx.grossAmount || 0);
+      const commission = Number(tx.platformCommissionAmount || 0);
+      const net = Number(tx.netAmountToInstructor || 0);
+      
+      // Cálculo del neto real (restando fee de Stripe + IVA si no está en la DB)
+      let realNet = net;
+      if (tx.stripeFeeAmount === null && gross > 0) {
+        const estimatedFee = ((gross * 0.036) + 3) * 1.16;
+        realNet = net - estimatedFee;
+      }
+
+      totalSales += gross;
+      totalCommission += commission;
+      netEarnings += realNet;
+
+      if (tx.createdAt >= startOfMonth) {
+        monthlyGross += gross;
+        monthlyNet += realNet;
       }
     });
-
-    const monthlyGross = Number(monthlyAggregations._sum.grossAmount || 0);
-    const monthlyNet = Number(monthlyAggregations._sum.netAmountToInstructor || 0);
 
     // Transactions Log
     const transactions = await prisma.transaction.findMany({

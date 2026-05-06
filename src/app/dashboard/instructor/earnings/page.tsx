@@ -45,15 +45,18 @@ export default async function InstructorEarningsPage(
     orderBy: { createdAt: 'desc' }
   });
 
-  const calcStripeFee = (gross: number) => {
-    if (gross <= 0) return 0;
-    return Number(((gross * 0.034) + 3) * 1.16);
-  };
-
   const processedTransactions = allTransactions.map(t => {
     const gross = Number(t.grossAmount);
-    const stripeFee = calcStripeFee(gross);
-    const platformFee = gross * (platformCommRate / 100);
+    
+    // Preferimos el fee guardado en la DB, si no existe lo estimamos
+    const stripeFee = t.stripeFeeAmount 
+      ? Number(t.stripeFeeAmount) 
+      : (gross > 0 ? Number(((gross * 0.036) + 3) * 1.16) : 0);
+
+    const platformFee = Number(t.platformCommissionAmount || (gross * (platformCommRate / 100)));
+    
+    // El neto en la DB ya debería ser correcto para nuevas transacciones, 
+    // pero calculamos para asegurar consistencia en visualización histórica
     const net = gross - stripeFee - platformFee;
     
     return {

@@ -86,18 +86,30 @@ export default async function InstructorDashboardPage() {
   });
 
   // Total Earnings (usando Transaction como fuente de verdad)
-  const aggregations = await prisma.transaction.aggregate({
+  const transactionsForStats = await prisma.transaction.findMany({
     where: { 
       instructorId: session.userId,
       paymentStatus: 'SUCCESS',
       paymentType: 'COURSE_PURCHASE'
     },
-    _sum: {
-      netAmountToInstructor: true
+    select: {
+      netAmountToInstructor: true,
+      grossAmount: true,
+      stripeFeeAmount: true
     }
   });
 
-  const totalEarnings = Number(aggregations._sum.netAmountToInstructor || 0);
+  const totalEarnings = transactionsForStats.reduce((acc, tx) => {
+    const net = Number(tx.netAmountToInstructor || 0);
+    const gross = Number(tx.grossAmount || 0);
+    // Si ya tenemos el fee en la DB (nuevas txs), el net ya es el real.
+    // Si no lo tenemos (históricas), lo estimamos con IVA.
+    if (tx.stripeFeeAmount === null && gross > 0) {
+      const estimatedFee = ((gross * 0.036) + 3) * 1.16;
+      return acc + (net - estimatedFee);
+    }
+    return acc + net;
+  }, 0);
 
   // Recent courses
   const recentCourses = await prisma.course.findMany({
