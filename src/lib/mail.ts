@@ -192,7 +192,7 @@ export async function sendSaleNotificationToInstructor(
             <td style="padding: 8px 0; text-align: right; color: #ef4444;">- ${formatMXN(financials.platformFee)}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #6b7280;">Comisión Stripe (aprox):</td>
+            <td style="padding: 8px 0; color: #6b7280;">Comisión Stripe (3.6% + $3 + 16% IVA):</td>
             <td style="padding: 8px 0; text-align: right; color: #ef4444;">- ${formatMXN(financials.stripeFee)}</td>
           </tr>
           <tr style="border-top: 1px solid #e5e7eb;">

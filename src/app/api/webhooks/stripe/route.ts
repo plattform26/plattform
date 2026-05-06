@@ -107,14 +107,16 @@ export async function POST(req: Request) {
           const platformCommission = actualCommission || (grossAmount * commissionRate) / 100;
           
           // --- CÁLCULO DE DESGLOSE FINANCIERO PARA CORREOS ---
-          const stripeFeeApprox = (grossAmount * 0.036) + 3; // 3.6% + $3 MXN (Aprox estándar Stripe México)
+          const stripeFeeBase = (grossAmount * 0.036) + 3; // 3.6% + $3 MXN (Estándar Stripe México)
+          const stripeFeeWithIVA = stripeFeeBase * 1.16;   // 16% IVA sobre la tarifa de Stripe
+          
           const netAmount = grossAmount - platformCommission; // Neto antes de fee de Stripe (para DB)
-          const netToInstructorEmail = grossAmount - platformCommission - stripeFeeApprox; // Neto real para el correo
+          const netToInstructorEmail = grossAmount - platformCommission - stripeFeeWithIVA; // Neto real para el correo
 
           const financials = {
             gross: grossAmount,
             platformFee: platformCommission,
-            stripeFee: stripeFeeApprox,
+            stripeFee: stripeFeeWithIVA,
             net: netToInstructorEmail
           };
 
