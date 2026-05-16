@@ -401,9 +401,15 @@ export async function generateCertificatePDF(
   doc.setFontSize(12);
   doc.text('Plattform Academy otorga el presente reconocimiento a:', width / 2, 70, { align: 'center' });
 
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(55);
+  // NOMBRE - con ajuste automático de tamaño
+  const maxNameFontSize = 40;
+  const minNameFontSize = 18;
+  let nameFontSize = maxNameFontSize;
+  doc.setFontSize(nameFontSize);
+  while (doc.getTextWidth(studentName.toUpperCase()) > width - 40 && nameFontSize > minNameFontSize) {
+    nameFontSize -= 1;
+    doc.setFontSize(nameFontSize);
+  }
   doc.text(studentName.toUpperCase(), width / 2, 95, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
@@ -411,8 +417,15 @@ export async function generateCertificatePDF(
   doc.setFontSize(12);
   doc.text('Por haber completado con éxito el programa de:', width / 2, 115, { align: 'center' });
 
-  doc.setTextColor(0, 229, 255);
-  doc.setFontSize(32);
+  // TÍTULO - con ajuste automático de tamaño
+  const maxTitleFontSize = 28;
+  const minTitleFontSize = 14;
+  let titleFontSize = maxTitleFontSize;
+  doc.setFontSize(titleFontSize);
+  while (doc.getTextWidth(courseTitle.toUpperCase()) > width - 40 && titleFontSize > minTitleFontSize) {
+    titleFontSize -= 1;
+    doc.setFontSize(titleFontSize);
+  }
   doc.text(courseTitle.toUpperCase(), width / 2, 135, { align: 'center' });
 
   // 6. Footer / QR / Firma

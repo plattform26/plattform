@@ -134,12 +134,18 @@ export default function CertificateDownloader({
                 
                 <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6">Plattform Academy otorga el presente reconocimiento a:</p>
                 
-                <h1 className="text-7xl font-black uppercase mb-12 italic tracking-tighter text-white px-10">
+                {/* NOMBRE */}
+                <h1 className="font-black uppercase italic tracking-tighter text-white px-16 text-center w-full"
+                  style={{ fontSize: 'clamp(1.8rem, 5vw, 4.5rem)', lineHeight: '1.1', wordBreak: 'break-word' }}>
                   {studentName}
                 </h1>
 
                 <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] mb-4">Por haber completado con éxito el programa de:</p>
-                <h3 className="text-4xl font-black mb-8 uppercase tracking-tight text-[#00e5ff] italic">{courseTitle}</h3>
+                {/* TÍTULO */}
+                <h3 className="font-black uppercase tracking-tight text-[#00e5ff] italic text-center w-full px-16"
+                  style={{ fontSize: 'clamp(1.2rem, 3vw, 2.5rem)', lineHeight: '1.2', wordBreak: 'break-word' }}>
+                  {courseTitle}
+                </h3>
             </div>
             
             {/* Footer / Validation Area */}
