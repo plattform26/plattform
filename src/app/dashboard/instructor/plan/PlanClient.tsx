@@ -6,17 +6,23 @@ import { formatMXN } from '@/lib/utils/currency';
 export default function PlanClient({ 
   plans, 
   activePlanId,
-  expirationDate 
+  expirationDate,
+  isCancelledAtPeriodEnd: initialIsCancelled = false
 }: { 
   plans: any[], 
   activePlanId?: string,
-  expirationDate?: string | null
+  expirationDate?: string | null,
+  isCancelledAtPeriodEnd?: boolean
 }) {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showDowngradeModal, setShowDowngradeModal] = useState<string | null>(null);
+  
+  const [isCancelled, setIsCancelled] = useState(initialIsCancelled);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [showConfirmCancelModal, setShowConfirmCancelModal] = useState(false);
 
   const activePlan = plans.find(p => p.id === activePlanId);
 
@@ -68,6 +74,37 @@ export default function PlanClient({
     }
   };
 
+  const handleToggleSubscriptionAutoRenewal = async (action: 'cancel' | 'reactivate') => {
+    setCancelLoading(true);
+    setError('');
+    setSuccess('');
+    setShowConfirmCancelModal(false);
+    
+    try {
+      const res = await fetch('/api/checkout/subscription/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Error al procesar la solicitud');
+      
+      setIsCancelled(action === 'cancel');
+      setSuccess(data.message || 'Operación realizada con éxito.');
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+      
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
   const PLAN_ICONS: Record<string, string> = {
     starter: '🚀',
     growth: '📈',
@@ -107,8 +144,8 @@ export default function PlanClient({
                 <span className="text-sm text-gray-500 ml-1">MXN/mes</span>
               </div>
               {isCurrent && expirationDate && (
-                <div className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1">
-                   <span className="animate-pulse">●</span> Renovación: {new Date(expirationDate).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                <div className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 ${isCancelled ? 'text-orange-400' : 'text-cyan-400'}`}>
+                   <span className={isCancelled ? '' : 'animate-pulse'}>●</span> {isCancelled ? 'Expira el' : 'Renovación el'}: {new Date(expirationDate).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
               <div className="space-y-2 mt-4 text-sm">
@@ -125,13 +162,34 @@ export default function PlanClient({
                   {plan.name === 'scale' ? 'Full IA + Carga de Documentos' : 'IA para generar cursos'}
                 </div>
               </div>
+              
               {isCurrent ? (
-                <button 
-                  disabled 
-                  className="mt-8 w-full py-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] opacity-80 cursor-default"
-                >
-                  Suscripción Activa
-                </button>
+                <div className="flex flex-col gap-2 mt-8">
+                  <button 
+                    disabled 
+                    className="w-full py-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em] opacity-80 cursor-default"
+                  >
+                    Suscripción Activa
+                  </button>
+                  
+                  {isCancelled ? (
+                    <button
+                      onClick={() => handleToggleSubscriptionAutoRenewal('reactivate')}
+                      disabled={cancelLoading}
+                      className="w-full py-3.5 rounded-2xl bg-green-600/10 border border-green-600/20 hover:bg-green-600 hover:border-green-600 text-[10px] font-black text-white hover:scale-[1.01] transition-all uppercase tracking-[0.2em] shadow-lg disabled:opacity-50"
+                    >
+                      {cancelLoading ? 'Procesando...' : 'Reactivar Renovación'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowConfirmCancelModal(true)}
+                      disabled={cancelLoading}
+                      className="w-full py-3.5 rounded-2xl bg-red-600/5 border border-red-600/20 hover:bg-red-600/10 text-[10px] font-black text-red-400 hover:text-white hover:scale-[1.01] transition-all uppercase tracking-[0.2em] disabled:opacity-50"
+                    >
+                      {cancelLoading ? 'Procesando...' : 'Desactivar Renovación'}
+                    </button>
+                  )}
+                </div>
               ) : (
                 <button 
                   onClick={() => handleSubscribe(plan.id)}
@@ -163,7 +221,7 @@ export default function PlanClient({
                 
                 <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter">¿CONFIRMAR BAJA DE PLAN?</h3>
                 
-                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light tracking-wide">
+                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light tracking-wide text-left">
                    Estás a punto de bajar de nivel al plan <span className="text-cyan-400 font-bold">{plans.find(p => p.id === showDowngradeModal)?.displayName || 'Básico'}</span>. 
                    <br/><br/>
                    <span className="text-white font-black uppercase tracking-widest text-[10px] block mb-4 border-b border-white/5 pb-2">Reglas de reinicio de ciclo:</span>
@@ -184,6 +242,46 @@ export default function PlanClient({
                     className="w-full py-5 border border-cyan-500/50 hover:bg-cyan-500/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-[0.2em] transition-all"
                   >
                     Mantener mi plan actual
+                  </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {showConfirmCancelModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-[#070d1a]/85 backdrop-blur-xl animate-fade-in">
+          <div className="bg-[#0d1524] border border-red-500/30 rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl relative overflow-hidden group">
+             <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-600/5 blur-[80px] rounded-full" />
+             
+             <div className="relative z-10 text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-red-600/10 border border-red-600/20 mb-8">
+                   <span className="text-4xl">⚠️</span>
+                </div>
+                
+                <h3 className="text-2xl font-space-grotesk font-black text-white mb-4 italic uppercase tracking-tighter">¿DESACTIVAR RENOVACIÓN AUTOMÁTICA?</h3>
+                
+                <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light tracking-wide text-left">
+                   Estás a punto de desactivar la renovación automática de tu suscripción actual. 
+                   <br/><br/>
+                   <span className="text-white font-black uppercase tracking-widest text-[10px] block mb-4 border-b border-white/5 pb-2">Ten en cuenta lo siguiente:</span>
+                   <span className="block mb-2 flex gap-2"><span>•</span> <span>Mantendrás acceso completo a todas las funciones hasta que finalice el periodo actual.</span></span>
+                   <span className="block mb-2 flex gap-2"><span>•</span> <span>Al vencer la suscripción, tus cursos pasarán a estar **hibernados** y no podrás editarlos ni registrar nuevos alumnos hasta reactivar tu plan.</span></span>
+                   <span className="block mb-2 flex gap-2"><span>•</span> <span>**No se realizarán más cargos automáticos** en tu tarjeta de crédito o débito.</span></span>
+                </p>
+ 
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => handleToggleSubscriptionAutoRenewal('cancel')}
+                    className="w-full py-5 bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl text-xs font-black text-white hover:scale-105 transition-all shadow-xl shadow-red-600/20 uppercase tracking-[0.2em]"
+                  >
+                    Confirmar: Desactivar Renovación
+                  </button>
+                  <button 
+                    onClick={() => setShowConfirmCancelModal(false)}
+                    className="w-full py-5 border border-cyan-500/50 hover:bg-cyan-500/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-[0.2em] transition-all"
+                  >
+                    Mantener Activa la Suscripción
                   </button>
                 </div>
              </div>

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { serialize } from '@/lib/utils';
 import PlanClient from './PlanClient';
 import { formatMXN } from '@/lib/utils/currency';
+import { stripe } from '@/lib/stripe';
 
 const PLAN_ICONS: Record<string, string> = {
   starter: '🚀',
@@ -35,6 +36,16 @@ const PLAN_ICONS: Record<string, string> = {
   const activeSub = profile?.subscriptions[0];
   const allPlans = await prisma.platformPlan.findMany({ where: { status: 'ACTIVE' }, orderBy: { monthlyPrice: 'asc' } });
   
+  let isCancelledAtPeriodEnd = false;
+  if (activeSub && activeSub.stripeSubscriptionId) {
+    try {
+      const stripeSub = await stripe.subscriptions.retrieve(activeSub.stripeSubscriptionId) as any;
+      isCancelledAtPeriodEnd = stripeSub.cancel_at_period_end === true;
+    } catch (e) {
+      console.error('Error retrieving stripe subscription details in page:', e);
+    }
+  }
+
   // Misión: Sanitización radical de Decimal (Prisma) para Componentes de Cliente
   const serializedPlans = serialize(allPlans || []);
   const serializedActivePlanId = serialize(activeSub?.plan.id || undefined);
@@ -61,14 +72,14 @@ const PLAN_ICONS: Record<string, string> = {
                 <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5">Plan actual</div>
                 <div className="text-xl font-bold text-white">{activeSub.plan.displayName}</div>
                 <div className="text-sm text-gray-400">
-                  {formatMXN(activeSub.plan.monthlyPrice)} /mes · {Number(activeSub.plan.commissionRate)}% comisión
+                  {formatMXN(Number(activeSub.plan.monthlyPrice))} /mes · {Number(activeSub.plan.commissionRate)}% comisión
                 </div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-xs text-gray-500 mb-1">Estado</div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-current" /> ACTIVO
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${isCancelledAtPeriodEnd ? 'text-orange-400 bg-orange-400/10 border border-orange-400/20' : 'text-green-400 bg-green-400/10 border border-green-400/20'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${isCancelledAtPeriodEnd ? 'bg-orange-400' : 'bg-green-400'}`} /> {isCancelledAtPeriodEnd ? 'SIN RENOVACIÓN' : 'ACTIVO'}
               </span>
             </div>
           </div>
@@ -85,7 +96,7 @@ const PLAN_ICONS: Record<string, string> = {
               <div className="text-lg font-bold text-white">{activeSub.plan.aiEnabled ? '✓ Sí' : '✗ No'}</div>
             </div>
             <div className="bg-[#070d1a]/60 rounded-xl p-4 border border-blue-500/10">
-              <div className="text-xs text-gray-500 mb-1">Vence</div>
+              <div className="text-xs text-gray-500 mb-1">{isCancelledAtPeriodEnd ? 'Expira el' : 'Vence el'}</div>
               <div className="text-lg font-bold text-white">
                 {activeSub.expiresAt ? new Date(activeSub.expiresAt).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Indefinido'}
               </div>
@@ -107,6 +118,7 @@ const PLAN_ICONS: Record<string, string> = {
             plans={serializedPlans} 
             activePlanId={serializedActivePlanId} 
             expirationDate={activeSub?.expiresAt?.toISOString() || undefined}
+            isCancelledAtPeriodEnd={isCancelledAtPeriodEnd}
           />
         </Suspense>
       </div>
