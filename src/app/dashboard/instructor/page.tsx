@@ -208,7 +208,7 @@ export default async function InstructorDashboardPage() {
                <span className={`w-1.5 h-1.5 rounded-full ${profile.stripeConnectId && profile.stripeOnboardingComplete ? 'bg-green-400 animate-pulse' : 'bg-red-500'}`} />
                Status: {profile.stripeConnectId && profile.stripeOnboardingComplete ? 'CONECTADO STRIPE' : 'SIN VINCULAR'}
             </div>
-            <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Modificar plan →</Link>
+            <Link href="/dashboard/instructor/plan" className="px-5 py-2 rounded-lg border border-blue-500/20 text-xs font-semibold text-gray-300 hover:text-white hover:border-cyan-500 transition-colors">Gestionar plan y renovación →</Link>
          </div>
       </div>
 
