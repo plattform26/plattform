@@ -164,7 +164,9 @@ export async function POST(req: Request) {
                   userId, courseId, instructorId: course.instructorId,
                   paymentType: 'COURSE_PURCHASE', grossAmount,
                   platformCommissionAmount: platformCommission, platformCommissionRate: commissionRate,
-                  netAmountToInstructor: netAmount, paymentStatus: 'SUCCESS',
+                  stripeFeeAmount: stripeFeeWithIVA,
+                  netAmountToInstructor: netToInstructorEmail, 
+                  paymentStatus: 'SUCCESS',
                   stripeSessionId: session.id, stripePaymentIntentId: session.payment_intent as string,
                   stripeTransferId: stripeTransferId || null,
                 }
@@ -366,10 +368,26 @@ export async function POST(req: Request) {
           if (sub) {
             const amountPaid = (invoice.amount_paid || 0) / 100;
             
+            let expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + 30); // Fallback seguro
+            
+            try {
+              if (invoice.subscription) {
+                const stripeSub = await stripe.subscriptions.retrieve(invoice.subscription as string) as any;
+                const periodEnd = stripeSub.current_period_end ?? stripeSub.items?.data?.[0]?.current_period_end;
+                if (periodEnd && !isNaN(periodEnd)) {
+                  expiresAt = new Date(periodEnd * 1000);
+                }
+              }
+            } catch (err: any) {
+              console.error('Error al recuperar suscripción de Stripe en renovación:', err.message);
+            }
+            
             const updatedSub = await prisma.instructorSubscription.update({
               where: { id: sub.id },
               data: { 
                 status: 'ACTIVE',
+                expiresAt,
                 // Sincronizar ID si no estaba presente
                 stripeSubscriptionId: sub.stripeSubscriptionId || (invoice.subscription as string)
               }
@@ -407,6 +425,7 @@ export async function POST(req: Request) {
                     status: 'ACTIVE',
                     amountPaid: amountPaid,
                     startDate: new Date(),
+                    endDate: expiresAt,
                     stripeSubscriptionId: invoice.subscription as string
                   }
                 });
@@ -418,6 +437,7 @@ export async function POST(req: Request) {
                     status: 'ACTIVE',
                     amountPaid: amountPaid,
                     startDate: new Date(),
+                    endDate: expiresAt,
                     stripeSubscriptionId: invoice.subscription as string
                   }
                 });
@@ -484,6 +504,19 @@ export async function POST(req: Request) {
         const stripeSub = event.data.object as any;
         const sub = await prisma.instructorSubscription.findFirst({ where: { stripeSubscriptionId: stripeSub.id }, include: { plan: true } });
         if (sub) {
+          const periodEnd = stripeSub.current_period_end ?? stripeSub.items?.data?.[0]?.current_period_end;
+          const expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
+          
+          await prisma.instructorSubscription.update({
+            where: { id: sub.id },
+            data: {
+              status: stripeSub.status === 'active' ? 'ACTIVE' : 
+                      stripeSub.status === 'past_due' ? 'PAST_DUE' : 
+                      stripeSub.status === 'canceled' ? 'CANCELLED' : sub.status,
+              ...(expiresAt && { expiresAt })
+            }
+          });
+
           const totalEnrollments = await prisma.enrollment.count({ where: { course: { instructorId: sub.instructorId } } });
           if (sub.plan.studentLimit !== -1 && totalEnrollments > sub.plan.studentLimit) {
             await prisma.course.updateMany({ where: { instructorId: sub.instructorId }, data: { status: 'HIBERNATED' } });
