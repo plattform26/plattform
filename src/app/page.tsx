@@ -295,24 +295,36 @@ export default function EliteStudentLanding() {
       {/* FOOTER */}
       <footer className="bg-[#070d1a] border-t border-white/5 pt-24 pb-12 px-6 sm:px-12 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-20">
                 <div className="md:col-span-2">
                     <div className="font-space-grotesk font-black text-4xl tracking-tighter italic text-white mb-8">PLATTFORM</div>
-                    <p className="text-gray-500 text-base max-w-sm leading-relaxed">La infraestructura definitiva para el aprendizaje de alto rendimiento. De expertos para profesionales.</p>
+                    <p className="text-gray-500 text-sm max-w-sm leading-relaxed">La infraestructura definitiva para el aprendizaje de alto rendimiento. De expertos para profesionales.</p>
                 </div>
                 <div>
-                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">Comunidad</h5>
-                    <ul className="space-y-4 text-sm text-gray-500">
-                        <li><Link href="/creators" className="hover:text-cyan-400 transition-colors">Para Instructores</Link></li>
-                        <li><Link href="/login" className="hover:text-cyan-400 transition-colors">Login</Link></li>
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 mb-8">Soluciones</h5>
+                    <ul className="space-y-4 text-xs text-gray-500">
+                        <li><Link href="/plataforma-de-cursos-online" className="hover:text-white transition-colors">Cursos Online</Link></li>
+                        <li><Link href="/vender-cursos-online" className="hover:text-white transition-colors">Vender Cursos</Link></li>
+                        <li><Link href="/lms-para-academias" className="hover:text-white transition-colors">LMS Academias</Link></li>
+                        <li><Link href="/plataforma-para-creadores" className="hover:text-white transition-colors">Para Creadores</Link></li>
+                        <li><Link href="/academia-digital" className="hover:text-white transition-colors">Academia Digital</Link></li>
                     </ul>
                 </div>
                 <div>
-                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">Legal</h5>
-                    <ul className="space-y-4 text-sm text-gray-500">
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 mb-8">Recursos</h5>
+                    <ul className="space-y-4 text-xs text-gray-500">
+                        <li><Link href="/recursos" className="hover:text-white transition-colors">Centro de Recursos</Link></li>
+                        <li><Link href="/recursos/como-vender-cursos-online" className="hover:text-white transition-colors">Cómo Vender Cursos</Link></li>
+                        <li><Link href="/recursos/que-es-un-lms" className="hover:text-white transition-colors">Qué es un LMS</Link></li>
+                        <li><Link href="/recursos/crear-academia-digital" className="hover:text-white transition-colors">Crear Academia</Link></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">Comunidad</h5>
+                    <ul className="space-y-4 text-xs text-gray-500">
+                        <li><Link href="/creators" className="hover:text-cyan-400 transition-colors">Para Instructores</Link></li>
                         <li><Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacidad</Link></li>
                         <li><Link href="/terms" className="hover:text-cyan-400 transition-colors">Términos</Link></li>
-                        <li><Link href="/refunds" className="hover:text-cyan-400 transition-colors">Reembolsos</Link></li>
                     </ul>
                 </div>
             </div>
