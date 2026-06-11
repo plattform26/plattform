@@ -15,8 +15,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'Plattform - Academia Digital Premium',
-  description: 'Plataforma SaaS para crear y vender cursos online con IA. Crea, vende y gestiona tus cursos con herramientas profesionales.',
+  title: 'Plataforma para Crear Academias Online | Plattform',
+  description: 'Crea, publica y vende tus cursos online con IA en México. Plataforma LMS profesional diseñada para creadores, academias y marcas.',
   
   icons: {
     icon: [
