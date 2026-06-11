@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Plataforma de Cursos Online en México | Crear Academias | Plattform',
-  description: 'Crea, hospeda y vende tus cursos online con tu propia marca. El LMS profesional en México con Stripe Connect e Inteligencia Artificial integrada. Regístrate gratis.',
+  description: 'Crea, hospeda y vende tus cursos online con tu propia marca. El LMS profesional en México con Stripe Connect e Inteligencia Artificial integrada. Regístrate hoy.',
   alternates: {
     canonical: 'https://plattform.mx/plataforma-de-cursos-online',
   },
@@ -26,7 +26,7 @@ export default function PlataformaCursosOnlinePage() {
         },
         'offers': {
           '@type': 'Offer',
-          'price': '0.00',
+          'price': '199.00',
           'priceCurrency': 'MXN',
           'availability': 'https://schema.org/InStock',
           'url': 'https://plattform.mx/register'
@@ -138,7 +138,7 @@ export default function PlataformaCursosOnlinePage() {
             href="/register?utm_source=seo&utm_medium=landing&utm_campaign=plataforma-cursos-online"
             className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl shadow-xl shadow-cyan-500/10 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm uppercase tracking-widest"
           >
-            Empezar Gratis Ahora
+            Comenzar Ahora
           </Link>
           <a
             href="#features"
@@ -149,7 +149,7 @@ export default function PlataformaCursosOnlinePage() {
         </div>
 
         <div className="mt-6 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-          ✓ Sin tarjetas de crédito requeridas · ✓ Plan Starter gratuito
+          ✓ Hosting de contenido incluido · ✓ Plan Starter para iniciar
         </div>
       </section>
 
@@ -170,7 +170,7 @@ export default function PlataformaCursosOnlinePage() {
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-cyan-400">Comisiones bajas sin letras chiquitas</h3>
               <p className="text-gray-400 leading-relaxed font-light">
-                Otras opciones del mercado te cobran tarifas mensuales costosas y además toman un porcentaje alto de tus ventas. En Plattform te ofrecemos el plan Starter sin costo mensual para iniciar, y comisiones que disminuyen conforme crece tu academia digital, bajando hasta un 7% en nuestro plan más alto.
+                Otras opciones del mercado te cobran tarifas mensuales costosas y además toman un porcentaje alto de tus ventas. En Plattform te ofrecemos el plan Starter ideal para arrancar tu academia, y comisiones que disminuyen conforme crece tu academia digital, bajando hasta un 7% en nuestro plan más alto.
               </p>
             </div>
             <div className="space-y-4">
@@ -252,7 +252,7 @@ export default function PlataformaCursosOnlinePage() {
         </h2>
         
         <p className="text-gray-400 text-base max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-          Hospeda tus cursos de forma profesional, automatiza tus ventas en México y brinda a tus estudiantes una experiencia premium única. Empieza con nuestro plan Starter gratis.
+          Hospeda tus cursos de forma profesional, automatiza tus ventas en México y brinda a tus estudiantes una experiencia premium única. Empieza hoy con nuestro plan Starter.
         </p>
 
         <Link
@@ -260,7 +260,7 @@ export default function PlataformaCursosOnlinePage() {
           href="/register?utm_source=seo&utm_medium=landing&utm_campaign=plataforma-cursos-online"
           className="px-10 py-5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-black rounded-2xl shadow-xl shadow-cyan-500/10 hover:scale-105 active:scale-[0.98] transition-all text-sm uppercase tracking-[0.2em]"
         >
-          Crear mi cuenta gratis
+          Crear mi cuenta ahora
         </Link>
       </section>
 

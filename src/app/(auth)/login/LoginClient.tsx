@@ -128,7 +128,7 @@ function LoginForm() {
           <p className="text-gray-500">
             ¿Aún no tienes cuenta?{' '}
             <Link href="/register" className="font-bold text-cyan-400 hover:text-white transition-colors">
-              Regístrate gratis
+              Regístrate aquí
             </Link>
           </p>
         </div>
