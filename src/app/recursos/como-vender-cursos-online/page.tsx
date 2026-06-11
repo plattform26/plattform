@@ -108,8 +108,8 @@ export default function ComoVenderCursosOnlinePage() {
     {
       title: '3. Prepara contenidos y materiales complementarios',
       paragraphs: [
-        'Graba videos claros y edítalos para eliminar tiempos muertos. Además de los videos, agrega lecturas de soporte, resúmenes en formato PDF, plantillas descargables y exámenes rápidos para evaluar el conocimiento.',
-        'Plattform te permite hospedar PDFs e incrustar de forma responsiva recursos desde YouTube, Vimeo, Loom o Google Drive, ofreciendo un entorno flexible y robusto para tus materiales.',
+        'Graba videos claros y edítalos para eliminar tiempos muertos. Además de los videos, agrega explicaciones detalladas y lecturas de soporte directamente escritas en la plataforma para garantizar la máxima agilidad, y exámenes rápidos para evaluar el conocimiento.',
+        'Para los contenidos multimedia como explicaciones o videos, no necesitas preocuparte por configuraciones complejas. Plattform te permite incrustar de forma sencilla recursos mediante códigos de inserción (iframes) o enlaces desde YouTube, Vimeo, Loom o Google Drive, adaptándose automáticamente a cualquier dispositivo.',
       ],
     },
     {

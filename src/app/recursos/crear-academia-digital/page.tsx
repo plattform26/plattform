@@ -108,8 +108,8 @@ export default function CrearAcademiaDigitalPage() {
     {
       title: '3. Prepara y ordena el material educativo',
       paragraphs: [
-        'Graba tus explicaciones con buena calidad de audio y video. Adicionalmente, redacta textos de soporte, prepara PDFs complementarios, diseña guías descargables e integra quizzes rápidos para evaluar la comprensión del alumno.',
-        'La organización de este material debe subirse a una plataforma que evite descargas no autorizadas de forma sencilla y provea un entorno agradable de aprendizaje.',
+        'Graba tus explicaciones con buena calidad de audio y video. Adicionalmente, redacta explicaciones y lecturas de soporte directamente en la plataforma para asegurar la máxima velocidad de carga, e integra quizzes rápidos para evaluar la comprensión del alumno.',
+        'Los contenidos de apoyo e interactivos deben organizarse visualmente en una plataforma que sea intuitiva y provea un entorno agradable y profesional de aprendizaje.',
       ],
     },
     {

@@ -70,7 +70,7 @@ export default function PlataformaCreadoresPage() {
             'name': '¿Puedo integrar audio, video y material multimedia?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Sí, Plattform cuenta con un editor de lecciones que soporta archivos PDF y permite incrustar recursos de forma responsiva desde plataformas como YouTube, Vimeo, Loom o Google Drive.',
+              'text': 'Sí, Plattform cuenta con un editor de lecciones basado en texto rápido que permite redactar contenidos directamente e incrustar de forma sencilla recursos responsivos mediante códigos de inserción de plataformas como YouTube, Vimeo, Loom o Google Drive.',
             },
           },
           {
@@ -105,7 +105,7 @@ export default function PlataformaCreadoresPage() {
     },
     {
       q: '¿Puedo integrar audio, video y material multimedia?',
-      a: 'Sí, Plattform cuenta con un editor de lecciones que soporta archivos PDF y permite incrustar recursos de forma responsiva desde plataformas como YouTube, Vimeo, Loom o Google Drive.',
+      a: 'Sí, Plattform cuenta con un editor de lecciones basado en texto rápido que permite redactar contenidos directamente e incrustar de forma sencilla recursos responsivos mediante códigos de inserción de plataformas como YouTube, Vimeo, Loom o Google Drive.',
     },
     {
       q: '¿La plataforma funciona para comunidades en México?',
@@ -125,7 +125,7 @@ export default function PlataformaCreadoresPage() {
     },
     {
       title: 'Hospedaje multimedia profesional',
-      description: 'Inserta tus videos y explicaciones de YouTube, Vimeo o Loom, y adjunta materiales complementarios como PDFs y lecturas.',
+      description: 'Inserta tus videos y explicaciones de YouTube, Vimeo o Loom de forma sencilla con códigos de inserción, y complementa las lecciones con textos y lecturas directas.',
       icon: '🎥',
     },
     {
