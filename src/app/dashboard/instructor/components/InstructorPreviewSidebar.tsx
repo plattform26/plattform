@@ -19,15 +19,17 @@ interface Module {
 interface InstructorPreviewSidebarProps {
   modules: Module[];
   currentLessonId: string;
-  onLessonChange: (lessonId: string) => void;
+  onLessonChange?: (lessonId: string) => void;
   children: ReactNode;
+  courseId?: string;
 }
 
 export default function InstructorPreviewSidebar({
   modules,
   currentLessonId,
   onLessonChange,
-  children
+  children,
+  courseId
 }: InstructorPreviewSidebarProps) {
   return (
     <div className="flex h-screen bg-[#080e1c] text-white overflow-hidden">
@@ -60,7 +62,13 @@ export default function InstructorPreviewSidebar({
                   return (
                     <button
                       key={lesson.id}
-                      onClick={() => onLessonChange(lesson.id)}
+                      onClick={() => {
+                        if (onLessonChange) {
+                          onLessonChange(lesson.id);
+                        } else if (courseId) {
+                          window.location.href = `/dashboard/instructor/courses/${courseId}/preview/lesson/${lesson.id}`;
+                        }
+                      }}
                       className={`
                         w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-medium transition-all
                         ${isActive

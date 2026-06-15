@@ -102,6 +102,7 @@ export default function InstructorPreviewQuizViewer({
                       <div className="grid grid-cols-1 gap-5">
                         {q.options.map((opt, oIdx) => {
                           const isSelected = answers[q.id] === opt.id;
+                          const isCorrectAnswer = opt.isCorrect;
                           return (
                             <button
                               key={opt.id}
@@ -109,24 +110,34 @@ export default function InstructorPreviewQuizViewer({
                               onClick={() => handleOptionClick(q.id, opt.id)}
                               className={`
                                 w-full text-left p-7 rounded-[2rem] border-2 transition-all flex items-center justify-between
-                                ${isSelected 
-                                  ? 'bg-cyan-500/10 border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.1)]' 
-                                  : 'border-white/5 bg-[#111928] hover:border-white/10'
+                                ${isCorrectAnswer 
+                                  ? 'bg-green-500/10 border-green-500/40 shadow-[0_0_30px_rgba(34,197,94,0.1)]' 
+                                  : isSelected 
+                                    ? 'bg-cyan-500/10 border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.1)]' 
+                                    : 'border-white/5 bg-[#111928] hover:border-white/10'
                                 }
                                 ${submitted ? 'cursor-default' : 'cursor-pointer'}
                               `}
                             >
                               <div className="flex items-center gap-6">
                                 <div className={`w-10 h-10 rounded-2xl border-2 flex items-center justify-center font-black text-sm transition-colors ${
-                                  isSelected ? 'border-cyan-400 bg-cyan-400 text-black' : 'border-white/10 text-gray-600'
+                                  isCorrectAnswer 
+                                    ? 'border-green-400 bg-green-400 text-black' 
+                                    : isSelected 
+                                      ? 'border-cyan-400 bg-cyan-400 text-black' 
+                                      : 'border-white/10 text-gray-600'
                                 }`}>
                                   {String.fromCharCode(64 + (oIdx + 1))}
                                 </div>
-                                <span className={`text-lg font-bold transition-colors ${isSelected ? 'text-white' : 'text-gray-400'}`}>
+                                <span className={`text-lg font-bold transition-colors ${isCorrectAnswer ? 'text-green-400' : isSelected ? 'text-white' : 'text-gray-400'}`}>
                                   {opt.text}
                                 </span>
                               </div>
-                              {isSelected && (
+                              {isCorrectAnswer ? (
+                                <span className="text-green-400 text-[10px] font-black uppercase tracking-widest bg-green-500/10 px-4 py-1.5 rounded-xl border border-green-500/20">
+                                   Respuesta Correcta
+                                </span>
+                              ) : isSelected && (
                                 <div className="w-6 h-6 rounded-full bg-cyan-400 flex items-center justify-center text-black text-[10px] font-black">
                                    ✓
                                 </div>

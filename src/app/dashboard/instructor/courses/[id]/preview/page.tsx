@@ -212,7 +212,7 @@ export default function PreviewPage({ params }: PreviewPageProps) {
                   questions: currentLesson.quiz.questions.map(q => ({
                     id: q.id,
                     question: q.questionText,
-                    type: q.questionType,
+                    type: q.questionType === 'SINGLE' || q.questionType === 'MULTIPLE' ? 'multiple_choice' : q.questionType,
                     options: q.options.map(o => ({
                       id: o.id,
                       text: o.optionText,

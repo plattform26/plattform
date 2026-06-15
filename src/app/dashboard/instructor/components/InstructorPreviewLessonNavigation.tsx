@@ -3,23 +3,40 @@
 interface InstructorPreviewLessonNavigationProps {
   prevLesson?: { id: string; title: string } | null;
   nextLesson?: { id: string; title: string } | null;
-  onPreviousClick: () => void;
-  onNextClick: () => void;
+  onPreviousClick?: () => void;
+  onNextClick?: () => void;
+  courseId?: string;
 }
 
 export default function InstructorPreviewLessonNavigation({
   prevLesson,
   nextLesson,
   onPreviousClick,
-  onNextClick
+  onNextClick,
+  courseId
 }: InstructorPreviewLessonNavigationProps) {
+  const handlePreviousClick = () => {
+    if (onPreviousClick) {
+      onPreviousClick();
+    } else if (courseId && prevLesson) {
+      window.location.href = `/dashboard/instructor/courses/${courseId}/preview/lesson/${prevLesson.id}`;
+    }
+  };
+
+  const handleNextClick = () => {
+    if (onNextClick) {
+      onNextClick();
+    } else if (courseId && nextLesson) {
+      window.location.href = `/dashboard/instructor/courses/${courseId}/preview/lesson/${nextLesson.id}`;
+    }
+  };
   return (
     <div className="bg-[#0a1f44]/40 backdrop-blur-md border border-blue-500/10 rounded-3xl p-8 transition-all mt-20">
        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           <div className="w-1/3">
              {prevLesson && (
                <button 
-                  onClick={onPreviousClick}
+                  onClick={handlePreviousClick}
                   className="group flex flex-col items-start gap-1 text-left"
                >
                   <span className="text-[10px] uppercase font-bold text-gray-500 group-hover:text-cyan-400 transition-colors">← Anterior</span>
@@ -38,7 +55,7 @@ export default function InstructorPreviewLessonNavigation({
           <div className="w-1/3 flex justify-end">
              {nextLesson && (
                 <button 
-                   onClick={onNextClick}
+                   onClick={handleNextClick}
                    className="group flex flex-col items-end gap-1 text-right"
                 >
                    <span className="text-[10px] uppercase font-bold text-gray-500 group-hover:text-cyan-400 transition-colors">Siguiente →</span>
