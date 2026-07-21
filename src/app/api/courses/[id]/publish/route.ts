@@ -68,6 +68,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
         where: { id: courseId },
         data: {
           status: 'PUBLISHED',
+          visibility: 'PUBLIC',
           publishedAt: new Date()
         }
       });
