@@ -15,6 +15,10 @@ const getEmbedHtml = (url: string): string | null => {
     const id = cleanUrl.split('youtu.be/')[1]?.split('?')[0];
     if (id) return `<iframe src="https://www.youtube.com/embed/${id}" width="100%" height="400" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   }
+  if (cleanUrl.includes('youtube.com/shorts/')) {
+    const id = cleanUrl.split('youtube.com/shorts/')[1]?.split('?')[0]?.split('&')[0];
+    if (id) return `<iframe src="https://www.youtube.com/embed/${id}" width="100%" height="400" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  }
   if (cleanUrl.includes('youtube.com/embed/')) {
     return `<iframe src="${cleanUrl}" width="100%" height="400" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   }
