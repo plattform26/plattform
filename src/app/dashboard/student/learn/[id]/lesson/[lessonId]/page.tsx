@@ -192,7 +192,7 @@ export default async function LessonPage(
                 {lesson.summary && (
                   <div>
                     <b className="text-cyan-400 uppercase tracking-widest text-[10px] block mb-1 font-black underline decoration-cyan-500/30 underline-offset-4">Puntos Clave</b>
-                    <p className="text-sm text-gray-300 leading-relaxed font-light">
+                    <p className="text-sm text-gray-300 leading-relaxed font-light whitespace-pre-line">
                       {lesson.summary}
                     </p>
                   </div>
@@ -200,7 +200,7 @@ export default async function LessonPage(
                 {lesson.funFact && (
                   <div>
                     <b className="text-cyan-400 uppercase tracking-widest text-[10px] block mb-1 font-black underline decoration-cyan-500/30 underline-offset-4 font-space-grotesk italic">¿Sabías que?</b>
-                    <p className="text-sm text-gray-400 leading-relaxed italic opacity-80">
+                    <p className="text-sm text-gray-400 leading-relaxed italic opacity-80 whitespace-pre-line">
                       {lesson.funFact}
                     </p>
                   </div>
