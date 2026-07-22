@@ -17,8 +17,10 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
     const validation = updateLessonSchema.safeParse(body);
 
     if (!validation.success) {
+      const issue = validation.error.issues[0];
+      const detailMsg = issue ? `${issue.path.join('.')}: ${issue.message}` : 'Datos inválidos';
       return NextResponse.json({ 
-        error: 'Datos inválidos', 
+        error: `Datos inválidos (${detailMsg})`, 
         details: validation.error.format() 
       }, { status: 400 });
     }
@@ -48,16 +50,20 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
         }, { status: 403 });
     }
 
+    const parsedDuration = (durationMinutes !== null && durationMinutes !== undefined && durationMinutes !== '') 
+      ? parseInt(String(durationMinutes)) 
+      : null;
+
     const updated = await prisma.courseLesson.update({
       where: { id },
       data: {
         title: title ?? undefined,
         subtitle: subtitle ?? undefined,
         contentText: contentText ?? undefined,
-        videoUrl: videoUrl ?? undefined,
+        videoUrl: videoUrl || null,
         isPreview: isPreview ?? undefined,
         contentType: contentType ?? undefined,
-        durationMinutes: durationMinutes ? parseInt(durationMinutes) : undefined,
+        durationMinutes: parsedDuration,
         moduleId: moduleId ?? undefined,
         orderIndex: orderIndex ?? undefined,
         summary: summary ?? undefined,
