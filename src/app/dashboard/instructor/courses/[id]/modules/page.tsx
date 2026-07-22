@@ -38,6 +38,8 @@ function LessonEditor({
       onSave(d);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+    } else {
+      alert(d.error || d.message || 'Error al guardar la lección. Revisa que los campos sean válidos.');
     }
     setSaving(false);
   };

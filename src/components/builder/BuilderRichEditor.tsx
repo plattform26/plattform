@@ -103,7 +103,15 @@ const BuilderRichEditor: React.FC<BuilderRichEditorProps> = ({
   const handleInsertImage = () => {
     restoreSelection();
     if (imageUrl) {
-      document.execCommand('insertImage', false, imageUrl);
+      let finalUrl = imageUrl.trim();
+      if (finalUrl.includes('drive.google.com/file/d/')) {
+        const id = finalUrl.split('drive.google.com/file/d/')[1]?.split('/')[0]?.split('?')[0];
+        if (id) finalUrl = `https://lh3.googleusercontent.com/d/${id}`;
+      } else if (finalUrl.includes('drive.google.com/open?id=')) {
+        const id = finalUrl.split('drive.google.com/open?id=')[1]?.split('&')[0];
+        if (id) finalUrl = `https://lh3.googleusercontent.com/d/${id}`;
+      }
+      document.execCommand('insertImage', false, finalUrl);
       handleInput();
     }
     setShowImageModal(false);
