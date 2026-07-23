@@ -48,7 +48,8 @@ export default async function ClassroomLayout(
             select: {
               id: true,
               title: true,
-              orderIndex: true
+              orderIndex: true,
+              contentType: true // Paso 5
             }
           }
         }
@@ -66,18 +67,26 @@ export default async function ClassroomLayout(
     select: { lessonId: true }
   });
 
-  // SHIELD: Incluir también lecciones cuyos quizzes hayan sido aprobados
-  const passedQuizAttempts = await prisma.quizAttempt.findMany({
+  // SHIELD: Obtener TODOS los intentos del alumno para pasarlos al SidebarClient
+  const allQuizAttempts = await prisma.quizAttempt.findMany({
     where: { 
       userId: session.userId, 
       courseId: params.id,
-      passed: true,
       quiz: { lessonId: { not: null } }
     },
-    select: { quiz: { select: { lessonId: true } } }
+    select: { passed: true, quiz: { select: { lessonId: true } } },
+    orderBy: { submittedAt: 'desc' }
   });
 
-  const quizCompletedLessonIds = passedQuizAttempts
+  const quizAttemptMap = allQuizAttempts.reduce((acc: any, curr: any) => {
+     if (curr.quiz?.lessonId && !(curr.quiz.lessonId in acc)) {
+         acc[curr.quiz.lessonId] = { passed: curr.passed };
+     }
+     return acc;
+  }, {});
+
+  const quizCompletedLessonIds = allQuizAttempts
+    .filter((a: any) => a.passed)
     .map((a: any) => a.quiz?.lessonId)
     .filter(Boolean);
 
@@ -98,6 +107,7 @@ export default async function ClassroomLayout(
         progressPercent={progressPercent}
         courseId={params.id}
         userRole={session.role}
+        quizAttemptMap={quizAttemptMap} // Mapa para evitar N+1 queries
       >
         {children}
       </SidebarClient>

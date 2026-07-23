@@ -148,6 +148,15 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     // Certificación si pasa
     let certification = null;
     if (passed) {
+      // 0. Sincronización de progreso al aprobar quiz (Paso 1 del plan)
+      if (quiz.lessonId) {
+        await prisma.progress.upsert({
+          where: { userId_lessonId: { userId: session.userId, lessonId: quiz.lessonId } },
+          create: { userId: session.userId, courseId: finalCourseId, lessonId: quiz.lessonId, completed: true, completedAt: new Date() },
+          update: { completed: true, completedAt: new Date() },
+        });
+      }
+
       certification = await prisma.certification.upsert({
         where: {
           userId_courseId: {

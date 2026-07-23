@@ -1,0 +1,412 @@
+{
+  "instructorEmail": "soporte@plattform.mx",
+  "title": "ChatGPT en la Práctica — Productividad con IA de OpenAI",
+  "description": "Domina ChatGPT desde cero hasta flujos de trabajo avanzados. Aprende a crear GPTs personalizados, usar Análisis Avanzado de Datos, generar imágenes directamente en el chat y aplicar técnicas de prompting que transformarán tu forma de trabajar. Curso práctico para profesionales sin experiencia técnica previa.",
+  "previewText": "ChatGPT es más que un chat de preguntas y respuestas — es una plataforma completa con capacidades de análisis de datos, generación de imágenes, navegación web y creación de asistentes personalizados llamados GPTs. En este curso aprenderás a usar cada una de estas herramientas para resolver problemas reales de tu trabajo o negocio.",
+  "price": 899.00,
+  "durationHours": 6,
+  "category": "TECH_INNOVATION",
+  "level": "BEGINNER",
+  "modules": [
+    {
+      "title": "Módulo 1: Primeros Pasos con ChatGPT",
+      "orderIndex": 1,
+      "lessons": [
+        {
+          "title": "Lección 1.1: ¿Qué es ChatGPT y cómo ha evolucionado?",
+          "subtitle": "De un chatbot simple a una plataforma completa de productividad",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "ChatGPT alcanzó 100 millones de usuarios activos en solo dos meses tras su lanzamiento",
+          "contentText": "<p>ChatGPT es un asistente de inteligencia artificial desarrollado por OpenAI, lanzado al público a finales de 2022. Desde entonces ha evolucionado de ser un simple chat de preguntas y respuestas a convertirse en una plataforma completa de productividad con múltiples herramientas integradas.</p><p>En sus primeras versiones, ChatGPT solo podía generar texto basándose en lo que aprendió durante su entrenamiento, sin acceso a información actualizada ni capacidad de realizar acciones más allá de conversar. Con el tiempo, se le fueron agregando capacidades: la posibilidad de analizar archivos, generar imágenes directamente en la conversación, navegar la web para obtener información reciente, y crear asistentes personalizados conocidos como GPTs.</p><p>Hoy en día, ChatGPT funciona como un verdadero asistente multipropósito: puede ayudarte a redactar documentos, analizar hojas de cálculo completas, generar código funcional, crear imágenes a partir de descripciones, resumir información extensa, y mucho más — todo dentro de la misma conversación.</p><p>Esta evolución es importante de entender porque muchas personas siguen usando ChatGPT únicamente como un chat de texto, sin aprovechar todas las herramientas adicionales disponibles. A lo largo de este curso descubrirás cada una de estas capacidades y cómo aplicararlas a tareas reales de tu trabajo diario.</p>"
+        },
+        {
+          "title": "Lección 1.2: Configurando tu cuenta y entendiendo los planes",
+          "subtitle": "Plan gratuito vs Plus — qué necesitas realmente",
+          "durationMinutes": 10,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Para comenzar a usar ChatGPT, visita chat.openai.com y crea una cuenta con tu correo electrónico, una cuenta de Google, o una cuenta de Microsoft. El registro toma apenas un par de minutos.</p><p>Existen distintos niveles de acceso. El plan gratuito te permite usar ChatGPT con ciertas limitaciones de uso y acceso a un modelo de capacidad estándar. El plan de pago (Plus) ofrece mayor capacidad de uso, acceso a modelos más avanzados, generación de imágenes sin restricciones tan estrictas, y herramientas adicionales como el Análisis Avanzado de Datos sin límites tan ajustados.</p><p>¿Cuál necesitas? Depende de tu uso. Si planeas usar ChatGPT ocasionalmente para tareas simples, el plan gratuito puede ser suficiente para empezar. Si lo vas a integrar en tu flujo de trabajo diario — análisis de datos regular, generación de contenido constante, o uso intensivo de las herramientas avanzadas — el plan de pago se vuelve más conveniente tanto en capacidad como en consistencia de acceso.</p><p>Una recomendación práctica: comienza con el plan gratuito, explora las funciones básicas durante una o dos semanas, y evalúa si tus necesidades reales justifican actualizar a un plan de pago. La mayoría de las técnicas que aprenderás en este curso funcionan en ambos planes, aunque algunas herramientas avanzadas tienen mayores límites de uso en la versión gratuita.</p>"
+        },
+        {
+          "title": "Lección 1.3: Navegando la interfaz — chats, historial y personalización",
+          "subtitle": "Configurar instrucciones personalizadas para respuestas más relevantes",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "summary": "Las \"Custom Instructions\" permiten que ChatGPT recuerde tu contexto sin repetirlo cada vez",
+          "contentText": "<p>La interfaz de ChatGPT se organiza en torno a conversaciones individuales, visibles en un panel lateral con tu historial completo. Cada conversación nueva inicia sin contexto previo, a menos que actives ciertas configuraciones de memoria o uses la función de instrucciones personalizadas.</p><p>Una de las funciones más útiles y menos utilizadas es la de \"Custom Instructions\" (Instrucciones Personalizadas), disponible en la configuración de tu cuenta. Aquí puedes decirle a ChatGPT información que quieres que tenga en cuenta en todas tus conversaciones futuras: a qué te dedicas, qué tipo de respuestas prefieres (más concisas o más detalladas), tu nivel de experiencia en ciertos temas, o el formato que sueles necesitar.</p><p>Por ejemplo, si trabajas en marketing digital, puedes configurar: \"Trabajo en marketing digital para una empresa de retail. Cuando me ayudes con textos, usa un tono cercano pero profesional, y evita explicaciones técnicas innecesarias a menos que las pida explícitamente.\" Esto significa que no tendrás que repetir este contexto en cada conversación nueva.</p><p>También existe la función de \"Memoria\", donde ChatGPT puede recordar detalles específicos mencionados en conversaciones anteriores — como el nombre de tu empresa, tus proyectos actuales o preferencias particulares — y aplicarlos automáticamente en futuras interacciones, sin que tengas que configurarlo manualmente cada vez.</p><p>Tomarte unos minutos para configurar estas instrucciones desde el inicio hará que cada conversación posterior sea significativamente más eficiente, ya que ChatGPT entenderá tu contexto desde el primer mensaje.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 2: Prompting y Conversaciones Efectivas",
+      "orderIndex": 2,
+      "lessons": [
+        {
+          "title": "Lección 2.1: Estructura de un prompt que funciona",
+          "subtitle": "Los elementos que distinguen una respuesta genérica de una útil",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>La forma en que escribes tu solicitud determina directamente la calidad de la respuesta que recibirás. Un prompt efectivo generalmente combina cuatro elementos: el contexto de la situación, la tarea específica que necesitas, el formato en que quieres recibir la respuesta, y cualquier restricción relevante.</p><p>Considera la diferencia entre pedir \"dame ideas de marketing\" versus \"soy dueño de una cafetería en una zona universitaria, necesito tres ideas de marketing de bajo presupuesto para aumentar las ventas durante el verano cuando los estudiantes no están, preséntalas en una tabla con la idea, el costo estimado y el tiempo de implementación\". El segundo prompt elimina la necesidad de varias rondas de aclaración.</p><p>Una técnica particularmente útil es asignar un rol específico a ChatGPT antes de la tarea. Frases como \"actúa como un consultor financiero con quince años de experiencia\" o \"responde como si fueras un editor estricto de una revista\" cambian notablemente el tono, profundidad y enfoque de la respuesta.</p><p>También es importante recordar que ChatGPT no necesita preguntas perfectamente formuladas en gramática formal — puedes escribir de forma natural, incluso con errores menores, y el modelo entenderá la intención. Lo que sí importa es la claridad de lo que realmente necesitas, no la elegancia de cómo lo pides.</p><p>Practica este enfoque con una tarea real: en lugar de hacer una pregunta general sobre algo que necesitas resolver, dedica treinta segundos a estructurar el contexto, la tarea, el formato y las restricciones antes de presionar enviar. Notarás que recibes respuestas mucho más cercanas a lo que realmente buscabas.</p>"
+        },
+        {
+          "title": "Lección 2.2: Iterar y refinar dentro de la misma conversación",
+          "subtitle": "Cómo construir sobre respuestas anteriores sin perder contexto",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Uno de los errores más comunes de quienes comienzan a usar ChatGPT es tratar cada pregunta como una búsqueda aislada, cuando en realidad la herramienta funciona mejor como una conversación continua donde cada mensaje construye sobre el anterior.</p><p>Si la primera respuesta no es exactamente lo que necesitabas, no es necesario reformular toda la pregunta desde cero. Simplemente indica el ajuste específico: \"hazlo más corto\", \"usa un tono más informal\", \"agrega ejemplos concretos\", o \"esto está bien pero enfócalo más hacia [aspecto específico]\". ChatGPT mantiene el contexto completo de la conversación y aplicará estos ajustes sobre lo ya generado.</p><p>Esta capacidad de iteración es especialmente valiosa para tareas creativas o de redacción, donde rara vez el primer resultado es perfecto, pero sí suele estar cerca. En lugar de descartar y reintentar, refinar progresivamente suele llegar a mejores resultados en menos tiempo total.</p><p>Otra técnica de iteración útil es pedir variaciones: \"dame tres versiones alternativas de esto, cada una con un enfoque distinto\" te permite comparar opciones antes de decidir cuál usar o combinar elementos de varias.</p><p>Ten en cuenta también que las conversaciones muy largas eventualmente pueden hacer que el modelo pierda algo de precisión sobre el contexto inicial. Si notas que las respuestas comienzan a desviarse o repetir información incorrecta, considera iniciar una conversación nueva con un resumen actualizado del contexto relevante.</p>"
+        },
+        {
+          "title": "Lección 2.3: Crear y usar prompts guardados",
+          "subtitle": "Acelera tareas repetitivas con plantillas reutilizables",
+          "durationMinutes": 13,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Si identificas tareas que realizas con frecuencia — redactar reportes semanales, responder cierto tipo de consultas, generar publicaciones de redes sociales con un formato específico — vale la pena construir plantillas de prompts reutilizables en lugar de escribir todo desde cero cada vez.</p><p>Una plantilla efectiva combina partes fijas (el contexto, el rol, la estructura deseada) con espacios claramente marcados donde insertarás la información específica de esa ocasión. Por ejemplo: \"Actúa como mi asistente de comunicación interna. Con la siguiente información [pegar datos de la semana], redacta un mensaje para el equipo en tono motivador, máximo 150 palabras, destacando un logro principal y un objetivo para la próxima semana.\"</p><p>Guarda estas plantillas en un documento personal de referencia — una nota, un archivo de texto, o incluso como mensaje fijado en una conversación dedicada exclusivamente a ese propósito. Algunas personas crean una conversación específica por cada tipo de tarea recurrente, manteniendo el contexto relevante siempre disponible.</p><p>Para quienes usan ChatGPT de forma más avanzada, la función de GPTs personalizados (que veremos en el último módulo) lleva este concepto un paso más allá, permitiendo crear un asistente completo preconfigurado para una tarea específica, sin necesidad de repetir instrucciones en absoluto.</p><p>El tiempo invertido en construir buenas plantillas se recupera rápidamente: lo que toma un poco más de esfuerzo definir bien una vez, se convierte en segundos de trabajo cada vez que la necesitas después.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 3: Herramientas Integradas de ChatGPT",
+      "orderIndex": 3,
+      "lessons": [
+        {
+          "title": "Lección 3.1: Análisis Avanzado de Datos — Excel y CSV sin programar",
+          "subtitle": "Sube un archivo y obtén gráficas, cálculos y conclusiones automáticas",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "Esta herramienta puede ejecutar código Python en segundo plano sin que tú escribas una sola línea",
+          "contentText": "<p>Una de las herramientas más poderosas dentro de ChatGPT es el Análisis Avanzado de Datos, que te permite subir archivos de Excel, CSV o incluso bases de datos simples, y obtener análisis, cálculos y visualizaciones sin necesidad de escribir una sola fórmula o línea de código.</p><p>Para usarla, simplemente adjunta tu archivo en la conversación y describe en lenguaje natural qué necesitas saber. Por ejemplo: \"analiza este archivo de ventas y dime cuáles fueron los tres productos con mejor desempeño cada mes, y si existe alguna tendencia estacional clara\".</p><p>Lo que sucede detrás de escena es notable: ChatGPT genera y ejecuta código de programación (generalmente en Python) para procesar tus datos, calcular las métricas solicitadas, y puede incluso generar gráficas visuales directamente dentro de la conversación. Tú nunca ves ni necesitas entender ese código — solo recibes el resultado en lenguaje claro.</p><p>Esta herramienta es especialmente útil para tareas como: limpiar datos desordenados, identificar valores atípicos o errores en una base de datos, cruzar información de múltiples columnas o pestañas, generar resúmenes ejecutivos de reportes financieros, o crear gráficas comparativas listas para usar en una presentación.</p><p>Una práctica recomendada es ser específico en tus solicitudes — en lugar de \"analiza esto\", pregunta algo concreto como \"¿cuál fue el mes con menor margen de ganancia y qué lo explica?\". Mientras más específica sea la pregunta, más útil y preciso será el análisis que recibas, ahorrándote el trabajo manual que normalmente tomaría en una hoja de cálculo tradicional.</p>"
+        },
+        {
+          "title": "Lección 3.2: Generación de imágenes directamente en el chat",
+          "subtitle": "De una descripción de texto a una imagen lista para usar, sin salir de la conversación",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>ChatGPT incluye la capacidad de generar imágenes completas a partir de una simple descripción de texto, directamente dentro de la misma conversación donde estás trabajando — sin necesidad de cambiar de herramienta o plataforma.</p><p>Para generar una imagen, simplemente describe lo que necesitas con el mayor detalle posible: el estilo visual (fotografía realista, ilustración, acuarela, minimalista), la composición, los colores predominantes, y el ambiente o sensación que buscas transmitir. Por ejemplo: \"genera una imagen de portada para un artículo de blog sobre productividad, estilo minimalista, con una persona organizando su escritorio, paleta de colores cálidos, sin texto en la imagen\".</p><p>Una ventaja de generar imágenes dentro del chat es que puedes iterar conversacionalmente: si el primer resultado no es exactamente lo que buscabas, puedes pedir ajustes específicos — \"hazla más oscura\", \"cambia la perspectiva a una vista superior\", \"quita el elemento de la izquierda\" — y ChatGPT generará una nueva versión considerando esos ajustes.</p><p>Esta función es especialmente útil para crear contenido visual rápido para presentaciones, publicaciones de redes sociales, portadas de documentos, o conceptos visuales preliminares antes de pasarlos a un diseñador para refinamiento profesional. No reemplaza el trabajo de un diseñador experto en proyectos importantes, pero acelera enormemente la etapa de exploración de ideas visuales.</p><p>Ten en cuenta que existen ciertas restricciones de contenido — no es posible generar imágenes de personas reales identificables, contenido violento, o material protegido por derechos de autor como personajes de marcas registradas. Estas limitaciones existen para un uso responsable de la herramienta.</p>"
+        },
+        {
+          "title": "Lección 3.3: Navegación web en tiempo real",
+          "subtitle": "Cuándo y cómo usar la búsqueda integrada para información actual",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Por defecto, ChatGPT no tiene acceso automático a información en tiempo real — su conocimiento proviene del entrenamiento que recibió hasta cierta fecha. Sin embargo, cuenta con una función de navegación web que le permite buscar información actualizada cuando la necesitas.</p><p>Esta función se activa automáticamente cuando ChatGPT detecta que tu pregunta requiere información reciente — noticias actuales, precios de mercado, eventos recientes, o cualquier dato que pueda haber cambiado después de su fecha de entrenamiento. También puedes solicitarlo explícitamente: \"busca en internet la información más reciente sobre [tema]\".</p><p>Es importante distinguir cuándo usar esta función y cuándo no es necesaria. Para conceptos generales, explicaciones de temas establecidos, o ayuda con tareas creativas, ChatGPT no necesita buscar en la web — su conocimiento base es suficiente. Pero para preguntas sobre el estado actual de algo, eventos recientes, o datos específicos y cambiantes, activar la búsqueda asegura que la respuesta refleje la información más actualizada disponible.</p><p>Cuando ChatGPT realiza una búsqueda, generalmente cita las fuentes de donde obtuvo la información, permitiéndote verificar la procedencia de los datos — una práctica especialmente importante para información que usarás en contextos profesionales o decisiones importantes.</p><p>Un uso práctico común es la investigación preliminar: \"busca las tendencias actuales en [tu industria] y resume los tres temas más discutidos este mes\" te da un punto de partida rápido para investigación más profunda, aunque siempre vale la pena verificar información crítica directamente en las fuentes originales.</p>"
+        },
+        {
+          "title": "Lección 3.4: Subir y analizar documentos e imágenes",
+          "subtitle": "PDFs, capturas de pantalla y fotos como fuente de información",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 4,
+          "isPreview": false,
+          "contentText": "<p>Además de archivos de datos como Excel, ChatGPT puede analizar una amplia variedad de documentos e imágenes que subas a la conversación, extrayendo información, respondiendo preguntas específicas, o realizando tareas basadas en su contenido.</p><p>Para documentos de texto como PDFs o archivos de Word, puedes pedir resúmenes, extracción de puntos clave, identificación de información específica, o incluso comparación entre múltiples documentos. Esto es particularmente útil para revisar contratos, analizar reportes extensos, o procesar manuales técnicos sin leer cada página manualmente.</p><p>Para imágenes, ChatGPT puede describir su contenido, leer texto presente en la imagen (incluyendo capturas de pantalla, fotos de documentos físicos o pizarras), identificar elementos visuales específicos, o ayudarte a entender gráficas y diagramas complejos. Por ejemplo, puedes subir una foto de una factura y pedir que extraiga los datos relevantes en formato de lista, o subir un diagrama técnico y pedir una explicación en lenguaje simple.</p><p>Un caso de uso particulamente práctico es subir capturas de pantalla de errores técnicos — si algo no funciona en una aplicación o sistema, una captura del mensaje de error junto con una descripción de lo que intentabas hacer suele ser suficiente para que ChatGPT identifique el problema y sugiera soluciones.</p><p>Como con cualquier análisis de IA, es buena práctica verificar información crítica extraída de documentos importantes, especialmente en contextos legales, financieros o médicos, donde la precisión exacta es indispensable.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 4: GPTs Personalizados y Casos Avanzados",
+      "orderIndex": 4,
+      "lessons": [
+        {
+          "title": "Lección 4.1: ¿Qué son los GPTs y para qué sirven?",
+          "subtitle": "Asistentes personalizados sin necesidad de programar",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Los GPTs son versiones personalizadas de ChatGPT que puedes crear para una tarea o propósito específico, sin necesidad de ningún conocimiento de programación. Piensa en ellos como asistentes preconfigurados con instrucciones, conocimiento y comportamiento específicos para un caso de uso particular.</p><p>La diferencia entre usar ChatGPT normal y un GPT personalizado es que el GPT ya tiene todo el contexto, las instrucciones y el conocimiento relevante configurados de antemano. En lugar de explicar el contexto cada vez que inicias una conversación, simplemente abres tu GPT y comienzas a trabajar directamente en la tarea.</p><p>Algunos ejemplos prácticos de GPTs que las personas crean: un asistente que conoce los productos y políticas específicas de tu empresa para responder consultas de clientes, un editor especializado en el estilo de escritura particular de tu marca, un asistente que conoce la documentación técnica completa de un proyecto, o un tutor personalizado configurado para enseñar un tema específico con un método particular.</p><p>Crear un GPT no requiere programar nada — se configura completamente a través de una interfaz conversacional donde describes qué necesitas, y opcionalmente puedes subir documentos para que el GPT tenga conocimiento específico de tu negocio, proyecto o área de expertise.</p><p>En la siguiente lección crearás tu primer GPT personalizado paso a paso, aplicando todo lo aprendido sobre prompting efectivo para configurar un asistente verdaderamente útil para una tarea recurrente de tu trabajo.</p>"
+        },
+        {
+          "title": "Lección 4.2: Crear tu primer GPT personalizado paso a paso",
+          "subtitle": "Instrucciones, conocimiento personalizado y capacidades específicas",
+          "durationMinutes": 22,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Crear un GPT personalizado sigue un proceso guiado dentro de la plataforma. Primero defines el propósito general: ¿qué tarea específica resolverá este asistente? Mientras más específico el propósito, más útil será el resultado — un GPT diseñado para \"ayudar con marketing\" será menos efectivo que uno diseñado para \"ayudar a redactar publicaciones de Instagram para una marca de café siguiendo nuestro tono de voz específico\".</p><p>El siguiente paso es configurar las instrucciones del sistema: el comportamiento, tono, conocimiento y límites que debe seguir el GPT en todas sus respuestas. Aquí defines cosas como: el rol que debe asumir, qué tipo de respuestas debe evitar, el formato preferido de sus respuestas, y cualquier regla de negocio relevante.</p><p>Opcionalmente, puedes subir documentos de conocimiento — manuales, guías de estilo, catálogos de productos, políticas internas — que el GPT usará como referencia al responder. Esto es especialmente valioso cuando necesitas que el asistente conozca información específica de tu negocio que no es de conocimiento público.</p><p>También puedes configurar capacidades específicas: si el GPT podrá navegar la web, generar imágenes, o analizar archivos que los usuarios le suban, dependiendo de la naturaleza de la tarea para la que está diseñado.</p><p>Una vez configurado, puedes probarlo directamente en una ventana de vista previa antes de finalizarlo, ajustando las instrucciones según los resultados que observes. Esta capacidad de iterar sobre la configuración antes de \"publicar\" el GPT te permite refinarlo hasta que responda exactamente como necesitas para tu caso de uso específico.</p>"
+        },
+        {
+          "title": "Lección 4.3: ChatGPT para programar — generar y depurar código",
+          "subtitle": "De una idea funcional a código ejecutable",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>ChatGPT es ampliamente utilizado tanto por programadores profesionales como por personas sin experiencia técnica que necesitan automatizar tareas simples. Puede generar código desde cero a partir de una descripción en lenguaje natural, explicar código existente que no entiendes, identificar y corregir errores, y sugerir mejoras de eficiencia.</p><p>Para obtener mejores resultados al pedir código, especifica claramente el lenguaje de programación que necesitas, el contexto de uso (un script independiente, parte de una aplicación web, una automatización), y cualquier restricción relevante como las herramientas o librerías disponibles en tu entorno.</p><p>Cuando algo no funcione como esperas, proporciona la mayor cantidad de contexto posible: el código completo o la sección relevante, el mensaje de error exacto si existe, y una descripción clara de qué esperabas que sucediera versus qué está ocurriendo realmente. Con esta información, ChatGPT puede identificar la causa del problema mucho más rápido que con descripciones vagas.</p><p>Más allá de escribir código nuevo, ChatGPT es útil para entender código heredado que no escribiste tú, traducir lógica entre diferentes lenguajes de programación, o sugerir formas de hacer que código repetitivo y desordenado sea más limpio y mantenible.</p><p>Como práctica fundamental, siempre revisa y entiendes el código generado antes de implementarlo en un proyecto real, especialmente en producción. ChatGPT acelera significativamente el proceso de desarrollo, pero la responsabilidad de verificar que el código funcione correctamente y de forma segura sigue siendo del programador.</p>"
+        },
+        {
+          "title": "Lección 4.4: Límites, precisión y buenas prácticas profesionales",
+          "subtitle": "Cuándo confiar en la respuesta y cuándo verificarla",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 4,
+          "isPreview": false,
+          "contentText": "<p>Usar ChatGPT de forma profesional y responsable requiere entender tanto sus capacidades como sus límites. Como cualquier modelo de inteligencia artificial, puede generar información incorrecta de forma muy convincente — un riesgo particularmente relevante en datos específicos, estadísticas, citas exactas, o información que cambia con el tiempo.</p><p>Para cualquier información que vaya a usarse en una decisión importante — financiera, legal, médica, o de negocio significativa — la verificación con fuentes confiables sigue siendo un paso esencial, sin importar qué tan segura suene la respuesta del modelo.</p><p>En cuanto a uso ético, hay categorías de tareas donde la supervisión humana directa es indispensable: decisiones que afectan significativamente a otras personas, comunicación en nombre de otros sin su conocimiento, o el uso de contenido generado que pudiera inducir a error a quien lo recibe sin saber que fue creado con IA.</p><p>Una buena práctica general es usar ChatGPT como un colaborador que acelera y enriquece tu trabajo, no como un sustituto de tu criterio y responsabilidad profesional. Esto significa: revisar siempre el output antes de usarlo en contextos importantes, mantener transparencia cuando sea relevante sobre el uso de IA en tu trabajo, y aplicar el mismo estándar de verificación que aplicarías al trabajo de un colega junior — útil, pero que requiere revisión antes de considerarse final.</p><p>Adoptar estos hábitos desde el principio te permitirá aprovechar el potencial de ChatGPT de forma sostenible y profesional, construyendo confianza en cómo y cuándo lo utilizas dentro de tu organización o proyecto personal.</p>"
+        }
+      ]
+    }
+  ],
+  "quiz": {
+    "title": "Dominio Práctico de ChatGPT",
+    "passingScore": 80,
+    "totalScore": 100,
+    "questions": [
+      {
+        "questionText": "¿Qué empresa desarrolló ChatGPT?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 1,
+        "options": [
+          { "optionText": "Anthropic", "isCorrect": false },
+          { "optionText": "OpenAI", "isCorrect": true },
+          { "optionText": "Google", "isCorrect": false },
+          { "optionText": "Microsoft", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuáles de las siguientes son herramientas integradas dentro de ChatGPT?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 2,
+        "options": [
+          { "optionText": "Análisis Avanzado de Datos", "isCorrect": true },
+          { "optionText": "Generación de imágenes", "isCorrect": true },
+          { "optionText": "Navegación web", "isCorrect": true },
+          { "optionText": "Edición de video", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Para qué sirve la función de \"Custom Instructions\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 3,
+        "options": [
+          { "optionText": "Para cambiar el idioma de la interfaz", "isCorrect": false },
+          { "optionText": "Para que ChatGPT recuerde tu contexto sin repetirlo en cada conversación", "isCorrect": true },
+          { "optionText": "Para activar la navegación web automáticamente", "isCorrect": false },
+          { "optionText": "Para descargar conversaciones anteriores", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué cuatro elementos componen un prompt efectivo?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 4,
+        "options": [
+          { "optionText": "Contexto de la situación", "isCorrect": true },
+          { "optionText": "Tarea específica", "isCorrect": true },
+          { "optionText": "Formato de respuesta deseado", "isCorrect": true },
+          { "optionText": "Restricciones relevantes", "isCorrect": true }
+        ]
+      },
+      {
+        "questionText": "Si la primera respuesta de ChatGPT no es exactamente lo que necesitas, ¿cuál es la mejor práctica?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 5,
+        "options": [
+          { "optionText": "Iniciar siempre una conversación nueva desde cero", "isCorrect": false },
+          { "optionText": "Pedir el ajuste específico dentro de la misma conversación", "isCorrect": true },
+          { "optionText": "Reformular toda la pregunta usando otras palabras", "isCorrect": false },
+          { "optionText": "Cerrar la sesión y volver a entrar", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué hace la herramienta de Análisis Avanzado de Datos cuando subes un archivo Excel?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 6,
+        "options": [
+          { "optionText": "Solo permite visualizar el archivo sin analizarlo", "isCorrect": false },
+          { "optionText": "Ejecuta código en segundo plano para procesar y analizar los datos sin que el usuario programe", "isCorrect": true },
+          { "optionText": "Convierte el archivo a formato PDF", "isCorrect": false },
+          { "optionText": "Elimina automáticamente los datos duplicados", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de restricciones existen al generar imágenes dentro de ChatGPT?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 7,
+        "options": [
+          { "optionText": "No se pueden generar imágenes de personas reales identificables", "isCorrect": true },
+          { "optionText": "No se permite contenido violento", "isCorrect": true },
+          { "optionText": "No se permite contenido protegido por derechos de autor de marcas", "isCorrect": true },
+          { "optionText": "No existen restricciones de ningún tipo", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuándo se activa la función de navegación web en ChatGPT?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 8,
+        "options": [
+          { "optionText": "En todas las conversaciones sin excepción", "isCorrect": false },
+          { "optionText": "Cuando la pregunta requiere información reciente o actualizada", "isCorrect": true },
+          { "optionText": "Solo si se paga una suscripción adicional especial", "isCorrect": false },
+          { "optionText": "Nunca se activa automáticamente", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al subir una captura de pantalla con un mensaje de error técnico, ¿qué puede hacer ChatGPT?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 9,
+        "options": [
+          { "optionText": "Solo puede ver la imagen pero no leer el texto", "isCorrect": false },
+          { "optionText": "Leer el texto del error e identificar posibles soluciones", "isCorrect": true },
+          { "optionText": "Eliminar automáticamente el error", "isCorrect": false },
+          { "optionText": "No puede procesar imágenes de ningún tipo", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué es un GPT personalizado?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 10,
+        "options": [
+          { "optionText": "Una versión de pago obligatoria de ChatGPT", "isCorrect": false },
+          { "optionText": "Un asistente preconfigurado con instrucciones y conocimiento específicos para una tarea", "isCorrect": true },
+          { "optionText": "Un complemento que requiere programación avanzada", "isCorrect": false },
+          { "optionText": "Una función exclusiva para empresas grandes", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Se requiere saber programar para crear un GPT personalizado?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 11,
+        "options": [
+          { "optionText": "Sí, es indispensable conocer Python", "isCorrect": false },
+          { "optionText": "No, se configura completamente a través de una interfaz conversacional", "isCorrect": true },
+          { "optionText": "Solo si se quiere agregar conocimiento personalizado", "isCorrect": false },
+          { "optionText": "Sí, requiere conocimientos de HTML", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se puede subir como \"conocimiento\" al crear un GPT personalizado?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 12,
+        "options": [
+          { "optionText": "Manuales y guías de estilo", "isCorrect": true },
+          { "optionText": "Catálogos de productos", "isCorrect": true },
+          { "optionText": "Políticas internas de la empresa", "isCorrect": true },
+          { "optionText": "Únicamente videos", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al pedir ayuda con código que no funciona, ¿qué información es más útil proporcionar?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 13,
+        "options": [
+          { "optionText": "Solo decir que \"no funciona\"", "isCorrect": false },
+          { "optionText": "El código completo, el error exacto y el comportamiento esperado", "isCorrect": true },
+          { "optionText": "Únicamente el nombre del lenguaje de programación", "isCorrect": false },
+          { "optionText": "No es necesario dar ningún contexto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué es importante revisar el código generado por IA antes de usarlo en producción?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 14,
+        "options": [
+          { "optionText": "Porque el código generado nunca funciona", "isCorrect": false },
+          { "optionText": "Porque la IA acelera el desarrollo pero no reemplaza la responsabilidad del programador de verificarlo", "isCorrect": true },
+          { "optionText": "No es necesario revisarlo nunca", "isCorrect": false },
+          { "optionText": "Porque siempre contiene virus", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significa que un modelo de IA puede tener \"alucinaciones\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 15,
+        "options": [
+          { "optionText": "Que se desconecta del servidor", "isCorrect": false },
+          { "optionText": "Que puede generar información incorrecta de forma convincente", "isCorrect": true },
+          { "optionText": "Que tarda mucho en responder", "isCorrect": false },
+          { "optionText": "Que cambia de idioma sin avisar", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de decisiones requieren siempre supervisión humana directa, según las buenas prácticas?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 16,
+        "options": [
+          { "optionText": "Decisiones que afectan significativamente a otras personas", "isCorrect": true },
+          { "optionText": "Comunicación enviada en nombre de otros sin su conocimiento", "isCorrect": true },
+          { "optionText": "Elegir el color de una diapositiva", "isCorrect": false },
+          { "optionText": "Decisiones financieras o legales importantes", "isCorrect": true }
+        ]
+      },
+      {
+        "questionText": "¿Qué ventaja ofrece guardar plantillas de prompts para tareas recurrentes?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 17,
+        "options": [
+          { "optionText": "Ahorra tiempo evitando reescribir el mismo contexto cada vez", "isCorrect": true },
+          { "optionText": "Es un requisito técnico obligatorio de la plataforma", "isCorrect": false },
+          { "optionText": "Mejora la velocidad de internet", "isCorrect": false },
+          { "optionText": "No ofrece ninguna ventaja real", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al analizar un documento extenso subido a ChatGPT, ¿qué práctica mejora la precisión de la respuesta?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 18,
+        "options": [
+          { "optionText": "Pedir solamente \"resume esto\" sin más contexto", "isCorrect": false },
+          { "optionText": "Hacer preguntas específicas sobre qué información necesitas exactamente", "isCorrect": true },
+          { "optionText": "No hacer ninguna pregunta y esperar", "isCorrect": false },
+          { "optionText": "Subir el documento sin texto legible", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es la diferencia principal entre el plan gratuito y el plan de pago de ChatGPT?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 19,
+        "options": [
+          { "optionText": "El plan gratuito no permite ninguna conversación", "isCorrect": false },
+          { "optionText": "El plan de pago ofrece mayor capacidad de uso y acceso a modelos y herramientas más avanzadas", "isCorrect": true },
+          { "optionText": "No existe ninguna diferencia entre ambos planes", "isCorrect": false },
+          { "optionText": "El plan gratuito solo funciona los fines de semana", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el propósito principal de este curso?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 20,
+        "options": [
+          { "optionText": "Enseñar a programar aplicaciones completas desde cero", "isCorrect": false },
+          { "optionText": "Enseñar a usar ChatGPT de forma efectiva para multiplicar la productividad profesional", "isCorrect": true },
+          { "optionText": "Vender una suscripción premium de OpenAI", "isCorrect": false },
+          { "optionText": "Reemplazar completamente el trabajo humano", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

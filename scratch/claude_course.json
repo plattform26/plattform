@@ -1,0 +1,408 @@
+{
+  "instructorEmail": "soporte@plattform.mx",
+  "title": "Claude AI en la Práctica — Domina la IA de Anthropic",
+  "description": "Aprende a usar Claude de Anthropic para multiplicar tu productividad profesional. Desde conversaciones básicas hasta flujos de trabajo avanzados con documentos, código y análisis de datos. Dirigido a profesionales, emprendedores y estudiantes que quieren integrar la IA en su trabajo diario sin necesidad de conocimientos técnicos previos.",
+  "previewText": "Claude no es solo un chatbot — es un asistente capaz de leer documentos completos, escribir y depurar código, analizar datos, y mantener conversaciones con contexto profundo. En este curso aprenderás a aprovechar todo su potencial, desde el primer prompt hasta flujos de trabajo que te ahorrarán horas cada semana.",
+  "price": 899.00,
+  "durationHours": 6,
+  "category": "TECH_INNOVATION",
+  "level": "BEGINNER",
+  "modules": [
+    {
+      "title": "Módulo 1: Fundamentos de Claude",
+      "orderIndex": 1,
+      "lessons": [
+        {
+          "title": "Lección 1.1: ¿Qué es Claude y por qué es diferente?",
+          "subtitle": "Entendiendo el modelo, sus capacidades y sus límites",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "summary": "Claude es un modelo de lenguaje desarrollado por Anthropic con énfasis en seguridad y utilidad real",
+          "funFact": "Anthropic fue fundada por exempleados de OpenAI enfocados en investigación de seguridad en IA",
+          "contentText": "<p>Claude es un asistente de inteligencia artificial desarrollado por Anthropic, una empresa fundada en 2021 por investigadores que anteriormente trabajaron en seguridad de IA en otras organizaciones. A diferencia de otros modelos de lenguaje, Claude fue construido con un enfoque particular en ser útil, honesto e inofensivo — tres principios que guían cómo responde a cada solicitud.</p><p>¿Qué significa esto en la práctica? Claude está diseñado para darte respuestas directas y útiles, sin rodeos innecesarios, pero también para reconocer cuando no sabe algo en lugar de inventar información. Esto lo hace especialmente confiable para tareas profesionales donde la precisión importa.</p><p>Claude puede ayudarte con una variedad enorme de tareas: escribir y editar textos, analizar documentos extensos, generar y depurar código, resolver problemas matemáticos, brainstorming creativo, resumir información compleja, y mantener conversaciones extendidas manteniendo el contexto de todo lo que se ha hablado.</p><p>Es importante entender también sus límites. Claude no tiene acceso a internet en tiempo real (a menos que la herramienta lo permita explícitamente), no recuerda conversaciones anteriores a menos que se le proporcione ese contexto, y como cualquier modelo de IA, puede cometer errores — especialmente en datos muy específicos o recientes. Por eso, siempre es buena práctica verificar información crítica, especialmente en temas legales, médicos o financieros.</p><p>A lo largo de este curso aprenderás no solo a usar Claude, sino a usarlo bien — sacándole el máximo provecho mientras entiendes cuándo confiar en sus respuestas y cuándo verificarlas.</p>"
+        },
+        {
+          "title": "Lección 1.2: Creando tu cuenta y explorando la interfaz",
+          "subtitle": "Tour guiado por claude.ai paso a paso",
+          "durationMinutes": 8,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "summary": "Configuración inicial y reconocimiento del entorno",
+          "contentText": "<p>Para comenzar a usar Claude, visita claude.ai y crea una cuenta gratuita usando tu correo electrónico o una cuenta de Google. El proceso toma menos de dos minutos.</p><p>Una vez dentro, la interfaz es intencionalmente simple: en el centro tienes un cuadro de texto donde escribes tus mensajes, y a la izquierda un panel con tu historial de conversaciones anteriores. Cada conversación nueva se llama un \"chat\" y mantiene su propio contexto independiente.</p><p>En la parte superior derecha encontrarás el ícono de configuración, donde puedes ajustar preferencias de la cuenta. También notarás que puedes adjuntar archivos directamente al chat usando el ícono de clip — esto te permitirá subir documentos, imágenes, hojas de cálculo y PDFs para que Claude los analice.</p><p>Existen diferentes planes de acceso: uno gratuito con límites de uso, y planes de pago que ofrecen mayor capacidad de uso, acceso a modelos más avanzados, y funciones adicionales como la posibilidad de crear \"Proyectos\" — espacios de trabajo organizados con su propio contexto persistente, ideales para trabajar en algo de forma continua a lo largo de varios días o semanas.</p><p>Antes de avanzar, te recomendamos explorar la interfaz por tu cuenta: inicia una conversación simple, prueba subir un documento, y familiarízate con dónde están las opciones principales. Esto hará que el resto del curso sea mucho más fluido.</p>"
+        },
+        {
+          "title": "Lección 1.3: Tu primera conversación efectiva",
+          "subtitle": "Cómo estructurar un prompt para obtener mejores respuestas",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "summary": "Claridad, contexto y especificidad como pilares de un buen prompt",
+          "contentText": "<p>La calidad de las respuestas de Claude depende directamente de la calidad de tus preguntas o instrucciones — lo que en este mundo se llama \"prompts\". Un prompt vago produce una respuesta vaga; un prompt específico produce una respuesta específica.</p><p>Comparemos dos ejemplos. Si escribes \"ayúdame con un correo\", Claude tendrá que adivinar el contexto, el tono, el destinatario y el propósito. En cambio, si escribes \"ayúdame a redactar un correo para mi jefe explicando que necesito posponer la entrega de un reporte tres días por motivos de salud, manteniendo un tono profesional pero cercano\", Claude tiene todo lo necesario para darte exactamente lo que buscas en el primer intento.</p><p>Tres elementos hacen la diferencia en cualquier prompt: el contexto (qué situación rodea tu solicitud), la instrucción clara (qué exactamente necesitas que haga) y el formato deseado (cómo quieres que se vea la respuesta — una lista, un párrafo, una tabla).</p><p>Otro hábito poderoso es tratar a Claude como una conversación continua, no como búsquedas aisladas en un buscador. Si la primera respuesta no es exactamente lo que necesitas, no empieces de cero — simplemente pide los ajustes específicos: \"hazlo más breve\", \"cambia el tono a uno más formal\", \"agrega un ejemplo concreto\". Claude recordará todo el contexto de la conversación y ajustará su respuesta en consecuencia.</p><p>Practica esto ahora: piensa en una tarea real de tu trabajo o estudio, y escribe un prompt completo con contexto, instrucción clara y formato deseado. Notarás la diferencia inmediatamente.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 2: Prompting Efectivo",
+      "orderIndex": 2,
+      "lessons": [
+        {
+          "title": "Lección 2.1: La anatomía de un buen prompt",
+          "subtitle": "Contexto, instrucción, formato y ejemplos",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "summary": "Estructura reutilizable para cualquier tipo de solicitud",
+          "contentText": "<p>Un prompt verdaderamente efectivo se puede descomponer en cuatro componentes que, combinados, producen resultados de manera consistente y mejor que preguntas improvisadas.</p><p>El primer componente es el <strong>rol o contexto</strong>: dile a Claude desde qué perspectiva debe responder. \"Actúa como un editor profesional revisando este texto\" produce un resultado distinto a simplemente pedir \"revisa este texto\". El rol enfoca el tipo de criterio que Claude aplicará.</p><p>El segundo es la <strong>tarea específica</strong>: qué exactamente necesitas. En lugar de \"ayúdame con marketing\", especifica \"escribe tres opciones de asunto para un correo de lanzamiento de producto, cada uno con un ángulo distinto: urgencia, curiosidad y beneficio directo\".</p><p>El tercero es el <strong>formato de salida</strong>: cómo quieres recibir la respuesta. ¿Una lista numerada? ¿Una tabla comparativa? ¿Un párrafo corrido? Especificarlo evita que tengas que reformatear manualmente después.</p><p>El cuarto, y opcional pero poderoso, son las <strong>restricciones o criterios</strong>: longitud máxima, tono, palabras a evitar, audiencia objetivo. Por ejemplo: \"máximo 100 palabras, tono cercano pero profesional, evita jerga técnica, dirigido a personas sin conocimientos previos del tema\".</p><p>Cuando combinas estos cuatro elementos en un solo prompt, obtienes resultados notablemente más precisos desde el primer intento, ahorrándote rondas de corrección. Esta estructura funciona para prácticamente cualquier tipo de tarea: redacción, análisis, programación, brainstorming o resolución de problemas.</p>"
+        },
+        {
+          "title": "Lección 2.2: Pedir que piense paso a paso",
+          "subtitle": "Razonamiento explícito para tareas complejas",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "funFact": "Pedirle a la IA que \"piense en voz alta\" mejora la precisión en tareas de lógica y matemáticas",
+          "contentText": "<p>Para tareas que requieren razonamiento — problemas matemáticos, decisiones con múltiples variables, análisis lógico o resolución de problemas complejos — existe una técnica simple pero poderosa: pedirle a Claude que piense paso a paso antes de dar la respuesta final.</p><p>Esto se conoce como \"chain of thought\" o cadena de razonamiento. En lugar de preguntar directamente \"¿cuál es la mejor opción?\", puedes pedir: \"analiza paso a paso las ventajas y desventajas de cada opción antes de darme tu recomendación final\".</p><p>¿Por qué funciona esto? Cuando un modelo de lenguaje genera una respuesta, lo hace de forma secuencial, palabra por palabra. Si le pides saltar directamente a una conclusión compleja, tiene menos \"espacio\" para procesar la lógica intermedia. Pero si le permites desarrollar el razonamiento explícitamente, cada paso informa al siguiente, reduciendo errores significativamente.</p><p>Esta técnica es especialmente útil en escenarios como: evaluar la viabilidad de un proyecto considerando múltiples factores, resolver problemas matemáticos con varios pasos, depurar código identificando la causa raíz de un error, o tomar decisiones de negocio comparando distintas alternativas.</p><p>Un ejemplo práctico: en lugar de preguntar \"¿deberíamos lanzar este producto en marzo o en junio?\", podrías pedir \"analiza paso a paso los factores estacionales, de competencia y de capacidad operativa para cada fecha, y luego dame tu recomendación con la justificación\". El resultado será considerablemente más sólido y defendible.</p>"
+        },
+        {
+          "title": "Lección 2.3: Dar ejemplos para guiar el estilo",
+          "subtitle": "Few-shot prompting explicado de forma simple",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Una de las formas más efectivas de obtener exactamente el estilo, tono o formato que buscas es simplemente mostrarle a Claude un ejemplo de lo que quieres, en lugar de intentar describirlo con palabras.</p><p>Esta técnica se llama \"few-shot prompting\" — proporcionar uno o varios ejemplos de la salida deseada antes de pedir que genere contenido nuevo siguiendo ese mismo patrón.</p><p>Imagina que necesitas escribir descripciones de producto para una tienda en línea, y ya tienes una que te gusta mucho de un producto anterior. En lugar de explicar \"quiero un tono divertido, con emojis ocasionales, y que mencione el beneficio principal en la primera línea\", simplemente pega la descripción existente como ejemplo y pide: \"escribe una descripción para este nuevo producto siguiendo exactamente el mismo estilo y estructura que el ejemplo anterior\".</p><p>Esto funciona igual de bien para correos, reportes, publicaciones de redes sociales, o incluso código — si tienes un fragmento de código con un estilo particular de comentarios y nomenclatura, mostrárselo a Claude antes de pedir código nuevo asegura consistencia.</p><p>Cuantos más ejemplos proporciones (generalmente entre uno y tres es suficiente), más precisamente Claude podrá replicar el patrón. Esta técnica es particularmente valiosa cuando trabajas en algo con una \"voz\" de marca muy específica, donde la consistencia es más importante que la creatividad pura.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 3: Claude para el Trabajo Diario",
+      "orderIndex": 3,
+      "lessons": [
+        {
+          "title": "Lección 3.1: Redacción de correos y documentos profesionales",
+          "subtitle": "De borrador a versión final en minutos",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Uno de los usos más inmediatos y prácticos de Claude es la redacción y edición de comunicación profesional. Ya sea un correo delicado, un reporte ejecutivo o una propuesta comercial, Claude puede ayudarte a pasar de una idea desordenada a un documento pulido en minutos.</p><p>El flujo de trabajo más efectivo suele ser: primero, dale a Claude el contexto completo de la situación — quién es el destinatario, cuál es el objetivo del mensaje, qué tono necesitas (formal, cercano, urgente, diplomático) y cualquier información específica que deba incluirse. Segundo, pide un primer borrador. Tercero, refina con instrucciones puntuales: \"hazlo más corto\", \"suaviza el segundo párrafo\", \"agrega una llamada a la acción más clara al final\".</p><p>Para correos delicados — como comunicar un retraso, dar feedback difícil, o negociar un punto sensible — Claude es particularmente útil porque te permite explorar diferentes formas de decir lo mismo antes de enviar nada. Puedes pedir: \"dame tres versiones de este mensaje: una más directa, una más diplomática, y una intermedia\" y elegir la que mejor se ajuste a la relación con esa persona.</p><p>Para documentos más largos como reportes o propuestas, una estrategia efectiva es construir primero un esqueleto o índice con Claude, validar que la estructura tenga sentido, y luego desarrollar cada sección por separado. Esto evita que el documento se sienta genérico y mantiene coherencia en el argumento general.</p><p>Recuerda siempre revisar y personalizar el resultado final — Claude acelera el proceso de escritura, pero el toque final, especialmente en comunicaciones importantes, debe reflejar tu voz y conocimiento específico de la situación.</p>"
+        },
+        {
+          "title": "Lección 3.2: Resumir y analizar documentos largos",
+          "subtitle": "Subir PDFs, contratos y reportes para extraer lo esencial",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "summary": "Claude puede leer documentos completos y responder preguntas específicas sobre ellos",
+          "contentText": "<p>Una de las capacidades más poderosas y subutilizadas de Claude es su habilidad para procesar documentos extensos — contratos, reportes financieros, artículos académicos, manuales técnicos — y ayudarte a extraer exactamente la información que necesitas sin tener que leer todo el documento línea por línea.</p><p>Para usar esta función, simplemente adjunta el archivo (PDF, Word, Excel, o incluso una imagen de texto) usando el ícono de clip en la conversación, y luego haz tu pregunta específica. Puedes pedir un resumen ejecutivo, preguntar por cláusulas específicas en un contrato, solicitar que identifique riesgos o inconsistencias, o pedir que compare dos documentos entre sí.</p><p>Algunos ejemplos prácticos: si recibes un contrato de proveedor de veinte páginas, puedes pedir \"identifica todas las cláusulas relacionadas con penalizaciones por incumplimiento y resume cada una en una oración\". Si tienes un reporte financiero trimestral, puedes preguntar \"¿cuáles fueron los tres cambios más significativos respecto al trimestre anterior y qué los explica?\".</p><p>Una práctica recomendada al trabajar con documentos largos es ser específico sobre qué necesitas, en lugar de simplemente pedir \"resume esto\". Mientras más específica sea tu pregunta, más útil y enfocada será la respuesta. También es buena práctica pedir que Claude cite o referencie la sección específica del documento de donde extrajo cada dato, especialmente en documentos legales o financieros donde la precisión es crítica.</p><p>Esta capacidad transforma tareas que normalmente tomarían horas — como revisar un contrato extenso o analizar un reporte denso — en un proceso de minutos, liberando tu tiempo para el análisis crítico y la toma de decisiones.</p>"
+        },
+        {
+          "title": "Lección 3.3: Análisis de datos sin saber programar",
+          "subtitle": "Subir un Excel y obtener insights en lenguaje natural",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>No necesitas saber programar ni manejar fórmulas complejas de Excel para obtener análisis valiosos de tus datos. Claude puede leer hojas de cálculo, identificar patrones, calcular métricas y presentar hallazgos en lenguaje claro — simplemente describiendo en español lo que necesitas saber.</p><p>El proceso es directo: sube tu archivo Excel o CSV usando el ícono de adjuntar, y luego pregunta en lenguaje natural. Por ejemplo: \"¿cuáles fueron mi tres productos con mayor crecimiento en ventas comparando este trimestre con el anterior?\" o \"identifica si hay algún mes donde los gastos superaron significativamente el promedio y por qué podría haber pasado\".</p><p>Claude puede realizar cálculos, generar tablas resumen, identificar tendencias, detectar valores atípicos, y hasta sugerir hipótesis sobre por qué ocurrieron ciertos patrones en los datos — aunque siempre es importante verificar conclusiones críticas con tu propio criterio y contexto del negocio que Claude no necesariamente conoce.</p><p>Una ventaja particular de este enfoque es la iteración rápida: si la primera respuesta no es exactamente lo que buscabas, puedes refinar inmediatamente — \"ahora sepáralo por región\" o \"muéstrame esto mismo pero solo para el segmento de clientes premium\" — sin tener que reconstruir fórmulas manualmente.</p><p>Para datos sensibles o estratégicos, ten en cuenta las políticas de privacidad y manejo de información de tu organización antes de subir archivos con información confidencial. Para análisis exploratorios, reportes internos o entendimiento general de tendencias, esta capacidad puede ahorrarte horas de trabajo manual en hojas de cálculo.</p>"
+        },
+        {
+          "title": "Lección 3.4: Crear presentaciones y contenido visual",
+          "subtitle": "De una idea a una estructura de slides lista para usar",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 4,
+          "isPreview": false,
+          "contentText": "<p>Crear una presentación desde cero puede ser de las tareas que más tiempo consume — no por la dificultad técnica, sino por la parálisis de la página en blanco: ¿cuántas diapositivas necesito? ¿Cómo organizo la información? ¿Qué va primero?</p><p>Claude puede ayudarte a resolver exactamente ese problema. Describe el objetivo de tu presentación, la audiencia y la duración aproximada, y pide una estructura completa: \"necesito una presentación de 10 minutos para presentar los resultados del trimestre a mi equipo directivo, enfocándome en logros, retos y plan para el siguiente trimestre\".</p><p>Claude generará una estructura lógica de diapositivas, con el título y los puntos clave de cada una, que luego puedes refinar, ajustar el orden, o pedir que desarrolle el contenido específico de alguna sección con más detalle. Esto convierte el proceso de crear una presentación en algo mucho más rápido: tú aportas el criterio y los datos específicos, Claude aporta la estructura y la redacción inicial.</p><p>También puedes pedir ayuda con elementos específicos: redactar el speaker notes (lo que dirás en cada diapositiva), generar analogías para explicar conceptos complejos a una audiencia no técnica, o incluso sugerir qué tipo de gráfico sería más efectivo para representar ciertos datos.</p><p>Una práctica recomendada es pedir primero solo el esqueleto o índice de la presentación, validar que la narrativa general tenga sentido, y después desarrollar el contenido detallado de cada diapositiva por separado. Esto te da control sobre la estructura general antes de invertir tiempo en los detalles.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 4: Casos de Uso Avanzados",
+      "orderIndex": 4,
+      "lessons": [
+        {
+          "title": "Lección 4.1: Claude para programadores — generar y depurar código",
+          "subtitle": "Cómo describir un problema técnico para obtener soluciones precisas",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Claude es una herramienta poderosa tanto para quienes programan profesionalmente como para quienes están comenzando a aprender. Puede escribir código desde cero a partir de una descripción en lenguaje natural, explicar código existente, identificar y corregir errores, y sugerir mejoras de eficiencia o legibilidad.</p><p>Para obtener mejores resultados al pedir código, sé específico sobre el lenguaje de programación, el contexto del proyecto (por ejemplo, si es para una página web, una aplicación móvil, o un script de automatización), y cualquier restricción relevante como qué librerías están disponibles o qué estilo de código sigue tu equipo.</p><p>Cuando tengas un error o algo no funcione como esperas, la forma más efectiva de pedir ayuda es proporcionar: el código completo (o la sección relevante), el mensaje de error exacto si lo hay, y qué comportamiento esperabas versus qué está pasando realmente. Con esa información, Claude puede identificar la causa raíz mucho más rápido que con descripciones vagas como \"no funciona\".</p><p>Claude también es útil para tareas de mantenimiento de código: explicar qué hace un fragmento de código que no escribiste tú, sugerir cómo refactorizar código repetitivo para hacerlo más limpio, o traducir lógica de un lenguaje de programación a otro.</p><p>Una práctica importante al usar IA para programar es siempre revisar y entender el código generado antes de implementarlo, especialmente en proyectos en producción. Claude es una herramienta de aceleración, no un reemplazo del criterio técnico — verificar la lógica, probar el código en un entorno seguro, y entender por qué funciona son pasos que siguen siendo responsabilidad del programador.</p>"
+        },
+        {
+          "title": "Lección 4.2: Crear flujos de trabajo repetibles",
+          "subtitle": "Plantillas de prompts para tareas que haces todas las semanas",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "funFact": "Guardar tus mejores prompts como plantillas puede ahorrarte horas al mes",
+          "contentText": "<p>Una vez que dominas la estructura de un buen prompt, el siguiente paso natural es identificar las tareas que realizas regularmente y convertirlas en plantillas reutilizables — ahorrándote tiempo cada vez que las necesites en lugar de reconstruir el prompt desde cero.</p><p>Piensa en tareas que haces semanal o mensualmente: redactar un reporte de status para tu equipo, responder a cierto tipo de consultas de clientes, crear publicaciones para redes sociales siguiendo un formato consistente, o preparar la agenda de una reunión recurrente.</p><p>Para cada una de estas tareas, puedes crear una plantilla de prompt que incluya: el rol o contexto fijo, la estructura deseada, y espacios claramente marcados donde insertarás la información variable de esa semana. Por ejemplo, una plantilla para reportes semanales podría verse así: \"Actúa como mi asistente de redacción. Con la siguiente información de la semana [pegar logros, pendientes, bloqueos], genera un reporte de status en formato de tres secciones: Logros, En progreso, y Bloqueos, con un tono profesional y conciso, máximo 200 palabras.\"</p><p>Guarda estas plantillas en un documento de referencia personal — pueden vivir en una nota, un documento de texto, o incluso en la función de \"Proyectos\" de Claude si tu plan lo incluye, donde puedes mantener contexto persistente para un tipo específico de trabajo recurrente.</p><p>El beneficio compuesto de este hábito es significativo: lo que inicialmente toma un poco más de tiempo construir bien una vez, se convierte en minutos de trabajo cada vez que la necesitas después, multiplicando el ahorro de tiempo a lo largo de semanas y meses.</p>"
+        },
+        {
+          "title": "Lección 4.3: Límites éticos y buenas prácticas",
+          "subtitle": "Qué tareas delegar a la IA y cuáles requieren siempre supervisión humana",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Usar Claude de forma responsable significa entender no solo qué puede hacer, sino también dónde están los límites apropiados de su uso — tanto por precisión como por consideraciones éticas y profesionales.</p><p>En cuanto a precisión, es importante recordar que Claude, como cualquier modelo de IA, puede generar información incorrecta de forma convincente — un fenómeno conocido como \"alucinación\". Esto es especialmente relevante en datos muy específicos, estadísticas recientes, citas exactas, o información que cambia con frecuencia. Para cualquier dato crítico que vaya a usarse en una decisión importante, la verificación con fuentes confiables sigue siendo esencial.</p><p>En cuanto a uso ético, hay categorías de tareas donde la supervisión humana directa es indispensable: decisiones que afectan significativamente a otras personas (contrataciones, evaluaciones de desempeño, decisiones médicas o legales), comunicación en nombre de otros sin su conocimiento, o generación de contenido que pudiera ser usado para engañar o manipular.</p><p>Una buena práctica general es usar Claude como un colaborador que acelera y enriquece tu trabajo, no como un sustituto de tu criterio y responsabilidad profesional. Esto significa: revisar siempre el output antes de usarlo en contextos importantes, mantener transparencia cuando sea relevante sobre el uso de IA en tu trabajo, y aplicar el mismo estándar de verificación que aplicarías al trabajo de un colega junior — útil, pero que requiere revisión antes de considerarse final.</p><p>Adoptar estos hábitos desde el principio te permitirá aprovechar el potencial de Claude de forma sostenible y profesional, construyendo confianza en cómo y cuándo lo utilizas dentro de tu organización o proyecto personal.</p>"
+        }
+      ]
+    }
+  ],
+  "quiz": {
+    "title": "Dominio Práctico de Claude",
+    "passingScore": 80,
+    "totalScore": 100,
+    "questions": [
+      {
+        "questionText": "¿Qué empresa desarrolló Claude?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 1,
+        "options": [
+          { "optionText": "OpenAI", "isCorrect": false },
+          { "optionText": "Anthropic", "isCorrect": true },
+          { "optionText": "Google", "isCorrect": false },
+          { "optionText": "Meta", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuáles son los tres principios que guían el comportamiento de Claude?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 2,
+        "options": [
+          { "optionText": "Útil", "isCorrect": true },
+          { "optionText": "Honesto", "isCorrect": true },
+          { "optionText": "Inofensivo", "isCorrect": true },
+          { "optionText": "Entretenido", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué es una \"alucinación\" en el contexto de IA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 3,
+        "options": [
+          { "optionText": "Cuando el modelo se desconecta", "isCorrect": false },
+          { "optionText": "Cuando el modelo genera información incorrecta de forma convincente", "isCorrect": true },
+          { "optionText": "Un tipo de error de servidor", "isCorrect": false },
+          { "optionText": "Cuando la respuesta tarda demasiado", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuáles son los cuatro componentes de un prompt efectivo?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 4,
+        "options": [
+          { "optionText": "Rol o contexto", "isCorrect": true },
+          { "optionText": "Tarea específica", "isCorrect": true },
+          { "optionText": "Formato de salida", "isCorrect": true },
+          { "optionText": "Restricciones o criterios", "isCorrect": true }
+        ]
+      },
+      {
+        "questionText": "¿Qué técnica consiste en pedirle al modelo que razone paso a paso antes de responder?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 5,
+        "options": [
+          { "optionText": "Few-shot prompting", "isCorrect": false },
+          { "optionText": "Chain of thought", "isCorrect": true },
+          { "optionText": "Zero-shot learning", "isCorrect": false },
+          { "optionText": "Prompt injection", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué es \"few-shot prompting\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 6,
+        "options": [
+          { "optionText": "Hacer preguntas muy cortas", "isCorrect": false },
+          { "optionText": "Proporcionar ejemplos de la salida deseada antes de pedir contenido nuevo", "isCorrect": true },
+          { "optionText": "Usar Claude solo unas pocas veces al día", "isCorrect": false },
+          { "optionText": "Limitar la longitud de la respuesta", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipos de archivos puede analizar Claude cuando se adjuntan a una conversación?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 7,
+        "options": [
+          { "optionText": "PDF", "isCorrect": true },
+          { "optionText": "Excel/CSV", "isCorrect": true },
+          { "optionText": "Documentos Word", "isCorrect": true },
+          { "optionText": "Únicamente archivos de texto plano", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al pedir ayuda para depurar código, ¿qué información es más útil proporcionar?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 8,
+        "options": [
+          { "optionText": "Solo decir \"no funciona\"", "isCorrect": false },
+          { "optionText": "El código completo, el error exacto y el comportamiento esperado", "isCorrect": true },
+          { "optionText": "Solo el nombre del lenguaje de programación", "isCorrect": false },
+          { "optionText": "Una captura de pantalla sin contexto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué es recomendable revisar siempre el código generado por IA antes de implementarlo?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 9,
+        "options": [
+          { "optionText": "Porque siempre tiene errores de sintaxis", "isCorrect": false },
+          { "optionText": "Porque la IA es un acelerador, no un reemplazo del criterio técnico", "isCorrect": true },
+          { "optionText": "Porque el código generado nunca funciona", "isCorrect": false },
+          { "optionText": "No es necesario revisarlo", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué ventaja ofrece crear plantillas de prompts reutilizables?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 10,
+        "options": [
+          { "optionText": "Ahorra tiempo en tareas que se repiten regularmente", "isCorrect": true },
+          { "optionText": "Hace que Claude responda más rápido técnicamente", "isCorrect": false },
+          { "optionText": "Es un requisito obligatorio de la plataforma", "isCorrect": false },
+          { "optionText": "Mejora la conexión a internet", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de decisiones requieren siempre supervisión humana directa según las buenas prácticas?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 11,
+        "options": [
+          { "optionText": "Decisiones que afectan significativamente a otras personas", "isCorrect": true },
+          { "optionText": "Decisiones médicas o legales", "isCorrect": true },
+          { "optionText": "Elegir el color de un botón en una presentación", "isCorrect": false },
+          { "optionText": "Comunicación en nombre de otros sin su conocimiento", "isCorrect": true }
+        ]
+      },
+      {
+        "questionText": "¿Qué función de Claude permite mantener contexto persistente para un tipo de trabajo recurrente?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 12,
+        "options": [
+          { "optionText": "Historial de búsqueda", "isCorrect": false },
+          { "optionText": "Proyectos", "isCorrect": true },
+          { "optionText": "Modo incógnito", "isCorrect": false },
+          { "optionText": "Configuración de cuenta", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al analizar un documento largo subido a Claude, ¿qué práctica se recomienda para mayor precisión?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 13,
+        "options": [
+          { "optionText": "Pedir solo \"resume esto\" sin más contexto", "isCorrect": false },
+          { "optionText": "Hacer preguntas específicas y pedir que cite la sección de donde extrajo cada dato", "isCorrect": true },
+          { "optionText": "Subir el documento sin hacer ninguna pregunta", "isCorrect": false },
+          { "optionText": "Pedir un resumen de una sola palabra", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significa que Claude \"no tiene acceso a internet en tiempo real\" por defecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 14,
+        "options": [
+          { "optionText": "Que no puede leer ningún archivo", "isCorrect": false },
+          { "optionText": "Que no puede buscar información actualizada de la web a menos que la herramienta lo permita explícitamente", "isCorrect": true },
+          { "optionText": "Que requiere conexión wifi especial", "isCorrect": false },
+          { "optionText": "Que solo funciona offline", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál de las siguientes es una buena estrategia al crear una presentación con ayuda de Claude?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 15,
+        "options": [
+          { "optionText": "Pedir directamente el contenido detallado de cada diapositiva sin estructura previa", "isCorrect": false },
+          { "optionText": "Pedir primero el esqueleto o índice, validarlo, y luego desarrollar cada sección", "isCorrect": true },
+          { "optionText": "Generar todas las diapositivas en un solo prompt sin revisión", "isCorrect": false },
+          { "optionText": "No darle ningún contexto sobre la audiencia", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se entiende por el \"rol o contexto\" dentro de un prompt?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 16,
+        "options": [
+          { "optionText": "El nombre del usuario que escribe", "isCorrect": false },
+          { "optionText": "Indicarle a Claude desde qué perspectiva debe responder", "isCorrect": true },
+          { "optionText": "La fecha en que se hace la pregunta", "isCorrect": false },
+          { "optionText": "El idioma de la conversación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Si quieres mantener un estilo o tono consistente en textos generados, ¿qué técnica es más efectiva?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 17,
+        "options": [
+          { "optionText": "Describir el tono con muchos adjetivos", "isCorrect": false },
+          { "optionText": "Proporcionar un ejemplo del estilo deseado para que Claude lo replique", "isCorrect": true },
+          { "optionText": "Pedir que use palabras más largas", "isCorrect": false },
+          { "optionText": "Escribir en mayúsculas", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de tareas son ideales para delegar completamente a Claude sin supervisión?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 18,
+        "options": [
+          { "optionText": "Todas las tareas sin excepción", "isCorrect": false },
+          { "optionText": "Tareas de bajo riesgo donde un error no tiene consecuencias significativas", "isCorrect": true },
+          { "optionText": "Solo tareas legales", "isCorrect": false },
+          { "optionText": "Ninguna tarea debe delegarse nunca", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué ocurre si dentro de una misma conversación pides ajustes a una respuesta anterior?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 19,
+        "options": [
+          { "optionText": "Claude pierde todo el contexto y empieza de cero", "isCorrect": false },
+          { "optionText": "Claude recuerda el contexto de la conversación y ajusta su respuesta en consecuencia", "isCorrect": true },
+          { "optionText": "Se debe abrir un chat completamente nuevo", "isCorrect": false },
+          { "optionText": "No es posible pedir ajustes", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el propósito principal de este curso?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 20,
+        "options": [
+          { "optionText": "Enseñar a programar desde cero", "isCorrect": false },
+          { "optionText": "Enseñar a usar Claude de forma efectiva para multiplicar la productividad profesional", "isCorrect": true },
+          { "optionText": "Vender una suscripción premium", "isCorrect": false },
+          { "optionText": "Reemplazar completamente el trabajo humano", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

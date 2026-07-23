@@ -128,7 +128,12 @@ export default function BuilderQuizPage() {
                         placeholder="Título de la Evaluación"
                     />
                 </div>
-                <p className="text-gray-500 text-[10px] mt-2 uppercase tracking-widest font-bold">Configuración de Examen Final / Lección</p>
+                <div className="mt-3 flex items-center gap-3">
+                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[9px] font-black uppercase tracking-widest">
+                       EVALUACIÓN DE MÓDULO
+                    </span>
+                    <p className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Configuración de Evaluación</p>
+                </div>
             </div>
             
             <div className="flex flex-wrap gap-4 items-center">

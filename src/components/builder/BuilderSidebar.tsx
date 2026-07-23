@@ -35,12 +35,30 @@ export default function BuilderSidebar() {
     if (res.ok) fetchCourse();
   };
 
+  const addModuleQuiz = async (modId: string) => {
+    const mod = course.modules.find((m: any) => m.id === modId);
+    const title = `Evaluación — ${mod.title}`;
+    // Usamos fetch directo a nuestro endpoint de módulo
+    const res = await fetch(`/api/modules/${modId}/quiz`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+           title, 
+           passingScore: 80, 
+           totalScore: 100, 
+           questions: [] 
+        })
+    });
+    if (res.ok) fetchCourse();
+  };
+
   return (
     <div className="py-4 space-y-1">
       <div className="px-4 mb-4">
          <h2 className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 italic">Estructura del Curso</h2>
          {course.modules.map((mod: any, index: number) => {
             const isCollapsed = collapsed[mod.id];
+            const hasModuleQuiz = mod.lessons?.some((l: any) => l.contentType === 'QUIZ');
             return (
                 <div key={mod.id} className="mb-2 group/module">
                    <div 
@@ -65,7 +83,42 @@ export default function BuilderSidebar() {
                    {!isCollapsed && (
                        <div className="ml-6 mt-1 space-y-1 border-l border-[#30363d]">
                           {mod.lessons.map((lesson: any) => {
-                             const isActive = pathname.includes(`/lesson/${lesson.id}`);
+                             const isActive = pathname.includes(`/lesson/${lesson.id}`) || pathname.includes(`/quiz/${lesson.id}`);
+                             
+                             if (lesson.contentType === 'QUIZ') {
+                                 const quizQuestions = lesson.quiz?.questions?.length || 0;
+                                 return (
+                                    <Link 
+                                        key={lesson.id}
+                                        href={`/dashboard/instructor/courses/${courseId}/builder/quiz/${lesson.id}`}
+                                        className={`group flex items-center justify-between gap-3 px-3 py-2 rounded-r-lg border-l-2 transition-all ${
+                                            isActive 
+                                            ? 'bg-blue-500/10 border-blue-500 text-blue-400' 
+                                            : 'border-transparent text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                                        }`}
+                                    >
+                                       <div className="flex items-center gap-3 min-w-0">
+                                          <span className="text-xs shrink-0">📝</span>
+                                          <span className="text-[11px] font-medium truncate">{lesson.title}</span>
+                                       </div>
+                                       <div className="flex flex-col items-end gap-1 shrink-0">
+                                          <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-blue-500/20 text-blue-400">
+                                             MÓDULO
+                                          </span>
+                                          {quizQuestions === 0 ? (
+                                              <span className="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-red-500/20 text-red-400 flex items-center gap-1">
+                                                 ⚠️ SIN CONFIGURAR
+                                              </span>
+                                          ) : (
+                                              <span className="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-green-500/20 text-green-400">
+                                                 ✓ CONFIGURADO ({quizQuestions})
+                                              </span>
+                                          )}
+                                       </div>
+                                    </Link>
+                                 );
+                             }
+
                              return (
                                 <Link 
                                     key={lesson.id}
@@ -81,8 +134,18 @@ export default function BuilderSidebar() {
                                 </Link>
                              );
                           })}
+                          
                           {(mod.lessons.length === 0) && (
                               <p className="text-[9px] text-gray-700 italic px-4 py-2 uppercase tracking-tighter">Sin lecciones todavía</p>
+                          )}
+
+                          {(!hasModuleQuiz) && (
+                             <button 
+                                onClick={(e) => { e.stopPropagation(); addModuleQuiz(mod.id); }}
+                                className="w-full flex items-center gap-3 px-3 py-2 text-[10px] font-bold text-[#3B82F6] hover:text-blue-400 hover:bg-white/5 transition-colors uppercase tracking-widest rounded-r-lg border-l-2 border-transparent hover:border-blue-500/30"
+                             >
+                                <span className="text-xs shrink-0">📝</span> + Agregar evaluación de módulo
+                             </button>
                           )}
                        </div>
                    )}
@@ -98,19 +161,42 @@ export default function BuilderSidebar() {
          </button>
       </div>
 
-      <div className="px-4 pt-4 border-t border-[#30363d] mt-6">
+      <div className="px-4 pt-4 border-t border-[#30363d] mt-6 mb-6">
          <h2 className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 italic">Certificación Final</h2>
-         <Link 
-            href={`/dashboard/instructor/courses/${courseId}/builder/quiz`}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-                pathname.includes('/builder/quiz')
-                ? 'bg-purple-500/10 border-purple-500 text-purple-400'
-                : 'bg-white/5 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/10'
-            }`}
-         >
-            <span className="text-sm shrink-0">📝</span>
-            <span className="text-[11px] font-bold uppercase tracking-widest">Examen del Curso</span>
-         </Link>
+         {(() => {
+             const finalQuiz = course.quizzes?.find((q: any) => !q.lessonId || q.lesson?.moduleId === null || course.modules.every((m: any) => !m.lessons.some((l: any) => l.id === q.lessonId)));
+             const finalQuizQuestions = finalQuiz?.questions?.length || 0;
+
+             return (
+                 <Link 
+                    href={`/dashboard/instructor/courses/${courseId}/builder/quiz`}
+                    className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all ${
+                        pathname.includes('/builder/quiz') && !pathname.includes('/builder/quiz/')
+                        ? 'bg-cyan-500/10 border-cyan-500 text-cyan-400'
+                        : 'bg-white/5 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/10'
+                    }`}
+                 >
+                    <div className="flex items-center gap-3">
+                       <span className="text-sm shrink-0">📝</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest">Examen del Curso</span>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-cyan-500/20 text-cyan-400">
+                           FINAL
+                        </span>
+                        {finalQuizQuestions === 0 ? (
+                            <span className="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-red-500/20 text-red-400 flex items-center gap-1">
+                               ⚠️ SIN CONFIGURAR
+                            </span>
+                        ) : (
+                            <span className="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-green-500/20 text-green-400">
+                               ✓ CONFIGURADO ({finalQuizQuestions})
+                            </span>
+                        )}
+                    </div>
+                 </Link>
+             );
+         })()}
       </div>
     </div>
   );

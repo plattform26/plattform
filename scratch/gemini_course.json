@@ -1,0 +1,360 @@
+{
+  "instructorEmail": "soporte@plattform.mx",
+  "title": "Gemini — IA Integrada al Ecosistema Google",
+  "description": "Aprende a sacarle provecho a Gemini dentro de las herramientas que ya usas todos los días: Gmail, Docs, Sheets y Drive. Un curso práctico enfocado en integrar la IA directamente a tu flujo de trabajo existente, sin cambiar de plataforma ni aprender herramientas nuevas desde cero.",
+  "previewText": "Gemini no vive aislado en una app aparte — está integrado directamente en Gmail, Google Docs, Sheets, Drive y el navegador Chrome. Esto significa que puedes usar IA sin abandonar las herramientas donde ya trabajas. En este curso aprenderás a activar y aprovechar esa integración para ahorrar tiempo real en tu día a día.",
+  "price": 899.00,
+  "durationHours": 5,
+  "category": "TECH_INNOVATION",
+  "level": "BEGINNER",
+  "modules": [
+    {
+      "title": "Módulo 1: Gemini y el Ecosistema Google Workspace",
+      "orderIndex": 1,
+      "lessons": [
+        {
+          "title": "Lección 1.1: ¿Qué hace diferente a Gemini de otros asistentes de IA?",
+          "subtitle": "Integración nativa versus aplicaciones independientes",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "Gemini puede procesar texto, imágenes, audio y video dentro de una misma conversación, una capacidad conocida como \"multimodalidad nativa\"",
+          "contentText": "<p>Gemini es el asistente de inteligencia artificial desarrollado por Google, y su característica más distintiva no es solo su capacidad conversacional, sino su integración profunda dentro de las herramientas que millones de personas ya usan diariamente: Gmail, Google Docs, Sheets, Drive, Meet y el navegador Chrome.</p><p>Esta integración nativa marca una diferencia importante respecto a otros asistentes de IA que funcionan como aplicaciones independientes. En lugar de copiar y pegar contenido entre una app de chat y tu documento de trabajo, Gemini puede operar directamente dentro de Google Docs mientras escribes, dentro de Gmail mientras redactas un correo, o dentro de Sheets mientras analizas una hoja de cálculo.</p><p>Otra característica central de Gemini es su capacidad multimodal: puede procesar y entender texto, imágenes, audio y video dentro de la misma conversación, sin necesidad de herramientas separadas para cada tipo de contenido. Esto significa que puedes, por ejemplo, subir una foto de un documento, hacer una pregunta sobre ella, y continuar la conversación normalmente, todo en el mismo hilo.</p><p>A lo largo de este curso nos enfocaremos especialmente en cómo aprovechar esta integración con Google Workspace, ya que es ahí donde Gemini ofrece el valor más inmediato y práctico para la mayoría de los profesionales: ahorro real de tiempo en las herramientas que ya usas, sin curva de aprendizaje adicional de una plataforma nueva.</p>"
+        },
+        {
+          "title": "Lección 1.2: Activando Gemini en tu cuenta de Google",
+          "subtitle": "Configuración inicial en Gmail, Docs y Chrome",
+          "durationMinutes": 10,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Para comenzar a usar Gemini dentro del ecosistema Google, necesitas una cuenta de Google activa. Dependiendo de tu tipo de cuenta (personal o de Google Workspace empresarial), algunas funciones de Gemini pueden estar disponibles de forma gratuita y otras requerir una suscripción adicional.</p><p>Dentro de Gmail, Gemini aparece típicamente como un ícono en la barra lateral o como sugerencias contextuales mientras redactas un correo. En Google Docs, lo encontrarás como un panel lateral activable que te permite generar, resumir o editar contenido directamente sobre el documento que tienes abierto. En Sheets, la integración te permite hacer preguntas en lenguaje natural sobre tus datos y generar fórmulas o resúmenes automáticamente.</p><p>También existe Gemini como una aplicación independiente (similar a un chat tradicional), accesible desde gemini.google.com, ideal para conversaciones que no están directamente vinculadas a un documento específico, como brainstorming, investigación general, o tareas que no requieren estar dentro de una herramienta de Workspace en particular.</p><p>Es importante revisar la configuración de privacidad asociada al uso de Gemini, especialmente si usas una cuenta de trabajo, ya que las políticas de uso de datos pueden variar entre cuentas personales y cuentas administradas por una organización. Tómate unos minutos para revisar esta configuración antes de comenzar a usar Gemini con información sensible de tu trabajo.</p>"
+        },
+        {
+          "title": "Lección 1.3: La barra lateral de Gemini — tu copiloto dentro de cada documento",
+          "subtitle": "Cómo invocar ayuda contextual sin salir de lo que estás haciendo",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Una de las experiencias más prácticas de usar Gemini es a través de su panel lateral, disponible dentro de Google Docs, Sheets y otras aplicaciones de Workspace. Este panel te permite invocar ayuda de IA sin salir nunca del documento en el que estás trabajando — algo que marca una diferencia real en el flujo de trabajo comparado con cambiar constantemente entre pestañas o aplicaciones.</p><p>Dentro de Google Docs, por ejemplo, puedes seleccionar un párrafo y pedirle a Gemini que lo haga más conciso, que ajuste el tono, o que lo traduzca, y el resultado aparece directamente listo para insertar en tu documento. También puedes pedir que genere contenido nuevo desde cero basándose en una instrucción, como \"redacta una introducción para este reporte trimestral basándote en los datos de la sección de resultados\".</p><p>En Sheets, el panel lateral funciona de forma similar pero orientado a datos: puedes pedir que genere una fórmula específica describiendo lo que necesitas calcular en lenguaje natural, que identifique patrones en tus datos, o que cree un resumen de una tabla extensa sin tener que revisarla manualmente celda por celda.</p><p>Esta forma de trabajar — IA integrada directamente donde ya estás, en lugar de una herramienta separada — reduce significativamente la fricción de adoptar IA en tareas cotidianas, ya que no requiere cambiar tu flujo de trabajo habitual, solo complementarlo.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 2: Prompting Aplicado a Documentos de Trabajo",
+      "orderIndex": 2,
+      "lessons": [
+        {
+          "title": "Lección 2.1: Pedir ayuda directamente sobre un documento existente",
+          "subtitle": "Generar, resumir y editar contenido sin copiar y pegar",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Una ventaja significativa de trabajar con Gemini dentro de Google Docs es que no necesitas describir el contexto completo de tu documento — Gemini ya tiene acceso al contenido que estás editando, por lo que puedes hacer solicitudes mucho más directas y específicas.</p><p>Por ejemplo, si tienes un documento extenso y necesitas un resumen, simplemente puedes pedir \"resume este documento en tres párrafos enfocados en las conclusiones principales\" sin tener que copiar y pegar el contenido en otra herramienta. Gemini procesa directamente lo que ya está escrito.</p><p>Para editar secciones específicas, selecciona el texto relevante antes de hacer tu solicitud — esto le indica a Gemini exactamente sobre qué parte del documento debe trabajar, en lugar de aplicar cambios a todo el contenido. Puedes pedir cosas como \"haz este párrafo más persuasivo\", \"simplifica este lenguaje técnico para una audiencia general\", o \"agrega una transición más fluida entre estos dos párrafos\".</p><p>También es posible pedir que Gemini continúe escribiendo a partir de donde dejaste el documento, manteniendo el tono y estilo que ya estableciste en las secciones anteriores. Esto resulta particularmente útil cuando tienes claridad sobre el inicio de un documento pero necesitas ayuda para desarrollar las secciones siguientes manteniendo coherencia.</p><p>La clave para aprovechar esta integración es pensar en Gemini no como una herramienta separada a la que le explicas todo desde cero, sino como un colaborador que ya está viendo lo mismo que tú en pantalla.</p>"
+        },
+        {
+          "title": "Lección 2.2: Análisis de datos en Sheets sin escribir fórmulas",
+          "subtitle": "Preguntas en lenguaje natural sobre tus hojas de cálculo",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Dentro de Google Sheets, Gemini te permite obtener análisis e insights de tus datos simplemente describiendo en lenguaje natural lo que necesitas saber, sin tener que recordar o construir fórmulas complejas manualmente.</p><p>Puedes hacer preguntas directas sobre tu hoja de cálculo, como \"¿cuál fue el mes con mayores ingresos en esta tabla?\" o \"identifica si hay alguna fila con datos faltantes o inconsistentes\", y Gemini analizará la información directamente desde la hoja activa para responderte.</p><p>También puedes pedir que genere fórmulas específicas describiendo el cálculo que necesitas: \"necesito una fórmula que calcule el porcentaje de crecimiento mes a mes en la columna de ventas\" generará la fórmula correspondiente, que luego puedes revisar y aplicar directamente en tu hoja.</p><p>Para tareas de organización de datos, Gemini puede ayudarte a identificar duplicados, sugerir cómo categorizar información de forma más clara, o generar tablas dinámicas resumiendo grandes volúmenes de datos en información digerible.</p><p>Una práctica recomendada es siempre revisar las fórmulas generadas antes de aplicarlas a datos críticos, especialmente en hojas de cálculo financieras o de reportes importantes — entender la lógica de la fórmula antes de confiar en sus resultados sigue siendo una buena práctica, independientemente de qué tan confiable parezca la herramienta.</p>"
+        },
+        {
+          "title": "Lección 2.3: Redacción y respuesta de correos con contexto automático",
+          "subtitle": "Gemini en Gmail — sugerencias inteligentes y redacción asistida",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Dentro de Gmail, Gemini puede ayudarte tanto a redactar correos nuevos como a responder mensajes existentes, aprovechando el contexto del hilo de conversación en el que te encuentras.</p><p>Para redactar un correo nuevo, puedes describir brevemente el propósito del mensaje y Gemini generará un borrador completo que luego puedes ajustar. Por ejemplo: \"redacta un correo solicitando una extensión de plazo para un proyecto, tono profesional pero cercano, mencionando que el motivo es una carga de trabajo inesperada esta semana\".</p><p>Para responder correos existentes, Gemini puede sugerir respuestas basadas en el contenido del mensaje recibido, ahorrándote el trabajo de redactar desde cero respuestas a consultas frecuentes o correos que siguen un patrón similar. Puedes pedir ajustes específicos al tono o contenido de la sugerencia antes de enviarla.</p><p>Una función particularmente útil es la capacidad de ajustar la longitud y formalidad de un correo ya redactado — si escribiste algo demasiado largo o informal para el destinatario, puedes pedir que lo haga más conciso o más formal sin tener que reescribirlo manualmente.</p><p>Como con cualquier comunicación generada con asistencia de IA, vale la pena revisar el resultado antes de enviarlo, especialmente en correos importantes o dirigidos a personas con quienes la relación profesional requiere especial cuidado en el tono.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 3: Capacidades Multimodales y Casos Avanzados",
+      "orderIndex": 3,
+      "lessons": [
+        {
+          "title": "Lección 3.1: Trabajar con imágenes, capturas y documentos escaneados",
+          "subtitle": "Cómo Gemini interpreta contenido visual además de texto",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Una de las fortalezas distintivas de Gemini es su capacidad multimodal nativa — la habilidad de procesar e interpretar imágenes, no solo texto, dentro de la misma conversación, sin necesidad de herramientas separadas para cada tipo de contenido.</p><p>Puedes subir una fotografía de un documento físico, una captura de pantalla, un diagrama, o incluso una imagen de una pizarra con anotaciones manuscritas, y pedirle a Gemini que extraiga el texto, lo explique, o lo organice de cierta forma. Esto resulta especialmente útil para digitalizar información que existe únicamente en formato físico o visual.</p><p>Para documentos escaneados o fotografiados, Gemini puede leer el texto presente en la imagen (incluso si la calidad no es perfecta) y trabajarlo como si fuera texto editable — resumirlo, traducirlo, reorganizarlo, o extraer datos específicos como cifras o fechas.</p><p>También puedes usar esta capacidad para análisis visual más complejo, como interpretar gráficas o diagramas técnicos y pedir una explicación en lenguaje simple, o comparar dos imágenes para identificar diferencias entre ellas.</p><p>Esta función amplía considerablemente el tipo de información que puedes procesar con IA, sin limitarte únicamente a contenido que ya existe en formato digital de texto.</p>"
+        },
+        {
+          "title": "Lección 3.2: Investigación profunda con razonamiento extendido",
+          "subtitle": "Cuándo usar el modo de pensamiento extendido para preguntas complejas",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "funFact": "El modo de razonamiento extendido permite que el modelo dedique más \"tiempo de procesamiento\" antes de responder, similar a cómo una persona piensa más detenidamente un problema difícil antes de contestar",
+          "contentText": "<p>Para preguntas que requieren análisis profundo, comparación de múltiples factores, o razonamiento en varios pasos, Gemini cuenta con un modo de pensamiento extendido que dedica más capacidad de procesamiento antes de generar la respuesta final, resultando en análisis considerablemente más sólidos para problemas complejos.</p><p>Este modo es especialmente útil para tareas como: evaluar la viabilidad de una decisión de negocio considerando múltiples variables, resolver problemas que requieren varios pasos lógicos secuenciales, o analizar información contradictoria proveniente de distintas fuentes para llegar a una conclusión bien fundamentada.</p><p>No todas las preguntas necesitan este nivel de procesamiento — para consultas simples o tareas de generación rápida de contenido, el modo estándar es suficiente y más rápido. La decisión de cuándo activar el razonamiento extendido depende de la complejidad real de la tarea: mientras más variables, pasos lógicos o ambigüedad tenga el problema, más valor aporta este modo.</p><p>Un ejemplo práctico sería: en lugar de preguntar directamente \"¿debería expandir mi negocio a esta nueva ciudad?\", activar el razonamiento extendido permite que Gemini analice sistemáticamente factores como competencia local, costos operativos estimados, demanda potencial y riesgos, antes de presentar una recomendación fundamentada con su lógica explícita.</p><p>Aprender a identificar qué tipo de preguntas se benefician de este modo más profundo es una habilidad que mejora significativamente la calidad de las respuestas que recibes para decisiones realmente importantes.</p>"
+        },
+        {
+          "title": "Lección 3.3: Buenas prácticas, precisión y límites de confianza",
+          "subtitle": "Cuándo verificar la información antes de actuar sobre ella",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Como cualquier asistente de inteligencia artificial, Gemini puede generar información incorrecta de forma convincente, particularmente en datos muy específicos, estadísticas precisas, o información que cambia con frecuencia. Entender este límite es esencial para usar la herramienta de forma profesional y responsable.</p><p>Para decisiones importantes — financieras, legales, médicas, o de negocio con consecuencias significativas — la verificación de información crítica con fuentes confiables sigue siendo un paso indispensable, independientemente de qué tan segura parezca la respuesta generada.</p><p>En el contexto específico de trabajar dentro de documentos de Google Workspace, es importante recordar que aunque Gemini tiene acceso al contenido del documento que estás editando, no necesariamente tiene contexto de información externa relevante — como decisiones tomadas en reuniones no documentadas, o matices específicos de tu negocio que no están escritos explícitamente en algún lugar accesible.</p><p>Una buena práctica al integrar Gemini en tu flujo de trabajo diario es tratarlo como un colaborador que acelera tareas de redacción, análisis y organización, pero mantener tu criterio profesional como la capa final de revisión antes de que cualquier contenido importante salga de tu control — ya sea un correo enviado, un reporte compartido, o una decisión tomada basándose en un análisis de datos.</p><p>Adoptar este equilibrio entre aprovechar la velocidad de la IA y mantener supervisión crítica sobre resultados importantes es lo que permite integrar estas herramientas de forma sostenible en un entorno profesional real.</p>"
+        }
+      ]
+    }
+  ],
+  "quiz": {
+    "title": "Dominio Práctico de Gemini",
+    "passingScore": 80,
+    "totalScore": 100,
+    "questions": [
+      {
+        "questionText": "¿Qué empresa desarrolló Gemini?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 1,
+        "options": [
+          { "optionText": "Microsoft", "isCorrect": false },
+          { "optionText": "Google", "isCorrect": true },
+          { "optionText": "Anthropic", "isCorrect": false },
+          { "optionText": "Meta", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es la característica más distintiva de Gemini respecto a otros asistentes de IA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 2,
+        "options": [
+          { "optionText": "Solo funciona en dispositivos móviles", "isCorrect": false },
+          { "optionText": "Su integración nativa dentro de Gmail, Docs, Sheets y otras herramientas de Google Workspace", "isCorrect": true },
+          { "optionText": "Es exclusivamente gratuito sin límites", "isCorrect": false },
+          { "optionText": "Solo procesa texto y nada más", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significa que Gemini sea \"multimodal nativo\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 3,
+        "options": [
+          { "optionText": "Solo funciona en varios idiomas", "isCorrect": false },
+          { "optionText": "Que puede procesar texto, imágenes, audio y video dentro de la misma conversación", "isCorrect": true },
+          { "optionText": "Que requiere varias aplicaciones distintas para cada tarea", "isCorrect": false },
+          { "optionText": "Que tiene múltiples cuentas de usuario simultáneas", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿En qué herramientas de Google Workspace está disponible el panel lateral de Gemini?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 4,
+        "options": [
+          { "optionText": "Gmail", "isCorrect": true },
+          { "optionText": "Google Docs", "isCorrect": true },
+          { "optionText": "Google Sheets", "isCorrect": true },
+          { "optionText": "Una aplicación de escritorio independiente no relacionada con Google", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al seleccionar un párrafo específico en Google Docs antes de pedir ayuda a Gemini, ¿qué se logra?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 5,
+        "options": [
+          { "optionText": "No tiene ningún efecto en la respuesta", "isCorrect": false },
+          { "optionText": "Indicarle a Gemini que debe trabajar exactamente sobre esa sección, no sobre todo el documento", "isCorrect": true },
+          { "optionText": "Eliminar el párrafo automáticamente", "isCorrect": false },
+          { "optionText": "Cambiar el idioma del documento", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "En Google Sheets, ¿qué puede hacer Gemini si le describes en lenguaje natural lo que necesitas calcular?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 6,
+        "options": [
+          { "optionText": "Generar la fórmula correspondiente automáticamente", "isCorrect": true },
+          { "optionText": "Eliminar todos los datos de la hoja", "isCorrect": false },
+          { "optionText": "Solo puede explicar fórmulas pero no generarlas", "isCorrect": false },
+          { "optionText": "Cambiar el formato de toda la hoja sin indicación previa", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se recomienda hacer antes de aplicar una fórmula generada por Gemini a datos financieros críticos?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 7,
+        "options": [
+          { "optionText": "Aplicarla directamente sin revisión", "isCorrect": false },
+          { "optionText": "Revisar y entender la lógica de la fórmula antes de confiar en sus resultados", "isCorrect": true },
+          { "optionText": "No es necesaria ninguna verificación", "isCorrect": false },
+          { "optionText": "Eliminar los datos originales primero", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de contenido puede interpretar Gemini gracias a su capacidad multimodal?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 8,
+        "options": [
+          { "optionText": "Fotografías de documentos físicos", "isCorrect": true },
+          { "optionText": "Capturas de pantalla", "isCorrect": true },
+          { "optionText": "Diagramas y gráficas técnicas", "isCorrect": true },
+          { "optionText": "Únicamente archivos de audio", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Para qué tipo de preguntas es más útil el modo de razonamiento extendido?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 9,
+        "options": [
+          { "optionText": "Para consultas simples y rápidas", "isCorrect": false },
+          { "optionText": "Para problemas complejos que requieren análisis de múltiples variables y pasos lógicos", "isCorrect": true },
+          { "optionText": "Para generar imágenes únicamente", "isCorrect": false },
+          { "optionText": "Es necesario activarlo siempre sin excepción", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significa que el modo de pensamiento extendido dedique más \"tiempo de procesamiento\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 10,
+        "options": [
+          { "optionText": "Que la respuesta tarda más en aparecer pero el análisis es más profundo", "isCorrect": true },
+          { "optionText": "Que se desconecta de internet temporalmente", "isCorrect": false },
+          { "optionText": "Que cambia automáticamente el idioma de respuesta", "isCorrect": false },
+          { "optionText": "Que reduce la calidad de la respuesta final", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué es importante revisar la configuración de privacidad antes de usar Gemini con información sensible?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 11,
+        "options": [
+          { "optionText": "Porque las políticas de uso de datos pueden variar entre cuentas personales y de Workspace empresarial", "isCorrect": true },
+          { "optionText": "Porque Gemini no funciona con cuentas empresariales", "isCorrect": false },
+          { "optionText": "No es relevante revisar esta configuración nunca", "isCorrect": false },
+          { "optionText": "Porque elimina automáticamente los datos sensibles", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al redactar un correo en Gmail con ayuda de Gemini, ¿qué información resulta útil proporcionar?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 12,
+        "options": [
+          { "optionText": "Ninguna información adicional es necesaria", "isCorrect": false },
+          { "optionText": "El propósito del mensaje, el tono deseado y cualquier contexto relevante", "isCorrect": true },
+          { "optionText": "Solo el nombre del destinatario", "isCorrect": false },
+          { "optionText": "La hora exacta del día", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué ventaja ofrece responder correos existentes con asistencia de Gemini en Gmail?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 13,
+        "options": [
+          { "optionText": "Genera sugerencias basadas en el contenido del mensaje recibido, ahorrando tiempo en respuestas frecuentes", "isCorrect": true },
+          { "optionText": "Elimina automáticamente correos no deseados", "isCorrect": false },
+          { "optionText": "Cambia la dirección de correo del destinatario", "isCorrect": false },
+          { "optionText": "No ofrece ninguna ventaja real sobre escribir manualmente", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se recomienda hacer siempre antes de enviar un correo redactado con ayuda de IA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 14,
+        "options": [
+          { "optionText": "Enviarlo inmediatamente sin revisión", "isCorrect": false },
+          { "optionText": "Revisar el resultado, especialmente en correos importantes o dirigidos a relaciones profesionales delicadas", "isCorrect": true },
+          { "optionText": "Eliminar toda mención de que se usó IA", "isCorrect": false },
+          { "optionText": "Duplicar el correo y enviarlo dos veces", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué riesgo comparte Gemini con otros modelos de inteligencia artificial?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 15,
+        "options": [
+          { "optionText": "Puede generar información incorrecta de forma convincente", "isCorrect": true },
+          { "optionText": "Solo funciona los fines de semana", "isCorrect": false },
+          { "optionText": "No puede procesar ningún tipo de documento", "isCorrect": false },
+          { "optionText": "Requiere conexión a un servidor físico local", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿En qué tipo de decisiones la verificación con fuentes confiables sigue siendo indispensable?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 16,
+        "options": [
+          { "optionText": "Decisiones financieras", "isCorrect": true },
+          { "optionText": "Decisiones legales", "isCorrect": true },
+          { "optionText": "Decisiones médicas", "isCorrect": true },
+          { "optionText": "Elegir el formato de una fuente tipográfica", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué limitación de contexto puede tener Gemini al trabajar dentro de un documento de Google Workspace?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 17,
+        "options": [
+          { "optionText": "No puede acceder a información de decisiones no documentadas o matices no escritos en algún lugar accesible", "isCorrect": true },
+          { "optionText": "No puede leer ningún tipo de texto", "isCorrect": false },
+          { "optionText": "Solo funciona con documentos en inglés", "isCorrect": false },
+          { "optionText": "No tiene ninguna limitación de contexto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es la diferencia entre usar Gemini como aplicación independiente versus integrado en Workspace?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 18,
+        "options": [
+          { "optionText": "No existe ninguna diferencia entre ambas formas", "isCorrect": false },
+          { "optionText": "La aplicación independiente es ideal para conversaciones no vinculadas a un documento específico, mientras que la integración trabaja directamente sobre el contenido existente", "isCorrect": true },
+          { "optionText": "La aplicación independiente solo funciona sin internet", "isCorrect": false },
+          { "optionText": "La integración en Workspace requiere instalar software adicional", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué práctica se recomienda para mantener un equilibrio responsable al usar Gemini en el trabajo diario?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 19,
+        "options": [
+          { "optionText": "Confiar completamente en cada respuesta sin revisión", "isCorrect": false },
+          { "optionText": "Aprovechar la velocidad de la IA mientras se mantiene supervisión crítica sobre resultados importantes", "isCorrect": true },
+          { "optionText": "Nunca usar la herramienta para ninguna tarea", "isCorrect": false },
+          { "optionText": "Usarla únicamente para tareas sin ninguna importancia", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el propósito principal de este curso?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 20,
+        "options": [
+          { "optionText": "Enseñar a programar aplicaciones de Google desde cero", "isCorrect": false },
+          { "optionText": "Enseñar a integrar Gemini efectivamente dentro del flujo de trabajo existente en Google Workspace", "isCorrect": true },
+          { "optionText": "Vender una suscripción premium de Google", "isCorrect": false },
+          { "optionText": "Reemplazar completamente el trabajo humano", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

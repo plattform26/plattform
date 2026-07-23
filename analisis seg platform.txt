@@ -1,0 +1,140 @@
+RESUMEN COMPLETO - PLATTFORM PRODUCCIÓN
+CONTEXTO DEL PROYECTO
+
+Plattform: SaaS e-learning para profesores hispanohablantes
+Stack: Next.js 15, Supabase (PostgreSQL), Prisma, Stripe, Resend, OpenAI
+Producción: https://www.plattform.mx
+Deploy: Vercel (Team: plattform26s-projects)
+Supabase Project ID: fvepbneypdvfjiafygjz
+
+
+PROBLEMA RAÍZ DESCUBIERTO
+Usuario de prueba: Diego Castellanos Maya (diego.castellanos.maya@hotmail.com)
+
+Pagó suscripción Starter (MXN 199) en Stripe ✅
+Suscripción se activó (status=ACTIVE) ✅
+PERO: No aparece en /admin/transactions ❌
+
+
+VIAJE DE DEBUGGING
+1. Webhook URL Configuration (CRÍTICO)
+Problema: Stripe enviaba webhooks a https://plattform.mx (sin www)
+Vercel lo redirigía a https://www.plattform.mx (HTTP 307)
+Stripe rechaza redirects en webhooks
+Solución:
+
+Cambiar Stripe Webhook URL a: https://www.plattform.mx/api/webhooks/stripe
+
+2. Proyecto Vercel Equivocado (CRÍTICO)
+Problema: Local estaba vinculado a diegos-projects-c077d3f7/plattform (cuenta equivocada)
+Resultado: Código subido a proyecto que NO está en producción
+Solución:
+bashnpx vercel logout
+npx vercel login  # Con cuenta plattform26@hotmail.com
+vercel link  # Vincular a plattform26s-projects/plattform
+3. Email Case Sensitivity (CRÍTICO)
+Problema: Webhook buscaba usuario con findUnique (sensible a mayúsculas)
+Stripe enviaba: diego.castellanos.maya@hotmail.com (minúsculas)
+Resultado: user_found: false
+Solución V5.3:
+typescriptconst user = await tx.user.findFirst({
+  where: { 
+    email: {
+      equals: invoice.customer_email?.trim(),
+      mode: 'insensitive'  // ← KEY
+    }
+  },
+  include: { instructorProfile: true }
+});
+4. STRIPE_CONNECT_ACCOUNT_ID Mismatch
+Problema: Preview apuntaba a TEST (acct_1TGjKwKCWV9uJjJt)
+Production: LIVE (acct_1TGjKgK5P46NFPls)
+Solución: Eliminar Preview, dejar solo Production
+
+WEBHOOK EVOLUTION
+VersiónCambioV1Original (fallaba por URL 307)V2Añadió fallback por emailV3Añadió case-insensitive searchV4Añadió diagnósticos en respuestaV5Creación de Transaction para INSTRUCTOR_SUBSCRIPTIONV5.1Diagnósticos directos en JSONV5.2Asiento contable automáticoV5.3mode: 'insensitive' + .trim()
+
+CÓDIGO FINAL WEBHOOK (stripe/route.ts)
+Para invoice.payment_succeeded / invoice.paid:
+typescript// 1. Buscar usuario CON case-insensitive
+const user = await tx.user.findFirst({
+  where: { 
+    email: {
+      equals: invoice.customer_email?.trim(),
+      mode: 'insensitive'
+    }
+  },
+  include: { instructorProfile: true }
+});
+
+// 2. Si encuentra usuario, buscar suscripción
+if (user?.instructorProfile) {
+  const sub = await tx.instructorSubscription.findFirst({
+    where: { 
+      instructorId: user.instructorProfile.id,
+      status: { in: ['ACTIVE', 'PAST_DUE'] }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+  
+  // 3. Si encuentra suscripción, activar
+  if (sub) {
+    await tx.instructorSubscription.update({
+      where: { id: sub.id },
+      data: { 
+        status: 'ACTIVE',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        stripeSubscriptionId: invoice.subscription
+      }
+    });
+    
+    // 4. CREAR TRANSACCIÓN CONTABLE
+    await tx.transaction.create({
+      data: {
+        type: 'INSTRUCTOR_SUBSCRIPTION',
+        amount: invoice.amount_paid / 100,
+        currency: 'MXN',
+        status: 'COMPLETED',
+        instructorId: user.instructorProfile.id,
+        userId: user.id,
+        stripePaymentIntentId: invoice.id,
+        description: `Suscripción - ${user.email}`
+      }
+    });
+  }
+}
+
+// 5. Respuesta con diagnósticos
+return NextResponse.json({
+  received: true,
+  version: "v5_diag_direct",
+  timestamp: new Date().toISOString(),
+  diagnostics: {
+    user_found: !!user,
+    profile_found: !!user?.instructorProfile,
+    subscription_found: !!sub,
+    status_updated: sub ? 'ACTIVE' : 'SKIPPED'
+  }
+});
+
+ESTADO ACTUAL
+✅ Webhook code: V5.3 desplegado en Vercel
+✅ Vercel vinculado a proyecto correcto
+✅ Stripe URL: https://www.plattform.mx/api/webhooks/stripe
+✅ Webhook Secret: whsec_YnF4vfJFJaxRbTpJGkhaQKOxlJJaQMbQ
+✅ STRIPE_CONNECT_ACCOUNT_ID: Production only acct_1TGjKgK5P46NFPls
+❓ PENDIENTE: Reenviar evento en Stripe y validar que Transaction aparece en /admin/transactions
+
+PRÓXIMO PASO
+
+Reenviar invoice.payment_succeeded (evt_1TSPC2K5P46NFPlsncmI56Vi) en Stripe
+Validar que aparece en https://www.plattform.mx/dashboard/admin/transactions
+Si NO aparece: Verificar qué tabla existe para transacciones en Supabase
+
+
+VARIABLES CLAVE
+Usuario: diego.castellanos.maya@hotmail.com
+Monto: 199.00 MXN
+Plan: Starter (15% comisión)
+Status esperado: ACTIVE
+expiresAt esperado: 30 días desde pago

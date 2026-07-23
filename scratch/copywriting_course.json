@@ -1,0 +1,394 @@
+{
+  "instructorEmail": "soporte@plattform.mx",
+  "title": "Copywriting y Contenido con IA — Vende con Palabras que Convierten",
+  "description": "Aprende a escribir textos persuasivos para redes sociales, email marketing, páginas de venta y anuncios, combinando técnicas probadas de copywriting con asistencia de inteligencia artificial. Dirigido a emprendedores, community managers y profesionales de marketing que quieren escribir contenido que realmente venda, sin depender de una agencia externa.",
+  "previewText": "La diferencia entre un texto que se lee y un texto que vende no está en la creatividad, está en la estructura. En este curso aprenderás las fórmulas de persuasión que usan los copywriters profesionales, y cómo usar IA como acelerador para aplicarlas en minutos en lugar de horas, sin perder tu voz de marca en el proceso.",
+  "price": 799.00,
+  "durationHours": 6,
+  "category": "DIGITAL_MARKETING",
+  "level": "BEGINNER",
+  "modules": [
+    {
+      "title": "Módulo 1: Fundamentos del Copywriting Persuasivo",
+      "orderIndex": 1,
+      "lessons": [
+        {
+          "title": "Lección 1.1: ¿Qué es el copywriting y por qué no es lo mismo que \"escribir bonito\"?",
+          "subtitle": "La diferencia entre redacción creativa y redacción que genera acción",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "La palabra \"copywriting\" viene de \"copy\", el término usado en publicidad para referirse al texto de un anuncio, no de \"copiar\" como muchos asumen",
+          "contentText": "<p>El copywriting es la disciplina de escribir textos con un objetivo específico: provocar una acción concreta en quien lo lee. Esto lo distingue claramente de la redacción creativa o literaria, cuyo objetivo principal es entretener, emocionar o informar sin necesariamente buscar que el lector haga algo después de leer.</p><p>Un texto de copywriting siempre tiene una acción objetivo: que la persona compre, se suscriba, haga clic, agende una llamada, o complete un formulario. Cada palabra, cada estructura de frase, cada decisión de diseño del texto se evalúa en función de si acerca o aleja al lector de esa acción específica.</p><p>Esto no significa que el copywriting deba ser frío o manipulador. El mejor copywriting es genuinamente útil: identifica un problema real que tiene el lector, presenta una solución honesta, y facilita que tome la decisión de actuar si esa solución realmente le conviene. La persuasión efectiva no se trata de engañar, sino de comunicar con claridad el valor real de algo para que la decisión de actuar sea fácil de tomar.</p><p>Un error común de quienes comienzan en copywriting es enfocarse en sonar \"creativo\" o \"ingenioso\" en lugar de enfocarse en ser claro y relevante para la persona específica que están tratando de convencer. Un texto simple y directo que resuelve la duda principal del lector suele convertir mejor que un texto elaborado que prioriza sonar inteligente sobre ser útil.</p><p>A lo largo de este curso aprenderás estructuras probadas de copywriting, y cómo usar IA para acelerar el proceso de aplicarlas, sin perder la claridad ni la honestidad que hace que un texto realmente funcione.</p>"
+        },
+        {
+          "title": "Lección 1.2: Conoce a tu lector antes de escribir una sola palabra",
+          "subtitle": "Por qué el copywriting efectivo empieza con investigación, no con redacción",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>El error más común en copywriting no está en cómo se escribe, sino en escribir sin entender suficientemente a quién se le está escribiendo. Un texto técnicamente bien redactado pero dirigido a la persona equivocada, o que no aborda su problema real, simplemente no convertirá, sin importar qué tan pulida sea la prosa.</p><p>Antes de escribir cualquier texto persuasivo, es fundamental responder preguntas concretas sobre tu lector: ¿qué problema específico tiene que tu producto o servicio resuelve? ¿qué ha intentado antes sin éxito? ¿qué objeciones o dudas tendría antes de comprar? ¿qué lenguaje usa para describir su problema en sus propias palabras?</p><p>Esta última pregunta es particularmente valiosa. Las personas no suelen describir sus problemas con el lenguaje técnico o de marketing que usa una empresa — usan sus propias palabras, a menudo más simples y emocionales. Un copywriting efectivo refleja ese lenguaje natural del cliente, no la jerga interna de la empresa que vende.</p><p>Una fuente excelente de este lenguaje real son las reseñas de productos similares, comentarios en redes sociales sobre el problema que resuelves, o conversaciones directas con clientes existentes. Si tienes acceso a esta información, identificar las frases exactas que usa tu audiencia para describir su frustración o su deseo te dará material de oro para tus textos.</p><p>Una vez que tienes claridad sobre quién es tu lector, qué problema tiene, y cómo lo describe en sus propias palabras, el proceso de escribir el texto persuasivo se vuelve considerablemente más directo — ya sabes qué decir, solo falta estructurarlo de forma efectiva, que es lo que veremos en las siguientes lecciones.</p>"
+        },
+        {
+          "title": "Lección 1.3: La fórmula AIDA — atención, interés, deseo, acción",
+          "subtitle": "La estructura clásica de persuasión que sigue funcionando después de un siglo",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "summary": "AIDA es la fórmula más antigua y probada en la historia de la publicidad, todavía vigente en cualquier formato de texto persuasivo",
+          "contentText": "<p>AIDA es una de las estructuras de copywriting más antiguas y a la vez más utilizadas en la actualidad, precisamente porque refleja el proceso psicológico natural que atraviesa una persona antes de tomar una decisión de compra. Sus cuatro etapas son Atención, Interés, Deseo y Acción.</p><p>La primera etapa, <strong>Atención</strong>, tiene un único objetivo: detener el scroll o captar la mirada en los primeros segundos. En redes sociales esto suele ser la primera línea de un post o el título de un anuncio. Debe ser lo suficientemente relevante o sorprendente para que la persona decida seguir leyendo en lugar de continuar deslizando.</p><p>La segunda etapa, <strong>Interés</strong>, profundiza en el problema o situación que le importa al lector, conectando emocionalmente con su realidad. Aquí no se vende todavía — se demuestra comprensión genuina del problema, generando la sensación de \"esto está hablando exactamente de mi situación\".</p><p>La tercera etapa, <strong>Deseo</strong>, presenta la solución y sus beneficios concretos, no solo características técnicas. La diferencia entre una característica y un beneficio es clave: \"incluye almacenamiento en la nube\" es una característica; \"accede a tus archivos desde cualquier lugar sin preocuparte por perder información\" es el beneficio que esa característica realmente significa para la persona.</p><p>La cuarta etapa, <strong>Acción</strong>, es la instrucción clara y específica de qué debe hacer el lector ahora: comprar, registrarse, hacer clic, agendar una llamada. Una llamada a la acción ambigua o débil puede arruinar un texto excelente en las primeras tres etapas — siempre debe ser específica y fácil de seguir.</p><p>Esta estructura funciona en prácticamente cualquier formato: un post de redes sociales, un correo de venta, una página de aterrizaje, o incluso un guión de video corto. Practicar identificar estas cuatro etapas en textos publicitarios que veas a tu alrededor es un excelente ejercicio para internalizar esta estructura.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 2: Copywriting con Asistencia de IA",
+      "orderIndex": 2,
+      "lessons": [
+        {
+          "title": "Lección 2.1: Cómo usar IA sin perder tu voz de marca",
+          "subtitle": "El riesgo de los textos genéricos y cómo evitarlo",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "Los textos generados sin contexto específico de marca tienden a sonar notablemente similares entre sí, un problema conocido informalmente como \"sonar a IA\"",
+          "contentText": "<p>Uno de los riesgos más comunes al usar inteligencia artificial para generar textos de marketing es terminar con contenido genérico que podría haber sido escrito para cualquier marca, sin ninguna personalidad distintiva. Este problema no es inevitable — surge específicamente cuando se le pide a la IA que genere contenido sin proporcionarle suficiente contexto sobre la voz y personalidad de tu marca particular.</p><p>La solución es construir lo que se conoce como una guía de voz de marca antes de empezar a generar contenido masivamente. Esta guía responde preguntas concretas: ¿tu marca es formal o cercana? ¿usa humor o es siempre seria? ¿qué palabras o expresiones usa con frecuencia y cuáles evita deliberadamente? ¿cómo se dirige a su audiencia, de tú o de usted?</p><p>Una técnica muy efectiva es proporcionarle a la IA ejemplos reales de textos que ya consideras representativos de tu voz de marca, y pedir explícitamente que el nuevo contenido siga ese mismo estilo y tono. Esto es mucho más efectivo que simplemente describir el tono con adjetivos genéricos como \"profesional pero cercano\", que pueden interpretarse de formas muy distintas.</p><p>También es recomendable evitar usar el primer resultado generado por la IA sin revisión. El valor real de combinar copywriting con IA está en usarla para generar un primer borrador rápido sobre el cual luego aplicas tu criterio editorial: ajustando el tono, agregando detalles específicos de tu negocio que la IA no podría conocer, y asegurando que el texto final realmente suene como tu marca y no como un texto genérico de internet.</p><p>Pensar en la IA como un asistente que acelera el primer borrador, no como un reemplazo del criterio final sobre qué representa bien a tu marca, es la diferencia entre contenido que se siente auténtico y contenido que se siente claramente generado en automático.</p>"
+        },
+        {
+          "title": "Lección 2.2: Generar variaciones de un mismo mensaje para probar qué funciona",
+          "subtitle": "A/B testing de copy sin tener que escribir cada versión manualmente",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Una de las aplicaciones más prácticas de usar IA en copywriting es la generación rápida de múltiples variaciones de un mismo mensaje, permitiéndote probar diferentes ángulos sin invertir horas escribiendo cada versión manualmente desde cero.</p><p>Por ejemplo, si necesitas escribir el texto principal de un anuncio, en lugar de quedarte con la primera versión que se te ocurra, puedes pedirle a la IA que genere cinco variaciones del mismo mensaje, cada una enfatizando un ángulo distinto: una centrada en el ahorro de tiempo, otra en el ahorro de dinero, otra apelando a la urgencia, otra usando una pregunta como gancho inicial, y otra usando un dato o estadística llamativa.</p><p>Esta práctica es especialmente valiosa porque rara vez es obvio de antemano qué ángulo funcionará mejor con tu audiencia específica — lo que parece el mensaje más lógico para ti como creador del producto puede no ser el que más resuene con quien realmente toma la decisión de compra. Generar y probar múltiples variaciones reales, en lugar de asumir cuál funcionará mejor, es una práctica fundamental del marketing basado en datos.</p><p>Al pedir estas variaciones, es útil ser explícito sobre qué quieres que cambie entre cada versión: el ángulo emocional, la longitud, el tipo de gancho inicial, o el nivel de urgencia. Esto produce variaciones genuinamente distintas entre sí, en lugar de cinco versiones casi idénticas con solo palabras sinónimas intercambiadas.</p><p>Una vez generadas las variaciones, la siguiente etapa natural es probarlas realmente con tu audiencia —ya sea mediante pruebas A/B formales en plataformas publicitarias, o simplemente observando qué tipo de mensajes generan más interacción en tus publicaciones orgánicas a lo largo del tiempo— para ir construyendo conocimiento real sobre qué resuena específicamente con tu audiencia.</p>"
+        },
+        {
+          "title": "Lección 2.3: Adaptar un mismo contenido a diferentes plataformas",
+          "subtitle": "De una idea central a múltiples formatos sin reescribir todo desde cero",
+          "durationMinutes": 15,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Cada plataforma de redes sociales y cada formato de comunicación tiene convenciones distintas: longitud apropiada, tono esperado, y estructura que funciona mejor. Escribir desde cero una versión distinta para cada plataforma consume mucho tiempo, pero adaptar un contenido ya desarrollado a múltiples formatos con ayuda de IA es considerablemente más eficiente.</p><p>El proceso recomendado es desarrollar primero el mensaje central completo en su formato más extenso —por ejemplo, un artículo de blog o una publicación detallada— y luego pedir adaptaciones específicas a otros formatos, indicando claramente las características de cada uno. Por ejemplo: \"convierte este artículo en una publicación corta para una red social de microblogging con límite de caracteres\" o \"extrae los tres puntos más importantes para convertirlos en una secuencia de tres publicaciones para una red social visual\".</p><p>Es importante especificar las convenciones reales de cada plataforma al hacer esta solicitud, ya que no son intercambiables: el tono profesional adecuado para una red orientada a negocios es distinto al tono más casual y visual de una red orientada a contenido de entretenimiento. Indicar esto explícitamente produce adaptaciones mucho más naturales que simplemente pedir \"hazlo más corto\" sin contexto de la plataforma destino.</p><p>También puedes pedir que la adaptación mantenga el mensaje central pero ajuste el formato de presentación: convertir un párrafo extenso en una lista de puntos clave, transformar una explicación detallada en una serie de preguntas y respuestas, o resumir un argumento completo en una sola frase memorable que funcione como gancho inicial.</p><p>Esta práctica de adaptar contenido en lugar de crear cada pieza desde cero multiplica significativamente tu capacidad de mantener presencia consistente en múltiples canales sin que esto signifique multiplicar proporcionalmente tu tiempo de trabajo dedicado a la redacción.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 3: Aplicaciones Prácticas por Canal",
+      "orderIndex": 3,
+      "lessons": [
+        {
+          "title": "Lección 3.1: Email marketing que se abre y se lee",
+          "subtitle": "Asuntos persuasivos y estructura de correos que convierten",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>El email marketing sigue siendo uno de los canales con mejor retorno de inversión en marketing digital, pero su efectividad depende casi por completo de dos elementos críticos: que el correo se abra, y que una vez abierto, se lee hasta el final y genere la acción deseada.</p><p>El asunto del correo es, sin exagerar, la decisión más importante de todo el mensaje, ya que determina si el resto del contenido siquiera será visto. Los asuntos efectivos suelen tener algunas características comunes: generan curiosidad sin revelar todo el contenido, son específicos en lugar de vagos, y evitan sonar como spam evidente con exceso de mayúsculas o símbolos de urgencia artificial.</p><p>Una vez abierto el correo, la primera línea —visible incluso antes de hacer clic en muchos clientes de correo como texto de previsualización— cumple una función similar al asunto: debe enganchar lo suficiente para que la persona continúe leyendo el cuerpo completo del mensaje.</p><p>La estructura del cuerpo del correo se beneficia de los mismos principios de AIDA vistos anteriormente, pero adaptados al formato: párrafos cortos (idealmente de dos a tres líneas), un único objetivo claro por correo en lugar de intentar comunicar múltiples mensajes distintos, y una llamada a la acción que destaque visualmente y sea inequívoca sobre qué hacer a continuación.</p><p>Para secuencias de correos automatizados —como una serie de bienvenida para nuevos suscriptores—, es importante considerar la progresión narrativa entre correos: el primer correo genera familiaridad y confianza, los siguientes profundizan en el valor que ofreces y abordan objeciones comunes, y los finales de la secuencia presentan la oferta concreta con mayor claridad y urgencia apropiada.</p>"
+        },
+        {
+          "title": "Lección 3.2: Publicaciones de redes sociales que generan interacción real",
+          "subtitle": "Más allá de \"me gusta\" — contenido que mueve a comentar y compartir",
+          "durationMinutes": 16,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Escribir para redes sociales requiere un enfoque distinto al de otros formatos de marketing, ya que el objetivo inmediato no siempre es la venta directa, sino generar suficiente interacción y valor percibido para construir una relación de confianza con la audiencia a lo largo del tiempo.</p><p>Las primeras palabras de cualquier publicación son críticas, ya que determinan si alguien se detiene a leer el resto o continúa deslizando sin prestar atención. Técnicas efectivas para esta primera línea incluyen hacer una pregunta directa relevante para la audiencia, presentar una afirmación que contradiga una creencia común, o compartir un dato específico y sorprendente relacionado con el tema.</p><p>El contenido que genera más interacción real —comentarios y compartidos, no solo reacciones pasivas— suele tener una de estas características: provoca una opinión o reacción emocional genuina, ofrece valor práctico inmediato que la persona puede aplicar de inmediato, o cuenta una historia o experiencia personal con la que la audiencia puede identificarse.</p><p>Es importante distinguir entre contenido diseñado para generar alcance amplio (informativo, de valor general, fácil de compartir) y contenido diseñado para generar conversión directa (más enfocado en un producto o servicio específico con una llamada a la acción clara). Ambos tipos son necesarios en una estrategia de contenido equilibrada, pero confundir el objetivo de cada publicación —tratar de vender agresivamente en cada post, o nunca incluir ninguna llamada a la acción— limita la efectividad general de la estrategia.</p><p>Terminar las publicaciones con una pregunta abierta relacionada con el tema, o una invitación explícita a compartir opiniones o experiencias propias, es una técnica simple pero efectiva para incrementar los comentarios, lo cual frecuentemente también mejora el alcance orgánico de la publicación en muchas plataformas.</p>"
+        },
+        {
+          "title": "Lección 3.3: Páginas de venta y anuncios que convierten",
+          "subtitle": "Estructura de una página de aterrizaje efectiva, sección por sección",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Una página de venta o de aterrizaje tiene un único propósito: guiar al visitante hacia una acción específica de conversión, sin las distracciones de navegación o contenido secundario que tendría una página web general. Su estructura, cuando es efectiva, sigue una progresión lógica diseñada cuidadosamente.</p><p>La sección superior, visible sin necesidad de hacer scroll, debe comunicar inmediatamente el beneficio principal de lo que se ofrece, idealmente en una sola frase clara, acompañada de una llamada a la acción visible desde el primer momento para quienes ya están convencidos y no necesitan leer más.</p><p>Las secciones siguientes desarrollan progresivamente la confianza del visitante: presentando el problema que resuelve de forma que la persona se sienta identificada, explicando cómo funciona la solución de manera clara y sin jerga innecesaria, y mostrando evidencia de que funciona —ya sean testimonios, casos de uso, datos concretos, o cualquier forma de prueba social relevante.</p><p>Abordar objeciones comunes de forma proactiva, antes de que el visitante las piense por sí mismo y abandone la página con dudas sin resolver, es una técnica de alto impacto en la tasa de conversión. Esto puede tomar la forma de una sección de preguntas frecuentes, o integrarse naturalmente en el texto principal abordando dudas típicas como el precio, el tiempo de implementación, o la comparación con alternativas.</p><p>La página debe cerrar con una llamada a la acción final clara y sin ambigüedad, idealmente reforzada con un elemento que reduzca la percepción de riesgo de tomar la decisión —como una garantía, una política de devolución, o simplemente la opción de probar antes de comprometerse completamente. Cada elemento de la página, desde el título hasta el último párrafo, debe trabajar hacia ese único objetivo de conversión, sin secciones que distraigan del propósito central.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 4: Optimización y Buenas Prácticas",
+      "orderIndex": 4,
+      "lessons": [
+        {
+          "title": "Lección 4.1: Cómo saber si tu copy realmente está funcionando",
+          "subtitle": "Métricas que importan más allá de las vistas o los \"me gusta\"",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Evaluar si un texto persuasivo realmente está funcionando requiere mirar más allá de métricas superficiales como el número de vistas o reacciones, que frecuentemente no se correlacionan directamente con el objetivo real del texto: generar la acción de conversión deseada.</p><p>Para email marketing, las métricas más relevantes incluyen la tasa de apertura (qué porcentaje de personas abrió el correo, indicando la efectividad del asunto), la tasa de clics (qué porcentaje hizo clic en el enlace principal, indicando si el cuerpo del correo logró convencer), y finalmente la tasa de conversión real (cuántos de quienes hicieron clic completaron la acción deseada, como una compra).</p><p>Para publicaciones en redes sociales, además del alcance y las interacciones, es valioso observar qué tipo específico de interacción está generando el contenido: los comentarios y compartidos generalmente indican mayor conexión genuina con el contenido que las reacciones pasivas, y suelen correlacionarse mejor con construcción de confianza de marca a largo plazo.</p><p>Para páginas de venta y anuncios, la métrica central es la tasa de conversión —qué porcentaje de visitantes completa la acción objetivo— pero es igualmente valioso observar en qué punto específico de la página los visitantes abandonan, ya que esto indica exactamente qué sección necesita mejorarse, en lugar de tener que adivinar qué cambiar en todo el texto.</p><p>Establecer un proceso sistemático de revisión periódica de estas métricas, comparando el desempeño de diferentes versiones de texto a lo largo del tiempo, es lo que permite mejorar progresivamente la efectividad del copywriting basándose en evidencia real de tu audiencia específica, en lugar de depender únicamente de intuición o de fórmulas genéricas que funcionan en promedio pero no necesariamente para tu caso particular.</p>"
+        },
+        {
+          "title": "Lección 4.2: Errores comunes que matan la conversión",
+          "subtitle": "Lo que evitar es tan importante como lo que incluir",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Existen errores recurrentes en copywriting que, independientemente de qué tan bien ejecutadas estén las demás partes del texto, reducen significativamente la efectividad general del mensaje. Conocerlos de antemano permite evitarlos sistemáticamente.</p><p>El primer error común es hablar de características en lugar de beneficios, asumiendo que el lector hará la conexión por sí mismo entre una especificación técnica y cómo eso mejora su vida concretamente. Siempre vale la pena preguntarse explícitamente \"¿y esto qué significa para la persona que lo lee?\" después de mencionar cualquier característica.</p><p>El segundo error es la falta de especificidad, usando lenguaje vago como \"mejora tu productividad\" o \"resultados increíbles\" sin respaldarlo con detalles concretos, números, o ejemplos específicos que hagan la afirmación creíble y tangible para el lector escéptico.</p><p>El tercer error es incluir múltiples llamadas a la acción distintas y competidoras dentro de un mismo texto —pedir simultáneamente que sigan una cuenta, compren un producto, y se suscriban a un boletín— lo cual diluye la efectividad de todas las opciones al generar indecisión en lugar de una acción clara.</p><p>El cuarto error, particularmente relevante cuando se usa IA para acelerar la redacción, es publicar contenido sin revisión humana final, resultando en textos que pueden sonar genéricos, contener inexactitudes sobre el producto real, o simplemente no capturar matices importantes que solo alguien con conocimiento directo del negocio puede identificar.</p><p>El quinto error es ignorar completamente las objeciones obvias que el lector tendrá, esperando que simplemente no las piense, en lugar de abordarlas proactivamente de forma honesta dentro del propio texto, lo cual genera más confianza que evitarlas por completo.</p>"
+        },
+        {
+          "title": "Lección 4.3: Construir un banco personal de textos que funcionan",
+          "subtitle": "Cómo documentar y reutilizar lo que ya demostró resultados",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Una práctica que distingue a quienes mejoran consistentemente en copywriting de quienes reinventan la rueda en cada proyecto es mantener un banco personal organizado de textos, estructuras y ángulos que ya demostraron generar buenos resultados en el pasado.</p><p>Este banco puede organizarse por tipo de contenido —asuntos de correo que tuvieron alta tasa de apertura, ganchos iniciales de publicaciones que generaron mucha interacción, estructuras de páginas de venta que convirtieron bien— permitiendo consultar rápidamente ejemplos probados al enfrentar una nueva tarea similar, en lugar de empezar completamente desde cero cada vez.</p><p>Más allá de simplemente guardar el texto final, es valioso documentar brevemente el contexto: para qué audiencia funcionó, qué resultado específico generó, y por qué crees que funcionó bien. Este contexto es lo que realmente permite aplicar el aprendizaje a situaciones nuevas, en lugar de simplemente copiar literalmente un texto que funcionó en un contexto distinto.</p><p>Este banco personal también se vuelve una herramienta poderosa para trabajar con IA de forma más efectiva: en lugar de describir abstractamente el estilo que buscas, puedes mostrarle directamente ejemplos reales de tu banco como referencia de estilo y estructura, obteniendo resultados consistentemente más alineados con lo que ya sabes que funciona para tu audiencia específica.</p><p>Con el tiempo, este banco se convierte en un activo valioso que refleja el aprendizaje acumulado específico de tu negocio y tu audiencia —algo que ninguna fórmula genérica de copywriting, sin importar qué tan bien diseñada esté, puede replicar exactamente, porque está basado en evidencia real de lo que funciona en tu contexto particular.</p>"
+        }
+      ]
+    }
+  ],
+  "quiz": {
+    "title": "Dominio del Copywriting con IA",
+    "passingScore": 80,
+    "totalScore": 100,
+    "questions": [
+      {
+        "questionText": "¿Cuál es el objetivo principal del copywriting, a diferencia de la redacción creativa?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 1,
+        "options": [
+          { "optionText": "Entretener al lector sin ningún otro propósito", "isCorrect": false },
+          { "optionText": "Provocar una acción concreta en quien lo lee", "isCorrect": true },
+          { "optionText": "Demostrar vocabulario amplio", "isCorrect": false },
+          { "optionText": "Cumplir un conteo mínimo de palabras", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Antes de escribir cualquier texto persuasivo, ¿qué es fundamental entender?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 2,
+        "options": [
+          { "optionText": "Qué problema específico tiene el lector", "isCorrect": true },
+          { "optionText": "Qué objeciones tendría antes de comprar", "isCorrect": true },
+          { "optionText": "Qué lenguaje usa el lector para describir su problema", "isCorrect": true },
+          { "optionText": "El color favorito del diseñador del logo", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significan las siglas de la fórmula AIDA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 3,
+        "options": [
+          { "optionText": "Análisis, Investigación, Diseño, Aplicación", "isCorrect": false },
+          { "optionText": "Atención, Interés, Deseo, Acción", "isCorrect": true },
+          { "optionText": "Audiencia, Idea, Datos, Anuncio", "isCorrect": false },
+          { "optionText": "Asunto, Imagen, Descripción, Aprobación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "En la fórmula AIDA, ¿qué objetivo tiene la etapa de \"Atención\"?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 4,
+        "options": [
+          { "optionText": "Cerrar la venta inmediatamente", "isCorrect": false },
+          { "optionText": "Captar la mirada en los primeros segundos para que continúen leyendo", "isCorrect": true },
+          { "optionText": "Explicar todas las características técnicas", "isCorrect": false },
+          { "optionText": "Mostrar el precio del producto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es la diferencia entre una característica y un beneficio en copywriting?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 5,
+        "options": [
+          { "optionText": "No existe ninguna diferencia real", "isCorrect": false },
+          { "optionText": "El beneficio explica qué significa esa característica concretamente para la vida del lector", "isCorrect": true },
+          { "optionText": "La característica siempre es más persuasiva que el beneficio", "isCorrect": false },
+          { "optionText": "El beneficio solo aplica a productos físicos", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué los textos generados con IA pueden sonar genéricos?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 6,
+        "options": [
+          { "optionText": "Porque la IA no puede escribir en español", "isCorrect": false },
+          { "optionText": "Porque se le pide generar contenido sin proporcionarle contexto específico de la voz de marca", "isCorrect": true },
+          { "optionText": "Porque siempre tienen errores ortográficos", "isCorrect": false },
+          { "optionText": "Porque son demasiado largos siempre", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué técnica es más efectiva para que la IA replique tu voz de marca?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 7,
+        "options": [
+          { "optionText": "Solo describir el tono con adjetivos genéricos", "isCorrect": false },
+          { "optionText": "Proporcionar ejemplos reales de textos representativos de tu marca", "isCorrect": true },
+          { "optionText": "No darle ninguna instrucción", "isCorrect": false },
+          { "optionText": "Pedir que use palabras más complejas", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Para qué sirve generar múltiples variaciones de un mismo mensaje con IA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 8,
+        "options": [
+          { "optionText": "Para confundir intencionalmente a la audiencia", "isCorrect": false },
+          { "optionText": "Para probar diferentes ángulos y descubrir cuál resuena mejor con la audiencia real", "isCorrect": true },
+          { "optionText": "Para aumentar artificialmente el conteo de publicaciones", "isCorrect": false },
+          { "optionText": "No tiene ninguna utilidad práctica", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Al adaptar contenido a diferentes plataformas, ¿qué es importante especificar?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 9,
+        "options": [
+          { "optionText": "Nada, todas las plataformas funcionan igual", "isCorrect": false },
+          { "optionText": "Las convenciones reales de tono y formato de cada plataforma específica", "isCorrect": true },
+          { "optionText": "Solo la longitud máxima permitida", "isCorrect": false },
+          { "optionText": "El nombre de la empresa competidora", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué elemento del correo electrónico determina si el mensaje siquiera será leído?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 10,
+        "options": [
+          { "optionText": "El pie de página", "isCorrect": false },
+          { "optionText": "El asunto del correo", "isCorrect": true },
+          { "optionText": "El tamaño de la fuente", "isCorrect": false },
+          { "optionText": "La firma del remitente", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué características suelen tener los asuntos de correo efectivos?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 11,
+        "options": [
+          { "optionText": "Generan curiosidad sin revelar todo el contenido", "isCorrect": true },
+          { "optionText": "Son específicos en lugar de vagos", "isCorrect": true },
+          { "optionText": "Evitan sonar como spam evidente", "isCorrect": true },
+          { "optionText": "Usan exceso de mayúsculas y símbolos de urgencia", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tipo de contenido suele generar más interacción real en redes sociales?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 12,
+        "options": [
+          { "optionText": "Contenido que nunca invita a opinar", "isCorrect": false },
+          { "optionText": "Contenido que provoca reacción emocional genuina u ofrece valor práctico inmediato", "isCorrect": true },
+          { "optionText": "Únicamente anuncios de venta directa", "isCorrect": false },
+          { "optionText": "Publicaciones sin ningún texto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el único propósito de una página de venta o aterrizaje?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 13,
+        "options": [
+          { "optionText": "Mostrar toda la información posible de la empresa", "isCorrect": false },
+          { "optionText": "Guiar al visitante hacia una acción específica de conversión", "isCorrect": true },
+          { "optionText": "Servir como página de inicio general del sitio web", "isCorrect": false },
+          { "optionText": "Listar todos los productos disponibles sin enfoque", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué práctica de alto impacto ayuda a reducir el abandono en una página de venta?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 14,
+        "options": [
+          { "optionText": "Ignorar las dudas del visitante por completo", "isCorrect": false },
+          { "optionText": "Abordar proactivamente las objeciones comunes antes de que el visitante las piense", "isCorrect": true },
+          { "optionText": "Hacer la página lo más larga posible sin estructura", "isCorrect": false },
+          { "optionText": "Eliminar cualquier mención de precio", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Para email marketing, ¿qué mide la tasa de apertura?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 15,
+        "options": [
+          { "optionText": "Cuántas personas compraron el producto", "isCorrect": false },
+          { "optionText": "Qué porcentaje de personas abrió el correo, indicando efectividad del asunto", "isCorrect": true },
+          { "optionText": "Cuántos correos se enviaron en total", "isCorrect": false },
+          { "optionText": "El tiempo que tarda en cargar el correo", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué es un error incluir múltiples llamadas a la acción distintas en un mismo texto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 16,
+        "options": [
+          { "optionText": "Porque diluye la efectividad generando indecisión en lugar de una acción clara", "isCorrect": true },
+          { "optionText": "Porque está prohibido legalmente", "isCorrect": false },
+          { "optionText": "Porque hace el texto más corto de lo necesario", "isCorrect": false },
+          { "optionText": "No es un error, siempre mejora resultados", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se recomienda hacer siempre antes de publicar contenido generado con ayuda de IA?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 17,
+        "options": [
+          { "optionText": "Publicarlo inmediatamente sin ninguna revisión", "isCorrect": false },
+          { "optionText": "Revisarlo con criterio editorial humano antes de publicarlo", "isCorrect": true },
+          { "optionText": "Eliminar toda mención del producto", "isCorrect": false },
+          { "optionText": "Duplicar el contenido en todas las plataformas sin ajuste", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué valor aporta mantener un banco personal de textos que ya funcionaron?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 18,
+        "options": [
+          { "optionText": "Ninguno, cada texto debe escribirse completamente desde cero siempre", "isCorrect": false },
+          { "optionText": "Permite consultar ejemplos probados y usarlos como referencia para nuevas tareas similares", "isCorrect": true },
+          { "optionText": "Solo sirve para textos en otros idiomas", "isCorrect": false },
+          { "optionText": "Reemplaza completamente la necesidad de entender a la audiencia", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué es más valioso documentar junto con un texto que funcionó bien, además del texto mismo?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 19,
+        "options": [
+          { "optionText": "Nada más es necesario", "isCorrect": false },
+          { "optionText": "El contexto: para qué audiencia funcionó y por qué crees que funcionó bien", "isCorrect": true },
+          { "optionText": "Únicamente la fecha de publicación", "isCorrect": false },
+          { "optionText": "El nombre de quien lo escribió, sin más detalle", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el propósito principal de este curso?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 20,
+        "options": [
+          { "optionText": "Enseñar gramática y ortografía avanzada", "isCorrect": false },
+          { "optionText": "Enseñar a escribir textos persuasivos combinando técnicas de copywriting con asistencia de IA", "isCorrect": true },
+          { "optionText": "Vender una herramienta específica de inteligencia artificial", "isCorrect": false },
+          { "optionText": "Reemplazar completamente el trabajo de los redactores publicitarios", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

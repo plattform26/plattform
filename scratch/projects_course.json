@@ -1,0 +1,394 @@
+{
+  "instructorEmail": "soporte@plattform.mx",
+  "title": "Gestión de Proyectos — Metodología Profesional Aplicada",
+  "description": "Domina los fundamentos de la gestión de proyectos profesional: desde la planificación inicial hasta el cierre exitoso. Aprende a definir alcance, gestionar riesgos, controlar cronogramas y presupuestos, y liderar equipos con las prácticas más reconocidas a nivel internacional. Dirigido a profesionales que lideran proyectos sin formación formal previa en la disciplina.",
+  "previewText": "Casi todos los proyectos fallan por las mismas tres razones: alcance mal definido, comunicación deficiente y falta de control sobre cambios. Este curso te da el marco de trabajo estructurado que usan los gestores de proyectos profesionales para evitar estos errores desde el primer día, sin importar el tamaño o industria de tu proyecto.",
+  "price": 999.00,
+  "durationHours": 8,
+  "category": "STRATEGY_BUSINESS",
+  "level": "INTERMEDIATE",
+  "modules": [
+    {
+      "title": "Módulo 1: Fundamentos de la Gestión de Proyectos",
+      "orderIndex": 1,
+      "lessons": [
+        {
+          "title": "Lección 1.1: ¿Qué es un proyecto y por qué necesita gestión formal?",
+          "subtitle": "La diferencia entre operaciones continuas y trabajo con principio y fin",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "Estudios de la industria muestran que más de la mitad de los proyectos exceden su presupuesto original, principalmente por una planificación inicial deficiente",
+          "contentText": "<p>Un proyecto es un esfuerzo temporal emprendido para crear un producto, servicio o resultado único. Esta definición, aunque simple, contiene dos elementos clave que lo distinguen de las operaciones rutinarias de una organización: es temporal (tiene un inicio y un fin definidos) y produce algo único (no es una tarea repetitiva idéntica cada vez).</p><p>¿Por qué un proyecto necesita gestión formal en lugar de simplemente \"hacerse\"? Porque la naturaleza única y temporal de un proyecto introduce incertidumbre que las operaciones rutinarias no tienen. No existe un manual exacto de cómo lanzar este producto específico, construir este sistema particular, o organizar este evento único — cada proyecto requiere planificación, adaptación y toma de decisiones constante.</p><p>La gestión de proyectos formal existe precisamente para reducir esa incertidumbre a través de procesos estructurados: definir claramente qué se va a lograr, estimar cuánto tiempo y recursos tomará, identificar riesgos antes de que se materialicen, y establecer mecanismos de control para detectar desviaciones a tiempo en lugar de descubrirlas cuando ya es demasiado tarde para corregirlas.</p><p>Es importante entender que la gestión de proyectos no es burocracia innecesaria — es el conjunto de prácticas que separan consistentemente a los proyectos exitosos de los que fallan, se retrasan significativamente, o exceden su presupuesto de forma descontrolada. A lo largo de este curso aprenderás el marco de trabajo completo para liderar proyectos con esta disciplina.</p>"
+        },
+        {
+          "title": "Lección 1.2: El ciclo de vida de un proyecto — las cinco fases",
+          "subtitle": "Inicio, planificación, ejecución, monitoreo y cierre",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "summary": "Todo proyecto, sin importar su tamaño, atraviesa estas cinco fases en algún grado",
+          "contentText": "<p>Todo proyecto, independientemente de su tamaño o industria, atraviesa cinco fases generales que conforman su ciclo de vida completo. Entender estas fases te da un mapa claro de en qué momento del proyecto te encuentras y qué actividades corresponden a cada etapa.</p><p>La primera fase es <strong>Inicio</strong>: aquí se define formalmente que el proyecto existe, se identifica su propósito general, se nombra al responsable de liderarlo, y se obtiene la autorización inicial para proceder. Esta fase responde a la pregunta fundamental: ¿por qué hacemos este proyecto y qué problema resuelve?</p><p>La segunda fase es <strong>Planificación</strong>: la más extensa en términos de documentación. Aquí se define el alcance detallado, se desglosa el trabajo en tareas específicas, se estima tiempo y costos, se identifican riesgos potenciales, y se establece cómo se medirá el éxito. Una planificación deficiente en esta fase es la causa más común de problemas posteriores en el proyecto.</p><p>La tercera fase es <strong>Ejecución</strong>: donde el equipo realmente realiza el trabajo planificado. Aquí el líder del proyecto se enfoca en coordinar al equipo, gestionar la comunicación con interesados, y resolver problemas que surjan en el día a día.</p><p>La cuarta fase, que ocurre en paralelo a la ejecución, es <strong>Monitoreo y Control</strong>: el seguimiento continuo del avance comparado contra lo planificado, identificando desviaciones en tiempo, costo o calidad, y tomando acciones correctivas cuando es necesario.</p><p>La quinta y última fase es <strong>Cierre</strong>: formalizar que el proyecto ha terminado, entregar los resultados finales, documentar lecciones aprendidas, y liberar a los recursos asignados para que puedan continuar con otras iniciativas.</p>"
+        },
+        {
+          "title": "Lección 1.3: Roles clave — quién hace qué en un proyecto",
+          "subtitle": "Patrocinador, líder del proyecto, equipo e interesados",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Un proyecto exitoso requiere claridad sobre quién es responsable de qué. Existen cuatro roles fundamentales que aparecen en prácticamente cualquier proyecto, sin importar su tamaño.</p><p>El <strong>patrocinador</strong> es la persona o grupo que autoriza el proyecto y proporciona los recursos necesarios para que exista. Generalmente es alguien con autoridad organizacional suficiente para tomar decisiones estratégicas sobre el proyecto, resolver bloqueos importantes, y asegurar que el proyecto se alinee con los objetivos generales de la organización.</p><p>El <strong>líder del proyecto</strong> es responsable de la planificación, ejecución y cierre día a día. Coordina al equipo, gestiona el cronograma y presupuesto, identifica y mitiga riesgos, y mantiene comunicación constante con todos los involucrados. Es quien convierte la visión del patrocinador en un plan ejecutable y luego asegura que ese plan se cumpla.</p><p>El <strong>equipo del proyecto</strong> está compuesto por las personas que realizan el trabajo técnico o especializado necesario para producir los entregables. Pueden ser empleados internos, contratistas externos, o una combinación de ambos, dependiendo de las habilidades específicas que requiera el proyecto.</p><p>Los <strong>interesados</strong> (en inglés conocidos como \"stakeholders\") son todas las personas o grupos que se ven afectados por el proyecto o que tienen influencia sobre su resultado, aunque no participen directamente en el trabajo diario. Pueden incluir clientes finales, otros departamentos de la organización, proveedores, o incluso entidades reguladoras externas. Identificar correctamente a todos los interesados desde el inicio es crucial, ya que un interesado ignorado puede convertirse en un obstáculo significativo más adelante.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 2: Planificación del Proyecto",
+      "orderIndex": 2,
+      "lessons": [
+        {
+          "title": "Lección 2.1: Definir el alcance — qué incluye y qué no incluye el proyecto",
+          "subtitle": "La causa número uno de proyectos fuera de control",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "funFact": "El término \"scope creep\" describe el fenómeno donde el alcance de un proyecto crece gradualmente sin control formal, una de las causas más comunes de retrasos y sobrecostos",
+          "contentText": "<p>Definir el alcance del proyecto significa establecer con precisión qué se va a entregar y, de igual importancia, qué explícitamente no se va a entregar. Esta segunda parte —definir los límites— suele ser la más descuidada y la que causa más conflictos a mitad del proyecto.</p><p>Un alcance bien definido responde preguntas concretas: ¿qué entregables específicos producirá el proyecto? ¿Qué características incluyen y cuáles quedan explícitamente fuera? ¿Qué supuestos se están haciendo sobre recursos, tiempo o condiciones externas? ¿Qué restricciones existen que limitan las opciones disponibles?</p><p>El fenómeno conocido como \"crecimiento descontrolado del alcance\" ocurre cuando, sin un proceso formal de control, se van agregando pequeñas peticiones adicionales a lo largo del proyecto — \"ya que estamos, también agreguemos esto\" — que individualmente parecen menores pero que acumuladas pueden duplicar el trabajo original sin que el cronograma o presupuesto se hayan ajustado en consecuencia.</p><p>La defensa contra este problema es un proceso formal de control de cambios: cualquier solicitud de modificar el alcance original debe documentarse, evaluarse en términos de su impacto en tiempo y costo, y aprobarse explícitamente antes de incorporarse al proyecto. Esto no significa rigidez excesiva — los proyectos sí necesitan adaptarse — pero sí significa que cada cambio sea una decisión consciente y documentada, no una acumulación silenciosa de pequeñas adiciones.</p><p>Una herramienta práctica para definir el alcance es la estructura de desglose del trabajo, que veremos en la siguiente lección, donde el proyecto completo se descompone en componentes cada vez más pequeños y manejables.</p>"
+        },
+        {
+          "title": "Lección 2.2: Desglose del trabajo y estimación de tiempos",
+          "subtitle": "De un objetivo general a tareas concretas y medibles",
+          "durationMinutes": 22,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Una vez definido el alcance general, el siguiente paso es descomponerlo en una estructura jerárquica de tareas manejables — un proceso conocido como desglose del trabajo. La idea central es simple: tomar el resultado final deseado y dividirlo progresivamente en componentes más pequeños hasta llegar a tareas concretas que una persona o equipo pequeño pueda ejecutar y estimar con razonable precisión.</p><p>Por ejemplo, si el entregable general es \"lanzar un nuevo sitio web\", el primer nivel de desglose podría incluir componentes como diseño, desarrollo, contenido y pruebas. Cada uno de estos, a su vez, se desglosa más: \"desarrollo\" podría dividirse en configuración del servidor, desarrollo del frontend, integración de base de datos, y pruebas de funcionalidad.</p><p>Este nivel de detalle es importante porque estimar tiempo y costo para \"lanzar un sitio web\" es prácticamente imposible con precisión, pero estimar \"configurar el servidor\" o \"diseñar la página de inicio\" es mucho más manejable y preciso, ya que son tareas concretas con un alcance claro.</p><p>Para la estimación de tiempos, existen varias técnicas. La más simple es la estimación basada en juicio de experto: preguntar a quien tiene experiencia directa en ese tipo de tarea cuánto tiempo suele tomar. Una técnica más estructurada es la estimación de tres puntos, donde se considera un escenario optimista, uno pesimista y uno más probable, y se calcula un promedio ponderado que refleja mejor la incertidumbre real que una sola cifra.</p><p>Una vez desglosado el trabajo y estimado el tiempo de cada componente, estas piezas se ensamblan en un cronograma general que muestra la secuencia y duración total del proyecto, considerando qué tareas dependen de otras y cuáles pueden ejecutarse en paralelo.</p>"
+        },
+        {
+          "title": "Lección 2.3: Identificación y gestión de riesgos",
+          "subtitle": "Anticipar lo que podría salir mal antes de que ocurra",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Un riesgo en el contexto de gestión de proyectos es cualquier evento incierto que, de ocurrir, tendría un impacto positivo o negativo en el proyecto. Gestionar riesgos no significa eliminar toda incertidumbre —algo imposible— sino identificarla de antemano y tener planes de respuesta preparados en lugar de improvisar cuando el problema ya ocurrió.</p><p>El proceso de gestión de riesgos comienza con su identificación: reunir al equipo y a los interesados relevantes para hacer una lluvia de ideas sistemática sobre qué podría salir mal. Esto incluye riesgos técnicos (una tecnología no funciona como se esperaba), riesgos de recursos (una persona clave se enferma o renuncia), riesgos externos (cambios regulatorios o de mercado), y riesgos de cronograma (dependencias que se retrasan).</p><p>Una vez identificados, cada riesgo se evalúa según dos dimensiones: la probabilidad de que ocurra y el impacto que tendría si ocurriera. Esta evaluación permite priorizar: un riesgo con alta probabilidad y alto impacto requiere atención inmediata, mientras que uno con baja probabilidad y bajo impacto puede simplemente monitorearse sin un plan elaborado.</p><p>Para los riesgos prioritarios, se desarrollan estrategias de respuesta. Estas pueden ser: evitar el riesgo (cambiar el plan para que el riesgo ya no aplique), mitigar el riesgo (reducir su probabilidad o impacto con acciones preventivas), transferir el riesgo (por ejemplo, mediante un seguro o un contrato con un tercero), o aceptar el riesgo conscientemente cuando el costo de prevenirlo supera el impacto potencial.</p><p>Mantener un registro de riesgos vivo a lo largo del proyecto —no solo al inicio— es una práctica fundamental, ya que nuevos riesgos pueden surgir y otros pueden dejar de ser relevantes conforme el proyecto avanza.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 3: Ejecución y Control",
+      "orderIndex": 3,
+      "lessons": [
+        {
+          "title": "Lección 3.1: Liderar al equipo durante la ejecución",
+          "subtitle": "Comunicación, motivación y resolución de conflictos",
+          "durationMinutes": 20,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>La fase de ejecución es donde la planificación se convierte en resultados reales, y el rol del líder del proyecto cambia significativamente: de planificador a coordinador y facilitador del trabajo diario del equipo.</p><p>La comunicación efectiva es probablemente la habilidad más determinante en esta fase. Esto incluye establecer reuniones de seguimiento regulares (sin caer en exceso de reuniones que interrumpen el trabajo real), mantener canales claros para que el equipo reporte bloqueos o problemas sin demora, y comunicar el progreso de forma transparente tanto al equipo como a los interesados externos.</p><p>Mantener al equipo motivado durante proyectos largos requiere atención activa. Reconocer logros intermedios, no solo el resultado final, ayuda a sostener el impulso. Igualmente importante es proteger al equipo de interrupciones innecesarias o cambios de prioridad constantes, que son una de las principales causas de frustración y baja productividad en proyectos.</p><p>Los conflictos durante la ejecución son normales e inevitables —diferencias de opinión sobre cómo abordar un problema técnico, desacuerdos sobre prioridades, o tensión por recursos limitados. Un buen líder de proyecto no evita los conflictos sino que los gestiona constructivamente: facilita conversaciones directas entre las partes involucradas, busca entender las perspectivas antes de proponer soluciones, y mantiene el enfoque en el objetivo común del proyecto por encima de posiciones individuales.</p><p>Finalmente, delegar efectivamente —confiar responsabilidades específicas a miembros del equipo en lugar de microgestionar cada detalle— no solo libera tiempo del líder para enfocarse en aspectos estratégicos, sino que también desarrolla la capacidad y compromiso del equipo con el proyecto.</p>"
+        },
+        {
+          "title": "Lección 3.2: Monitorear el avance contra el plan",
+          "subtitle": "Indicadores clave para saber si el proyecto va por buen camino",
+          "durationMinutes": 18,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Monitorear un proyecto significa comparar constantemente lo que realmente está sucediendo contra lo que se planificó originalmente, para detectar desviaciones lo antes posible —cuando aún son fáciles de corregir— en lugar de descubrirlas cuando ya es tarde para actuar.</p><p>Tres dimensiones se monitorean típicamente en cualquier proyecto: el cronograma (¿estamos avanzando al ritmo planificado?), el presupuesto (¿estamos gastando conforme a lo estimado?), y la calidad (¿el trabajo producido cumple con los estándares establecidos?). Estas tres dimensiones suelen estar interconectadas: acelerar el cronograma frecuentemente implica mayor costo, y reducir costos puede comprometer la calidad si no se gestiona con cuidado.</p><p>Una práctica fundamental es establecer puntos de control regulares —semanales o quincenales, dependiendo de la duración del proyecto— donde se revisa formalmente el estado de cada tarea: completada, en progreso según lo planeado, retrasada, o bloqueada. Esta revisión sistemática evita que pequeños retrasos individuales se acumulen silenciosamente hasta convertirse en un problema mayor difícil de resolver.</p><p>Cuando se detecta una desviación significativa, el primer paso es entender la causa raíz antes de reaccionar. Un retraso puede deberse a una subestimación original del tiempo necesario, a un riesgo que se materializó, a la disponibilidad limitada de un recurso clave, o a un cambio de alcance no formalizado. La respuesta correcta depende de identificar correctamente cuál de estas situaciones está ocurriendo realmente.</p><p>Documentar estas desviaciones y las acciones correctivas tomadas no solo ayuda a gestionar el proyecto actual, sino que se convierte en información valiosa para mejorar la estimación y planificación de proyectos futuros similares.</p>"
+        },
+        {
+          "title": "Lección 3.3: Gestión de cambios formales",
+          "subtitle": "Cómo evaluar y aprobar modificaciones sin perder el control",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Los proyectos rara vez se ejecutan exactamente como se planificaron originalmente —circunstancias cambian, surge nueva información, o los interesados solicitan ajustes que parecen razonables en el momento. La gestión de cambios formal existe para que estas modificaciones se evalúen e incorporen de manera controlada, en lugar de aceptarse informalmente sin entender su impacto real.</p><p>El proceso comienza con una solicitud de cambio documentada: qué se está pidiendo modificar, quién lo solicita, y por qué razón. Esta documentación, aunque pueda parecer burocracia innecesaria para cambios que parecen pequeños, es justamente lo que previene que múltiples pequeñas modificaciones se acumulen sin que nadie tenga visibilidad del impacto total.</p><p>Cada solicitud se evalúa en términos de su impacto en tres dimensiones: tiempo (¿esto retrasa el cronograma y por cuánto?), costo (¿requiere recursos adicionales?), y alcance o calidad (¿modifica lo que originalmente se acordó entregar?). Esta evaluación debe hacerse antes de aprobar el cambio, no después.</p><p>Con esta información, la persona o comité con autoridad para aprobar cambios —generalmente el patrocinador del proyecto o un comité de control de cambios en proyectos más grandes— toma la decisión de aprobar, rechazar, o aprobar con modificaciones la solicitud original.</p><p>Una vez aprobado un cambio, es fundamental actualizar formalmente el plan del proyecto —el cronograma, el presupuesto, el alcance documentado— para que refleje la nueva realidad acordada. Sin esta actualización, el equipo continúa trabajando contra un plan obsoleto, generando confusión sobre qué es realmente lo que se está construyendo.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Módulo 4: Cierre y Mejora Continua",
+      "orderIndex": 4,
+      "lessons": [
+        {
+          "title": "Lección 4.1: Cerrando el proyecto formalmente",
+          "subtitle": "Más allá de simplemente \"terminar de trabajar\"",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 1,
+          "isPreview": false,
+          "contentText": "<p>Cerrar un proyecto no es simplemente dejar de trabajar en él una vez que el entregable principal está listo. Un cierre formal incluye varios pasos que aseguran que el proyecto realmente concluya de forma ordenada y que el valor del trabajo realizado se preserve para el futuro.</p><p>El primer paso es la entrega formal de los resultados al cliente o área que solicitó el proyecto, confirmando explícitamente que lo entregado cumple con los criterios de aceptación acordados originalmente. Esta confirmación formal evita ambigüedades posteriores sobre si el proyecto realmente se completó satisfactoriamente.</p><p>El segundo paso es liberar formalmente a los recursos asignados —tanto personas como herramientas o presupuesto reservado— para que puedan reasignarse a otras iniciativas dentro de la organización. Sin este paso explícito, es común que recursos queden \"atados\" innecesariamente a un proyecto que ya terminó en la práctica.</p><p>El tercer paso, frecuentemente omitido pero sumamente valioso, es la documentación de lecciones aprendidas: qué funcionó bien y debería repetirse en proyectos futuros, qué no funcionó y por qué, y qué se haría diferente con el conocimiento actual. Esta documentación, cuando se realiza honestamente y se consulta en proyectos futuros, es una de las formas más efectivas de mejorar la capacidad de gestión de proyectos de una organización a lo largo del tiempo.</p><p>Finalmente, es importante celebrar y reconocer el trabajo del equipo. Más allá de ser un gesto agradable, reconocer formalmente el cierre exitoso de un proyecto refuerza comportamientos positivos y contribuye a la motivación para proyectos futuros.</p>"
+        },
+        {
+          "title": "Lección 4.2: Lecciones aprendidas — convertir experiencia en mejora real",
+          "subtitle": "Cómo documentar de forma que realmente se use después",
+          "durationMinutes": 12,
+          "contentType": "TEXT",
+          "orderIndex": 2,
+          "isPreview": false,
+          "contentText": "<p>Documentar lecciones aprendidas es una práctica que muchas organizaciones realizan superficialmente —llenando un documento que después nadie vuelve a consultar— sin obtener el valor real que esta práctica puede ofrecer cuando se hace correctamente.</p><p>La diferencia entre lecciones aprendidas útiles e inútiles está en su especificidad y accesibilidad. En lugar de conclusiones genéricas como \"se debió planificar mejor\", una lección útil es específica y accionable: \"subestimamos en un 40% el tiempo de integración con el sistema externo porque no consideramos el tiempo de aprobación de su equipo de seguridad; en proyectos futuros con integraciones similares, agregar dos semanas adicionales de margen específicamente para este tipo de aprobación\".</p><p>Para que estas lecciones realmente se usen en el futuro, deben ser fáciles de encontrar cuando se planifica un proyecto nuevo similar. Esto puede significar organizar las lecciones por tipo de proyecto o por categoría de problema (estimación, comunicación, gestión de proveedores), en lugar de simplemente archivarlas cronológicamente donde nadie las consultará de forma proactiva.</p><p>Una práctica recomendada es realizar esta documentación en dos momentos: durante el proyecto, capturando lecciones específicas justo cuando ocurren —porque los detalles se olvidan rápidamente—, y al cierre formal, donde se consolida una visión general del proyecto completo con la perspectiva de todo lo ocurrido.</p><p>Las organizaciones que verdaderamente aprenden de sus proyectos anteriores desarrollan, con el tiempo, una capacidad de estimación y planificación notablemente más precisa que aquellas que repiten los mismos errores proyecto tras proyecto sin capturar y aplicar este conocimiento institucional.</p>"
+        },
+        {
+          "title": "Lección 4.3: Aplicando el marco a proyectos de cualquier tamaño",
+          "subtitle": "Adaptar el rigor del proceso a la escala real del proyecto",
+          "durationMinutes": 14,
+          "contentType": "TEXT",
+          "orderIndex": 3,
+          "isPreview": false,
+          "contentText": "<p>Un error común al aprender gestión de proyectos formal es asumir que todo el rigor descrito en este curso —documentación extensa, comités de control de cambios, registros detallados de riesgos— debe aplicarse exactamente igual sin importar el tamaño del proyecto. En la práctica, la habilidad más valiosa es saber adaptar el nivel de formalidad a la escala y complejidad real de lo que estás gestionando.</p><p>Para un proyecto pequeño con pocas personas involucradas y bajo riesgo, aplicar los principios fundamentales —alcance claro, cronograma realista, comunicación regular, control simple de cambios— es suficiente y apropiado. Imponer un proceso burocrático pesado en un proyecto simple genera más fricción que valor.</p><p>Para proyectos grandes, complejos, con múltiples equipos o alto riesgo financiero o reputacional, el rigor adicional —documentación más extensa, comités formales de revisión, registros de riesgo detallados, controles de cambio más estrictos— se vuelve no solo apropiado sino necesario para evitar que la complejidad del proyecto se vuelva inmanejable.</p><p>La habilidad de un gestor de proyectos experimentado no está en aplicar mecánicamente cada herramienta y proceso aprendido, sino en discernir cuáles son realmente necesarios para el proyecto específico que tiene frente a sí, y aplicarlos con el nivel de detalle apropiado a esa situación particular.</p><p>Con los fundamentos de este curso —entender el ciclo de vida del proyecto, definir alcance claramente, planificar con desglose de trabajo y gestión de riesgos, ejecutar con liderazgo efectivo, monitorear sistemáticamente, y cerrar formalmente capturando lecciones aprendidas— tienes la base sólida para liderar proyectos de cualquier tamaño con considerablemente mayor probabilidad de éxito que sin esta estructura.</p>"
+        }
+      ]
+    }
+  ],
+  "quiz": {
+    "title": "Dominio de la Gestión de Proyectos",
+    "passingScore": 80,
+    "totalScore": 100,
+    "questions": [
+      {
+        "questionText": "¿Cuáles son las dos características que definen a un proyecto?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 1,
+        "options": [
+          { "optionText": "Es temporal, tiene inicio y fin definidos", "isCorrect": true },
+          { "optionText": "Produce un resultado único", "isCorrect": true },
+          { "optionText": "Se repite exactamente igual cada vez", "isCorrect": false },
+          { "optionText": "No requiere ningún tipo de planificación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuáles son las cinco fases del ciclo de vida de un proyecto?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 2,
+        "options": [
+          { "optionText": "Inicio", "isCorrect": true },
+          { "optionText": "Planificación", "isCorrect": true },
+          { "optionText": "Ejecución", "isCorrect": true },
+          { "optionText": "Marketing", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué responde la fase de Inicio de un proyecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 3,
+        "options": [
+          { "optionText": "Cuánto costará exactamente cada tarea", "isCorrect": false },
+          { "optionText": "Por qué se hace el proyecto y qué problema resuelve", "isCorrect": true },
+          { "optionText": "Quién será despedido al final", "isCorrect": false },
+          { "optionText": "Qué proveedor específico se usará", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Quién es el patrocinador de un proyecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 4,
+        "options": [
+          { "optionText": "La persona que realiza el trabajo técnico diario", "isCorrect": false },
+          { "optionText": "Quien autoriza el proyecto y proporciona los recursos necesarios", "isCorrect": true },
+          { "optionText": "Un cliente externo sin relación con la organización", "isCorrect": false },
+          { "optionText": "El proveedor de software utilizado", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué son los \"interesados\" (stakeholders) en un proyecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 5,
+        "options": [
+          { "optionText": "Únicamente los miembros del equipo técnico", "isCorrect": false },
+          { "optionText": "Personas o grupos afectados por el proyecto o con influencia sobre su resultado", "isCorrect": true },
+          { "optionText": "Solo el patrocinador del proyecto", "isCorrect": false },
+          { "optionText": "Exclusivamente los clientes finales", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué significa \"scope creep\" o crecimiento descontrolado del alcance?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 6,
+        "options": [
+          { "optionText": "Cuando el presupuesto se reduce inesperadamente", "isCorrect": false },
+          { "optionText": "Cuando se agregan pequeñas peticiones adicionales sin control formal a lo largo del proyecto", "isCorrect": true },
+          { "optionText": "Cuando el equipo termina antes de lo planeado", "isCorrect": false },
+          { "optionText": "Cuando se cancela el proyecto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es la mejor defensa contra el crecimiento descontrolado del alcance?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 7,
+        "options": [
+          { "optionText": "Aceptar todas las solicitudes sin documentarlas", "isCorrect": false },
+          { "optionText": "Un proceso formal de control de cambios que evalúe y apruebe cada modificación", "isCorrect": true },
+          { "optionText": "Ignorar todas las solicitudes de cambio", "isCorrect": false },
+          { "optionText": "Eliminar la fase de planificación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué es el desglose del trabajo?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 8,
+        "options": [
+          { "optionText": "Cancelar tareas que parecen difíciles", "isCorrect": false },
+          { "optionText": "Dividir progresivamente el proyecto en componentes más pequeños y manejables", "isCorrect": true },
+          { "optionText": "Asignar todo el trabajo a una sola persona", "isCorrect": false },
+          { "optionText": "Eliminar la necesidad de estimar tiempos", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué considera la técnica de estimación de tres puntos?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 9,
+        "options": [
+          { "optionText": "Solo un escenario optimista", "isCorrect": false },
+          { "optionText": "Un escenario optimista, uno pesimista y uno más probable, calculando un promedio ponderado", "isCorrect": true },
+          { "optionText": "Únicamente el costo total del proyecto", "isCorrect": false },
+          { "optionText": "Solo la opinión del patrocinador", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué dos dimensiones se evalúan al analizar un riesgo identificado?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 10,
+        "options": [
+          { "optionText": "Probabilidad de que ocurra", "isCorrect": true },
+          { "optionText": "Impacto si ocurriera", "isCorrect": true },
+          { "optionText": "El color asignado en el cronograma", "isCorrect": false },
+          { "optionText": "La cantidad de reuniones realizadas", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuáles son las estrategias de respuesta a un riesgo identificado?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 11,
+        "options": [
+          { "optionText": "Evitar el riesgo", "isCorrect": true },
+          { "optionText": "Mitigar el riesgo", "isCorrect": true },
+          { "optionText": "Transferir el riesgo", "isCorrect": true },
+          { "optionText": "Ignorar completamente su existencia", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "Durante la fase de ejecución, ¿cuál es uno de los roles principales del líder del proyecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 12,
+        "options": [
+          { "optionText": "Realizar personalmente todas las tareas técnicas", "isCorrect": false },
+          { "optionText": "Coordinar al equipo, facilitar comunicación y resolver bloqueos", "isCorrect": true },
+          { "optionText": "Evitar cualquier tipo de reunión con el equipo", "isCorrect": false },
+          { "optionText": "Delegar toda la responsabilidad sin seguimiento", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué tres dimensiones se monitorean típicamente durante la ejecución de un proyecto?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 13,
+        "options": [
+          { "optionText": "Cronograma", "isCorrect": true },
+          { "optionText": "Presupuesto", "isCorrect": true },
+          { "optionText": "Calidad", "isCorrect": true },
+          { "optionText": "Color corporativo de la empresa", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué se debe hacer antes de reaccionar ante una desviación detectada en el monitoreo?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 14,
+        "options": [
+          { "optionText": "Cancelar el proyecto inmediatamente", "isCorrect": false },
+          { "optionText": "Entender la causa raíz de la desviación", "isCorrect": true },
+          { "optionText": "Despedir al responsable de la tarea", "isCorrect": false },
+          { "optionText": "Ignorarla hasta el cierre del proyecto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿En qué tres dimensiones se evalúa el impacto de una solicitud de cambio?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 15,
+        "options": [
+          { "optionText": "Tiempo", "isCorrect": true },
+          { "optionText": "Costo", "isCorrect": true },
+          { "optionText": "Alcance o calidad", "isCorrect": true },
+          { "optionText": "Cantidad de correos enviados", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué debe actualizarse una vez que se aprueba formalmente un cambio?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 16,
+        "options": [
+          { "optionText": "Nada, el equipo simplemente lo recuerda de memoria", "isCorrect": false },
+          { "optionText": "El plan del proyecto, incluyendo cronograma, presupuesto y alcance documentado", "isCorrect": true },
+          { "optionText": "Solo el nombre del proyecto", "isCorrect": false },
+          { "optionText": "Únicamente el logo de la presentación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué incluye un cierre formal de proyecto además de entregar el resultado principal?",
+        "questionType": "MULTIPLE",
+        "points": 5,
+        "orderIndex": 17,
+        "options": [
+          { "optionText": "Liberar formalmente los recursos asignados", "isCorrect": true },
+          { "optionText": "Documentar lecciones aprendidas", "isCorrect": true },
+          { "optionText": "Reconocer el trabajo del equipo", "isCorrect": true },
+          { "optionText": "Eliminar todos los registros del proyecto", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Qué hace que una lección aprendida sea realmente útil en lugar de genérica?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 18,
+        "options": [
+          { "optionText": "Ser vaga para aplicar a cualquier situación", "isCorrect": false },
+          { "optionText": "Ser específica y accionable, identificando causa y solución concreta", "isCorrect": true },
+          { "optionText": "Escribirse en el menor número de palabras posible", "isCorrect": false },
+          { "optionText": "No documentarse en ningún lugar", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Por qué es importante adaptar el nivel de formalidad del proceso al tamaño del proyecto?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 19,
+        "options": [
+          { "optionText": "Porque todos los proyectos requieren exactamente el mismo nivel de documentación", "isCorrect": false },
+          { "optionText": "Porque imponer procesos pesados en proyectos simples genera más fricción que valor", "isCorrect": true },
+          { "optionText": "Porque la formalidad nunca debe usarse en ningún proyecto", "isCorrect": false },
+          { "optionText": "Porque solo los proyectos grandes necesitan planificación", "isCorrect": false }
+        ]
+      },
+      {
+        "questionText": "¿Cuál es el propósito principal de este curso?",
+        "questionType": "SINGLE",
+        "points": 5,
+        "orderIndex": 20,
+        "options": [
+          { "optionText": "Enseñar a usar un software específico de gestión de proyectos", "isCorrect": false },
+          { "optionText": "Dar el marco de trabajo estructurado para liderar proyectos exitosos de cualquier tamaño", "isCorrect": true },
+          { "optionText": "Certificar oficialmente a los participantes", "isCorrect": false },
+          { "optionText": "Reemplazar la necesidad de un líder de proyecto", "isCorrect": false }
+        ]
+      }
+    ]
+  }
+}

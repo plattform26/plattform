@@ -173,26 +173,27 @@ export async function POST(req: Request) {
       const allLessonsCompleted = finalCompletedCount >= totalLessons;
 
       if (allLessonsCompleted) {
-        // Misión: Validar si el curso requiere aprobación de examen para graduarse
-        const quiz = await prisma.quiz.findFirst({
-          where: { courseId }
+        // Misión: Validar si el curso requiere aprobación de exámenes para graduarse (Paso 2)
+        const totalQuizzesInCourse = await prisma.courseLesson.count({
+          where: { courseId, contentType: 'QUIZ' }
         });
 
         let shouldMarkCompleted = false;
         let lastQuizAttempt = null;
 
-        if (quiz) {
-          // Si hay quiz, SOLO marcar como COMPLETED si el alumno ha aprobado
-          lastQuizAttempt = await prisma.quizAttempt.findFirst({
-            where: {
-              userId: session.userId,
-              quizId: quiz.id
-            },
-            orderBy: { submittedAt: 'desc' }
+        if (totalQuizzesInCourse > 0) {
+          // Si hay quizzes, SOLO marcar como COMPLETED si el alumno ha aprobado TODOS
+          const passedQuizzesCount = await prisma.quizAttempt.count({
+            where: { userId: session.userId, courseId, passed: true }
           });
 
-          if (lastQuizAttempt && lastQuizAttempt.scorePercentage >= (quiz.passingScore || 80)) {
+          if (passedQuizzesCount >= totalQuizzesInCourse) {
             shouldMarkCompleted = true;
+            // Obtener el último intento aprobado para el registro de certificación
+            lastQuizAttempt = await prisma.quizAttempt.findFirst({
+              where: { userId: session.userId, courseId, passed: true },
+              orderBy: { submittedAt: 'desc' }
+            });
           }
         } else {
           // Si NO hay quiz, marcar como COMPLETED al completar todas las lecciones
@@ -220,7 +221,7 @@ export async function POST(req: Request) {
                 userId: session.userId,
                 courseId,
                 certificateCode,
-                quizAttemptId: quiz ? lastQuizAttempt?.id : null,
+                quizAttemptId: lastQuizAttempt?.id || null,
                 issuedAt: new Date()
               }
             });

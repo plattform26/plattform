@@ -11,6 +11,7 @@ export default function SidebarClient(props: {
   progressPercent: number;
   courseId: string;
   userRole: string;
+  quizAttemptMap?: Record<string, { passed: boolean }>; // Paso 5
   children: React.ReactNode; 
 }) {
   return (
@@ -24,11 +25,13 @@ function SidebarInternal({
   course, 
   courseId,
   userRole,
+  quizAttemptMap,
   children 
 }: { 
   course: any; 
   courseId: string;
   userRole: string;
+  quizAttemptMap?: Record<string, { passed: boolean }>;
   children: React.ReactNode; 
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -87,6 +90,40 @@ function SidebarInternal({
                      const isActive = pathname.includes(lesson.id);
                      const isCompleted = completedLessonIds.includes(lesson.id);
                      
+                     // Determinar colores e iconos según tipo de lección (Paso 5)
+                     let statusIcon = '○';
+                     let statusClasses = 'border-gray-700 text-gray-600 bg-transparent';
+                     let borderLeftClass = '';
+
+                     if (lesson.contentType === 'QUIZ') {
+                         const attempt = quizAttemptMap?.[lesson.id];
+                         if (!attempt) {
+                             // Pendiente
+                             statusIcon = '○';
+                             statusClasses = 'border-[#4a6278] text-[#4a6278] bg-transparent';
+                         } else if (attempt.passed) {
+                             // Aprobado
+                             statusIcon = '✅';
+                             statusClasses = 'border-transparent text-[#22C55E] bg-transparent text-[14px]'; // ✅ es emoji, no necesita borde visible
+                             borderLeftClass = 'border-l-2 border-l-[#22C55E]';
+                         } else {
+                             // En progreso / reprobado
+                             statusIcon = '⚠️';
+                             statusClasses = 'border-transparent text-[#F59E0B] bg-transparent text-[14px]';
+                             borderLeftClass = 'border-l-2 border-l-[#F59E0B]';
+                         }
+                     } else {
+                         // Lección Normal
+                         if (isCompleted) {
+                             statusIcon = '✓';
+                             statusClasses = 'bg-green-500/20 border-green-500 text-green-400';
+                             borderLeftClass = 'border-l-2 border-l-green-500';
+                         } else if (isActive) {
+                             statusIcon = '▶';
+                             statusClasses = 'border-cyan-500 text-cyan-400';
+                         }
+                     }
+
                      return (
                        <Link 
                          key={lesson.id} 
@@ -95,14 +132,10 @@ function SidebarInternal({
                            isActive 
                             ? 'bg-blue-600/10 text-cyan-400 border border-blue-500/10' 
                             : 'text-gray-400 hover:bg-blue-500/5 hover:text-white'
-                         } ${isCompleted ? 'border-l-2 border-l-green-500' : ''}`}
+                         } ${borderLeftClass}`}
                        >
-                         <span className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] border ${
-                           isCompleted 
-                            ? 'bg-green-500/20 border-green-500 text-green-400' 
-                            : isActive ? 'border-cyan-500 text-cyan-400' : 'border-gray-700 text-gray-600'
-                         }`}>
-                           {isCompleted ? '✓' : isActive ? '▶' : '○'}
+                         <span className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] border ${statusClasses}`}>
+                           {statusIcon}
                          </span>
                          <span className="flex-1 truncate">{lesson.title}</span>
                        </Link>
