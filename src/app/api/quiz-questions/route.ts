@@ -15,8 +15,10 @@ export async function POST(req: Request) {
     const validation = createQuizQuestionSchema.safeParse(body);
 
     if (!validation.success) {
+      const issue = validation.error.issues[0];
+      const detailMsg = issue ? `${issue.path.join('.')}: ${issue.message}` : 'Datos inválidos';
       return NextResponse.json({ 
-        error: 'Datos inválidos', 
+        error: `Datos inválidos (${detailMsg})`, 
         details: validation.error.format() 
       }, { status: 400 });
     }

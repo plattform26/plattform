@@ -62,7 +62,7 @@ export const createQuizQuestionSchema = z.object({
   quizId: z.string().uuid('ID de quiz inválido'),
   questionText: z.string().min(1, 'La pregunta es requerida').max(5000),
   questionType: z.enum(['SINGLE', 'MULTIPLE']).default('SINGLE'),
-  optionsJson: z.array(quizQuestionOptionSchema).min(2, 'Se requieren al menos 2 opciones'),
+  optionsJson: z.any().optional().nullable(),
   correctAnswer: z.any().optional().nullable(),
   points: z.coerce.number().int().min(0).max(100).default(10),
   orderIndex: z.coerce.number().int().min(0).default(0),
