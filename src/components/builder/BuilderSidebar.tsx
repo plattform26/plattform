@@ -81,8 +81,8 @@ export default function BuilderSidebar() {
                    </div>
 
                    {!isCollapsed && (
-                       <div className="ml-6 mt-1 space-y-1 border-l border-[#30363d]">
-                          {mod.lessons.map((lesson: any) => {
+                       <div className="ml-6 mt-1 space-y-1 border-l border-[#30363d] pb-2">
+                          {mod.lessons?.map((lesson: any) => {
                              const isActive = pathname.includes(`/lesson/${lesson.id}`) || pathname.includes(`/quiz/${lesson.id}`);
                              
                              if (lesson.contentType === 'QUIZ') {
@@ -135,16 +135,17 @@ export default function BuilderSidebar() {
                              );
                           })}
                           
-                          {(mod.lessons.length === 0) && (
+                          {(!mod.lessons || mod.lessons.length === 0) && (
                               <p className="text-[9px] text-gray-700 italic px-4 py-2 uppercase tracking-tighter">Sin lecciones todavía</p>
                           )}
 
-                          {(!hasModuleQuiz) && (
+                          {!hasModuleQuiz && (
                              <button 
-                                onClick={(e) => { e.stopPropagation(); addModuleQuiz(mod.id); }}
-                                className="w-full flex items-center gap-3 px-3 py-2 text-[10px] font-bold text-[#3B82F6] hover:text-blue-400 hover:bg-white/5 transition-colors uppercase tracking-widest rounded-r-lg border-l-2 border-transparent hover:border-blue-500/30"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); addModuleQuiz(mod.id); }}
+                                className="w-full flex items-center justify-start gap-3 px-3 py-2.5 mt-1 text-[11px] font-bold text-blue-500 hover:text-blue-400 hover:bg-blue-500/10 transition-colors uppercase tracking-widest rounded-r-lg border-l-2 border-transparent hover:border-blue-500/30"
+                                type="button"
                              >
-                                <span className="text-xs shrink-0">📝</span> + Agregar evaluación de módulo
+                                <span className="text-sm shrink-0">📝</span> + Agregar evaluación de módulo
                              </button>
                           )}
                        </div>
