@@ -29,6 +29,8 @@ export default function BuilderLayout({ children }: { children: React.ReactNode 
     fetchCourse();
   }, [courseId]);
 
+  console.log('[DEBUG] LAYOUT STATE:', { loading, course: !!course, courseId });
+
   if (loading) return <div className="h-screen bg-[#0b0e14] flex items-center justify-center text-cyan-500 font-mono text-xs animate-pulse uppercase tracking-[0.3em]">Inicializando Entorno de Construcción...</div>;
   if (!course) return <div className="h-screen bg-[#0b0e14] flex items-center justify-center text-red-500 font-bold">ERROR: CURSO NO ENCONTRADO</div>;
 
@@ -68,6 +70,7 @@ export default function BuilderLayout({ children }: { children: React.ReactNode 
             </div>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar">
+            {console.log('[DEBUG] LAYOUT RENDERING SIDEBAR')}
             <BuilderSidebar />
           </div>
         </aside>
