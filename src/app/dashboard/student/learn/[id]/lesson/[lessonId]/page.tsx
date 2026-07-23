@@ -152,15 +152,33 @@ export default async function LessonPage(
                   // Esto garantiza que el componente Cliente reciba datos limpios.
                   const sanitizedQuizRaw = {
                     ...lesson.quiz,
-                    questions: (lesson.quiz.questions as any[]).map(q => ({
-                      id: q.id,
-                      quizId: q.quizId,
-                      questionText: q.questionText,
-                      questionType: q.questionType,
-                      points: q.points,
-                      orderIndex: q.orderIndex,
-                      options: q.options // Única fuente autorizada
-                    }))
+                    questions: (lesson.quiz.questions as any[]).map(q => {
+                      const options = (q.options && q.options.length > 0)
+                        ? q.options
+                        : (Array.isArray(q.optionsJson) ? q.optionsJson.map((opt: any, idx: number) => {
+                            const isString = typeof opt === 'string';
+                            const text = isString ? opt : (opt.optionText || opt.text || '');
+                            const optId = isString ? opt : (opt.id || opt.optionText || `opt-${idx}`);
+                            const isCorrect = isString ? (q.correctAnswer === opt) : !!opt.isCorrect;
+                            return {
+                              id: optId,
+                              questionId: q.id,
+                              optionText: text,
+                              isCorrect: isCorrect,
+                              orderIndex: idx + 1
+                            };
+                          }) : []);
+
+                      return {
+                        id: q.id,
+                        quizId: q.quizId,
+                        questionText: q.questionText,
+                        questionType: q.questionType,
+                        points: q.points,
+                        orderIndex: q.orderIndex,
+                        options
+                      };
+                    })
                   };
 
                   // Blindaje de Serialización: Convertir a objeto plano

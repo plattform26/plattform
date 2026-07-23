@@ -12,7 +12,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   const params = await props.params;
   try {
     const session = await getSession();
-    if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN')) {
+    if (!session || (session.role !== 'STUDENT' && session.role !== 'ADMIN' && session.role !== 'INSTRUCTOR')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
