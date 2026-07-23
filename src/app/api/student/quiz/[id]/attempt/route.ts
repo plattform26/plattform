@@ -170,7 +170,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
 
       // Misión: El Alumno lo logró - Empaquetado y Envío de Diploma
       try {
-        // 1. Detectar si es Evaluación Final
+        // 1. Detectar si es la última evaluación Y si se han aprobado TODOS los quizzes del curso
         const higherQuizzes = await prisma.courseLesson.count({
           where: {
             courseId: finalCourseId,
@@ -179,8 +179,26 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
           }
         });
 
-        if (higherQuizzes === 0) {
-          console.log(`[CERT] Final Evaluation detected for ${session.userId}. Generating PDF...`);
+        const totalQuizzesInCourse = await prisma.courseLesson.count({
+          where: {
+            courseId: finalCourseId,
+            contentType: 'QUIZ'
+          }
+        });
+
+        const passedQuizzesCount = await prisma.quizAttempt.count({
+          where: {
+            userId: session.userId,
+            courseId: finalCourseId,
+            passed: true
+          }
+        });
+
+        const isLastQuizInCourse = higherQuizzes === 0;
+        const allQuizzesPassed = passedQuizzesCount >= totalQuizzesInCourse;
+
+        if (isLastQuizInCourse && allQuizzesPassed) {
+          console.log(`[CERT] All ${totalQuizzesInCourse} quizzes passed for user ${session.userId}. Generating PDF...`);
           
           const userFresh = await prisma.user.findUnique({
             where: { id: session.userId },
