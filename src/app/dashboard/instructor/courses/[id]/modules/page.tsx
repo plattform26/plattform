@@ -88,14 +88,28 @@ function LessonEditor({
 
       {open && (
         <div className="p-4 border-t border-blue-500/10 space-y-4">
-          <div>
-            <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Subtítulo</label>
-            <input
-              value={data.subtitle}
-              onChange={e => setData({ ...data, subtitle: e.target.value })}
-              placeholder="Descripción corta de la lección"
-              className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Subtítulo</label>
+              <input
+                value={data.subtitle}
+                onChange={e => setData({ ...data, subtitle: e.target.value })}
+                placeholder="Descripción corta de la lección"
+                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 placeholder-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Tipo de Contenido</label>
+              <select
+                value={data.contentType}
+                onChange={e => setData({ ...data, contentType: e.target.value as any })}
+                className="w-full bg-[#070d1a] border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-cyan-400 font-bold focus:outline-none focus:border-cyan-500"
+              >
+                <option value="TEXT">📄 Texto Enriquecido</option>
+                <option value="VIDEO">🎬 Video Streaming</option>
+                <option value="QUIZ">🎯 QUIZ / Evaluación</option>
+              </select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -141,6 +155,19 @@ function LessonEditor({
               />
             </div>
           </div>
+
+          {data.contentType === 'QUIZ' && (
+            <div className="bg-gradient-to-br from-cyan-600/10 to-blue-600/10 border border-cyan-500/20 p-6 rounded-2xl text-center space-y-3">
+              <h4 className="text-xs font-black text-cyan-400 uppercase tracking-widest italic">Módulo de Evaluación (Quiz)</h4>
+              <p className="text-gray-400 text-xs font-light">Configura las preguntas, opciones de respuesta y puntajes para esta lección.</p>
+              <Link 
+                href={`/dashboard/instructor/courses/${courseId}/builder/quiz/${lesson.id}`}
+                className="inline-block px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-cyan-500/20"
+              >
+                🧠 Abrir Constructor de Quiz / Evaluación
+              </Link>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Contenido de la lección</label>
