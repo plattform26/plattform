@@ -4,11 +4,16 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
 // Esquema de validación para metadatos del quiz
+// Esquema de validación para metadatos del quiz
 const quizSchema = z.object({
   title: z.string().min(1).max(200),
-  passingScore: z.number().min(0).max(100).optional(),
-  totalScore: z.number().min(1).optional(),
-}).strict();
+  passingScore: z.coerce.number().min(0).max(100).optional(),
+  totalScore: z.coerce.number().min(1).optional(),
+  scoreDistribution: z.string().optional().nullable(),
+  id: z.string().optional().nullable(),
+  courseId: z.string().optional().nullable(),
+  lessonId: z.string().optional().nullable(),
+});
 
 /**
  * Helper para validar permisos de gestión de quiz.
@@ -79,8 +84,10 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const validation = quizSchema.safeParse(body);
     
     if (!validation.success) {
+      const issue = validation.error.issues[0];
+      const detailMsg = issue ? `${issue.path.join('.')}: ${issue.message}` : 'Payload inválido';
       return NextResponse.json({ 
-        error: 'Payload inválido', 
+        error: `Payload inválido (${detailMsg})`, 
         details: validation.error.format() 
       }, { status: 400 });
     }
@@ -121,8 +128,10 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
     const validation = quizSchema.partial().safeParse(body);
 
     if (!validation.success) {
+      const issue = validation.error.issues[0];
+      const detailMsg = issue ? `${issue.path.join('.')}: ${issue.message}` : 'Payload inválido';
       return NextResponse.json({ 
-        error: 'Payload inválido', 
+        error: `Payload inválido (${detailMsg})`, 
         details: validation.error.format() 
       }, { status: 400 });
     }

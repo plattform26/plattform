@@ -44,14 +44,17 @@ export default function BuilderQuizPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sanitizePayload({
-            title: quiz.title,
-            passingScore: quiz.passingScore,
-            totalScore: quiz.totalScore
+            title: quiz.title || 'Evaluación',
+            passingScore: parseInt(String(quiz.passingScore)) || 70,
+            totalScore: parseInt(String(quiz.totalScore)) || 100
         }))
     });
     if (res.ok) {
         setShowSuccessModal(true);
         setTimeout(() => setShowSuccessModal(false), 3000);
+    } else {
+        const d = await res.json().catch(() => ({}));
+        alert(`Error al guardar examen: ${d.error || 'Datos inválidos'}`);
     }
     setSaving(false);
   };
