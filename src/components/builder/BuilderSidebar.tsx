@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useBuilder } from '@/app/dashboard/instructor/courses/[id]/builder/layout';
@@ -9,6 +9,10 @@ export default function BuilderSidebar() {
   const { id: courseId } = useParams();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    console.log('[DEBUG] SIDEBAR MOUNTED');
+  }, []);
 
   const toggleModule = (modId: string) => {
     setCollapsed(prev => ({ ...prev, [modId]: !prev[modId] }));
@@ -59,6 +63,13 @@ export default function BuilderSidebar() {
          {course.modules.map((mod: any, index: number) => {
             const isCollapsed = collapsed[mod.id];
             const hasModuleQuiz = mod.lessons?.some((l: any) => l.contentType === 'QUIZ');
+            
+            // Temporary debug log
+            console.log(`[DEBUG] Módulo ${mod.title} | lessons count: ${mod.lessons?.length} | hasModuleQuiz: ${hasModuleQuiz}`);
+            if (mod.lessons?.length > 0) {
+                console.log(`[DEBUG] Lessons para ${mod.title}:`, mod.lessons.map((l: any) => ({ id: l.id, contentType: l.contentType })));
+            }
+
             return (
                 <div key={mod.id} className="mb-2 group/module">
                    <div 
