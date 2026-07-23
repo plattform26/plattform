@@ -57,13 +57,16 @@ export default function BuilderQuizPage() {
   };
 
   const addQuestion = async () => {
+    if (questions.length >= 100) {
+      return alert('Límite alcanzado: máximo 100 preguntas por evaluación.');
+    }
     setSaving(true);
     const newQuestion = {
         quizId: quiz.id,
         questionText: '¿Nueva pregunta?',
         questionType: 'SINGLE',
         optionsJson: ['Opción 1', 'Opción 2', 'Opción 3'],
-        correctAnswer: 'Opción 1', // We'll handle multiple as stringified array or similar
+        correctAnswer: 'Opción 1',
         points: 10,
         orderIndex: questions.length
     };
@@ -125,7 +128,26 @@ export default function BuilderQuizPage() {
                 <p className="text-gray-500 text-[10px] mt-2 uppercase tracking-widest font-bold">Configuración de Examen Final / Lección</p>
             </div>
             
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4 items-center">
+                <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl px-5 py-3 flex flex-col items-center">
+                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Aprobación Mínima</span>
+                    <div className="flex items-center gap-1">
+                        <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={quiz.passingScore || 70}
+                            onChange={e => {
+                                const val = Math.max(1, Math.min(100, parseInt(e.target.value) || 0));
+                                setQuiz({ ...quiz, passingScore: val });
+                            }}
+                            onBlur={handleSaveQuizMetadata}
+                            className="w-16 bg-[#070d1a] border border-cyan-500/30 rounded-xl px-2 py-1 text-center font-space-grotesk font-black text-xl text-cyan-400 outline-none focus:border-cyan-400"
+                        />
+                        <span className="text-cyan-400 font-bold text-xs">%</span>
+                    </div>
+                </div>
+
                 <div className="bg-[#0d1524] border border-blue-500/20 rounded-2xl px-6 py-3 flex flex-col items-center">
                     <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Puntos Totales</span>
                     <span className={`${totalAssignedPoints < quiz.totalScore ? 'text-red-400' : 'text-green-400'} font-space-grotesk font-black text-xl`}>
@@ -267,19 +289,35 @@ export default function BuilderQuizPage() {
                         {/* SETTINGS */}
                         <div className="lg:col-span-4 space-y-6">
                             <div className="bg-[#070d1a] border border-white/5 rounded-3xl p-6">
-                                <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-4 block italic text-center">Valor de la Pregunta</label>
-                                <div className="flex items-center justify-center gap-4">
+                                <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-4 block italic text-center">Valor de la Pregunta (Puntos)</label>
+                                <div className="flex items-center justify-center gap-3">
                                      <button onClick={() => {
-                                        const p = Math.max(1, q.points - 5);
+                                        const p = Math.max(1, (parseInt(q.points) || 1) - 1);
                                         updateQuestionClient(q.id, { points: p });
                                         saveQuestion({ ...q, points: p });
-                                     }} className="w-10 h-10 border border-white/10 rounded-xl text-white hover:bg-white/5">-</button>
-                                     <span className="text-3xl font-space-grotesk font-black text-cyan-400">{q.points}</span>
+                                     }} className="w-9 h-9 border border-white/10 rounded-xl text-white hover:bg-white/5 font-bold">-</button>
+                                     
+                                     <input
+                                        type="number"
+                                        min="1"
+                                        max="100"
+                                        value={q.points !== undefined && q.points !== null ? q.points : ''}
+                                        onChange={e => {
+                                            const val = Math.max(1, Math.min(100, parseInt(e.target.value) || 0));
+                                            updateQuestionClient(q.id, { points: val });
+                                        }}
+                                        onBlur={e => {
+                                            const val = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
+                                            saveQuestion({ ...q, points: val });
+                                        }}
+                                        className="w-20 bg-[#0d1524] border border-cyan-500/30 rounded-xl px-3 py-2 text-center text-xl font-space-grotesk font-black text-cyan-400 outline-none focus:border-cyan-400"
+                                     />
+
                                      <button onClick={() => {
-                                        const p = q.points + 5;
+                                        const p = Math.min(100, (parseInt(q.points) || 0) + 1);
                                         updateQuestionClient(q.id, { points: p });
                                         saveQuestion({ ...q, points: p });
-                                     }} className="w-10 h-10 border border-white/10 rounded-xl text-white hover:bg-white/5">+</button>
+                                     }} className="w-9 h-9 border border-white/10 rounded-xl text-white hover:bg-white/5 font-bold">+</button>
                                 </div>
                                 <div className="mt-4 text-center">
                                     <p className="text-[9px] text-gray-500 uppercase tracking-tighter">Puntos asignados de un total de {quiz.totalScore}</p>
