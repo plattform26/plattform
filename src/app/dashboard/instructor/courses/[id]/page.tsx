@@ -332,6 +332,14 @@ export default function EditCoursePage() {
       {/* Quick nav */}
       <div className="flex gap-3 mb-6 flex-wrap">
         <button 
+          onClick={() => isLocked ? setShowLockModal(true) : router.push(`/dashboard/instructor/courses/${id}/builder`)} 
+          className={`flex-1 min-w-[150px] bg-blue-500/10 border rounded-xl p-4 text-center transition-colors group shadow-lg shadow-blue-500/5 ${isLocked ? 'border-gray-500/20 opacity-60' : 'border-blue-500/40 hover:border-blue-400 hover:bg-blue-500/20'}`}
+        >
+          <div className="text-2xl mb-1">{isLocked ? '🔒' : '🛠️'}</div>
+          <div className={`text-sm font-bold transition-colors uppercase tracking-wider ${isLocked ? 'text-gray-500' : 'text-blue-400 group-hover:text-blue-300'}`}>Abrir Builder →</div>
+          <div className="text-xs text-blue-500/70 mt-0.5">Constructor Integral de Cursos</div>
+        </button>
+        <button 
           onClick={() => isLocked ? setShowLockModal(true) : router.push(`/dashboard/instructor/courses/${id}/modules`)} 
           className={`flex-1 min-w-[150px] bg-[#0d1524] border rounded-xl p-4 text-center transition-colors group ${isLocked ? 'border-gray-500/20 opacity-60' : 'border-cyan-500/20 hover:border-cyan-500/40'}`}
         >
