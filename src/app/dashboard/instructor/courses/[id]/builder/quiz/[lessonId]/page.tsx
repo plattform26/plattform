@@ -1,4 +1,4 @@
-import QuizBuilderPage from '../../../../quiz/page';
+import QuizBuilderPage from '../../../quiz/page';
 
 export default function ModuleQuizBuilderPage() {
     return <QuizBuilderPage />;
