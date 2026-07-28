@@ -20,7 +20,12 @@ export default function BuilderQuizPage() {
     const data = await res.json();
     if (data) {
         setQuiz(data);
-        setQuestions(data.questions || []);
+        const hydratedQuestions = (data.questions || []).map((q: any) => {
+            const rawOpts = q.optionsJson || [];
+            const stringOpts = rawOpts.map((o: any) => typeof o === 'object' ? (o.optionText || o.text || '') : String(o));
+            return { ...q, optionsJson: stringOpts };
+        });
+        setQuestions(hydratedQuestions);
     } else {
         // Create initial quiz metadata if it doesn't exist
         const initRes = await fetch(`/api/lessons/${lessonId}/quiz`, {
@@ -101,11 +106,10 @@ export default function BuilderQuizPage() {
     if (q.correctAnswer === undefined || q.correctAnswer === null || q.correctAnswer === '') return;
 
     // 2. Mapeo correcto para el backend
-    // Prisma devuelve .options (array de objetos) pero el PATCH exige .optionsJson
-    const mappedOptions = q.options || q.optionsJson || [];
+    // Prioridad absoluta a lo que el usuario acaba de escribir en el estado local
     const payload = {
         ...sanitizePayload(q),
-        optionsJson: mappedOptions
+        optionsJson: q.optionsJson
     };
 
     console.log('[SAVE QUESTION] Payload final:', JSON.stringify(payload));
@@ -207,7 +211,6 @@ export default function BuilderQuizPage() {
                             <textarea 
                                 value={q.questionText}
                                 onChange={e => updateQuestionClient(q.id, { questionText: e.target.value })}
-                                onBlur={() => saveQuestion(q)}
                                 rows={2}
                                 className="w-full bg-[#070d1a] border border-white/5 rounded-2xl px-6 py-4 text-white font-medium focus:border-cyan-500 outline-none resize-none"
                             />
@@ -221,10 +224,11 @@ export default function BuilderQuizPage() {
                                 }}
                                 className="bg-[#070d1a] border border-white/10 rounded-xl px-4 py-2 text-[10px] font-black text-cyan-400 uppercase tracking-widest outline-none"
                              >
-                                <option value="SINGLE">Selección Única (Radio)</option>
-                                <option value="MULTIPLE">Selección Múltiple (Check)</option>
                              </select>
-                             <button onClick={() => deleteQuestion(q.id)} className="text-red-500/30 hover:text-red-500 transition-colors text-[9px] font-black uppercase tracking-widest">Eliminar Pregunta</button>
+                             <div className="flex items-center gap-3 mt-2">
+                                 <button onClick={() => saveQuestion(q)} className="text-cyan-400 hover:text-cyan-300 transition-colors text-[9px] font-black uppercase tracking-widest bg-cyan-900/30 px-3 py-1.5 rounded-lg border border-cyan-500/30">💾 Guardar</button>
+                                 <button onClick={() => deleteQuestion(q.id)} className="text-red-500/30 hover:text-red-500 transition-colors text-[9px] font-black uppercase tracking-widest">Eliminar</button>
+                             </div>
                         </div>
                     </div>
 
@@ -238,7 +242,6 @@ export default function BuilderQuizPage() {
                                         onClick={() => {
                                             const newOpts = [...q.optionsJson, 'Nueva Opción'];
                                             updateQuestionClient(q.id, { optionsJson: newOpts });
-                                            saveQuestion({ ...q, optionsJson: newOpts });
                                         }}
                                         className="text-cyan-400 text-[9px] font-black uppercase tracking-widest hover:underline"
                                     >
@@ -261,7 +264,6 @@ export default function BuilderQuizPage() {
                                                         checked={isCorrect}
                                                         onChange={() => {
                                                             updateQuestionClient(q.id, { correctAnswer: opt });
-                                                            saveQuestion({ ...q, correctAnswer: opt });
                                                         }}
                                                         className="w-4 h-4 accent-cyan-500"
                                                     />
@@ -278,7 +280,6 @@ export default function BuilderQuizPage() {
                                                             }
                                                             const finalAns = answers.join(',');
                                                             updateQuestionClient(q.id, { correctAnswer: finalAns });
-                                                            saveQuestion({ ...q, correctAnswer: finalAns });
                                                         }}
                                                         className="w-4 h-4 accent-cyan-500"
                                                     />
@@ -295,7 +296,6 @@ export default function BuilderQuizPage() {
                                                         }
                                                         updateQuestionClient(q.id, { optionsJson: newOpts, correctAnswer: newCorrect });
                                                     }}
-                                                    onBlur={() => saveQuestion(q)}
                                                     className="bg-transparent text-xs text-white outline-none flex-1 font-medium"
                                                 />
                                                 {q.optionsJson.length > 3 && (
@@ -303,7 +303,6 @@ export default function BuilderQuizPage() {
                                                         onClick={() => {
                                                             const newOpts = q.optionsJson.filter((_: any, i: number) => i !== optIndex);
                                                             updateQuestionClient(q.id, { optionsJson: newOpts });
-                                                            saveQuestion({ ...q, optionsJson: newOpts });
                                                         }}
                                                         className="opacity-0 group-hover/opt:opacity-100 text-red-500/40 text-[8px] font-black uppercase transition-opacity"
                                                     >
