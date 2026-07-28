@@ -92,6 +92,16 @@ export default function BuilderQuizPage() {
   };
 
   const saveQuestion = async (q: any) => {
+    // 1. Client-side pre-validation to avoid spamming the API with invalid data
+    if (!q.questionText || String(q.questionText).trim() === '') return;
+    
+    const validOptions = Array.isArray(q.optionsJson) ? q.optionsJson.filter(opt => opt) : [];
+    if (validOptions.length < 2) return;
+    
+    if (q.correctAnswer === undefined || q.correctAnswer === null || q.correctAnswer === '') return;
+
+    console.log('[SAVE QUESTION] Payload enviado:', JSON.stringify(sanitizePayload(q)));
+
     setSaving(true);
     const res = await fetch('/api/quiz-questions', {
         method: 'PATCH',
