@@ -100,13 +100,21 @@ export default function BuilderQuizPage() {
     
     if (q.correctAnswer === undefined || q.correctAnswer === null || q.correctAnswer === '') return;
 
-    console.log('[SAVE QUESTION] Payload enviado:', JSON.stringify(sanitizePayload(q)));
+    // 2. Mapeo correcto para el backend
+    // Prisma devuelve .options (array de objetos) pero el PATCH exige .optionsJson
+    const mappedOptions = q.options || q.optionsJson || [];
+    const payload = {
+        ...sanitizePayload(q),
+        optionsJson: mappedOptions
+    };
+
+    console.log('[SAVE QUESTION] Payload final:', JSON.stringify(payload));
 
     setSaving(true);
     const res = await fetch('/api/quiz-questions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sanitizePayload(q))
+        body: JSON.stringify(payload)
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
