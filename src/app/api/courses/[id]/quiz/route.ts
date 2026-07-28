@@ -22,7 +22,7 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
         }, { status: 400 });
       }
 
-      const { title, passingScore, totalScore, scoreDistribution, questions } = validation.data;
+      const { title, passingScore, totalScore, scoreDistribution, questions, lessonId } = validation.data;
 
       // 1. Verify existence & ownership
       const course = await prisma.course.findUnique({
@@ -58,27 +58,33 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       // 3. Transactional Sync (Atomic Wipe and Recreate)
       const result = await prisma.$transaction(async (tx) => {
           // Find or create quiz
-          let quiz = course.quizzes[0];
+          let quiz;
+          if (lessonId) {
+              quiz = await tx.quiz.findUnique({ where: { lessonId } });
+          } else {
+              quiz = course.quizzes[0];
+          }
+
           if (!quiz) {
-              // 1. Buscar la última lección del curso para vincular el quiz
-              const lastLesson = await tx.courseLesson.findFirst({
+              // 1. Determinar lección objetivo
+              const targetLessonId = lessonId || (await tx.courseLesson.findFirst({
                 where: { courseId },
                 orderBy: [
                   { module: { orderIndex: 'desc' } },
                   { orderIndex: 'desc' }
                 ]
-              });
+              }))?.id;
 
-              if (!lastLesson) {
-                throw new Error('No se encontró ninguna lección en el curso para asignar la evaluación final.');
+              if (!targetLessonId) {
+                throw new Error('No se encontró ninguna lección para asignar la evaluación.');
               }
 
               // 2. Crear el quiz vinculado
               quiz = await tx.quiz.create({
                   data: {
                       courseId,
-                      lessonId: lastLesson.id, // ← VINCULACIÓN CRÍTICA
-                      title: title || 'Examen Final',
+                      lessonId: targetLessonId,
+                      title: title || 'Evaluación',
                       passingScore: passingScore || 80,
                       totalScore: 100,
                       scoreDistribution: scoreDistribution || 'MANUAL'

@@ -34,9 +34,11 @@ function validateSum(quiz: Quiz): { valid: boolean; sum: number } {
 export default function QuizBuilderPage() {
   const params = useParams();
   const courseId = params.id as string;
+  const lessonId = params.lessonId as string | undefined;
+
   const [course, setCourse] = useState<any>(null);
   const [quiz, setQuiz] = useState<Quiz>({
-    title: 'Evaluación Final',
+    title: 'Evaluación',
     totalScore: 100,
     passingScore: 70,
     scoreDistribution: 'AUTOMATIC',
@@ -57,10 +59,15 @@ export default function QuizBuilderPage() {
       .then(r => r.json())
       .then(d => {
         setCourse(d);
-        if (d.quizzes && d.quizzes.length > 0) {
-          const q = d.quizzes[0];
-          setQuizId(q.id);
-          setQuiz({
+        // Si hay lessonId (módulo), usamos el endpoint de la lección, de lo contrario usamos el de curso
+        const quizPromise = lessonId 
+          ? fetch(`/api/lessons/${lessonId}/quiz`).then(r => r.ok ? r.json() : null)
+          : Promise.resolve(d.quizzes && d.quizzes.length > 0 ? d.quizzes[0] : null);
+
+        quizPromise.then(q => {
+          if (q) {
+            setQuizId(q.id);
+            setQuiz({
             title: q.title,
             totalScore: q.totalScore,
             passingScore: q.passingScore,
@@ -96,7 +103,8 @@ export default function QuizBuilderPage() {
           });
         }
       });
-  }, [courseId]);
+    });
+  }, [courseId, lessonId]);
 
   const showMsg = (type: 'ok' | 'err', text: string) => {
     setMsg({ type, text });
@@ -219,6 +227,7 @@ export default function QuizBuilderPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sanitizePayload({ 
               ...quiz, 
+              lessonId,
               questions: quiz.questions.map(q => ({
                   ...q,
                   optionsJson: q.options.map((o, idx) => ({
