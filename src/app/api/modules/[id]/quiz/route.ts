@@ -22,7 +22,10 @@ async function handleRequest(req: Request, props: { params: Promise<{ id: string
 
       const moduleId = params.id;
       const body = await req.json();
+      
+      console.log('[MODULE QUIZ] Body recibido:', JSON.stringify(body))
       const validation = syncQuizSchema.safeParse(body);
+      console.log('[MODULE QUIZ] Validación:', validation.success, !validation.success && validation.error.format())
 
       if (!validation.success) {
         return NextResponse.json({ 
