@@ -84,7 +84,7 @@ export const syncQuizSchema = z.object({
     optionsJson: z.array(quizQuestionOptionSchema).min(2),
     correctAnswer: z.any(),
     points: z.number().min(0).max(100),
-  })).min(1, 'El examen debe tener al menos una pregunta'),
+  })).min(0, 'El examen puede estar vacío inicialmente'),
 }).strict();
 
 export const updateCourseSchema = z.object({

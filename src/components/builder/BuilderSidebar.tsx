@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useBuilder } from '@/app/dashboard/instructor/courses/[id]/builder/layout';
 
 export default function BuilderSidebar() {
   const { course, fetchCourse } = useBuilder();
   const { id: courseId } = useParams();
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -53,7 +54,13 @@ export default function BuilderSidebar() {
            questions: [] 
         })
     });
-    if (res.ok) fetchCourse();
+    if (res.ok) {
+        const data = await res.json();
+        await fetchCourse();
+        if (data.redirectUrl) {
+            router.push(data.redirectUrl);
+        }
+    }
   };
 
   return (

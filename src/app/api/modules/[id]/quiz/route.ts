@@ -44,10 +44,12 @@ async function handleRequest(req: Request, props: { params: Promise<{ id: string
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
 
-      // 2. Validate total points must be 100
-      const calculatedTotal = questions.reduce((sum: number, q: any) => sum + (Number(q.points) || 0), 0);
-      if (calculatedTotal !== 100) {
-          return NextResponse.json({ error: `El puntaje total debe sumar exactamente 100 (Recibido: ${calculatedTotal})` }, { status: 400 });
+      // 2. Validate total points must be 100 (only if there are questions)
+      if (questions && questions.length > 0) {
+          const calculatedTotal = questions.reduce((sum: number, q: any) => sum + (Number(q.points) || 0), 0);
+          if (calculatedTotal !== 100) {
+              return NextResponse.json({ error: `El puntaje total debe sumar exactamente 100 (Recibido: ${calculatedTotal})` }, { status: 400 });
+          }
       }
 
       // 3. Transactional Sync (Atomic Wipe and Recreate)
@@ -151,7 +153,10 @@ async function handleRequest(req: Request, props: { params: Promise<{ id: string
                 });
             }
 
-            return quiz;
+            return {
+                ...quiz,
+                redirectUrl: `/dashboard/instructor/courses/${module.courseId}/builder/quiz/${quizLesson.id}`
+            };
         }, {
             timeout: 15000
         });
