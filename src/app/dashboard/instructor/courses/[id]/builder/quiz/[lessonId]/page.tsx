@@ -93,11 +93,16 @@ export default function BuilderQuizPage() {
 
   const saveQuestion = async (q: any) => {
     setSaving(true);
-    await fetch('/api/quiz-questions', {
+    const res = await fetch('/api/quiz-questions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sanitizePayload(q))
     });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error('[SAVE QUESTION ERROR]', err);
+        alert(`Error al guardar pregunta: ${err.error || 'Error desconocido'}`);
+    }
     setSaving(false);
   };
 
