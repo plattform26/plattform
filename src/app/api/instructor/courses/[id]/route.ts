@@ -35,6 +35,13 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
           include: {
             lessons: {
               orderBy: { orderIndex: 'asc' },
+              include: {
+                quiz: {
+                  include: {
+                    _count: { select: { questions: true } }
+                  }
+                }
+              }
             },
           },
         },

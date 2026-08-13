@@ -104,7 +104,7 @@ export default function BuilderSidebar() {
                              const isActive = pathname.includes(`/lesson/${lesson.id}`) || pathname.includes(`/quiz/${lesson.id}`);
                              
                              if (lesson.contentType === 'QUIZ') {
-                                 const quizQuestions = lesson.quiz?.questions?.length || 0;
+                                 const quizQuestions = lesson.quiz?._count?.questions || 0;
                                  return (
                                     <Link 
                                         key={lesson.id}
@@ -197,7 +197,7 @@ export default function BuilderSidebar() {
                  >
                     <div className="flex items-center gap-3">
                        <span className="text-sm shrink-0">📝</span>
-                       <span className="text-[11px] font-bold uppercase tracking-widest">Examen del Curso</span>
+                       <span className="text-[11px] font-bold uppercase tracking-widest">Examen Final del Curso</span>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
                         <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-cyan-500/20 text-cyan-400">

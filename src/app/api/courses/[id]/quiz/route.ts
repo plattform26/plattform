@@ -62,29 +62,23 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
           if (lessonId) {
               quiz = await tx.quiz.findUnique({ where: { lessonId } });
           } else {
-              quiz = course.quizzes[0];
+              quiz = await tx.quiz.findFirst({ where: { courseId, lessonId: null } });
+              // Fallback para cursos legacy donde el quiz final estaba atado a una lección aleatoria
+              if (!quiz) {
+                  const allCourseQuizzes = await tx.quiz.findMany({ where: { courseId } });
+                  // El quiz final legacy es aquel cuyo lessonId no está en ningún módulo, o fue atado mal
+                  // Para evitar complejidad, si no encontramos null, buscamos el que NO corresponda al módulo
+                  // Pero lo más seguro es: si era course.quizzes[0], mantenemos compatibilidad:
+                  quiz = course.quizzes.find(q => !q.lessonId) || course.quizzes[0];
+              }
           }
 
           if (!quiz) {
-              // 1. Determinar lección objetivo
-              const targetLessonId = lessonId || (await tx.courseLesson.findFirst({
-                where: { courseId },
-                orderBy: [
-                  { module: { orderIndex: 'desc' } },
-                  { orderIndex: 'desc' }
-                ]
-              }))?.id;
-
-              if (!targetLessonId) {
-                throw new Error('No se encontró ninguna lección para asignar la evaluación.');
-              }
-
-              // 2. Crear el quiz vinculado
               quiz = await tx.quiz.create({
                   data: {
                       courseId,
-                      lessonId: targetLessonId,
-                      title: title || 'Evaluación',
+                      lessonId: lessonId || null,
+                      title: title || (lessonId ? 'Evaluación' : 'Examen Final del Curso'),
                       passingScore: passingScore || 80,
                       totalScore: 100,
                       scoreDistribution: scoreDistribution || 'MANUAL'
