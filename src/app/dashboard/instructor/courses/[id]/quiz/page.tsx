@@ -221,22 +221,26 @@ export default function QuizBuilderPage() {
 
     setSaving(true);
     try {
+      const payload = sanitizePayload({ 
+          ...quiz, 
+          lessonId,
+          questions: quiz.questions.map(q => ({
+              ...q,
+              optionsJson: q.options.map((o, idx) => ({
+                  optionText: o.text || '',
+                  isCorrect: q.correctAnswer.includes(idx),
+                  orderIndex: idx + 1
+              }))
+          }))
+      });
+      
+      console.log('[QUIZ SAVE CLIENT] Enviando:', JSON.stringify(payload, null, 2));
+
       // Usar el nuevo endpoint unificado que creamos
       const res = await fetch(`/api/courses/${courseId}/quiz`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sanitizePayload({ 
-              ...quiz, 
-              lessonId,
-              questions: quiz.questions.map(q => ({
-                  ...q,
-                  optionsJson: q.options.map((o, idx) => ({
-                      optionText: o.text || '',
-                      isCorrect: q.correctAnswer.includes(idx),
-                      orderIndex: idx + 1
-                  }))
-              }))
-          }))
+          body: JSON.stringify(payload)
       });
 
       if (!res.ok) {
@@ -296,7 +300,7 @@ export default function QuizBuilderPage() {
                 : 'bg-[#00f2ff] text-black ring-cyan-500/50 shadow-cyan-500/20'
             }`}
           >
-            {saving ? '📦 SINCRONIZANDO...' : isLocked ? '🔒 EXAMEN BLOQUEADO' : '💾 GUARDAR EXAMEN FINAL'}
+            {saving ? '📦 SINCRONIZANDO...' : isLocked ? '🔒 EXAMEN BLOQUEADO' : lessonId ? '💾 GUARDAR EVALUACIÓN DE MÓDULO' : '💾 GUARDAR EXAMEN FINAL'}
           </button>
           <Link href={`/dashboard/instructor/courses/${courseId}/modules`} className="px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-white text-[10px] font-black transition-all hover:bg-white/10 uppercase tracking-widest italic">
             Módulos →

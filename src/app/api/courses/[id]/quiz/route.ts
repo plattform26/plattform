@@ -13,9 +13,12 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
 
       const courseId = params.id;
       const body = await req.json();
+      console.log('[QUIZ SAVE] Payload recibido:', JSON.stringify(body, null, 2));
+      
       const validation = syncQuizSchema.safeParse(body);
 
       if (!validation.success) {
+        console.log('[QUIZ SAVE] Error Zod:', JSON.stringify(validation.error.format(), null, 2));
         return NextResponse.json({ 
           error: 'Datos inválidos', 
           details: validation.error.format() 
