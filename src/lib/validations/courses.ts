@@ -78,14 +78,17 @@ export const syncQuizSchema = z.object({
   passingScore: z.number().min(0).max(100).optional().nullable(),
   totalScore: z.literal(100),
   scoreDistribution: z.enum(['MANUAL', 'AUTOMATIC']).optional().nullable(),
+  lessonId: z.string().uuid().optional().nullable(),
   questions: z.array(z.object({
+    id: z.string().optional().nullable(),
     questionText: z.string().min(1).max(5000),
     questionType: z.enum(['SINGLE', 'MULTIPLE']),
     optionsJson: z.array(quizQuestionOptionSchema).min(2),
     correctAnswer: z.any(),
     points: z.number().min(0).max(100),
-  })).min(0, 'El examen puede estar vacío inicialmente'),
-}).strict();
+    orderIndex: z.number().optional().nullable(),
+  }).passthrough()).min(0, 'El examen puede estar vacío inicialmente'),
+});
 
 export const updateCourseSchema = z.object({
   title: z.string().min(1, 'El título no puede estar vacío').max(200).optional(),
