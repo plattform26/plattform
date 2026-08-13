@@ -462,7 +462,7 @@ export default function QuizBuilderPage() {
 
       {/* Modal de Confirmación */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
            <div className="bg-[#0d1524] border border-blue-500/20 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center">
               <div className="text-5xl mb-4">🎉</div>
               <h3 className="text-xl font-bold text-white mb-2">¡Evaluación Guardada!</h3>
