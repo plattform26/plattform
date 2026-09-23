@@ -16,6 +16,7 @@ export default function StudentRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +27,7 @@ export default function StudentRegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, termsAccepted }),
       });
 
       const data = await res.json();
@@ -139,9 +140,23 @@ export default function StudentRegisterPage() {
             </div>
           </div>
 
+          <div className="flex items-start gap-3 mt-4">
+            <input 
+              type="checkbox" 
+              id="terms" 
+              required
+              className="mt-1 bg-[#152035] border-blue-500/20 rounded text-cyan-500 focus:ring-cyan-500"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            <label htmlFor="terms" className="text-xs text-gray-400 leading-relaxed">
+              He leído y acepto los <Link href="/terminos" target="_blank" className="text-cyan-400 hover:underline">Términos y Condiciones</Link> y el <Link href="/privacidad" target="_blank" className="text-cyan-400 hover:underline">Aviso de Privacidad</Link>
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !termsAccepted}
             className="w-full flex justify-center py-4 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-50 mt-4"
           >
             {isLoading ? 'Procesando...' : 'Crear cuenta de alumno'}

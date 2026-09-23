@@ -79,6 +79,7 @@ export const metadata: Metadata = {
 
 import StructuredData from "@/components/StructuredData";
 import SessionManager from "@/components/auth/SessionManager";
+import CookieBanner from "@/components/legal/CookieBanner";
 
 export default function RootLayout({
   children,
@@ -91,6 +92,7 @@ export default function RootLayout({
         <StructuredData />
         <SessionManager />
         {children}
+        <CookieBanner />
       </body>
     </html>
   );

@@ -14,6 +14,7 @@ const registerSchema = z.object({
   birthDate: z.coerce.date().optional(),
   role: z.enum(['STUDENT', 'INSTRUCTOR']),
   academyName: z.string().max(200).optional(),
+  termsAccepted: z.boolean().optional(),
 }).strict();
 
 /**
@@ -90,6 +91,7 @@ export async function POST(req: Request) {
         role,
         birthDate: birthDate || null,
         status: initialStatus,
+        termsAcceptedAt: new Date(),
       },
     });
 
