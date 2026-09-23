@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 
 interface FAQ {
@@ -326,7 +326,7 @@ export default function FAQPage() {
   }, [searchTerm]);
 
   // Handle auto-expansion on search
-  useMemo(() => {
+  useEffect(() => {
     if (searchTerm.trim()) {
       const newExpanded = new Set<string>();
       filteredData.forEach(cat => {
