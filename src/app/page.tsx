@@ -323,8 +323,16 @@ export default function EliteStudentLanding() {
                     <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">Comunidad</h5>
                     <ul className="space-y-4 text-xs text-gray-500">
                         <li><Link href="/creators" className="hover:text-cyan-400 transition-colors">Para Instructores</Link></li>
-                        <li><Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacidad</Link></li>
-                        <li><Link href="/terms" className="hover:text-cyan-400 transition-colors">Términos</Link></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 mb-8">Legal</h5>
+                    <ul className="space-y-4 text-xs text-gray-500">
+                        <li><Link href="/privacidad" className="hover:text-white transition-colors">Aviso de Privacidad</Link></li>
+                        <li><Link href="/terminos" className="hover:text-white transition-colors">Términos y Condiciones</Link></li>
+                        <li><Link href="/reembolsos" className="hover:text-white transition-colors">Política de Reembolsos</Link></li>
+                        <li><Link href="/cookies" className="hover:text-white transition-colors">Política de Cookies</Link></li>
+                        <li><Link href="/faq" className="hover:text-white transition-colors">Preguntas Frecuentes</Link></li>
                     </ul>
                 </div>
             </div>

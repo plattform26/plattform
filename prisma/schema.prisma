@@ -21,6 +21,8 @@ model User {
   createdAt                 DateTime                @default(now()) @map("created_at")
   updatedAt                 DateTime                @updatedAt @map("updated_at")
   lastLoginAt               DateTime?               @map("last_login_at")
+  termsAcceptedAt           DateTime?               @map("terms_accepted_at")
+  deletionWarningSentAt     DateTime?               @map("deletion_warning_sent_at")
   manualEnrollmentsCreated  AdminManualEnrollment[] @relation("AdminCreator")
   manualEnrollmentsReceived AdminManualEnrollment[] @relation("EnrolledStudent")
   auditLogs                 AuditLog[]
