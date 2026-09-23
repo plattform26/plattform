@@ -8,39 +8,82 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const DRY_RUN = process.argv.includes('--execute') ? false : true;
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://plattform.mx';
 
+const PROTECTED_EMAILS = [
+  'soporte@plattform.mx',
+  'diego@plattform.mx',
+  'plattform26@gmail.com',
+];
+
 async function main() {
   console.log(`\n=== INICIANDO LIMPIEZA DE CUENTAS INACTIVAS ===`);
   console.log(`Modo: ${DRY_RUN ? 'DRY RUN (Solo lectura)' : 'EXECUTE (Eliminación y envío real)'}\n`);
 
   const now = new Date();
   
-  // 2 meses y 15 días atrás (aprox 75 días)
-  const warningThreshold = new Date(now.getTime() - (75 * 24 * 60 * 60 * 1000));
-  
-  // 3 meses atrás (aprox 90 días)
-  const deletionThreshold = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000));
-  
-  // 15 días atrás
+  // 75 días
+  const warningThresholdDays = 75;
+  // 90 días
+  const deletionThresholdDays = 90;
+  // 15 días (tiempo desde que se envió el aviso)
   const warningSentThreshold = new Date(now.getTime() - (15 * 24 * 60 * 60 * 1000));
 
-  // 1. Fase de Aviso
-  const usersToWarn = await prisma.user.findMany({
-    where: {
-      lastLoginAt: { lt: warningThreshold },
-      deletionWarningSentAt: null,
-      enrollments: { none: {} },
+  // Obtener todos los usuarios con sus relaciones
+  const allUsers = await prisma.user.findMany({
+    include: {
+      enrollments: true,
       instructorProfile: {
-        is: null, // No instructor profile, meaning no subscriptions
+        include: {
+          subscriptions: {
+            where: {
+              status: { in: ['ACTIVE', 'PAUSED'] }
+            }
+          }
+        }
       }
     }
   });
 
+  const usersToWarn = [];
+  const usersToDelete = [];
+
+  for (const user of allUsers) {
+    // Excluir cuentas protegidas o ADMINs
+    if (PROTECTED_EMAILS.includes(user.email) || user.role === 'ADMIN') {
+      continue;
+    }
+
+    const hasPurchases = user.enrollments.length > 0;
+    const isInstructor = user.role === 'INSTRUCTOR' || user.instructorProfile != null;
+    const hasActiveSub = isInstructor && (user.instructorProfile?.subscriptions?.length ?? 0) > 0;
+
+    // Protegidos si tienen compras o subs activas
+    if (hasPurchases || hasActiveSub) {
+      continue;
+    }
+
+    // Calcular inactividad usando lastLoginAt o createdAt si nunca entró
+    const referenceDate = user.lastLoginAt || user.createdAt;
+    const daysInactive = Math.floor((now.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysInactive >= deletionThresholdDays) {
+      if (user.deletionWarningSentAt && user.deletionWarningSentAt < warningSentThreshold) {
+        usersToDelete.push(user);
+      } else if (!user.deletionWarningSentAt) {
+        usersToWarn.push(user);
+      }
+    } else if (daysInactive >= warningThresholdDays && !user.deletionWarningSentAt) {
+      usersToWarn.push(user);
+    }
+  }
+
+  // --- FASE 1: AVISOS ---
   console.log(`--- FASE 1: AVISOS ---`);
   console.log(`Usuarios a notificar: ${usersToWarn.length}`);
   
   for (const user of usersToWarn) {
+    const reference = user.lastLoginAt ? user.lastLoginAt.toISOString().split('T')[0] : 'Nunca (Registro: ' + user.createdAt.toISOString().split('T')[0] + ')';
     if (DRY_RUN) {
-      console.log(`[DRY RUN] Se enviaría aviso a: ${user.email} (lastLogin: ${user.lastLoginAt})`);
+      console.log(`[DRY RUN] Se enviaría aviso a: ${user.email} (Último acceso: ${reference} | Rol: ${user.role})`);
     } else {
       try {
         await resend.emails.send({
@@ -62,18 +105,7 @@ async function main() {
     }
   }
 
-  // 2. Fase de Eliminación
-  const usersToDelete = await prisma.user.findMany({
-    where: {
-      lastLoginAt: { lt: deletionThreshold },
-      deletionWarningSentAt: { lt: warningSentThreshold },
-      enrollments: { none: {} },
-      instructorProfile: {
-        is: null,
-      }
-    }
-  });
-
+  // --- FASE 2: ELIMINACIÓN ---
   console.log(`\n--- FASE 2: ELIMINACIÓN ---`);
   console.log(`Usuarios a eliminar: ${usersToDelete.length}`);
 
